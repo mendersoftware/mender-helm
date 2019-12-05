@@ -1,0 +1,96 @@
+{{- if .Values.conductor.enabled  }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conductor
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: conductor
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: conductor
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  # Conductor is stateless application and can be scaled with number of instances.
+  # Conductor is internal service, quite expensive JavaApp woth relatively small load.
+  replicas: {{ .Values.conductor.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: conductor
+
+  # if deployment is not completed within few min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+  progressDeadlineSeconds: 800
+
+  # Detection of conductor starting and finishing loading workflows if not reliable
+  # until it can be fine-tuned give it minimum time to get things done.
+  minReadySeconds: 180
+
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: conductor
+    spec:
+      {{- with .Values.conductor.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: conductor
+      ***REMOVED*** {{ .Values.conductor.image.registry }}/{{ .Values.conductor.image.repository }}:{{ .Values.conductor.image.tag }}
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.conductor.resources | indent 10 }}
+
+        command: ["/srv/start_conductor.sh"]
+
+        # Perform periodic checks during pod startup period to determine  when it's ready.
+        # After conductor goes online where is a number of configurations that is loaded,
+        # that need to be finished before we consider condictor ready (time consuming operation).
+        # TODO: make startup script touch as file that can be checked for (independent on config versions)
+        # readinessProbe:
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 20
+        #   # TODO cleaner way to check not only if API is up but also if correct worflow version is loaded.
+        #   # exec:
+        #     # command:
+        #     # - 'if [ $(curl --write-out %{http_code} --silent --output /dev/null http://localhost:8080/api/metadata/workflow/decommission_device?version=2) = 200 ]; then true; else false; fi'
+        #   httpGet:
+        #     path: /api/metadata/workflow/decommission_device
+        #     port: 8080
+
+        env:
+        - name: CONFIG_PROP
+          value: {{ .Values.conductor.env.CONFIG_PROP | quote }}
+        - name: CONDUCTOR_JAVA_OPTS
+          value: {{ .Values.conductor.env.CONDUCTOR_JAVA_OPTS | quote }}
+        - name: REDIS
+          value: {{ .Values.conductor.env.REDIS | quote }}
+        - name: ELASTICSEARCH
+          value: {{ .Values.conductor.env.ELASTICSEARCH | quote }}
+
+        volumeMounts:
+        - name: config
+          mountPath: "/app/config/"
+          readOnly: true
+
+      volumes:
+      - name: config
+        configMap:
+          name: conductor-appconfig
+
+{{- if .Values.global.image.username  }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
+{{- end }}

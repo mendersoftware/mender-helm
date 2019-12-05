@@ -1,0 +1,40 @@
+{{- if .Values.useradm.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.useradm.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: useradm-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: useradm
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.useradm.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.useradm.service.type }}
+  {{- if and (eq .Values.useradm.service.type "ClusterIP") .Values.useradm.service.clusterIP }}
+  clusterIP: {{ .Values.useradm.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.useradm.service.type "LoadBalancer") .Values.useradm.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.useradm.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.useradm.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.useradm.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.useradm.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.useradm.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.useradm.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.useradm.service.nodePort }}
+    nodePort: {{ .Values.useradm.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: useradm
+{{- end }}

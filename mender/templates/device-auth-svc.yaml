@@ -1,0 +1,40 @@
+{{- if .Values.device_auth.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.device_auth.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: device-auth-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: device-auth
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.device_auth.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.device_auth.service.type }}
+  {{- if and (eq .Values.device_auth.service.type "ClusterIP") .Values.device_auth.service.clusterIP }}
+  clusterIP: {{ .Values.device_auth.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.device_auth.service.type "LoadBalancer") .Values.device_auth.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.device_auth.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.device_auth.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.device_auth.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.device_auth.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.device_auth.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.device_auth.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.device_auth.service.nodePort }}
+    nodePort: {{ .Values.device_auth.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: device-auth
+{{- end }}

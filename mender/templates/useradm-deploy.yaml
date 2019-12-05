@@ -1,0 +1,103 @@
+{{- if .Values.useradm.enabled  }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: useradm
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: useradm
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: useradm
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.useradm.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: useradm
+
+  # if deployment is not completed within 10 min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+
+  progressDeadlineSeconds: 600
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: useradm
+    spec:
+      {{- with .Values.useradm.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: useradm
+      ***REMOVED*** {{ .Values.useradm.image.registry }}/{{ .Values.useradm.image.repository }}:{{ .Values.useradm.image.tag }}
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.useradm.resources | indent 10 }}
+
+{{- if .Values.useradm.automigrate  }}
+        args: ["server", "--automigrate"]
+{{- else -}}
+        args: ["server"]
+{{- end }}
+
+        env:
+        - name: TENANTADM_MIDDLEWARE
+          value: {{ .Values.useradm.env.TENANTADM_MIDDLEWARE | quote }}
+        - name: USERADM_JWT_ISSUER
+          value: {{ .Values.useradm.env.USERADM_JWT_ISSUER | quote }}
+        - name: USERADM_JWT_EXP_TIMEOUT
+          value: {{ .Values.useradm.env.USERADM_JWT_EXP_TIMEOUT | quote }}
+        - name: USERADM_SERVER_PRIV_KEY_PATH
+          value: {{ .Values.useradm.env.USERADM_SERVER_PRIV_KEY_PATH | quote }}
+        - name: USERADM_MIDDLEWARE
+          value: {{ .Values.useradm.env.USERADM_MIDDLEWARE | quote }}
+        - name: USERADM_TENANTADM_ADDR
+          value: {{ .Values.useradm.env.USERADM_TENANTADM_ADDR | quote }}
+        - name: USERADM_TOTP_ISSUER
+          value: {{ .Values.useradm.env.USERADM_TOTP_ISSUER | quote }}
+
+        # Perform periodic checks during pod startup period to determine
+        # when it's ready and listening of specificed port.
+        # readinessProbe:
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 20
+        #   tcpSocket:
+        #     port: 8080
+
+        volumeMounts:
+        - name: rsa
+          mountPath: "/etc/useradm/rsa/"
+          readOnly: true
+
+
+        # Supported configuration settings: https://github.com/mendersoftware/useradm/blob/master/config.yaml
+        # Set in order, last value for the key will be used in case duplications.
+
+        envFrom:
+        - secretRef:
+            name: mongodb-common
+          prefix: USERADM_
+
+      volumes:
+      - name: rsa
+        secret:
+          secretName: rsa-useradm
+
+{{- if .Values.global.image.username  }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
+{{- end }}

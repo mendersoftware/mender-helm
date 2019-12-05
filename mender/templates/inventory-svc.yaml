@@ -1,0 +1,40 @@
+{{- if .Values.inventory.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.inventory.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: inventory-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: inventory
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.inventory.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.inventory.service.type }}
+  {{- if and (eq .Values.inventory.service.type "ClusterIP") .Values.inventory.service.clusterIP }}
+  clusterIP: {{ .Values.inventory.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.inventory.service.type "LoadBalancer") .Values.inventory.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.inventory.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.inventory.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.inventory.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.inventory.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.inventory.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.inventory.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.inventory.service.nodePort }}
+    nodePort: {{ .Values.inventory.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: inventory
+{{- end }}
