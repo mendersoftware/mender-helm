@@ -1,0 +1,71 @@
+{{- if .Values.gui.enabled  }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gui
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: gui
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: gui
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.gui.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gui
+
+  # if deployment is not completed within 10 min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+  progressDeadlineSeconds: 600
+
+  # We are executign js minify at container startup. This is expensive and time consuming.
+  # Give container minimum time to finish before it's considered ready.
+  minReadySeconds: 120
+
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gui
+    spec:
+      {{- with .Values.gui.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: gui
+        image: {{ .Values.gui.image.registry }}/{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.device_auth.resources | indent 10 }}
+
+        # Perform periodic checks during pod startup period to determine
+        # when it's ready and listening of specificed port.
+        # readinessProbe:
+        # periodSeconds: 20
+        #   tcpSocket:
+        #     port: 80
+
+        env:
+        - name: HAVE_MULTITENANT
+          value: {{ .Values.gui.env.HAVE_MULTITENANT | quote }}
+        - name: MENDER_HOSTED
+          value: {{ .Values.gui.env.MENDER_HOSTED | quote }}
+        - name: HAVE_ENTERPRISE
+          value: {{ .Values.gui.env.HAVE_ENTERPRISE | quote }}
+        - name: GATEWAY_IP
+          value: {{ .Values.gui.env.GATEWAY_IP | quote }}
+        - name: GATEWAY_PORT
+          value: {{ .Values.gui.env.GATEWAY_PORT | quote }}
+{{- end }}

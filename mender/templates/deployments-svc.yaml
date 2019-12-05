@@ -1,0 +1,40 @@
+{{- if .Values.deployments.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployments.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: deployments-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: deployments
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.deployments.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.deployments.service.type }}
+  {{- if and (eq .Values.deployments.service.type "ClusterIP") .Values.deployments.service.clusterIP }}
+  clusterIP: {{ .Values.deployments.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.deployments.service.type "LoadBalancer") .Values.deployments.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.deployments.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.deployments.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.deployments.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.deployments.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.deployments.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.deployments.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.deployments.service.nodePort }}
+    nodePort: {{ .Values.deployments.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: deployments
+{{- end }}

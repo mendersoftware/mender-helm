@@ -1,0 +1,40 @@
+{{- if .Values.tenantadm.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.tenantadm.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: tenantadm
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: tenantadm-svc
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.tenantadm.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.tenantadm.service.type }}
+  {{- if and (eq .Values.tenantadm.service.type "ClusterIP") .Values.tenantadm.service.clusterIP }}
+  clusterIP: {{ .Values.tenantadm.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.tenantadm.service.type "LoadBalancer") .Values.tenantadm.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.tenantadm.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.tenantadm.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.tenantadm.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.tenantadm.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.tenantadm.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.tenantadm.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.tenantadm.service.nodePort }}
+    nodePort: {{ .Values.tenantadm.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: tenantadm
+{{- end }}

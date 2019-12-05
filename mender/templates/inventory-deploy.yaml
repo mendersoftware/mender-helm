@@ -1,0 +1,77 @@
+{{- if .Values.inventory.enabled  }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: inventory
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: inventory
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.inventory.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inventory
+
+  # if deployment is not completed within 10 min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+  progressDeadlineSeconds: 600
+
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inventory
+    spec:
+      {{- with .Values.inventory.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: inventory
+        image: {{ .Values.inventory.image.registry }}/{{ .Values.inventory.image.repository }}:{{ .Values.inventory.image.tag }}
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.inventory.resources | indent 10 }}
+
+{{- if .Values.inventory.automigrate  }}
+        args: ["server", "--automigrate"]
+{{- else -}}
+        args: ["server"]
+{{- end }}
+        # Perform periodic checks during pod startup period to determine
+        # when it's ready and listening of specificed port.
+        # readinessProbe:
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 20
+        #   tcpSocket:
+        #     port: 8080
+
+        env:
+        - name: INVENTORY_MIDDLEWARE
+          value: {{ .Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
+
+        # Supported configuration settings: https://github.com/mendersoftware/inventory/blob/master/config.yaml
+        # Set in order, last value for the key will be used in case duplications.
+        envFrom:
+        - prefix: INVENTORY_
+          secretRef:
+            name: mongodb-common
+
+{{- if .Values.global.image.username  }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
+{{- end }}

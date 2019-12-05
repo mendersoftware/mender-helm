@@ -1,0 +1,40 @@
+{{- if .Values.conductor_ui.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.conductor_ui.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: conductor-ui-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: conductor
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.conductor_ui.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.conductor_ui.service.type }}
+  {{- if and (eq .Values.conductor_ui.service.type "ClusterIP") .Values.conductor_ui.service.clusterIP }}
+  clusterIP: {{ .Values.conductor_ui.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.conductor_ui.service.type "LoadBalancer") .Values.conductor_ui.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.conductor_ui.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.conductor_ui.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.conductor_ui.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.conductor_ui.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.conductor_ui.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.conductor_ui.service.port }}
+    protocol: TCP
+    targetPort: 5000
+    {{- if .Values.conductor_ui.service.nodePort }}
+    nodePort: {{ .Values.conductor_ui.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: conductor-ui
+{{- end }}

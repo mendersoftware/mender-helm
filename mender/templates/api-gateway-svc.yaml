@@ -1,0 +1,48 @@
+{{- if .Values.api_gateway.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.api_gateway.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: api-gateway-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.api_gateway.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.api_gateway.service.type }}
+  {{- if and (eq .Values.api_gateway.service.type "ClusterIP") .Values.api_gateway.service.clusterIP }}
+  clusterIP: {{ .Values.api_gateway.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.api_gateway.service.type "LoadBalancer") .Values.api_gateway.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.api_gateway.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.api_gateway.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.api_gateway.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.api_gateway.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.api_gateway.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.api_gateway.service.httpsPort }}
+    protocol: TCP
+    targetPort: 443
+    {{- if .Values.api_gateway.httpsNodePort }}
+    nodePort: {{ .Values.api_gateway.service.httpsNodePort }}
+    {{- end }}
+    name: https
+  - port: {{ .Values.api_gateway.service.httpPort }}
+    protocol: TCP
+    targetPort: 80
+    {{- if .Values.api_gateway.service.httpNodePort }}
+    nodePort: {{ .Values.api_gateway.service.httpNodePort }}
+    {{- end }}
+    name: http
+  selector:
+    app.kubernetes.io/name: api-gateway
+{{- end }}

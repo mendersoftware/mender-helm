@@ -1,0 +1,41 @@
+{{- if .Values.gui.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gui.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: gui-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: gui
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.gui.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.gui.service.type }}
+  {{- if and (eq .Values.gui.service.type "ClusterIP") .Values.gui.service.clusterIP }}
+  clusterIP: {{ .Values.gui.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.gui.service.type "LoadBalancer") .Values.gui.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.gui.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.gui.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.gui.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.gui.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.gui.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.gui.service.port }}
+    protocol: TCP
+    targetPort: 80
+    {{- if .Values.gui.service.nodePort }}
+    nodePort: {{ .Values.gui.service.nodePort }}
+    {{- end }}
+    name: http
+  selector:
+    app.kubernetes.io/name: gui
+{{- end }}
