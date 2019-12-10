@@ -1,0 +1,300 @@
+global:
+  image:
+    registry: registry.mender.io
+    username: null
+    password: null
+  mongodb:
+    URL: mongodb
+  s3:
+    AWS_URI: http://minio:9000
+    AWS_BUCKET: minio-hosted-mender-artifacts
+    AWS_ACCESS_KEY_ID: myaccesskey
+    AWS_SECRET_ACCESS_KEY: mysecretkey
+  smtp:
+    EMAIL_SENDER: root@localhost
+    SMTP_ADDRESS: smtp.mailtrap.io
+    SMTP_LOGIN: "null"
+    SMTP_PASSWORD: "null"
+    SMTP_SSL: "false"
+
+api_gateway:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: mendersoftware/api-gateway
+    tag: 2.0.0
+    imagePullPolicy: IfNotPresent
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  affinity: {}
+  service:
+    name: mender-api-gateway
+    annotations: {}
+    type: ClusterIP
+    httpPort: 80
+    httpsPort: 443
+  env:
+    HAVE_MULTITENANT: true
+    DNS_NAMES: "mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui"
+    IS_LOGS_FORMAT_JSON: true
+    ALLOWED_HOSTS: "[a-zA-Z0-9:.]+"
+
+conductor:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512M
+    requests:
+      cpu: 100m
+      memory: 128M
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/mender-conductor-enterprise
+    tag: 1.5.0
+    imagePullPolicy: IfNotPresent
+  affinity: {}
+  service:
+    name: mender-conductor
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+  env:
+    CONFIG_PROP: config.properties
+    CONDUCTOR_JAVA_OPTS: -Xmx768m -Xms128m
+    ELASTICSEARCH: mender-elasticsearch-master:9300
+    ELASTICSEARCH_INDEX: conductor
+    REDIS: mender-redis-master:6379
+
+conductor_ui:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  image:
+    registry: docker.io
+    repository: mendersoftware/conductor-ui
+    tag: 2.11.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-conductor-ui
+    annotations: {}
+    type: ClusterIP
+    port: 5000
+  env:
+    WF_SERVER: http://mender-conductor:8080/api/
+
+deployments:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 200m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/deployments-enterprise
+    tag: 1.8.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-deployments
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+  env:
+    DEPLOYMENTS_MIDDLEWARE: prod
+    DEPLOYMENTS_AWS_TAG_ARTIFACT: true
+
+device_auth:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/deviceauth
+    tag: 2.1.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-device-auth
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+  env:
+    DEVICEAUTH_INVENTORY_ADDR: http://mender-inventory:8080/
+    DEVICEAUTH_DEVICE_AUTH_ORCHESTRATOR: http://mender-conductor:8080/
+    DEVICEAUTH_JWT_ISSUER: Mender
+    DEVICEAUTH_JWT_EXP_TIMEOUT: 604800
+    DEVICEAUTH_MIDDLEWARE: prod
+    DEVICEAUTH_TENANTADM_ADDR: http://mender-tenantadm:8080
+    DEVICEAUTH_MAX_DEVICES_LIMIT_DEFAULT: 500
+
+gui:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 20m
+      memory: 64M
+    requests:
+      cpu: 5m
+      memory: 16M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/gui
+    tag: 2.2.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-gui
+    annotations: {}
+    type: ClusterIP
+    port: 80
+  env:
+    HAVE_MULTITENANT: true
+    MENDER_HOSTED: true
+    HAVE_ENTERPRISE: true
+    GATEWAY_IP: k8s.hosted.mender.io
+    GATEWAY_PORT: "443"
+
+inventory:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/inventory
+    tag: 1.6.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-inventory
+    annotations: {}
+    type: ClusterIP
+    port: 80
+  env:
+    INVENTORY_MIDDLEWARE: prod
+
+tenantadm:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/tenantadm
+    tag: 1.0.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-tenantadm
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+  env:
+    TENANTADM_MIDDLEWARE: prod
+    TENANTADM_SERVER_PRIV_KEY_PATH: /etc/tenantadm/rsa/private.pem
+    TENANTADM_CONDUCTOR_ADDR: http://mender-conductor:8080/
+    TENANTADM_RECAPTCHA_URL_VERIFY: https://www.google.com/recaptcha/api/siteverify
+
+useradm:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/useradm-enterprise
+    tag: 1.9.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-useradm
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+  env:
+    USERADM_JWT_ISSUER: Mender Users
+    USERADM_JWT_EXP_TIMEOUT: 604800
+    USERADM_SERVER_PRIV_KEY_PATH: /etc/useradm/rsa/private.pem
+    USERADM_MIDDLEWARE: prod
+    USERADM_TENANTADM_ADDR: http://mender-tenantadm:8080
+    USERADM_TOTP_ISSUER: Mender
+
+email_sender:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 40m
+      memory: 50M
+    requests:
+      cpu: 20m
+      memory: 30M
+  image:
+    registry: docker.io
+    repository: mendersoftware/email-sender
+    tag: 1.5.0
+    imagePullPolicy: IfNotPresent
+  env:
+    CONDUCTOR: http://mender-conductor:8080
+
+org_welcome_email_preparer:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 40m
+      memory: 50M
+    requests:
+      cpu: 20m
+      memory: 30M
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/org-welcome-email-preparer
+    tag: 1.5.0
+    imagePullPolicy: IfNotPresent
+  env:
+    CONDUCTOR: http://mender-conductor:8080
