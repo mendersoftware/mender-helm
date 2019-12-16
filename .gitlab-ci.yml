@@ -1,9 +1,29 @@
 stages:
+  - build
   - test
- 
+
+build:
+  stage: build
+  tags:
+    - mender-qa-slave
+  script:
+    - apt-get update -y
+    - apt-get install -y curl make
+    - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+    - chmod 755 get_helm.sh
+    - ./get_helm.sh
+    - make lint
+    - make package
+  artifacts:
+    expire_in: 2w
+    paths:
+      - mender-*.tgz
+
 test_helm_chart_install:
 ***REMOVED*** debian:buster
   stage: test
+  dependencies: 
+    - build
   tags:
     - mender-qa-slave
   before_script:

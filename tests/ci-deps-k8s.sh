@@ -3,6 +3,8 @@
 . tests/variables.sh
 . tests/functions.sh
 
+set -e
+
 log "deploying dependencies: ElasticSearch"
 kubectl apply -f service-elasticsearch5.yaml
 kubectl apply -f elasticsearch5.yaml
@@ -13,7 +15,7 @@ chmod 755 get_helm.sh
 ./get_helm.sh
 
 log "cloning charts"
-git clone https://github.com/helm/charts
+git clone --depth=1 https://github.com/helm/charts
 
 log "deploying dependencies: Minio"
 helm install mender-minio ./charts/stable/minio --set accessKey="${MINIO_accessKey}" --set secretKey=${MINIO_secretKey}

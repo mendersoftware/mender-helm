@@ -2,6 +2,8 @@
 
 . tests/functions.sh
 
+set -e
+
 log "starting dockerd"
 # start dockerd
 dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 &> /var/log/docker.log 2>&1 < /dev/null &
