@@ -20,9 +20,10 @@ kubectl apply -f "$TMPFILE"
 
 echo -n "> Waiting for the ubuntu POD to become ready"
 n=0
-while [ $n -lt 60 ]; do
+max_wait=512
+while [ $n -lt $max_wait ]; do
     sleep 1
-    NOT_READY=$(kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready | grep ubuntu | egrep -e 'false$' | wc -l)
+    NOT_READY=$(kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready | grep ubuntu | egrep -e 'false$' -e '<none>$' | wc -l)
     if [ $NOT_READY -eq 0 ]; then
         echo -e "\n> POD is ready:"
         kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready
@@ -32,7 +33,7 @@ while [ $n -lt 60 ]; do
     n=$((n+1))
 done
 
-if [ $n -ge 60 ]; then
+if [ $n -ge $max_wait ]; then
     echo -e "\n> POD is not ready, aborting"
     kubectl delete -f "$TMPFILE"
     rm "$TMPFILE"
@@ -54,7 +55,6 @@ USER_PASSWORD="demodemo"
 TENANTADM=$(kubectl get pods -o custom-columns=POD:metadata.name | grep tenantadm | head -n1)
 USERADM=$(kubectl get pods -o custom-columns=POD:metadata.name | grep useradm | head -n1)
 
-
 echo "> Creating a new tenant: $TENANT_NAME"
 TENANT_ID=$(kubectl exec $TENANTADM -- tenantadm create-org --name $TENANT_NAME --username "$ADMIN_USERNAME" --password "$ADMIN_PASSWORD")
 
@@ -73,7 +73,7 @@ fi
 echo "> JWT token: $JWT"
 
 # verify the jwt token (TENANT_ID should be inside the decoded JSON)
-if ! echo $JWT | cut -f2 -d. | base64 -Dd | grep -q $TENANT_ID; then
+if ! [ `echo $JWT | cut -f2 -d. | base64 --decode 2>/dev/null | jq -r '.["mender.tenant"]'` == "$TENANT_ID" ]; then
     echo "> JWT token is invalid"
     kubectl delete -f "$TMPFILE"
     rm "$TMPFILE"
@@ -98,10 +98,10 @@ echo "> Got: $RESPONSE"
 
 if [ "$RESPONSE" != '{"count":0}' ]; then
     kubectl delete -f "$TMPFILE"
-    rm "$TMPFILE"
+    rm -f "$TMPFILE"
     exit 1
 fi
 
 # clean up, remove the testing pod
 kubectl delete -f "$TMPFILE"
-rm "$TMPFILE"
+rm -f "$TMPFILE"

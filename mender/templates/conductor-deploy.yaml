@@ -48,6 +48,15 @@ spec:
       containers:
       - name: conductor
         image: {{ .Values.conductor.image.registry }}/{{ .Values.conductor.image.repository }}:{{ .Values.conductor.image.tag }}
+{{- if .Values.conductor.probes_enabled  }}
+        readinessProbe:
+          httpGet:
+            path: /api/metadata/workflow/create_organization
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 8
+          failureThreshold: 128
+{{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.conductor.resources | indent 10 }}
