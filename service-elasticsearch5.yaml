@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: mender-elasticsearch5
+  name: mender-elasticsearch5
+spec:
+  ports:
+  - port: 9300
+    protocol: TCP
+    targetPort: 9300
+  selector:
+    run: mender-elasticsearch5
+  type: ClusterIP
+status:
+  loadBalancer: {}
