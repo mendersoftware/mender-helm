@@ -1,0 +1,40 @@
+{{- if .Values.workflows.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.workflows.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: workflows
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: workflows-svc
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.workflows.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.workflows.service.type }}
+  {{- if and (eq .Values.workflows.service.type "ClusterIP") .Values.workflows.service.clusterIP }}
+  clusterIP: {{ .Values.workflows.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.workflows.service.type "LoadBalancer") .Values.workflows.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.workflows.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.workflows.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.workflows.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.workflows.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.workflows.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.workflows.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.workflows.service.nodePort }}
+    nodePort: {{ .Values.workflows.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: workflows-server
+{{- end }}
