@@ -52,13 +52,19 @@ spec:
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "server"]
 {{- end }}
 
-        # Perform periodic checks during pod startup period to determine
-        # when it's ready and listening of specificed port.
-        # readinessProbe:
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 20
-        #   tcpSocket:
-        #     port: 8080
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
 
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
