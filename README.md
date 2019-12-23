@@ -399,6 +399,32 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-***REMOVED***8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 
+### Parameters: workflows
+
+The following table lists the parameters for the `workflows-server` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `workflows.enabled` | Enable the component | `true` |
+| `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `workflows.image.registry` | Docker image registry | `docker.io` |
+| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows` |
+| `workflows.image.tag` | Docker image tag | `1.0.0` |
+| `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `workflows.replicas` | Number of replicas | `1` |
+| `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `workflows.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `workflows.resources.limits.cpu` | Resources memory limit | `128M` |
+| `workflows.resources.requests.cpu` | Resources CPU limit | `200m` |
+| `workflows.resources.requests.cpu` | Resources memory limit | `50M` |
+| `workflows.service.name` | Name of the service | `mender-workflows-server` |
+| `workflows.service.annotations` | Annotations map for the service | `{}` |
+| `workflows.service.type` | Service type | `ClusterIP` |
+| `workflows.service.loadBalancerIP` | Service load balancer IP | `nil` |
+| `workflows.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
+| `workflows.service.port` | Port for the service | `8080` |
+| `workflows.service.nodePort` | Node port for the service | `nil` |
+
 ### Parameters: email-sender
 
 The following table lists the parameters for the `email-sender` component and their default values:
