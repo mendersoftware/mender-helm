@@ -4,7 +4,7 @@ global:
     username: null
     password: null
   mongodb:
-    URL: mongodb
+    URL: mongodb://mongodb
   s3:
     AWS_URI: http://minio:9000
     AWS_BUCKET: minio-hosted-mender-artifacts
@@ -299,3 +299,26 @@ org_welcome_email_preparer:
     imagePullPolicy: IfNotPresent
   env:
     CONDUCTOR: http://mender-conductor:8080
+
+workflows:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/workflows
+    tag: master
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-workflows-server
+    annotations: {}
+    type: ClusterIP
+    port: 8080

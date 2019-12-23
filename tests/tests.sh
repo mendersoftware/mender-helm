@@ -4,6 +4,8 @@ set -e
 
 errors=0
 
+bash tests/ci-test-setup.sh
+
 for i in tests/test-*.sh; do
     echo "=== $i"
     EXIT_CODE=0
@@ -17,6 +19,8 @@ for i in tests/test-*.sh; do
         errors=1
     fi
 done
+
+bash tests/ci-test-teardown.sh || true
 
 if [ "$errors" -gt 0 ]; then
     exit 1
