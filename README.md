@@ -505,7 +505,7 @@ $ helm install --set "usePassword=false" --name redis stable/redis
 You can create a tenant from the command line of the `tenantadm` pod; the value printed is the newly generated tenant ID:
 
 ```bash
-$ tenantadm create-org --name demo
+$ tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin"
 5dcd71624143b30050e63bed
 ```
 
