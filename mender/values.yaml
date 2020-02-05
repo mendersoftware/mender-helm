@@ -322,3 +322,21 @@ workflows:
     annotations: {}
     type: ClusterIP
     port: 8080
+
+create_artifact_worker:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 50M
+  affinity: {}
+***REMOVED***
+    registry: docker.io
+    repository: mendersoftware/create-artifact-worker
+    tag: master
+    imagePullPolicy: IfNotPresent
