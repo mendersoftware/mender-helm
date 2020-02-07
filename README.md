@@ -174,7 +174,7 @@ The following table lists the parameters for the `conductor` component and their
 | `conductor.enabled` | Enable the component | `true` |
 | `conductor.image.registry` | Docker image registry | `registry.mender.io` |
 | `conductor.image.repository` | Docker image repository | `mendersoftware/mender-conductor-enterprise` |
-| `conductor.image.tag` | Docker image tag | `1.5.0` |
+| `conductor.image.tag` | Docker image tag | `master` |
 | `conductor.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `conductor.replicas` | Number of replicas | `1` |
 | `conductor.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
