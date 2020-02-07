@@ -2,20 +2,20 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    run: mender-elasticsearch5
-  name: mender-elasticsearch5
+    run: mender-elasticsearch
+  name: mender-elasticsearch
 spec:
   # Stateful application, cannot go beyond single instance without special setup.
   replicas: 1
   selector:
     matchLabels:
-      run: mender-elasticsearch5
+      run: mender-elasticsearch
 
   # if deployment is not completed within 5 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 300
-  
+
   # Rollout upgrade one by one
   # In case any issues, they will be detected early and deployment be stopped.
   strategy:
@@ -26,7 +26,7 @@ spec:
   template:
     metadata:
       labels:
-        run: mender-elasticsearch5
+        run: mender-elasticsearch
     spec:
       initContainers:
        - command:
@@ -42,24 +42,16 @@ spec:
            runAsUser: 0
 
       containers:
-      - name: mender-elasticsearch5
+      - name: mender-elasticsearch
         env:
         - name: ES_JAVA_OPTS
           value: "-Xms512m -Xmx512m"
- 
-        - name: transport.host
-          value: "0.0.0.0"
-
-        - name: network.host
-          value: "0.0.0.0"
-
-        - name: discovery.type
+        - name: "discovery.type"
           value: "single-node"
+        - name: "network.host"
+          value: "0.0.0.0"
 
-        - name: xpack.security.enabled
-          value: "false"
-
-      ***REMOVED*** docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+      ***REMOVED*** elasticsearch:6.8.6
 
         resources:
           requests:
@@ -69,9 +61,7 @@ spec:
         - name: data
           mountPath: "/usr/share/elasticsearch/data"
 
-      volumes:		
+      volumes:
       - name: data
         emptyDir: {}
 status: {}
-
-
