@@ -203,7 +203,7 @@ inventory:
     name: mender-inventory
     annotations: {}
     type: ClusterIP
-    port: 80
+    port: 8080
   env:
     INVENTORY_MIDDLEWARE: prod
 
