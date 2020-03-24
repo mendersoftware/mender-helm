@@ -6,8 +6,8 @@
 set -e
 
 log "deploying dependencies: ElasticSearch"
-kubectl apply -f service-elasticsearch.yaml
-kubectl apply -f elasticsearch.yaml
+kubectl apply -f tests/service-elasticsearch.yaml
+kubectl apply -f tests/elasticsearch.yaml
 
 log "installing helm"
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh

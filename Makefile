@@ -1,5 +1,5 @@
 NAME=mender
-VERSION=$$(grep version: $(NAME)/Chart.yaml | sed -e 's/.*: *//g')
+VERSION=$$(grep version: $(NAME)/Chart.yaml | sed -e 's/.*: *//g' | sed -e 's/"//g')
 
 help: ## Show this help
 	@IFS=$$'\n' ; \
