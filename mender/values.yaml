@@ -22,7 +22,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: mendersoftware/api-gateway
-    tag: 2.0.0
+    tag: 2.1.x
     imagePullPolicy: IfNotPresent
   replicas: 1
   resources:
@@ -58,7 +58,7 @@ conductor:
   image:
     registry: registry.mender.io
     repository: mendersoftware/mender-conductor-enterprise
-    tag: master
+    tag: 1.6.x
     imagePullPolicy: IfNotPresent
   affinity: {}
   service:
@@ -112,7 +112,7 @@ deployments:
   image:
     registry: registry.mender.io
     repository: mendersoftware/deployments-enterprise
-    tag: 1.8.0
+    tag: 1.9.x
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deployments
@@ -138,7 +138,7 @@ device_auth:
   image:
     registry: docker.io
     repository: mendersoftware/deviceauth
-    tag: 2.1.0
+    tag: 2.2.x
     imagePullPolicy: IfNotPresent
   service:
     name: mender-device-auth
@@ -168,7 +168,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: 2.2.0
+    tag: 2.3.x
     imagePullPolicy: IfNotPresent
   service:
     name: mender-gui
@@ -197,7 +197,7 @@ inventory:
   image:
     registry: docker.io
     repository: mendersoftware/inventory
-    tag: 1.6.0
+    tag: 1.7.x
     imagePullPolicy: IfNotPresent
   service:
     name: mender-inventory
@@ -221,7 +221,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: 1.0.0
+    tag: 1.1.x
     imagePullPolicy: IfNotPresent
   service:
     name: mender-tenantadm
@@ -249,7 +249,7 @@ useradm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/useradm-enterprise
-    tag: 1.9.0
+    tag: 1.10.x
     imagePullPolicy: IfNotPresent
   service:
     name: mender-useradm
@@ -277,7 +277,7 @@ email_sender:
   image:
     registry: docker.io
     repository: mendersoftware/email-sender
-    tag: 1.5.0
+    tag: 1.6.x
     imagePullPolicy: IfNotPresent
   env:
     CONDUCTOR: http://mender-conductor:8080
@@ -295,7 +295,7 @@ org_welcome_email_preparer:
   image:
     registry: registry.mender.io
     repository: mendersoftware/org-welcome-email-preparer
-    tag: 1.5.0
+    tag: 1.6.x
     imagePullPolicy: IfNotPresent
   env:
     CONDUCTOR: http://mender-conductor:8080
@@ -315,7 +315,7 @@ workflows:
   image:
     registry: docker.io
     repository: mendersoftware/workflows
-    tag: master
+    tag: 1.0.x
     imagePullPolicy: IfNotPresent
   service:
     name: mender-workflows-server
@@ -338,5 +338,5 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: master
+    tag: 1.0.x
     imagePullPolicy: IfNotPresent
