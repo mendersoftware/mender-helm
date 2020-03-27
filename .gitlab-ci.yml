@@ -2,6 +2,10 @@ stages:
   - build
   - test
 
+include:
+  - project: 'Northern.tech/Mender/mendertesting'
+    file: '.gitlab-ci-check-commits-signoffs.yml'
+
 build:
   stage: build
 ***REMOVED*** debian:buster
