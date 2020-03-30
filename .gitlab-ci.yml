@@ -2,16 +2,20 @@ stages:
   - build
   - test
 
+include:
+  - project: 'Northern.tech/Mender/mendertesting'
+    file: '.gitlab-ci-check-commits-signoffs.yml'
+  - project: 'Northern.tech/Mender/mendertesting'
+    file: '.gitlab-ci-template-k8s-test.yml'
+
 build:
   stage: build
-  tags:
-    - mender-qa-slave
-  script:
+***REMOVED*** debian:buster
+  before_script:
     - apt-get update -y
     - apt-get install -y curl make
-    - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
-    - chmod 755 get_helm.sh
-    - ./get_helm.sh
+    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+  script:
     - make lint
     - make package
   artifacts:
@@ -20,43 +24,11 @@ build:
       - mender-*.tgz
 
 test_helm_chart_install:
-***REMOVED*** debian:buster
-  stage: test
-  dependencies: 
+  extends: .test_on_k8s_cluster
+  dependencies:
     - build
-  tags:
-    - mender-qa-slave
-  before_script:
-    # Default value, will later be overwritten if successful
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get update -y
-    - apt-get -yy -q --no-install-recommends install iptables ebtables ethtool
-      ca-certificates conntrack socat git nfs-common glusterfs-client
-      cifs-utils apt-transport-https ca-certificates curl gnupg2
-      software-properties-common bridge-utils ipcalc aufs-tools
-      sudo procps vim curl bash make uuid-runtime jq
-    - apt-get clean
-    # Install docker
-    - curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-    - apt-key fingerprint 0EBFCD88
-    - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian buster stable"
-    - apt-get update
-    - apt-get install -y docker-ce docker-ce-cli containerd.io
-    - apt-get clean
-    # Install kubectl
-    - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-    - add-apt-repository "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-    - apt-get update
-    - apt-get install --reinstall -y kubeadm kubelet kubectl
-    # Install kind
-    - curl -Lo ./kind https://github.com/kubernetes-sigs/kind/releases/download/v0.6.1/kind-Linux-amd64
-    - chmod 755 kind
-    - mv kind /usr/bin/
   script:
-    - tests/ci-prepare.sh
-    - tests/ci-start-k8s.sh
     - tests/ci-deps-k8s.sh
     - tests/ci-make-helm.sh
     - kubectl get deployments conductor -o yaml
     - make test
-    - tests/ci-cleanup.sh
