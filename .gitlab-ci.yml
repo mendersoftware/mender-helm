@@ -5,7 +5,8 @@ stages:
 include:
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-commits-signoffs.yml'
-  - local: '.gitlab-ci-template-k8s-test.yml'
+  - project: 'Northern.tech/Mender/mendertesting'
+    file: '.gitlab-ci-template-k8s-test.yml'
 
 build:
   stage: build
