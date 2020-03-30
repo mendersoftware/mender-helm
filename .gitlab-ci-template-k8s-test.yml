@@ -76,14 +76,6 @@ stages:
     log "started k8s cluster"
   }
 
-  function ci_cleanup() {
-    log "cleaning up"
-    kind get clusters | while read; do
-      log " removing cluster \"$REPLY\""
-      kind delete cluster --name="${REPLY}"
-    done
-  }
-
 .test_on_k8s_cluster:
   stage: test
   image: debian:buster
@@ -120,8 +112,3 @@ stages:
     - ci_prepare
     # Start k8s cluster for CI
     - ci_start_k8s
-  after_script:
-    # Source functions
-    - *functions
-    # Clean-up k8s cluster for CI
-    - ci_cleanup
