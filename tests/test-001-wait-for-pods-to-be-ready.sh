@@ -19,4 +19,5 @@ while [ $n -lt $max_wait ]; do
 done
 
 echo "PODs are not ready after $n seconds, giving up!"
+kubectl get pods
 exit 1
