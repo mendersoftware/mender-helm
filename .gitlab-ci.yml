@@ -27,6 +27,8 @@ build:
 
 test_helm_chart_install:
   extends: .test_on_k8s_cluster
+  variables:
+    K8S_VERSION: "v1.16.9"
   dependencies:
     - build
   script:
