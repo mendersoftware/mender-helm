@@ -34,5 +34,4 @@ test_helm_chart_install:
   script:
     - tests/ci-deps-k8s.sh
     - tests/ci-make-helm.sh
-    - kubectl get deployments conductor -o yaml
     - make test

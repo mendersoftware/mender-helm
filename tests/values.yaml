@@ -3,9 +3,3 @@
     URL: mongodb://mender-mongo-mongodb
   s3:
     AWS_URI: http://mender-minio:9000
-
-conductor:
-  probes_enabled: true
-  env:
-    REDIS: mender-redis-master:6379
-    ELASTICSEARCH: mender-elasticsearch:9300
