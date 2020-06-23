@@ -10,12 +10,13 @@ curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get
 chmod 755 get_helm.sh
 ./get_helm.sh
 
-log "cloning charts"
-git clone --depth=1 https://github.com/helm/charts
+log "add help repo: stable"
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo update
 
 log "deploying dependencies: minio"
-helm install mender-minio ./charts/stable/minio --set accessKey="${MINIO_accessKey}" --set secretKey=${MINIO_secretKey}
+helm install mender-minio stable/minio --version 2.5.18 --set accessKey=${MINIO_accessKey},secretKey=${MINIO_secretKey}
 
 log "deploying dependencies: mongodb"
-helm install mender-mongo ./charts/stable/mongodb --set persistence.enabled=false --set usePassword=false
+helm install mender-mongo stable/mongodb --set persistence.enabled=false --set usePassword=false
 
