@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: workflows-server
+  name: workflows-worker
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: workflows-server
+    app.kubernetes.io/name: workflows-worker
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: workflows
@@ -15,7 +15,7 @@ spec:
   replicas: {{ .Values.workflows.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: workflows-server
+      app.kubernetes.io/name: workflows-worker
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -33,7 +33,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: workflows-server
+        app.kubernetes.io/name: workflows-worker
     spec:
       {{- with .Values.workflows.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -41,30 +41,16 @@ spec:
 
       containers:
       - name: workflows
-        image: {{ .Values.workflows.image.registry }}/{{ .Values.workflows.image.repository }}:{{ .Values.workflows.image.tag }}
+        image: {{ .Values.workflows.image.registry }}/{{ .Values.workflows.image.repository }}-worker:{{ .Values.workflows.image.tag }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
 
 {{- if .Values.workflows.automigrate  }}
-        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "server", "--automigrate"]
+        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
 {{- else -}}
-        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "server"]
+        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "worker", "--excluded-workflows", "generate_artifact"]
 {{- end }}
-
-        readinessProbe:
-          httpGet:
-            path: /status
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
-
-        livenessProbe:
-          httpGet:
-            path: /status
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
 
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.

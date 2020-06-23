@@ -5,7 +5,7 @@
 ## TL;DR;
 
 ```bash
-$ helm install ./mender-2.3.0.tgz
+$ helm install ./mender-2.4.0+b1.1.tgz
 ```
 
 ## Introduction
@@ -22,13 +22,13 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 To install the chart with the release name `my-release` using `helm2`:
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-2.3.0.tgz
+$ helm install --name my-release -f values.yaml ./mender-2.4.0+b1.1.tgz
 ```
 
 or using `helm3`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender-2.3.0.tgz
+$ helm install my-release -f values.yaml ./mender-2.4.0+b1.1.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -53,11 +53,6 @@ api_gateway:
     key: |-
       -----BEGIN PRIVATE KEY-----
       MIIEvgIBADA...
-
-conductor:
-  env:
-    REDIS: redis-master:6379
-    ELASTICSEARCH: elasticsearch-master-headless:9300
 
 device_auth:
   certs:
@@ -135,7 +130,7 @@ $ helm install --name my-release \
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-2.3.0.tgz
+$ helm install --name my-release -f values.yaml ./mender-2.4.0+b1.1.tgz
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -170,61 +165,6 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.env.DNS_NAMES` | Set the HAVE_MULTITENANT variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
 | `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the HAVE_MULTITENANT variable | `true` |
 | `api_gateway.env.ALLOWED_HOSTS` | Set the HAVE_MULTITENANT variable | `[a-zA-Z0-9:.]+` |
-
-### Parameters: conductor
-
-The following table lists the parameters for the `conductor` component and their default values:
-
-| Parameter | Description | Default |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `conductor.enabled` | Enable the component | `true` |
-| `conductor.image.registry` | Docker image registry | `registry.mender.io` |
-| `conductor.image.repository` | Docker image repository | `mendersoftware/mender-conductor-enterprise` |
-| `conductor.image.tag` | Docker image tag | `1.6.x` |
-| `conductor.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `conductor.replicas` | Number of replicas | `1` |
-| `conductor.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `conductor.resources.limits.cpu` | Resources CPU limit | `500m` |
-| `conductor.resources.limits.cpu` | Resources memory limit | `128M` |
-| `conductor.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `conductor.resources.requests.cpu` | Resources memory limit | `50M` |
-| `conductor.service.name` | Name of the service | `mender-conductor` |
-| `conductor.service.annotations` | Annotations map for the service | `{}` |
-| `conductor.service.type` | Service type | `ClusterIP` |
-| `conductor.service.loadBalancerIP` | Service load balancer IP | `nil` |
-| `conductor.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
-| `conductor.service.port` | Port for the service | `8080` |
-| `conductor.service.nodePort` | Node port for the service | `nil` |
-| `conductor.env.CONFIG_PROP` | Set the CONFIG_PROP variable | `config.properties` |
-| `conductor.env.CONDUCTOR_JAVA_OPTS` | Set the CONDUCTOR_JAVA_OPTS variable | `-Xmx768m -Xms128m` |
-| `conductor.env.ELASTICSEARCH` | Set the ELASTICSEARCH variable | `mender-elasticsearch-master:9300` |
-| `conductor.env.ELASTICSEARCH_INDEX` | Set the ELASTICSEARCH_INDEX variable | `conductor` |
-| `conductor.env.REDIS` | Set the REDIS variable | `mender-redis-master:6379` |
-
-### Parameters: conductor-ui
-
-The following table lists the parameters for the `conductor-ui` component and their default values:
-
-| Parameter | Description | Default |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `conductor_ui.enabled` | Enable the component | `true` |
-| `conductor_ui.image.registry` | Docker image registry | `docker.io` |
-| `conductor_ui.image.repository` | Docker image repository | `mendersoftware/conductor-ui` |
-| `conductor_ui.image.tag` | Docker image tag | `2.11.0` |
-| `conductor_ui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `conductor_ui.replicas` | Number of replicas | `1` |
-| `conductor_ui.resources.limits.cpu` | Resources CPU limit | `500m` |
-| `conductor_ui.resources.limits.cpu` | Resources memory limit | `128M` |
-| `conductor_ui.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `conductor_ui.resources.requests.cpu` | Resources memory limit | `50M` |
-| `conductor_ui.service.name` | Name of the service | `mender-conductor-ui` |
-| `conductor_ui.service.annotations` | Annotations map for the service | `{}` |
-| `conductor_ui.service.type` | Service type | `ClusterIP` |
-| `conductor_ui.service.loadBalancerIP` | Service load balancer IP | `nil` |
-| `conductor_ui.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
-| `conductor_ui.service.port` | Port for the service | `5000` |
-| `conductor_ui.service.nodePort` | Node port for the service | `nil` |
-| `conductor_ui.env.WF_SERVER` | Set the WF_SERVER variable | `http://mender-conductor:8080/api/` |
 
 ### Parameters: deployments
 
@@ -280,7 +220,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.service.port` | Port for the service | `8080` |
 | `device_auth.service.nodePort` | Node port for the service | `nil` |
 | `device_auth.env.DEVICEAUTH_INVENTORY_ADDR` | Set the DEVICEAUTH_INVENTORY_ADDR variable | `http://mender-inventory:8080/` |
-| `device_auth.env.DEVICEAUTH_DEVICE_AUTH_ORCHESTRATOR` | Set the DEVICEAUTH_DEVICE_AUTH_ORCHESTRATOR variable | `http://mender-conductor:8080` |
+| `device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR` | Set the DEVICEAUTH_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080` |
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
@@ -370,7 +310,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.service.nodePort` | Node port for the service | `nil` |
 | `tenantadm.env.TENANTADM_MIDDLEWARE` | Set the TENANTADM_MIDDLEWARE variable | `prod` |
 | `tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH` | Set the TENANTADM_SERVER_PRIV_KEY_PATH variable | `/etc/tenantadm/rsa/private.pem` |
-| `tenantadm.env.TENANTADM_CONDUCTOR_ADDR` | Set the TENANTADM_CONDUCTOR_ADDR variable | `http://mender-conductor:8080/` |
+| `tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR` | Set the TENANTADM_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080/` |
 | `tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY` | Set the TENANTADM_RECAPTCHA_URL_VERIFY variable | `https://www.google.com/recaptcha/api/siteverify` |
 
 ### Parameters: useradm
@@ -450,48 +390,10 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.resources.requests.cpu` | Resources CPU limit | `200m` |
 | `create_artifact_worker.resources.requests.cpu` | Resources memory limit | `50M` |
 
-### Parameters: email-sender
-
-The following table lists the parameters for the `email-sender` component and their default values:
-
-| Parameter | Description | Default |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `email_sender.enabled` | Enable the component | `true` |
-| `email_sender.image.registry` | Docker image registry | `docker.io` |
-| `email_sender.image.repository` | Docker image repository | `mendersoftware/email-sender` |
-| `email_sender.image.tag` | Docker image tag | `1.6.x` |
-| `email_sender.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `email_sender.replicas` | Number of replicas | `1` |
-| `email_sender.resources.limits.cpu` | Resources CPU limit | `40m` |
-| `email_sender.resources.limits.cpu` | Resources memory limit | `50M` |
-| `email_sender.resources.requests.cpu` | Resources CPU limit | `20m` |
-| `email_sender.resources.requests.cpu` | Resources memory limit | `30M` |
-| `email_sender.env.CONDUCTOR` | Set the CONDUCTOR variable | `http://mender-conductor:8080` |
-
-### Parameters: org-welcome-email-preparer
-
-The following table lists the parameters for the `email-sender` component and their default values:
-
-| Parameter | Description | Default |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `org_welcome_email_preparer.enabled` | Enable the component | `true` |
-| `org_welcome_email_preparer.image.registry` | Docker image registry | `registry.mender.io` |
-| `org_welcome_email_preparer.image.repository` | Docker image repository | `mendersoftware/org-welcome-email-preparer` |
-| `org_welcome_email_preparer.image.tag` | Docker image tag | `1.6.x` |
-| `org_welcome_email_preparer.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `org_welcome_email_preparer.replicas` | Number of replicas | `1` |
-| `org_welcome_email_preparer.resources.limits.cpu` | Resources CPU limit | `40m` |
-| `org_welcome_email_preparer.resources.limits.cpu` | Resources memory limit | `50M` |
-| `org_welcome_email_preparer.resources.requests.cpu` | Resources CPU limit | `20m` |
-| `org_welcome_email_preparer.resources.requests.cpu` | Resources memory limit | `30M` |
-| `org_welcome_email_preparer.env.CONDUCTOR` | Set the CONDUCTOR variable | `http://mender-conductor:8080` |
-
 ## External services required
 
 - mongodb
 - MinIO
-- elasticsearch (version `6.x`)
-- redis
 
 ### Installing mongodb
 
@@ -519,34 +421,6 @@ or using `helm3`:
 
 ```bash
 $ helm install minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
-```
-
-### Installing elasticsearch
-
-You can install elasticsearch using the official elastic helm chart using `helm2`:
-
-```bash
-$ helm install --name elasticsearch -f examples/values-elasticsearch.yaml elastic/elasticsearch
-```
-
-or using `helm3`:
-
-```bash
-$ helm install elasticsearch -f examples/values-elasticsearch.yaml elastic/elasticsearch
-```
-
-### Installing redis
-
-You can install the redis instance using the official redis helm chart using `helm2`:
-
-```bash
-$ helm install --name redis --set "usePassword=false" stable/redis
-```
-
-or using `helm3`:
-
-```bash
-$ helm install redis --set "usePassword=false" stable/redis
 ```
 
 ## Create a tenant and a user from command line

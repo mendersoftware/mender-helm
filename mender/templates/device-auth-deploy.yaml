@@ -68,8 +68,8 @@ spec:
         env:
         - name: DEVICEAUTH_INVENTORY_ADDR
           value: {{ .Values.device_auth.env.DEVICEAUTH_INVENTORY_ADDR | quote }}
-        - name: DEVICEAUTH_DEVICE_AUTH_ORCHESTRATOR
-          value: {{ .Values.device_auth.env.DEVICEAUTH_DEVICE_AUTH_ORCHESTRATOR | quote }}
+        - name: DEVICEAUTH_ORCHESTRATOR_ADDR
+          value: {{ .Values.device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR | quote }}
         - name: DEVICEAUTH_JWT_ISSUER
           value: {{ .Values.device_auth.env.DEVICEAUTH_JWT_ISSUER | quote }}
         - name: DEVICEAUTH_JWT_EXP_TIMEOUT

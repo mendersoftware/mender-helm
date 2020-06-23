@@ -64,8 +64,8 @@ spec:
           value: {{ .Values.tenantadm.env.TENANTADM_MIDDLEWARE | quote }}
         - name: TENANTADM_SERVER_PRIV_KEY_PATH
           value: {{ .Values.tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH | quote }}
-        - name: TENANTADM_CONDUCTOR_ADDR
-          value: {{ .Values.tenantadm.env.TENANTADM_CONDUCTOR_ADDR | quote }}
+        - name: TENANTADM_ORCHESTRATOR_ADDR
+          value: {{ .Values.tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR | quote }}
         - name: TENANTADM_RECAPTCHA_URL_VERIFY
           value: {{ .Values.tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY | quote }}
 
