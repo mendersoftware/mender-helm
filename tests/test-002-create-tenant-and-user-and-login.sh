@@ -14,10 +14,13 @@ TENANTADM=$(kubectl get pods -o custom-columns=POD:metadata.name | grep tenantad
 USERADM=$(kubectl get pods -o custom-columns=POD:metadata.name | grep useradm | head -n1)
 
 echo "> Creating a new tenant: $TENANT_NAME"
-TENANT_ID=$(kubectl exec $TENANTADM -- tenantadm create-org --name $TENANT_NAME --username "$ADMIN_USERNAME" --password "$ADMIN_PASSWORD")
+TENANT_ID=$(kubectl exec $TENANTADM -- tenantadm create-org --name $TENANT_NAME --username "$ADMIN_USERNAME" --password "$ADMIN_PASSWORD" --plan "enterprise")
 
 echo "> Creating a new user for the tenant: $USER_USERNAME / $USER_PASSWORD"
-kubectl exec $USERADM -- useradm create-user --username "$USER_USERNAME" --password "$USER_PASSWORD" --tenant-id "$TENANT_ID"
+kubectl exec $USERADM -- useradm create-user --username "$USER_USERNAME" --password "$USER_PASSWORD" --tenant-id "$TENANT_ID" --roles "RBAC_ROLE_PERMIT_ALL"
+
+# sleep one second, to let the workflow execute
+sleep 1
 
 # log in
 echo "> Log in with credentials"
@@ -29,7 +32,7 @@ fi
 echo "> JWT token: $JWT"
 
 # verify the jwt token (TENANT_ID should be inside the decoded JSON)
-if ! [ `echo $JWT | cut -f2 -d. | base64 --decode 2>/dev/null | jq -r '.["mender.tenant"]'` == "$TENANT_ID" ]; then
+if ! echo $JWT | cut -f2 -d. | base64 --decode 2>/dev/null | grep -qF '"mender.tenant":"'${TENANT_ID}'"'; then
     echo "> JWT token is invalid"
     exit 1
 fi
