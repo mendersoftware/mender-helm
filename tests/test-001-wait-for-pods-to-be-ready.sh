@@ -7,7 +7,7 @@ echo -n "> Waiting for all the PODs to become ready"
 n=0
 max_wait=512
 while [ $n -lt $max_wait ]; do
-    NOT_READY=$(kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready | grep -v elasticsearch-master-0 | egrep -e 'false$' -e '<none>$' | wc -l)
+    NOT_READY=$(kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready | egrep -e 'false$' -e '<none>$' | wc -l)
     if [ $NOT_READY -eq 0 ]; then
         echo -e "\n> PODs area ready:"
         kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready
@@ -19,4 +19,5 @@ while [ $n -lt $max_wait ]; do
 done
 
 echo "PODs are not ready after $n seconds, giving up!"
+kubectl get pods --all-namespaces
 exit 1

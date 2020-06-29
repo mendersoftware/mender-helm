@@ -97,11 +97,6 @@ api_gateway:
       H/MAUqj3bqcagZPTS9CLuBFl
       -----END PRIVATE KEY-----
 
-conductor:
-  env:
-    REDIS: redis-master:6379
-    ELASTICSEARCH: elasticsearch-master-headless:9300
-
 device_auth:
   certs:
     key: |-
