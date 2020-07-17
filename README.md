@@ -5,7 +5,7 @@
 ## TL;DR;
 
 ```bash
-$ helm install ./mender-2.4.0+b1.1.tgz
+$ helm install ./mender-2.4.0.tgz
 ```
 
 ## Introduction
@@ -22,13 +22,13 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 To install the chart with the release name `my-release` using `helm2`:
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-2.4.0+b1.1.tgz
+$ helm install --name my-release -f values.yaml ./mender-2.4.0.tgz
 ```
 
 or using `helm3`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender-2.4.0+b1.1.tgz
+$ helm install my-release -f values.yaml ./mender-2.4.0.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -130,7 +130,7 @@ $ helm install --name my-release \
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-2.4.0+b1.1.tgz
+$ helm install --name my-release -f values.yaml ./mender-2.4.0.tgz
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -144,7 +144,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.enabled` | Enable the component | `true` |
 | `api_gateway.image.registry` | Docker image registry | `docker.io` |
 | `api_gateway.image.repository` | Docker image repository | `mendersoftware/api-gateway` |
-| `api_gateway.image.tag` | Docker image tag | `2.1.x` |
+| `api_gateway.image.tag` | Docker image tag | `mender-2.4.x` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -176,7 +176,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deployments.image.registry` | Docker image registry | `registry.mender.io` |
 | `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` |
-| `deployments.image.tag` | Docker image tag | `1.9.x` |
+| `deployments.image.tag` | Docker image tag | `mender-2.4.x` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -204,7 +204,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `device_auth.image.registry` | Docker image registry | `docker.io` |
 | `device_auth.image.repository` | Docker image repository | `mendersoftware/deviceauth` |
-| `device_auth.image.tag` | Docker image tag | `2.2.x` |
+| `device_auth.image.tag` | Docker image tag | `mender-2.4.x` |
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `device_auth.replicas` | Number of replicas | `1` |
 | `device_auth.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -236,7 +236,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.enabled` | Enable the component | `true` |
 | `gui.image.registry` | Docker image registry | `docker.io` |
 | `gui.image.repository` | Docker image repository | `mendersoftware/gui` |
-| `gui.image.tag` | Docker image tag | `2.3.x` |
+| `gui.image.tag` | Docker image tag | `mender-2.4.x` |
 | `gui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `gui.replicas` | Number of replicas | `1` |
 | `gui.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -267,7 +267,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `inventory.image.registry` | Docker image registry | `docker.io` |
 | `inventory.image.repository` | Docker image repository | `mendersoftware/inventory` |
-| `inventory.image.tag` | Docker image tag | `1.7.x` |
+| `inventory.image.tag` | Docker image tag | `mender-2.4.x` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.replicas` | Number of replicas | `1` |
 | `inventory.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -293,7 +293,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.enabled` | Enable the component | `true` |
 | `tenantadm.image.registry` | Docker image registry | `registry.mender.io` |
 | `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm-enterprise` |
-| `tenantadm.image.tag` | Docker image tag | `1.1.x` |
+| `tenantadm.image.tag` | Docker image tag | `mender-2.4.x` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `tenantadm.replicas` | Number of replicas | `1` |
 | `tenantadm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -323,7 +323,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `useradm.image.registry` | Docker image registry | `registry.mender.io` |
 | `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` |
-| `useradm.image.tag` | Docker image tag | `1.10.x` |
+| `useradm.image.tag` | Docker image tag | `mender-2.4.x` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `useradm.replicas` | Number of replicas | `1` |
 | `useradm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -355,7 +355,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `workflows.image.registry` | Docker image registry | `docker.io` |
 | `workflows.image.repository` | Docker image repository | `mendersoftware/workflows` |
-| `workflows.image.tag` | Docker image tag | `1.0.x` |
+| `workflows.image.tag` | Docker image tag | `mender-2.4.x` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -381,7 +381,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `create_artifact_worker.image.registry` | Docker image registry | `docker.io` |
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
-| `create_artifact_worker.image.tag` | Docker image tag | `1.0.x` |
+| `create_artifact_worker.image.tag` | Docker image tag | `mender-2.4.x` |
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
 | `create_artifact_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
