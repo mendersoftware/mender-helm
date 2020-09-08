@@ -15,7 +15,9 @@ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 helm repo update
 
 log "deploying dependencies: minio"
-helm install mender-minio stable/minio --version 2.5.18 --set accessKey=${MINIO_accessKey},secretKey=${MINIO_secretKey}
+helm repo add minio https://helm.min.io/
+helm repo update
+helm install mender-minio minio/minio --version 6.0.5 --set accessKey=${MINIO_accessKey},secretKey=${MINIO_secretKey},persistence.enabled=false
 
 log "deploying dependencies: mongodb"
 helm install mender-mongo stable/mongodb --set persistence.enabled=false --set usePassword=false
