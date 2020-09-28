@@ -459,5 +459,5 @@ $ useradm create-user --username "demo@mender.io" --password "demodemo" --tenant
 You can port-forward the `mender-api-gateway` Kubernetes service to verify the system is up and running:
 
 ```bash
-$ kubectl port-forward service/mender-api-gateway 8443:443
+$ kubectl port-forward service/mender-api-gateway 443:443
 ```
