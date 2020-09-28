@@ -1,4 +1,4 @@
-{{- if .Values.inventory.enabled  }}
+{{- if .Values.inventory.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,7 +46,7 @@ spec:
         resources:
 {{ toYaml .Values.inventory.resources | indent 10 }}
 
-{{- if .Values.inventory.automigrate  }}
+{{- if .Values.inventory.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
         args: ["server"]
@@ -75,7 +75,7 @@ spec:
           secretRef:
             name: mongodb-common
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

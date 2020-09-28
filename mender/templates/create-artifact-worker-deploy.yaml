@@ -1,4 +1,4 @@
-{{- if .Values.create_artifact_worker.enabled  }}
+{{- if .Values.create_artifact_worker.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,7 +46,7 @@ spec:
         resources:
 {{ toYaml .Values.create_artifact_worker.resources | indent 10 }}
 
-{{- if .Values.workflows.automigrate  }}
+{{- if .Values.workflows.automigrate }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
 {{- else -}}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]
@@ -64,7 +64,7 @@ spec:
           secretRef:
             name: mongodb-common
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

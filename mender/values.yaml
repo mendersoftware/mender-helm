@@ -1,4 +1,7 @@
 global:
+  enterprise: true
+  hosted: false
+  multitenant: true
   image:
     registry: registry.mender.io
     username: null
@@ -42,7 +45,6 @@ api_gateway:
   env:
     ALLOWED_HOSTS: "[a-zA-Z0-9:.]+"
     DNS_NAMES: "mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui"
-    HAVE_MULTITENANT: true
     IS_LOGS_FORMAT_JSON: false
 
 deployments:
@@ -126,9 +128,6 @@ gui:
   env:
     GATEWAY_IP: k8s.hosted.mender.io
     GATEWAY_PORT: "443"
-    HAVE_MULTITENANT: true
-    HAVE_ENTERPRISE: true
-    MENDER_HOSTED: false
 
 inventory:
   enabled: true
