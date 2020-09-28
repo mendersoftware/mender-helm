@@ -112,6 +112,9 @@ The following table lists the global parameters supported by the chart and their
 
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `global.enterprise` | Enable the enterprise features | `true` |
+| `global.hosted` | Enabled Hosted Mender specific features | `false` |
+| `global.multitenant` | Enable multi tenancy | `true` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
@@ -171,7 +174,6 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
 | `api_gateway.env.ALLOWED_HOSTS` | Set the ALLOWED_HOSTS variable | `[a-zA-Z0-9:.]+` |
 | `api_gateway.env.DNS_NAMES` | Set the DNS_NAMES variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
-| `api_gateway.env.HAVE_MULTITENANT` | Set the HAVE_MULTITENANT variable | `true` |
 | `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the IS_LOGS_FORMAT_JSON variable | `false` |
 
 ### Parameters: deployments
@@ -261,9 +263,6 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.service.nodePort` | Node port for the service | `nil` |
 | `gui.env.GATEWAY_IP` | Set the GATEWAY_IP variable | `k8s.hosted.mender.io` |
 | `gui.env.GATEWAY_PORT` | Set the GATEWAY_PORT variable | `443` |
-| `gui.env.HAVE_ENTERPRISE` | Set the HAVE_ENTERPRISE variable | `true` |
-| `gui.env.HAVE_MULTITENANT` | Set the HAVE_MULTITENANT variable | `true` |
-| `gui.env.MENDER_HOSTED` | Set the MENDER_HOSTED variable | `false` |
 
 ### Parameters: inventory
 

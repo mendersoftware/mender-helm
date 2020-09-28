@@ -1,4 +1,4 @@
-{{- if .Values.workflows.enabled  }}
+{{- if .Values.workflows.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,7 +46,7 @@ spec:
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
 
-{{- if .Values.deployments.automigrate  }}
+{{- if .Values.deployments.automigrate }}
         args: ["worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
 {{- else -}}
         args: ["worker", "--excluded-workflows", "generate_artifact"]
@@ -59,7 +59,7 @@ spec:
           secretRef:
             name: mongodb-common
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

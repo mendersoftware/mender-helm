@@ -1,4 +1,4 @@
-{{- if .Values.useradm.enabled  }}
+{{- if .Values.useradm.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -47,7 +47,7 @@ spec:
         resources:
 {{ toYaml .Values.useradm.resources | indent 10 }}
 
-{{- if .Values.useradm.automigrate  }}
+{{- if .Values.useradm.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
         args: ["server"]
@@ -64,8 +64,10 @@ spec:
           value: {{ .Values.useradm.env.USERADM_SERVER_PRIV_KEY_PATH | quote }}
         - name: USERADM_MIDDLEWARE
           value: {{ .Values.useradm.env.USERADM_MIDDLEWARE | quote }}
+        {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
         - name: USERADM_TENANTADM_ADDR
-          value: {{ .Values.useradm.env.USERADM_TENANTADM_ADDR | quote }}
+          value: {{ .Values.device_auth.env.USERADM_TENANTADM_ADDR | quote }}
+        {{- end }}
         - name: USERADM_TOTP_ISSUER
           value: {{ .Values.useradm.env.USERADM_TOTP_ISSUER | quote }}
 
@@ -100,7 +102,7 @@ spec:
         secret:
           secretName: rsa-useradm
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

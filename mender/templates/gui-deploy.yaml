@@ -1,4 +1,4 @@
-{{- if .Values.gui.enabled  }}
+{{- if .Values.gui.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -61,12 +61,18 @@ spec:
           periodSeconds: 15
 
         env:
+        {{- if .Values.global.multitenant }}
         - name: HAVE_MULTITENANT
-          value: {{ .Values.gui.env.HAVE_MULTITENANT | quote }}
+          value: {{ .Values.global.multitenant | quote }}
+        {{- end }}
+        {{- if .Values.global.hosted }}
         - name: MENDER_HOSTED
-          value: {{ .Values.gui.env.MENDER_HOSTED | quote }}
+          value: {{ .Values.global.hosted | quote }}
+        {{- end }}
+        {{- if .Values.global.enterprise }}
         - name: HAVE_ENTERPRISE
-          value: {{ .Values.gui.env.HAVE_ENTERPRISE | quote }}
+          value: {{ .Values.global.enterprise | quote }}
+        {{- end }}
         - name: GATEWAY_IP
           value: {{ .Values.gui.env.GATEWAY_IP | quote }}
         - name: GATEWAY_PORT

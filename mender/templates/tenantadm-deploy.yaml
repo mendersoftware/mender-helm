@@ -1,4 +1,4 @@
-{{- if .Values.tenantadm.enabled  }}
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -85,7 +85,7 @@ spec:
         secret:
           secretName: rsa-tenantadm
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}
