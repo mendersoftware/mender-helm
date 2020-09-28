@@ -266,7 +266,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.enabled` | Enable the component | `true` |
 | `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `inventory.image.registry` | Docker image registry | `docker.io` |
-| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory` |
+| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` |
 | `inventory.image.tag` | Docker image tag | `mender-2.5.0` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.replicas` | Number of replicas | `1` |
@@ -354,7 +354,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.enabled` | Enable the component | `true` |
 | `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `workflows.image.registry` | Docker image registry | `docker.io` |
-| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows` |
+| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` |
 | `workflows.image.tag` | Docker image tag | `mender-2.5.0` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.replicas` | Number of replicas | `1` |
