@@ -259,11 +259,11 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `gui.service.port` | Port for the service | `80` |
 | `gui.service.nodePort` | Node port for the service | `nil` |
-| `gui.env.HAVE_MULTITENANT` | Set the HAVE_MULTITENANT variable | `true` |
-| `gui.env.MENDER_HOSTED` | Set the MENDER_HOSTED variable | `true` |
-| `gui.env.HAVE_ENTERPRISE` | Set the HAVE_ENTERPRISE variable | `true` |
 | `gui.env.GATEWAY_IP` | Set the GATEWAY_IP variable | `k8s.hosted.mender.io` |
 | `gui.env.GATEWAY_PORT` | Set the GATEWAY_PORT variable | `443` |
+| `gui.env.HAVE_ENTERPRISE` | Set the HAVE_ENTERPRISE variable | `true` |
+| `gui.env.HAVE_MULTITENANT` | Set the HAVE_MULTITENANT variable | `true` |
+| `gui.env.MENDER_HOSTED` | Set the MENDER_HOSTED variable | `false` |
 
 ### Parameters: inventory
 

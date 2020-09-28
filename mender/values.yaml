@@ -124,11 +124,11 @@ gui:
     type: ClusterIP
     port: 80
   env:
-    HAVE_MULTITENANT: true
-    MENDER_HOSTED: true
-    HAVE_ENTERPRISE: true
     GATEWAY_IP: k8s.hosted.mender.io
     GATEWAY_PORT: "443"
+    HAVE_MULTITENANT: true
+    HAVE_ENTERPRISE: true
+    MENDER_HOSTED: false
 
 inventory:
   enabled: true
