@@ -440,17 +440,30 @@ $ helm install --name minio --version 6.0.5 --set "accessKey=myaccesskey,secretK
 
 ## Create a tenant and a user from command line
 
+### Enterprise version
+
 You can create a tenant from the command line of the `tenantadm` pod; the value printed is the newly generated tenant ID:
 
 ```bash
-$ tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin"
+$ tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin" --plan enterprise
 5dcd71624143b30050e63bed
 ```
 
-You can create a user from the command line of the `useradm` pod:
+You can create additional useres from the command line of the `useradm` pod:
 
 ```bash
 $ useradm create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
+187b8101-4431-500f-88da-54709f51f2e6
+```
+
+### Open Source version
+
+If you are running the Open Source version of Mender, you won't have the `tenantadm` service.
+You can create users directly in the `useradm` pod:
+
+```bash
+$ useradm create-user --username "demo@mender.io" --password "demodemo"
+187b8101-4431-500f-88da-54709f51f2e6
 ```
 
 ## Test the service through the GUI
