@@ -54,8 +54,8 @@ spec:
 {{- end }}
 
         env:
-        - name: TENANTADM_MIDDLEWARE
-          value: {{ .Values.useradm.env.TENANTADM_MIDDLEWARE | quote }}
+        - name: USERADM_MIDDLEWARE
+          value: {{ .Values.useradm.env.USERADM_MIDDLEWARE | quote }}
         - name: USERADM_JWT_ISSUER
           value: {{ .Values.useradm.env.USERADM_JWT_ISSUER | quote }}
         - name: USERADM_JWT_EXP_TIMEOUT
@@ -66,7 +66,7 @@ spec:
           value: {{ .Values.useradm.env.USERADM_MIDDLEWARE | quote }}
         {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
         - name: USERADM_TENANTADM_ADDR
-          value: {{ .Values.device_auth.env.USERADM_TENANTADM_ADDR | quote }}
+          value: {{ .Values.useradm.env.USERADM_TENANTADM_ADDR | quote }}
         {{- end }}
         - name: USERADM_TOTP_ISSUER
           value: {{ .Values.useradm.env.USERADM_TOTP_ISSUER | quote }}
