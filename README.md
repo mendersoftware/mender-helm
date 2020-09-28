@@ -4,8 +4,16 @@
 
 ## TL;DR;
 
+Using `helm3`:
+
 ```bash
-$ helm install ./mender-2.5.0.tgz
+$ helm install mender ./mender-2.5.0.tgz
+```
+
+or using `helm2`:
+
+```bash
+$ helm install --name mender ./mender-2.5.0.tgz
 ```
 
 ## Introduction
@@ -19,16 +27,16 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release` using `helm2`:
-
-```bash
-$ helm install --name my-release -f values.yaml ./mender-2.5.0.tgz
-```
-
-or using `helm3`:
+To install the chart with the release name `my-release` using `helm3`:
 
 ```bash
 $ helm install my-release -f values.yaml ./mender-2.5.0.tgz
+```
+
+or using `helm2`:
+
+```bash
+$ helm install --name my-release -f values.yaml ./mender-2.5.0.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -117,7 +125,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.smtp.SMTP_ADDRESS` | SMTP server address | `smtp.mailtrap.io` |
 | `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
 | `global.smtp.SMTP_PASSWORD` | SMTP server password | `null` |
-| `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
+| `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -397,30 +405,30 @@ The following table lists the parameters for the `create-artifact-worker` compon
 
 ### Installing mongodb
 
-You can install mongodb using the official mongodb helm chart using `helm2`:
-
-```bash
-$ helm install --name mongodb --set "usePassword=false" stable/mongodb
-```
-
-or using `helm3`:
+You can install mongodb using the official mongodb helm chart using `helm3`:
 
 ```bash
 $ helm install mongodb --set "usePassword=false" stable/mongodb
 ```
 
-### Installing MinIO
-
-You can install MinIO using the official MinIO helm chart using `helm2`:
+or using `helm2`:
 
 ```bash
-$ helm install --name minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
+$ helm install --name mongodb --set "usePassword=false" stable/mongodb
 ```
 
-or using `helm3`:
+### Installing MinIO
+
+You can install MinIO using the official MinIO helm chart using `helm3`:
 
 ```bash
 $ helm install minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
+```
+
+or using `helm2`:
+
+```bash
+$ helm install --name minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
 ```
 
 ## Create a tenant and a user from command line
