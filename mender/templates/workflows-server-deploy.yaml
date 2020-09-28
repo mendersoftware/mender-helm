@@ -47,9 +47,9 @@ spec:
 {{ toYaml .Values.workflows.resources | indent 10 }}
 
 {{- if .Values.workflows.automigrate  }}
-        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "server", "--automigrate"]
+        args: ["server", "--automigrate"]
 {{- else -}}
-        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "server"]
+        args: ["server"]
 {{- end }}
 
         # Readiness/liveness probes
