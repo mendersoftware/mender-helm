@@ -69,13 +69,17 @@ spec:
         - name: USERADM_TOTP_ISSUER
           value: {{ .Values.useradm.env.USERADM_TOTP_ISSUER | quote }}
 
-        # Perform periodic checks during pod startup period to determine
-        # when it's ready and listening of specificed port.
-        # readinessProbe:
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 20
-        #   tcpSocket:
-        #     port: 8080
+        # Readiness/liveness probes
+        readinessProbe:
+          httpGet:
+            path: /api/internal/v1/useradm/health
+            port: 8080
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/useradm/alive
+            port: 8080
+          periodSeconds: 5
 
         volumeMounts:
         - name: rsa

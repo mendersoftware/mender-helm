@@ -52,19 +52,17 @@ spec:
         command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "server"]
 {{- end }}
 
+        # Readiness/liveness probes
         readinessProbe:
           httpGet:
-            path: /status
+            path: /api/v1/health
             port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
-
+          periodSeconds: 15
         livenessProbe:
           httpGet:
             path: /status
             port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
+          periodSeconds: 5
 
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
