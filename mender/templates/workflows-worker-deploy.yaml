@@ -52,7 +52,7 @@ spec:
         command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "worker", "--excluded-workflows", "generate_artifact"]
 {{- end }}
 
-        # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
+        # Supported configuration settings: https://github.com/mendersoftware/workflows-enterprise/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
         - prefix: WORKFLOWS_

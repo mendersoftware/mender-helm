@@ -63,7 +63,7 @@ spec:
         - name: INVENTORY_MIDDLEWARE
           value: {{ .Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
 
-        # Supported configuration settings: https://github.com/mendersoftware/inventory/blob/master/config.yaml
+        # Supported configuration settings: https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
         - prefix: INVENTORY_

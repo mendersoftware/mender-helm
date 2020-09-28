@@ -143,8 +143,8 @@ inventory:
       memory: 50M
   affinity: {}
   image:
-    registry: docker.io
-    repository: mendersoftware/inventory
+    registry: registry.mender.io
+    repository: mendersoftware/inventory-enterprise
     tag: mender-2.5.0
     imagePullPolicy: IfNotPresent
   service:
