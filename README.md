@@ -130,9 +130,9 @@ The following table lists the global parameters supported by the chart and their
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install --name my-release \
+$ helm install my-release \
   --set mongodbRootPassword=secretpassword,mongodbUsername=my-user,mongodbPassword=my-password,mongodbDatabase=my-database \
-    stable/Mender
+  ./mender-2.5.0.tgz
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
@@ -408,13 +408,17 @@ The following table lists the parameters for the `create-artifact-worker` compon
 You can install mongodb using the official mongodb helm chart using `helm3`:
 
 ```bash
-$ helm install mongodb --set "usePassword=false" stable/mongodb
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm repo update
+$ helm install mongodb --set "auth.enabled=false" bitnami/mongodb
 ```
 
 or using `helm2`:
 
 ```bash
-$ helm install --name mongodb --set "usePassword=false" stable/mongodb
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm repo update
+$ helm install --name mongodb --set "auth.enabled=false" bitnami/mongodb
 ```
 
 ### Installing MinIO
@@ -422,13 +426,17 @@ $ helm install --name mongodb --set "usePassword=false" stable/mongodb
 You can install MinIO using the official MinIO helm chart using `helm3`:
 
 ```bash
-$ helm install minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
+$ helm repo add minio https://helm.min.io/
+$ helm repo update
+$ helm install minio minio/minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey"
 ```
 
 or using `helm2`:
 
 ```bash
-$ helm install --name minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
+$ helm repo add minio https://helm.min.io/
+$ helm repo update
+$ helm install --name minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey" minio/minio
 ```
 
 ## Create a tenant and a user from command line
