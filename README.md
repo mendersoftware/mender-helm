@@ -169,10 +169,10 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpsPort` | Port for the HTTPS service | `443` |
 | `api_gateway.service.httpNodePort` | Node port for the HTTP service | `nil` |
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
+| `api_gateway.env.ALLOWED_HOSTS` | Set the ALLOWED_HOSTS variable | `[a-zA-Z0-9:.]+` |
+| `api_gateway.env.DNS_NAMES` | Set the DNS_NAMES variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
 | `api_gateway.env.HAVE_MULTITENANT` | Set the HAVE_MULTITENANT variable | `true` |
-| `api_gateway.env.DNS_NAMES` | Set the HAVE_MULTITENANT variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
-| `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the HAVE_MULTITENANT variable | `true` |
-| `api_gateway.env.ALLOWED_HOSTS` | Set the HAVE_MULTITENANT variable | `[a-zA-Z0-9:.]+` |
+| `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the IS_LOGS_FORMAT_JSON variable | `false` |
 
 ### Parameters: deployments
 

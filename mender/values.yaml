@@ -40,10 +40,10 @@ api_gateway:
     httpPort: 80
     httpsPort: 443
   env:
-    HAVE_MULTITENANT: true
-    DNS_NAMES: "mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui"
-    IS_LOGS_FORMAT_JSON: true
     ALLOWED_HOSTS: "[a-zA-Z0-9:.]+"
+    DNS_NAMES: "mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui"
+    HAVE_MULTITENANT: true
+    IS_LOGS_FORMAT_JSON: false
 
 deployments:
   enabled: true
