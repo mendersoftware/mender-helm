@@ -1,4 +1,4 @@
-{{- if .Values.deployments.enabled  }}
+{{- if .Values.deployments.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,19 +46,23 @@ spec:
         resources:
 {{ toYaml .Values.deployments.resources | indent 10 }}
 
-{{- if .Values.deployments.automigrate  }}
+{{- if .Values.deployments.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
         args: ["server"]
 {{- end }}
 
-        # Perform periodic checks during pod startup period to determine
-        # when it's ready and listening of specificed port.
-        # readinessProbe:
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 20
-        #   tcpSocket:
-        #     port: 8080
+        # Readiness/liveness probes
+        readinessProbe:
+          httpGet:
+            path: /api/internal/v1/deployments/health
+            port: 8080
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/deployments/alive
+            port: 8080
+          periodSeconds: 5
 
         env:
         - name: DEPLOYMENTS_MIDDLEWARE
@@ -76,7 +80,7 @@ spec:
           secretRef:
             name: s3-artifacts
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}
