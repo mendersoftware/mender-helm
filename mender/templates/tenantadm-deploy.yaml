@@ -1,4 +1,4 @@
-{{- if .Values.tenantadm.enabled  }}
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,13 +46,17 @@ spec:
         resources:
 {{ toYaml .Values.tenantadm.resources | indent 10 }}
 
-        # Perform periodic checks during pod startup period to determine
-        # when it's ready and listening of specificed port.
-        # readinessProbe:
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 20
-        #   tcpSocket:
-        #     port: 8080
+        # Readiness/liveness probes
+        readinessProbe:
+          httpGet:
+            path: /api/internal/v1/tenantadm/health
+            port: 8080
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/tenantadm/alive
+            port: 8080
+          periodSeconds: 5
 
         volumeMounts:
         - name: rsa
@@ -81,7 +85,7 @@ spec:
         secret:
           secretName: rsa-tenantadm
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

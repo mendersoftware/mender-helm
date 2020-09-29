@@ -4,8 +4,16 @@
 
 ## TL;DR;
 
+Using `helm3`:
+
 ```bash
-$ helm install ./mender-2.5.0.tgz
+$ helm install mender ./mender-2.5.0.tgz
+```
+
+or using `helm2`:
+
+```bash
+$ helm install --name mender ./mender-2.5.0.tgz
 ```
 
 ## Introduction
@@ -19,16 +27,16 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release` using `helm2`:
-
-```bash
-$ helm install --name my-release -f values.yaml ./mender-2.5.0.tgz
-```
-
-or using `helm3`:
+To install the chart with the release name `my-release` using `helm3`:
 
 ```bash
 $ helm install my-release -f values.yaml ./mender-2.5.0.tgz
+```
+
+or using `helm2`:
+
+```bash
+$ helm install --name my-release -f values.yaml ./mender-2.5.0.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -104,6 +112,9 @@ The following table lists the global parameters supported by the chart and their
 
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `global.enterprise` | Enable the enterprise features | `true` |
+| `global.hosted` | Enabled Hosted Mender specific features | `false` |
+| `global.multitenant` | Enable multi tenancy | `true` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
@@ -117,14 +128,14 @@ The following table lists the global parameters supported by the chart and their
 | `global.smtp.SMTP_ADDRESS` | SMTP server address | `smtp.mailtrap.io` |
 | `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
 | `global.smtp.SMTP_PASSWORD` | SMTP server password | `null` |
-| `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
+| `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install --name my-release \
+$ helm install my-release \
   --set mongodbRootPassword=secretpassword,mongodbUsername=my-user,mongodbPassword=my-password,mongodbDatabase=my-database \
-    stable/Mender
+  ./mender-2.5.0.tgz
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
@@ -161,10 +172,9 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpsPort` | Port for the HTTPS service | `443` |
 | `api_gateway.service.httpNodePort` | Node port for the HTTP service | `nil` |
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
-| `api_gateway.env.HAVE_MULTITENANT` | Set the HAVE_MULTITENANT variable | `true` |
-| `api_gateway.env.DNS_NAMES` | Set the HAVE_MULTITENANT variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
-| `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the HAVE_MULTITENANT variable | `true` |
-| `api_gateway.env.ALLOWED_HOSTS` | Set the HAVE_MULTITENANT variable | `[a-zA-Z0-9:.]+` |
+| `api_gateway.env.ALLOWED_HOSTS` | Set the ALLOWED_HOSTS variable | `[a-zA-Z0-9:.]+` |
+| `api_gateway.env.DNS_NAMES` | Set the DNS_NAMES variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
+| `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the IS_LOGS_FORMAT_JSON variable | `false` |
 
 ### Parameters: deployments
 
@@ -251,9 +261,6 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `gui.service.port` | Port for the service | `80` |
 | `gui.service.nodePort` | Node port for the service | `nil` |
-| `gui.env.HAVE_MULTITENANT` | Set the HAVE_MULTITENANT variable | `true` |
-| `gui.env.MENDER_HOSTED` | Set the MENDER_HOSTED variable | `true` |
-| `gui.env.HAVE_ENTERPRISE` | Set the HAVE_ENTERPRISE variable | `true` |
 | `gui.env.GATEWAY_IP` | Set the GATEWAY_IP variable | `k8s.hosted.mender.io` |
 | `gui.env.GATEWAY_PORT` | Set the GATEWAY_PORT variable | `443` |
 
@@ -266,7 +273,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.enabled` | Enable the component | `true` |
 | `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `inventory.image.registry` | Docker image registry | `docker.io` |
-| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory` |
+| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` |
 | `inventory.image.tag` | Docker image tag | `mender-2.5.0` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.replicas` | Number of replicas | `1` |
@@ -354,7 +361,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.enabled` | Enable the component | `true` |
 | `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `workflows.image.registry` | Docker image registry | `docker.io` |
-| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows` |
+| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` |
 | `workflows.image.tag` | Docker image tag | `mender-2.5.0` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.replicas` | Number of replicas | `1` |
@@ -397,45 +404,66 @@ The following table lists the parameters for the `create-artifact-worker` compon
 
 ### Installing mongodb
 
-You can install mongodb using the official mongodb helm chart using `helm2`:
+You can install mongodb using the official mongodb helm chart using `helm3`:
 
 ```bash
-$ helm install --name mongodb --set "usePassword=false" stable/mongodb
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm repo update
+$ helm install mongodb --set "auth.enabled=false" bitnami/mongodb
 ```
 
-or using `helm3`:
+or using `helm2`:
 
 ```bash
-$ helm install mongodb --set "usePassword=false" stable/mongodb
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm repo update
+$ helm install --name mongodb --set "auth.enabled=false" bitnami/mongodb
 ```
 
-### Installing MinIO
+### Installing MinIO
 
-You can install MinIO using the official MinIO helm chart using `helm2`:
+You can install MinIO using the official MinIO helm chart using `helm3`:
 
 ```bash
-$ helm install --name minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
+$ helm repo add minio https://helm.min.io/
+$ helm repo update
+$ helm install minio minio/minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey"
 ```
 
-or using `helm3`:
+or using `helm2`:
 
 ```bash
-$ helm install minio --set "accessKey=myaccesskey,secretKey=mysecretkey" stable/minio
+$ helm repo add minio https://helm.min.io/
+$ helm repo update
+$ helm install --name minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey" minio/minio
 ```
 
 ## Create a tenant and a user from command line
 
+### Enterprise version
+
 You can create a tenant from the command line of the `tenantadm` pod; the value printed is the newly generated tenant ID:
 
 ```bash
-$ tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin"
+$ tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin" --plan enterprise
 5dcd71624143b30050e63bed
 ```
 
-You can create a user from the command line of the `useradm` pod:
+You can create additional useres from the command line of the `useradm` pod:
 
 ```bash
 $ useradm create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
+187b8101-4431-500f-88da-54709f51f2e6
+```
+
+### Open Source version
+
+If you are running the Open Source version of Mender, you won't have the `tenantadm` service.
+You can create users directly in the `useradm` pod:
+
+```bash
+$ useradm create-user --username "demo@mender.io" --password "demodemo"
+187b8101-4431-500f-88da-54709f51f2e6
 ```
 
 ## Test the service through the GUI
@@ -443,5 +471,5 @@ $ useradm create-user --username "demo@mender.io" --password "demodemo" --tenant
 You can port-forward the `mender-api-gateway` Kubernetes service to verify the system is up and running:
 
 ```bash
-$ kubectl port-forward service/mender-api-gateway 8443:443
+$ kubectl port-forward service/mender-api-gateway 443:443
 ```

@@ -1,4 +1,4 @@
-{{- if .Values.api_gateway.enabled  }}
+{{- if .Values.api_gateway.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,17 +50,21 @@ spec:
         - containerPort: 443
         - containerPort: 80
 
-        # Perform periodic checks during pod startup period to determine
-        # when it's ready and listening of specificed port.
-        # readinessProbe:
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 20
-        #   tcpSocket:
-        #     port: 443
+        # Readiness/liveness probes
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          periodSeconds: 5
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          periodSeconds: 15
 
         env:
+        {{- if .Values.global.multitenant }}
         - name: HAVE_MULTITENANT
-          value: {{ .Values.api_gateway.env.HAVE_MULTITENANT | quote }}
+          value: {{ .Values.global.multitenant | quote }}
+        {{- end }}
         - name: DNS_NAMES
           value: {{ .Values.api_gateway.env.DNS_NAMES | quote }}
         - name: IS_LOGS_FORMAT_JSON
@@ -85,7 +89,7 @@ spec:
         secret:
           secretName: api-gateway
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

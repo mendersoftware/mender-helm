@@ -1,4 +1,4 @@
-{{- if .Values.useradm.enabled  }}
+{{- if .Values.useradm.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -47,15 +47,15 @@ spec:
         resources:
 {{ toYaml .Values.useradm.resources | indent 10 }}
 
-{{- if .Values.useradm.automigrate  }}
+{{- if .Values.useradm.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
         args: ["server"]
 {{- end }}
 
         env:
-        - name: TENANTADM_MIDDLEWARE
-          value: {{ .Values.useradm.env.TENANTADM_MIDDLEWARE | quote }}
+        - name: USERADM_MIDDLEWARE
+          value: {{ .Values.useradm.env.USERADM_MIDDLEWARE | quote }}
         - name: USERADM_JWT_ISSUER
           value: {{ .Values.useradm.env.USERADM_JWT_ISSUER | quote }}
         - name: USERADM_JWT_EXP_TIMEOUT
@@ -64,18 +64,24 @@ spec:
           value: {{ .Values.useradm.env.USERADM_SERVER_PRIV_KEY_PATH | quote }}
         - name: USERADM_MIDDLEWARE
           value: {{ .Values.useradm.env.USERADM_MIDDLEWARE | quote }}
+        {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
         - name: USERADM_TENANTADM_ADDR
           value: {{ .Values.useradm.env.USERADM_TENANTADM_ADDR | quote }}
+        {{- end }}
         - name: USERADM_TOTP_ISSUER
           value: {{ .Values.useradm.env.USERADM_TOTP_ISSUER | quote }}
 
-        # Perform periodic checks during pod startup period to determine
-        # when it's ready and listening of specificed port.
-        # readinessProbe:
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 20
-        #   tcpSocket:
-        #     port: 8080
+        # Readiness/liveness probes
+        readinessProbe:
+          httpGet:
+            path: /api/internal/v1/useradm/health
+            port: 8080
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/useradm/alive
+            port: 8080
+          periodSeconds: 5
 
         volumeMounts:
         - name: rsa
@@ -96,7 +102,7 @@ spec:
         secret:
           secretName: rsa-useradm
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

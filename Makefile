@@ -14,7 +14,7 @@ help: ## Show this help
 
 .PHONY: clean
 clean: ## Clean the working directory removing the packages and the rendered templates
-	rm -fr $(NAME)-$(VERSION)*.tgz $(NAME)-$(VERSION)*.yaml tmp.*
+	rm -fr $(NAME)-$(VERSION)*.tgz $(NAME)-$(VERSION)*.yaml index.yaml tmp.*
 
 .PHONY: lint
 lint: ## Lint the mender helm package
@@ -23,6 +23,7 @@ lint: ## Lint the mender helm package
 .PHONY: package
 package: ## Create the mender helm package
 	helm package $(NAME)
+	helm repo index --url https://charts.mender.io .
 
 .PHONY: upload
 upload: package ## Upload the mender helm package to the charts repository

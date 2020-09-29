@@ -1,4 +1,4 @@
-{{- if .Values.workflows.enabled  }}
+{{- if .Values.workflows.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,20 +46,20 @@ spec:
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
 
-{{- if .Values.workflows.automigrate  }}
-        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
+{{- if .Values.deployments.automigrate }}
+        args: ["worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
 {{- else -}}
-        command: ["/usr/bin/workflows-enterprise", "--config", "/etc/workflows-enterprise/config.yaml", "worker", "--excluded-workflows", "generate_artifact"]
+        args: ["worker", "--excluded-workflows", "generate_artifact"]
 {{- end }}
 
-        # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
+        # Supported configuration settings: https://github.com/mendersoftware/workflows-enterprise/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:
             name: mongodb-common
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

@@ -1,4 +1,4 @@
-{{- if .Values.inventory.enabled  }}
+{{- if .Values.inventory.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,31 +46,36 @@ spec:
         resources:
 {{ toYaml .Values.inventory.resources | indent 10 }}
 
-{{- if .Values.inventory.automigrate  }}
+{{- if .Values.inventory.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
         args: ["server"]
 {{- end }}
-        # Perform periodic checks during pod startup period to determine
-        # when it's ready and listening of specificed port.
-        # readinessProbe:
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 20
-        #   tcpSocket:
-        #     port: 8080
+
+        # Readiness/liveness probes
+        readinessProbe:
+          httpGet:
+            path: /api/internal/v1/inventory/health
+            port: 8080
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/inventory/alive
+            port: 8080
+          periodSeconds: 5
 
         env:
         - name: INVENTORY_MIDDLEWARE
           value: {{ .Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
 
-        # Supported configuration settings: https://github.com/mendersoftware/inventory/blob/master/config.yaml
+        # Supported configuration settings: https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
         - prefix: INVENTORY_
           secretRef:
             name: mongodb-common
 
-{{- if .Values.global.image.username  }}
+{{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}
