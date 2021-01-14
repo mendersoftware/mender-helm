@@ -124,6 +124,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | `http://minio:9000` |
 | `global.s3.AWS_BUCKET` | AWS S3 / MinIO bucket | `minio-hosted-mender-artifacts` |
+| `global.s3.AWS_REGION` | AWS S3 region | `us-east-1` |
 | `global.s3.AWS_ACCESS_KEY_ID` | AWS S3 / MinIO key ID | `myaccesskey` |
 | `global.s3.AWS_SECRET_ACCESS_KEY` | AWS S3 / MinIO access key | `mysecretkey` |
 | `global.smtp.EMAIL_SENDER` | SMTP email sender | `root@localhost` |
