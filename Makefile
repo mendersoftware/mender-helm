@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 NAME=mender
 VERSION=$$(grep version: $(NAME)/Chart.yaml | sed -e 's/.*: *//g' | sed -e 's/"//g')
 
