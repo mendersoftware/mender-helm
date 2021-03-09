@@ -6,8 +6,6 @@ include:
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-commits-signoffs.yml'
   - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-template-k8s-test.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-github-status-updates.yml'
 
 build:
@@ -25,14 +23,41 @@ build:
     paths:
       - mender-*.tgz
 
-test_helm_chart_install:
-  extends: .test_on_k8s_cluster
-  variables:
-    K8S_VERSION: "v1.16.9"
+.get_kubectl_and_tools: &get_kubectl_and_tools |
+  # Install kubectl
+  apt update && apt install -yyq curl
+  curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl
+  chmod +x ./kubectl
+  mv ./kubectl /usr/local/bin/kubectl
+  # Install AWS CLI and aws-iam-authenticator
+  apt install -yyq awscli
+  curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+  chmod +x ./aws-iam-authenticator
+  mv ./aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
+  # Install kubectx
+  apt install -yyq kubectx
+
+.setup_eks_cluster_staging: &setup_eks_cluster_staging |
+  # Configure AWS CLI for staging cluster
+  export AWS_ACCESS_KEY_ID=$CI_JOBS_AWS_ACCESS_KEY_ID_STAGING
+  export AWS_SECRET_ACCESS_KEY=$CI_JOBS_AWS_SECRET_ACCESS_KEY_STAGING
+  export AWS_DEFAULT_REGION=$CI_JOBS_AWS_REGION_STAGING
+  aws eks --region $CI_JOBS_AWS_REGION_STAGING update-kubeconfig --name $CI_JOBS_AWS_EKS_CLUSTER_NAME_STAGING
+  kubens staging
+
+test:helm_chart_install:
+  stage: test
   dependencies:
     - build
+  image: debian:buster
+  before_script:
+    - *get_kubectl_and_tools
+    - *setup_eks_cluster_staging
   script:
+    - tests/ci-namespace-setup.sh
     - tests/ci-deps-k8s.sh
     - tests/ci-make-deps.sh
     - tests/ci-make-helm.sh
     - make test
+  after_script:
+    - tests/ci-namespace-teardown.sh
