@@ -7,12 +7,14 @@
 Using `helm3`:
 
 ```bash
+$ make package
 $ helm install mender ./mender-2.5.0.tgz
 ```
 
 or using `helm2`:
 
 ```bash
+$ make package
 $ helm install --name mender ./mender-2.5.0.tgz
 ```
 
