@@ -11,7 +11,7 @@ chmod 755 get_helm.sh
 ./get_helm.sh
 
 log "add help repo: stable"
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
 log "deploying dependencies: minio"
