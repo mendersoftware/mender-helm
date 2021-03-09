@@ -33,5 +33,6 @@ test_helm_chart_install:
     - build
   script:
     - tests/ci-deps-k8s.sh
+    - tests/ci-make-deps.sh
     - tests/ci-make-helm.sh
     - make test
