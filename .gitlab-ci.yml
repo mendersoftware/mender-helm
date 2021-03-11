@@ -57,6 +57,7 @@ test:helm_chart_install:
     - apt install -yyq make uuid-runtime
     - tests/ci-deps-k8s.sh
     # Clean possible leftovers from an unfinished run
+    - tests/ci-test-teardown.sh || true
     - tests/ci-make-clean.sh || true
   script:
     - tests/ci-make-deps.sh
