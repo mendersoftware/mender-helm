@@ -1,0 +1,93 @@
+{{- if .Values.deviceconnect.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deviceconnect
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: deviceconnect
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: deviceconnect
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.deviceconnect.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: deviceconnect
+
+  # if deployment is not completed within 10 min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+  progressDeadlineSeconds: 600
+
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: deviceconnect
+    spec:
+      {{- with .Values.deviceconnect.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: deviceconnect
+        image: {{ .Values.deviceconnect.image.registry }}/{{ .Values.deviceconnect.image.repository }}:{{ .Values.deviceconnect.image.tag }}
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.deviceconnect.resources | indent 10 }}
+
+{{- if .Values.deviceconnect.automigrate }}
+        args: ["server", "--automigrate"]
+{{- else -}}
+        args: ["server"]
+{{- end }}
+
+        # Readiness/liveness probes
+        readinessProbe:
+          httpGet:
+            path: /api/internal/v1/deviceconnect/health
+            port: 8080
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/deviceconnect/alive
+            port: 8080
+          periodSeconds: 5
+
+        env:
+        # NATS uri
+        - name: DEVICECONNECT_NATS_URI
+          value: "nats://nats:4222"
+
+        # Enable audit logging
+        {{- if .Values.global.auditlogs }}
+        - name: DEVICECONNECT_ENABLE_AUDIT
+          value: "true"
+        {{- end }}
+
+        # Workflows orchestrator address
+        - name: DEVICECONNECT_WORKFLOWS_URL
+          value: http://mender-workflows-server:8080/
+
+        # Supported configuration settings: https://github.com/mendersoftware/deviceconnect/blob/master/config.yaml
+        # Set in order, last value for the key will be used in case duplications.
+        envFrom:
+        - prefix: DEVICECONNECT_
+          secretRef:
+            name: mongodb-common
+
+{{- if .Values.global.image.username }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
+{{- end }}

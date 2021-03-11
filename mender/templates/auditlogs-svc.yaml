@@ -1,0 +1,40 @@
+{{- if .Values.auditlogs.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.auditlogs.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: auditlogs-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: auditlogs
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.auditlogs.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.auditlogs.service.type }}
+  {{- if and (eq .Values.auditlogs.service.type "ClusterIP") .Values.auditlogs.service.clusterIP }}
+  clusterIP: {{ .Values.auditlogs.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.auditlogs.service.type "LoadBalancer") .Values.auditlogs.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.auditlogs.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.auditlogs.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.auditlogs.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.auditlogs.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.auditlogs.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.auditlogs.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.auditlogs.service.nodePort }}
+    nodePort: {{ .Values.auditlogs.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: auditlogs
+{{- end }}
