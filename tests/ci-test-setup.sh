@@ -3,7 +3,6 @@
 set -e
 
 # create an ubuntu POD to run the tests
-TEMPNAME=`basename $0`
 TMPFILE=`mktemp` || exit 1
 cat > $TMPFILE <<EOF
 kind: Pod
