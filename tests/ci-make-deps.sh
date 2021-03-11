@@ -13,3 +13,6 @@ helm install mender-minio minio/minio \
 
 log "deploying dependencies: mongodb"
 helm install mender-mongo --set "auth.enabled=false,persistence.enabled=false" bitnami/mongodb
+
+log "deploying dependencies: nats"
+find tests/nats -type f -name "*.yaml" -exec kubectl apply -f {} \;

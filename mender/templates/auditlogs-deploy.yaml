@@ -1,21 +1,21 @@
-{{- if .Values.workflows.enabled }}
+{{- if .Values.auditlogs.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: workflows-worker
+  name: auditlogs
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: workflows-worker
+    app.kubernetes.io/name: auditlogs
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: workflows
+    app.kubernetes.io/component: auditlogs
     app.kubernetes.io/part-of: mender
     helm.sh/chart: "{{ .Chart.Name }}"
 spec:
-  replicas: {{ .Values.workflows.replicas }}
+  replicas: {{ .Values.auditlogs.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: workflows-worker
+      app.kubernetes.io/name: auditlogs
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -33,39 +33,42 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: workflows-worker
+        app.kubernetes.io/name: auditlogs
     spec:
-      {{- with .Values.workflows.affinity }}
+      {{- with .Values.auditlogs.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 
       containers:
-      - name: workflows
-      ***REMOVED*** {{ .Values.workflows.image.registry }}/{{ .Values.workflows.image.repository }}-worker:{{ .Values.workflows.image.tag }}
+      - name: auditlogs
+      ***REMOVED*** {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
-{{ toYaml .Values.workflows.resources | indent 10 }}
+{{ toYaml .Values.auditlogs.resources | indent 10 }}
 
-{{- if .Values.deployments.automigrate }}
-        args: ["worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
+{{- if .Values.auditlogs.automigrate }}
+        args: ["server", "--automigrate"]
 {{- else -}}
-        args: ["worker", "--excluded-workflows", "generate_artifact"]
+        args: ["server"]
 {{- end }}
 
-        env:
-        {{- if .Values.auditlogs.enabled }}
-        - name: HAVE_AUDITLOGS
-          value: {{ .Values.auditlogs.enabled | quote }}
-        {{- end }}
-        {{- if .Values.deviceconnect.enabled }}
-        - name: HAVE_DEVICECONNECT
-          value: {{ .Values.deviceconnect.enabled | quote }}
-        {{- end }}
+        # Readiness/liveness probes
+        # readinessProbe: FIXME: endpoint not yet implemented by the service
+        #    httpGet:
+        #      path: /api/internal/v1/auditlogs/health
+        #      port: 8080
+        #    periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/auditlogs/health/alive
+            port: 8080
+          periodSeconds: 5
 
-        # Supported configuration settings: https://github.com/mendersoftware/workflows-enterprise/blob/master/config.yaml
+        env:
+        # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
-        - prefix: WORKFLOWS_
+        - prefix: AUDITLOGS_
           secretRef:
             name: mongodb-common
 
