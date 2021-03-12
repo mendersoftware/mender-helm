@@ -2,6 +2,8 @@ global:
   enterprise: true
   hosted: false
   multitenant: true
+  auditlogs: true
+  deviceconnect: true
   image:
     registry: registry.mender.io
     username: null
@@ -26,7 +28,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: mendersoftware/api-gateway
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   replicas: 1
   resources:
@@ -63,7 +65,7 @@ deployments:
   image:
     registry: registry.mender.io
     repository: mendersoftware/deployments-enterprise
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deployments
@@ -89,7 +91,7 @@ device_auth:
   image:
     registry: docker.io
     repository: mendersoftware/deviceauth
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-device-auth
@@ -119,7 +121,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-gui
@@ -145,7 +147,7 @@ inventory:
   image:
     registry: registry.mender.io
     repository: mendersoftware/inventory-enterprise
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-inventory
@@ -169,7 +171,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-tenantadm
@@ -197,7 +199,7 @@ useradm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/useradm-enterprise
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-useradm
@@ -227,7 +229,7 @@ workflows:
   image:
     registry: registry.mender.io
     repository: mendersoftware/workflows-enterprise
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-workflows-server
@@ -250,5 +252,51 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-2.5.0
+    tag: mender-2.6.0
     imagePullPolicy: IfNotPresent
+
+auditlogs:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 200m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/auditlogs
+    tag: mender-2.6.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-auditlogs
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+
+deviceconnect:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128M
+    requests:
+      cpu: 200m
+      memory: 50M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/deviceconnect
+    tag: mender-2.6.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-deviceconnect
+    annotations: {}
+    type: ClusterIP
+    port: 8080
