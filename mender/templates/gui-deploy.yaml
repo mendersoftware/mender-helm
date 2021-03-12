@@ -77,4 +77,8 @@ spec:
           value: {{ .Values.gui.env.GATEWAY_IP | quote }}
         - name: GATEWAY_PORT
           value: {{ .Values.gui.env.GATEWAY_PORT | quote }}
+        {{- if .Values.deviceconnect.enabled }}
+        - name: HAVE_DEVICECONNECT
+          value: {{ .Values.deviceconnect.enabled | quote }}
+        {{- end }}
 {{- end }}
