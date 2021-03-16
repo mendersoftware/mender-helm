@@ -49,6 +49,7 @@ api_gateway:
     ALLOWED_HOSTS: "[a-zA-Z0-9:.]+"
     DNS_NAMES: "mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui"
     IS_LOGS_FORMAT_JSON: false
+    SSL: true
 
 deployments:
   enabled: true
