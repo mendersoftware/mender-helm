@@ -71,7 +71,10 @@ spec:
           value: {{ .Values.api_gateway.env.IS_LOGS_FORMAT_JSON | quote }}
         - name: ALLOWED_HOSTS
           value: {{ .Values.api_gateway.env.ALLOWED_HOSTS | quote }}
+        - name: SSL
+          value: {{ .Values.api_gateway.env.SSL | quote }}
 
+{{- if .Values.api_gateway.env.SSL }}
         volumeMounts:
         - name: certs
           mountPath: /var/www/mendersoftware/cert/
@@ -88,6 +91,7 @@ spec:
       - name: dhparam
         secret:
           secretName: api-gateway
+{{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
