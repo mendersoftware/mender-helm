@@ -29,6 +29,7 @@ spec:
   loadBalancerSourceRanges: {{- toYaml .Values.api_gateway.service.loadBalancerSourceRanges | nindent 4 }}
   {{- end }}
   ports:
+{{- if .Values.api_gateway.env.SSL }}
   - port: {{ .Values.api_gateway.service.httpsPort }}
     protocol: TCP
     targetPort: 443
@@ -36,6 +37,7 @@ spec:
     nodePort: {{ .Values.api_gateway.service.httpsNodePort }}
     {{- end }}
     name: https
+{{- end }}
   - port: {{ .Values.api_gateway.service.httpPort }}
     protocol: TCP
     targetPort: 80
