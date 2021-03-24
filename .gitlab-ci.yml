@@ -46,6 +46,8 @@ build:
   kubens mender-helm-tests
 
 test:helm_chart_install:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
   stage: test
   dependencies:
     - build
