@@ -9,7 +9,7 @@ max_wait=512
 while [ $n -lt $max_wait ]; do
     NOT_READY=$(kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready | egrep -e 'false$' -e '<none>$' | wc -l)
     if [ $NOT_READY -eq 0 ]; then
-        echo -e "\n> PODs area ready:"
+        echo -e "\n> PODs are ready:"
         kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready
         exit 0
     fi
