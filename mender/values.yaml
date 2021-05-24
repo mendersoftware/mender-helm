@@ -28,7 +28,7 @@
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/api-gateway
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   replicas: 1
   resources:
@@ -66,7 +66,7 @@ deployments:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/deployments-enterprise
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deployments
@@ -92,7 +92,7 @@ deployments:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/deviceauth
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-device-auth
@@ -122,7 +122,7 @@ gui:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-gui
@@ -148,7 +148,7 @@ inventory:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/inventory-enterprise
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-inventory
@@ -172,7 +172,7 @@ inventory:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-tenantadm
@@ -200,7 +200,7 @@ inventory:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/useradm-enterprise
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-useradm
@@ -230,7 +230,7 @@ workflows:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/workflows-enterprise
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-workflows-server
@@ -253,7 +253,7 @@ create_artifact_worker:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
 
 auditlogs:
@@ -271,7 +271,7 @@ auditlogs:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-auditlogs
@@ -294,7 +294,7 @@ deviceconnect:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-2.6.0
+    tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deviceconnect
