@@ -152,6 +152,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `api_gateway.enabled` | Enable the component | `true` |
+| `api_gateway.dashboard` | Enable the Traefik dashboard (port 8080) | `false` |
 | `api_gateway.image.registry` | Docker image registry | `docker.io` |
 | `api_gateway.image.repository` | Docker image repository | `traefik` |
 | `api_gateway.image.tag` | Docker image tag | `v2.4` |
@@ -171,9 +172,6 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpsPort` | Port for the HTTPS service | `443` |
 | `api_gateway.service.httpNodePort` | Node port for the HTTP service | `nil` |
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
-| `api_gateway.env.ALLOWED_HOSTS` | Set the ALLOWED_HOSTS variable | `[a-zA-Z0-9:.]+` |
-| `api_gateway.env.DNS_NAMES` | Set the DNS_NAMES variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
-| `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the IS_LOGS_FORMAT_JSON variable | `false` |
 | `api_gateway.env.SSL` | SSL termination flag | `true` |
 
 ### Parameters: deployments
@@ -184,8 +182,8 @@ The following table lists the parameters for the `deployments` component and the
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `deployments.enabled` | Enable the component | `true` |
 | `deployments.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `deployments.image.registry` | Docker image registry | `registry.mender.io` |
-| `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` |
+| `deployments.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` if `global.enterprise` is true, else `mendersoftware/deployments` |
 | `deployments.image.tag` | Docker image tag | `mender-2.7.0` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.replicas` | Number of replicas | `1` |
@@ -270,8 +268,8 @@ The following table lists the parameters for the `inventory` component and their
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `inventory.enabled` | Enable the component | `true` |
 | `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `inventory.image.registry` | Docker image registry | `docker.io` |
-| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` |
+| `inventory.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` if `global.enterprise` is true, else `mendersoftware/inventory` |
 | `inventory.image.tag` | Docker image tag | `mender-2.7.0` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.replicas` | Number of replicas | `1` |
@@ -326,8 +324,8 @@ The following table lists the parameters for the `useradm` component and their d
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `useradm.enabled` | Enable the component | `true` |
 | `useradm.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `useradm.image.registry` | Docker image registry | `registry.mender.io` |
-| `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` |
+| `useradm.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
 | `useradm.image.tag` | Docker image tag | `mender-2.7.0` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `useradm.replicas` | Number of replicas | `1` |
@@ -358,8 +356,8 @@ The following table lists the parameters for the `workflows-server` component an
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `workflows.enabled` | Enable the component | `true` |
 | `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `workflows.image.registry` | Docker image registry | `docker.io` |
-| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` |
+| `workflows.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` if `global.enterprise` is true, else `mendersoftware/workflows` |
 | `workflows.image.tag` | Docker image tag | `mender-2.7.0` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.replicas` | Number of replicas | `1` |

@@ -23,6 +23,7 @@
 
 ***REMOVED***
   enabled: true
+  dashboard: false
 ***REMOVED***
     registry: docker.io
     repository: traefik
@@ -44,9 +45,6 @@
     httpPort: 80
     httpsPort: 443
   env:
-    ALLOWED_HOSTS: "[a-zA-Z0-9:.]+"
-    DNS_NAMES: "mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui"
-    IS_LOGS_FORMAT_JSON: false
     SSL: true
 
 deployments:
@@ -62,8 +60,8 @@ deployments:
       memory: 64M
   affinity: {}
 ***REMOVED***
-    registry: registry.mender.io
-    repository: mendersoftware/deployments-enterprise
+    registry: ""
+    repository: ""
     tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
@@ -142,8 +140,8 @@ inventory:
       memory: 128M
   affinity: {}
 ***REMOVED***
-    registry: registry.mender.io
-    repository: mendersoftware/inventory-enterprise
+    registry: ""
+    repository: ""
     tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
@@ -194,8 +192,8 @@ inventory:
       memory: 64M
   affinity: {}
 ***REMOVED***
-    registry: registry.mender.io
-    repository: mendersoftware/useradm-enterprise
+    registry: ""
+    repository: ""
     tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:
@@ -224,8 +222,8 @@ workflows:
       memory: 64M
   affinity: {}
 ***REMOVED***
-    registry: registry.mender.io
-    repository: mendersoftware/workflows-enterprise
+    registry: ""
+    repository: ""
     tag: mender-2.7.0
     imagePullPolicy: IfNotPresent
   service:

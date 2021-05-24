@@ -46,6 +46,11 @@ spec:
         args:
             - --accesslog=true
             - --accesslog.format=json
+{{- if .Values.api_gateway.dashboard }}
+            - --api=true
+            - --api.dashboard=true
+            - --api.insecure=true
+{{- end }}
             - --entrypoints.http.address=:80
             - --entrypoints.https.address=:443
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
@@ -78,23 +83,25 @@ spec:
             port: 80
           periodSeconds: 15
 
-{{- if .Values.api_gateway.env.SSL }}
         volumeMounts:
-        - name: certs
-          mountPath: /etc/traefik/certs
-          readOnly: true
         - name: api-gateway-traefik
           mountPath: /etc/traefik/config/traefik.yaml
           subPath: traefik.yaml
           readOnly: true
+{{- if .Values.api_gateway.env.SSL }}
+        - name: certs
+          mountPath: /etc/traefik/certs
+          readOnly: true
+{{- end }}
 
       volumes:
-      - name: certs
-        secret:
-          secretName: api-gateway
       - name: api-gateway-traefik
         configMap:
           name: api-gateway-traefik
+{{- if .Values.api_gateway.env.SSL }}
+      - name: certs
+        secret:
+          secretName: api-gateway
 {{- end }}
 
 {{- if .Values.global.image.username }}
