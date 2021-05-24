@@ -41,7 +41,11 @@ spec:
 
       containers:
       - name: inventory
-        image: {{ .Values.inventory.image.registry }}/{{ .Values.inventory.image.repository }}:{{ .Values.inventory.image.tag }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.inventory.image.registry | default "registry.mender.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory-enterprise" }}:{{ .Values.inventory.image.tag }}
+{{- else }}
+        image: {{ .Values.inventory.image.registry | default "docker.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .Values.inventory.image.tag }}
+{{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.inventory.resources | indent 10 }}

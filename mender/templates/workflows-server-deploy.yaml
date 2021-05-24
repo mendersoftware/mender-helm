@@ -41,7 +41,11 @@ spec:
 
       containers:
       - name: workflows
-        image: {{ .Values.workflows.image.registry }}/{{ .Values.workflows.image.repository }}:{{ .Values.workflows.image.tag }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.workflows.image.registry | default "registry.mender.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}:{{ .Values.workflows.image.tag }}
+{{- else }}
+        image: {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}:{{ .Values.workflows.image.tag }}
+{{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}

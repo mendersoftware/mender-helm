@@ -41,7 +41,11 @@ spec:
 
       containers:
       - name: deployments
-        image: {{ .Values.deployments.image.registry }}/{{ .Values.deployments.image.repository }}:{{ .Values.deployments.image.tag }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag }}
+{{- else }}
+        image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
+{{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.deployments.resources | indent 10 }}

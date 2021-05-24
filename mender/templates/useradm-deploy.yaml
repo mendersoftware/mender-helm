@@ -42,7 +42,11 @@ spec:
 
       containers:
       - name: useradm
-        image: {{ .Values.useradm.image.registry }}/{{ .Values.useradm.image.repository }}:{{ .Values.useradm.image.tag }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.useradm.image.registry | default "registry.mender.io" }}/{{ .Values.useradm.image.repository | default "mendersoftware/useradm-enterprise" }}:{{ .Values.useradm.image.tag }}
+{{- else }}
+        image: {{ .Values.useradm.image.registry | default "docker.io" }}/{{ .Values.useradm.image.repository | default "mendersoftware/useradm" }}:{{ .Values.useradm.image.tag }}
+{{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.useradm.resources | indent 10 }}

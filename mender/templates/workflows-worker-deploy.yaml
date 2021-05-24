@@ -41,7 +41,11 @@ spec:
 
       containers:
       - name: workflows
-        image: {{ .Values.workflows.image.registry }}/{{ .Values.workflows.image.repository }}-worker:{{ .Values.workflows.image.tag }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.workflows.image.registry | default "registry.mender.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}-worker:{{ .Values.workflows.image.tag }}
+{{- else }}
+        image: {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}-worker:{{ .Values.workflows.image.tag }}
+{{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
@@ -53,7 +57,7 @@ spec:
 {{- end }}
 
         env:
-        {{- if .Values.auditlogs.enabled }}
+        {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: HAVE_AUDITLOGS
           value: {{ .Values.auditlogs.enabled | quote }}
         {{- end }}
