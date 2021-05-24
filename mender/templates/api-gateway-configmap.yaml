@@ -1,0 +1,426 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-traefik
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: api-gateway-traefik
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+data:
+  traefik.yaml : |-
+    http:
+
+      #
+      # Routers
+      #
+      routers:
+
+        #
+        # auditlogs
+        #
+        auditlogs:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/auditlogs`)"
+          service: auditlogs
+          tls: true
+
+        #
+        # deployments
+        #
+        deployments:
+          entrypoints: https
+          middlewares:
+          - devauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deployments`)"
+          service: deployments
+          tls: true
+
+        deploymentsDL:
+          entrypoints: https
+          middlewares:
+          - sec-headers
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deployments/download`)"
+          service: deployments
+          tls: true
+
+        deploymentsMgmt:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deployments`)"
+          service: deployments
+          tls: true
+
+        #
+        # deviceauth
+        #
+        deviceauth:
+          entrypoints: https
+          middlewares:
+          - sec-headers
+          - compression
+          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/authentication`)"
+          service: deviceauth
+          tls: true
+
+        deviceauthMgmt:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devauth`)"
+          service: deviceauth
+          tls: true
+
+        #
+        # deviceconfig
+        #
+        deviceconfig:
+          entrypoints: https
+          middlewares:
+          - devauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deviceconfig`)"
+          service: deviceconfig
+          tls: true
+
+        deviceconfigMgmt:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconfig`)"
+          service: deviceconfig
+          tls: true
+
+        #
+        # deviceconnect
+        #
+        deviceconnect:
+          entrypoints: https
+          middlewares:
+          - devauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deviceconnect`)"
+          service: deviceconnect
+          tls: true
+
+        deviceconnectMgmt:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconnect`)"
+          service: deviceconnect
+          tls: true
+
+        #
+        # gui
+        #
+        gui:
+          entrypoints: https
+          middlewares:
+          - ensure-ui-path
+          - signup-redirect
+          - ui-stripprefix
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/`)"
+          service: gui
+          tls: true
+
+        #
+        # inventory
+        #
+        inventoryV1:
+          entrypoints: https
+          middlewares:
+          - devauth
+          - inventoryV1-replacepathregex
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/devices/v1/inventory`)"
+          service: inventory
+          tls: true
+
+        inventoryV2:
+          entrypoints: https
+          middlewares:
+          - devauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/devices/v2/inventory`)"
+          service: inventory
+          tls: true
+
+        inventoryMgmtV1:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - inventoryMgmtV1-replacepathregex
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/v1/inventory`)"
+          service: inventory
+          tls: true
+
+        inventoryMgmtV2:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/v2/inventory`)"
+          service: inventory
+          tls: true
+
+        #
+        # tenantadm
+        #
+        tenantadm:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/tenantadm`)"
+          service: tenantadm
+          tls: true
+
+        tenantadmSignup:
+          entrypoints: https
+          middlewares:
+          - sec-headers
+          - compression
+          rule: >-
+            Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants`) ||
+            Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants/trial`)
+          service: tenantadm
+          tls: true
+
+        #
+        # useradm
+        #
+        useradm:
+          entrypoints: https
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/useradm`)"
+          service: useradm
+          tls: true
+
+        useradmNoAuth:
+          entrypoints: https
+          middlewares:
+          - sec-headers
+          - compression
+          - json-error-responder4
+          rule: "Path(`/api/management/{ver:v[0-9]+}/useradm/auth/login`)||PathPrefix(`/api/management/{ver:v[0-9]+}/useradm/{ep:(oauth2|auth/password-reset|auth/verify-email|auth/plan-verify)}`)"
+          service: useradm
+          tls: true
+
+      #
+      # Services
+      #
+      services:
+
+        auditlogs:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.auditlogs.service.name }}:{{ .Values.auditlogs.service.port }}"
+
+        deviceauth:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.device_auth.service.name }}:{{ .Values.device_auth.service.port }}"
+
+        deviceconnect:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.deviceconnect.service.name }}:{{ .Values.deviceconnect.service.port }}"
+
+        deviceconfig:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.deviceconfig.service.name }}:{{ .Values.deviceconfig.service.port }}"
+
+        deployments:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}"
+
+        error-responder:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.gui.service.name }}:8080"
+
+        gui:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.gui.service.name }}:{{ .Values.gui.service.port }}"
+
+        inventory:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.inventory.service.name }}:{{ .Values.inventory.service.port }}"
+
+        tenantadm:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.tenantadm.service.name }}:{{ .Values.tenantadm.service.port }}"
+
+        useradm:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}"
+
+      #
+      # Middlewares
+      #
+      middlewares:
+
+        ui-stripprefix:
+          stripprefix:
+            prefixes: "/ui"
+
+        ensure-ui-path:
+          redirectregex:
+            regex: "^(https?://[^/]+)(/[a-z]*)?$"
+            replacement: "${1}/ui/"
+            permanent: true
+
+        signup-redirect:
+          redirectregex:
+            regex: "^(https://[^/]+)/signup"
+            replacement: "${1}/ui/#/signup"
+
+        sec-headers:
+          headers:
+            referrerPolicy: "no-referrer"
+            stsSeconds: 31536000
+            forceSTSHeader: true
+            stsPreload: true
+            stsIncludeSubdomains: true
+            browserXssFilter: true
+            customRequestHeaders:
+              "X-Forwarded-Proto": "https"
+
+        compression:
+          compress: true
+
+        devauth:
+          forwardAuth:
+            address: "http://{{ .Values.device_auth.service.name }}:{{ .Values.device_auth.service.port }}/api/internal/v1/devauth/tokens/verify"
+            authResponseHeaders: "X-MEN-RequestID"
+
+        userauth:
+          forwardAuth:
+            address: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}/api/internal/v1/useradm/auth/verify"
+            authResponseHeaders: "X-MEN-RequestID,X-MEN-RBAC-Inventory-Groups,X-MEN-RBAC-Deployments-Groups"
+
+        json-error-responder1:
+          errors:
+            service: error-responder
+            query: "/{status}.json"
+            status: "401-404"
+
+        json-error-responder2:
+          errors:
+            service: error-responder
+            query: "/{status}.json"
+            status: "500-504"
+
+        json-error-responder3:
+          errors:
+            service: error-responder
+            query: "/{status}.json"
+            status: "408"
+
+        json-error-responder4:
+          errors:
+            service: error-responder
+            query: "/{status}.json"
+            status: "429"
+
+        inventoryV1-replacepathregex:
+          replacepathregex:
+            regex: "^/api/devices/v1/inventory/(.*)"
+            replacement: "/api/0.1.0/attributes"
+
+        inventoryMgmtV1-replacepathregex:
+          replacepathregex:
+            regex: "^/api/management/v1/inventory/(.*)"
+            replacement: "/api/0.1.0/$1"
+
+    tls:
+      certificates:
+        - certFile: /etc/traefik/certs/cert.crt
+          keyFile: /etc/traefik/certs/private.key
+          stores:
+            - default
+

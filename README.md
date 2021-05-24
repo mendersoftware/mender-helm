@@ -55,8 +55,6 @@ global:
 
 api_gateway:
   certs:
-    dhparam: |-
-      LS0...
     cert: |-
       -----BEGIN CERTIFICATE-----
       MIIFcjCCBFq...
@@ -83,10 +81,9 @@ useradm:
       MIIEvgIBADA...
 ```
 
-You can generate your `dhparam`, `cert` and `key` for `api-gareway` using `openssl`:
+You can generate your `cert` and `key` for `api-gareway` using `openssl`:
 
 ```bash
-$ openssl dhparam -out dhparam.pem 2048
 $ openssl req -x509 -sha256 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) -keyout private.key -out certificate.crt -subj /CN="your.host.name"
 ```
 
@@ -157,8 +154,8 @@ The following table lists the parameters for the `api-gateway` component and the
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `api_gateway.enabled` | Enable the component | `true` |
 | `api_gateway.image.registry` | Docker image registry | `docker.io` |
-| `api_gateway.image.repository` | Docker image repository | `mendersoftware/api-gateway` |
-| `api_gateway.image.tag` | Docker image tag | `mender-2.7.0` |
+| `api_gateway.image.repository` | Docker image repository | `traefik` |
+| `api_gateway.image.tag` | Docker image tag | `v2.4` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
