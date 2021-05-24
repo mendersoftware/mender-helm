@@ -453,6 +453,32 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.service.port` | Port for the service | `8080` |
 | `deviceconnect.service.nodePort` | Node port for the service | `nil` |
 
+### Parameters: deviceconfig
+
+The following table lists the parameters for the `deviceconfig` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `deviceconfig.enabled` | Enable the component | `true` |
+| `deviceconfig.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `deviceconfig.image.registry` | Docker image registry | `docker.io` |
+| `deviceconfig.image.repository` | Docker image repository | `mendersoftware/deviceconfig` |
+| `deviceconfig.image.tag` | Docker image tag | `mender-2.7.0` |
+| `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deviceconfig.replicas` | Number of replicas | `1` |
+| `deviceconfig.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `deviceconfig.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `deviceconfig.resources.limits.memory` | Resources memory limit | `128M` |
+| `deviceconfig.resources.requests.cpu` | Resources CPU limit | `200m` |
+| `deviceconfig.resources.requests.memory` | Resources memory limit | `50M` |
+| `deviceconfig.service.name` | Name of the service | `mender-deviceconfig` |
+| `deviceconfig.service.annotations` | Annotations map for the service | `{}` |
+| `deviceconfig.service.type` | Service type | `ClusterIP` |
+| `deviceconfig.service.loadBalancerIP` | Service load balancer IP | `nil` |
+| `deviceconfig.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
+| `deviceconfig.service.port` | Port for the service | `8080` |
+| `deviceconfig.service.nodePort` | Node port for the service | `nil` |
+
 ## External services required
 
 - mongodb
