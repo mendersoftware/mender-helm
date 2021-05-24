@@ -61,6 +61,10 @@ spec:
         - name: HAVE_DEVICECONNECT
           value: {{ .Values.deviceconnect.enabled | quote }}
         {{- end }}
+        {{- if .Values.deviceconfig.enabled }}
+        - name: HAVE_DEVICECONFIG
+          value: {{ .Values.deviceconfig.enabled | quote }}
+        {{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/workflows-enterprise/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.

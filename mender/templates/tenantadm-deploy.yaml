@@ -57,6 +57,12 @@ spec:
             path: /api/internal/v1/tenantadm/alive
             port: 8080
           periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /api/internal/v1/tenantadm/alive
+            port: 8080
+          failureThreshold: 36
+          periodSeconds: 5
 
         volumeMounts:
         - name: rsa

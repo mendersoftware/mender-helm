@@ -61,10 +61,14 @@ spec:
           periodSeconds: 15
 
         env:
-        {{- if .Values.global.multitenant }}
-        - name: HAVE_MULTITENANT
-          value: {{ .Values.global.multitenant | quote }}
-        {{- end }}
+        - name: INTEGRATION_VERSION
+          value: "2.7.0"
+        - name: MENDER_VERSION
+          value: "2.6.0"
+        - name: MENDER_ARTIFACT_VERSION
+          value: "3.5.1"
+        - name: MENDER_DEB_PACKAGE_VERSION
+          value: "2.6.0"
         {{- if .Values.global.hosted }}
         - name: MENDER_HOSTED
           value: {{ .Values.global.hosted | quote }}
@@ -72,13 +76,15 @@ spec:
         {{- if .Values.global.enterprise }}
         - name: HAVE_ENTERPRISE
           value: {{ .Values.global.enterprise | quote }}
+        - name: HAVE_MULTITENANT
+          value: {{ .Values.global.enterprise | quote }}
         {{- end }}
-        - name: GATEWAY_IP
-          value: {{ .Values.gui.env.GATEWAY_IP | quote }}
-        - name: GATEWAY_PORT
-          value: {{ .Values.gui.env.GATEWAY_PORT | quote }}
         {{- if .Values.deviceconnect.enabled }}
         - name: HAVE_DEVICECONNECT
           value: {{ .Values.deviceconnect.enabled | quote }}
+        {{- end }}
+        {{- if .Values.deviceconfig.enabled }}
+        - name: HAVE_DEVICECCONFIG
+          value: {{ .Values.deviceconfig.enabled | quote }}
         {{- end }}
 {{- end }}

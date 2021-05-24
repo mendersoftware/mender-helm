@@ -1,9 +1,7 @@
 global:
   enterprise: true
   hosted: false
-  multitenant: true
   auditlogs: true
-  deviceconnect: true
   image:
     registry: registry.mender.io
     username: null
@@ -33,11 +31,11 @@ api_gateway:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
-      memory: 128M
+      cpu: 600m
+      memory: 1G
     requests:
-      cpu: 100m
-      memory: 50M
+      cpu: 600m
+      memory: 512M
   affinity: {}
   service:
     name: mender-api-gateway
@@ -57,11 +55,11 @@ deployments:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 300m
       memory: 128M
     requests:
-      cpu: 200m
-      memory: 50M
+      cpu: 300m
+      memory: 64M
   affinity: {}
   image:
     registry: registry.mender.io
@@ -76,6 +74,7 @@ deployments:
   env:
     DEPLOYMENTS_MIDDLEWARE: prod
     DEPLOYMENTS_AWS_TAG_ARTIFACT: true
+    DEPLOYMENTS_PRESIGN_SECRET: ""
 
 device_auth:
   enabled: true
@@ -83,11 +82,11 @@ device_auth:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 350m
       memory: 128M
     requests:
-      cpu: 100m
-      memory: 50M
+      cpu: 350m
+      memory: 128M
   affinity: {}
   image:
     registry: docker.io
@@ -129,9 +128,6 @@ gui:
     annotations: {}
     type: ClusterIP
     port: 80
-  env:
-    GATEWAY_IP: k8s.hosted.mender.io
-    GATEWAY_PORT: "443"
 
 inventory:
   enabled: true
@@ -139,11 +135,11 @@ inventory:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 300m
       memory: 128M
     requests:
-      cpu: 100m
-      memory: 50M
+      cpu: 300m
+      memory: 128M
   affinity: {}
   image:
     registry: registry.mender.io
@@ -163,11 +159,11 @@ tenantadm:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 150m
       memory: 128M
     requests:
-      cpu: 100m
-      memory: 50M
+      cpu: 150m
+      memory: 64M
   affinity: {}
   image:
     registry: registry.mender.io
@@ -191,11 +187,11 @@ useradm:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 150m
       memory: 128M
     requests:
-      cpu: 100m
-      memory: 50M
+      cpu: 150m
+      memory: 64M
   affinity: {}
   image:
     registry: registry.mender.io
@@ -221,11 +217,11 @@ workflows:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 100m
       memory: 128M
     requests:
-      cpu: 100m
-      memory: 50M
+      cpu: 10m
+      memory: 64M
   affinity: {}
   image:
     registry: registry.mender.io
@@ -244,11 +240,11 @@ create_artifact_worker:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
-      memory: 128M
+      cpu: 100m
+      memory: 1024M
     requests:
       cpu: 100m
-      memory: 50M
+      memory: 128M
   affinity: {}
   image:
     registry: docker.io
@@ -262,11 +258,11 @@ auditlogs:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 50m
       memory: 128M
     requests:
-      cpu: 200m
-      memory: 50M
+      cpu: 50m
+      memory: 128M
   affinity: {}
   image:
     registry: registry.mender.io
@@ -285,11 +281,11 @@ deviceconnect:
   replicas: 1
   resources:
     limits:
-      cpu: 500m
+      cpu: 100m
       memory: 128M
     requests:
-      cpu: 200m
-      memory: 50M
+      cpu: 100m
+      memory: 128M
   affinity: {}
   image:
     registry: docker.io
@@ -298,6 +294,29 @@ deviceconnect:
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deviceconnect
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+
+deviceconfig:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 128M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/deviceconfig
+    tag: mender-2.7.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-deviceconfig
     annotations: {}
     type: ClusterIP
     port: 8080
