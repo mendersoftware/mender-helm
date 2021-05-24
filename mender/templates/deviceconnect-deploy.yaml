@@ -63,6 +63,12 @@ spec:
             path: /api/internal/v1/deviceconnect/alive
             port: 8080
           periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /api/internal/v1/deviceconnect/alive
+            port: 8080
+          failureThreshold: 36
+          periodSeconds: 5
 
         env:
         # NATS uri
@@ -70,10 +76,10 @@ spec:
           value: "nats://nats:4222"
 
         # Enable audit logging
-        {{- if .Values.global.auditlogs }}
+{{- if .Values.global.auditlogs }}
         - name: DEVICECONNECT_ENABLE_AUDIT
           value: "true"
-        {{- end }}
+{{- end }}
 
         # Workflows orchestrator address
         - name: DEVICECONNECT_WORKFLOWS_URL

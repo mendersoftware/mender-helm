@@ -63,7 +63,9 @@ spec:
 {{ toYaml .Values.api_gateway.resources | indent 10 }}
 
         ports:
+{{- if .Values.api_gateway.env.SSL }}
         - containerPort: 443
+{{- end }}
         - containerPort: 80
 
         # Readiness/liveness probes

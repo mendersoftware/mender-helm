@@ -53,15 +53,21 @@ spec:
 {{- end }}
 
         # Readiness/liveness probes
-        # readinessProbe: FIXME: endpoint not yet implemented by the service
-        #    httpGet:
-        #      path: /api/internal/v1/auditlogs/health
-        #      port: 8080
-        #    periodSeconds: 15
+        readinessProbe:
+           httpGet:
+             path: /api/internal/v1/auditlogs/health/alive
+             port: 8080
+           periodSeconds: 15
         livenessProbe:
           httpGet:
             path: /api/internal/v1/auditlogs/health/alive
             port: 8080
+          periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /api/internal/v1/auditlogs/health/alive
+            port: 8080
+          failureThreshold: 36
           periodSeconds: 5
 
         env:

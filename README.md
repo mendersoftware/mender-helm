@@ -113,7 +113,6 @@ The following table lists the global parameters supported by the chart and their
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `global.enterprise` | Enable the enterprise features | `true` |
 | `global.hosted` | Enabled Hosted Mender specific features | `false` |
-| `global.multitenant` | Enable multi tenancy | `true` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
@@ -159,10 +158,10 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `api_gateway.resources.limits.cpu` | Resources CPU limit | `500m` |
-| `api_gateway.resources.limits.memory` | Resources memory limit | `128M` |
-| `api_gateway.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `api_gateway.resources.requests.memory` | Resources memory limit | `50M` |
+| `api_gateway.resources.limits.cpu` | Resources CPU limit | `600m` |
+| `api_gateway.resources.limits.memory` | Resources memory limit | `1G` |
+| `api_gateway.resources.requests.cpu` | Resources CPU limit | `600m` |
+| `api_gateway.resources.requests.memory` | Resources memory limit | `512M` |
 | `api_gateway.service.name` | Name of the service | `mender-api-gateway` |
 | `api_gateway.service.annotations` | Annotations map for the service | `{}` |
 | `api_gateway.service.type` | Service type | `ClusterIP` |
@@ -191,10 +190,10 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `deployments.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `deployments.resources.limits.cpu` | Resources CPU limit | `300m` |
 | `deployments.resources.limits.memory` | Resources memory limit | `128M` |
-| `deployments.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `deployments.resources.requests.memory` | Resources memory limit | `50M` |
+| `deployments.resources.requests.cpu` | Resources CPU limit | `300m` |
+| `deployments.resources.requests.memory` | Resources memory limit | `64M` |
 | `deployments.service.name` | Name of the service | `mender-deployments` |
 | `deployments.service.annotations` | Annotations map for the service | `{}` |
 | `deployments.service.type` | Service type | `ClusterIP` |
@@ -219,10 +218,10 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `device_auth.replicas` | Number of replicas | `1` |
 | `device_auth.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `device_auth.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `device_auth.resources.limits.cpu` | Resources CPU limit | `350m` |
 | `device_auth.resources.limits.memory` | Resources memory limit | `128M` |
-| `device_auth.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `device_auth.resources.requests.memory` | Resources memory limit | `50M` |
+| `device_auth.resources.requests.cpu` | Resources CPU limit | `350m` |
+| `device_auth.resources.requests.memory` | Resources memory limit | `128M` |
 | `device_auth.service.name` | Name of the service | `mender-device-auth` |
 | `device_auth.service.annotations` | Annotations map for the service | `{}` |
 | `device_auth.service.type` | Service type | `ClusterIP` |
@@ -254,7 +253,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.resources.limits.cpu` | Resources CPU limit | `20m` |
 | `gui.resources.limits.memory` | Resources memory limit | `64M` |
 | `gui.resources.requests.cpu` | Resources CPU limit | `5m` |
-| `gui.resources.requests.memory` | Resources memory limit | `16m` |
+| `gui.resources.requests.memory` | Resources memory limit | `16M` |
 | `gui.service.name` | Name of the service | `mender-gui` |
 | `gui.service.annotations` | Annotations map for the service | `{}` |
 | `gui.service.type` | Service type | `ClusterIP` |
@@ -262,8 +261,6 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `gui.service.port` | Port for the service | `80` |
 | `gui.service.nodePort` | Node port for the service | `nil` |
-| `gui.env.GATEWAY_IP` | Set the GATEWAY_IP variable | `k8s.hosted.mender.io` |
-| `gui.env.GATEWAY_PORT` | Set the GATEWAY_PORT variable | `443` |
 
 ### Parameters: inventory
 
@@ -279,10 +276,10 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.replicas` | Number of replicas | `1` |
 | `inventory.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `inventory.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `inventory.resources.limits.cpu` | Resources CPU limit | `300m` |
 | `inventory.resources.limits.memory` | Resources memory limit | `128M` |
-| `inventory.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `inventory.resources.requests.memory` | Resources memory limit | `50M` |
+| `inventory.resources.requests.cpu` | Resources CPU limit | `300m` |
+| `inventory.resources.requests.memory` | Resources memory limit | `128M` |
 | `inventory.service.name` | Name of the service | `mender-inventory` |
 | `inventory.service.annotations` | Annotations map for the service | `{}` |
 | `inventory.service.type` | Service type | `ClusterIP` |
@@ -305,10 +302,10 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `tenantadm.replicas` | Number of replicas | `1` |
 | `tenantadm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `tenantadm.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `tenantadm.resources.limits.cpu` | Resources CPU limit | `150m` |
 | `tenantadm.resources.limits.memory` | Resources memory limit | `128M` |
-| `tenantadm.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `tenantadm.resources.requests.memory` | Resources memory limit | `50M` |
+| `tenantadm.resources.requests.cpu` | Resources CPU limit | `150m` |
+| `tenantadm.resources.requests.memory` | Resources memory limit | `64M` |
 | `tenantadm.service.name` | Name of the service | `mender-tenantadm` |
 | `tenantadm.service.annotations` | Annotations map for the service | `{}` |
 | `tenantadm.service.type` | Service type | `ClusterIP` |
@@ -335,10 +332,10 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `useradm.replicas` | Number of replicas | `1` |
 | `useradm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `useradm.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `useradm.resources.limits.cpu` | Resources CPU limit | `150m` |
 | `useradm.resources.limits.memory` | Resources memory limit | `128M` |
-| `useradm.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `useradm.resources.requests.memory` | Resources memory limit | `50M` |
+| `useradm.resources.requests.cpu` | Resources CPU limit | `150m` |
+| `useradm.resources.requests.memory` | Resources memory limit | `64M` |
 | `useradm.service.name` | Name of the service | `mender-useradm` |
 | `useradm.service.annotations` | Annotations map for the service | `{}` |
 | `useradm.service.type` | Service type | `ClusterIP` |
@@ -367,10 +364,10 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `workflows.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `workflows.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `workflows.resources.limits.memory` | Resources memory limit | `128M` |
-| `workflows.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `workflows.resources.requests.memory` | Resources memory limit | `50M` |
+| `workflows.resources.requests.cpu` | Resources CPU limit | `10m` |
+| `workflows.resources.requests.memory` | Resources memory limit | `64M` |
 | `workflows.service.name` | Name of the service | `mender-workflows-server` |
 | `workflows.service.annotations` | Annotations map for the service | `{}` |
 | `workflows.service.type` | Service type | `ClusterIP` |
@@ -393,10 +390,10 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
 | `create_artifact_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `create_artifact_worker.resources.limits.cpu` | Resources CPU limit | `500m` |
-| `create_artifact_worker.resources.limits.memory` | Resources memory limit | `128M` |
-| `create_artifact_worker.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `create_artifact_worker.resources.requests.memory` | Resources memory limit | `50M` |
+| `create_artifact_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
+| `create_artifact_worker.resources.limits.memory` | Resources memory limit | `1024M` |
+| `create_artifact_worker.resources.requests.cpu` | Resources CPU limit | `100m` |
+| `create_artifact_worker.resources.requests.memory` | Resources memory limit | `128M` |
 
 ### Parameters: auditlogs
 
@@ -412,10 +409,10 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `auditlogs.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `auditlogs.resources.limits.cpu` | Resources CPU limit | `50m` |
 | `auditlogs.resources.limits.memory` | Resources memory limit | `128M` |
-| `auditlogs.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `auditlogs.resources.requests.memory` | Resources memory limit | `50M` |
+| `auditlogs.resources.requests.cpu` | Resources CPU limit | `50m` |
+| `auditlogs.resources.requests.memory` | Resources memory limit | `128M` |
 | `auditlogs.service.name` | Name of the service | `mender-auditlogs` |
 | `auditlogs.service.annotations` | Annotations map for the service | `{}` |
 | `auditlogs.service.type` | Service type | `ClusterIP` |
@@ -438,10 +435,10 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconnect.replicas` | Number of replicas | `1` |
 | `deviceconnect.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `deviceconnect.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `deviceconnect.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `deviceconnect.resources.limits.memory` | Resources memory limit | `128M` |
-| `deviceconnect.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `deviceconnect.resources.requests.memory` | Resources memory limit | `50M` |
+| `deviceconnect.resources.requests.cpu` | Resources CPU limit | `100m` |
+| `deviceconnect.resources.requests.memory` | Resources memory limit | `128M` |
 | `deviceconnect.service.name` | Name of the service | `mender-deviceconnect` |
 | `deviceconnect.service.annotations` | Annotations map for the service | `{}` |
 | `deviceconnect.service.type` | Service type | `ClusterIP` |
@@ -464,10 +461,10 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconfig.replicas` | Number of replicas | `1` |
 | `deviceconfig.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `deviceconfig.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `deviceconfig.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `deviceconfig.resources.limits.memory` | Resources memory limit | `128M` |
-| `deviceconfig.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `deviceconfig.resources.requests.memory` | Resources memory limit | `50M` |
+| `deviceconfig.resources.requests.cpu` | Resources CPU limit | `100m` |
+| `deviceconfig.resources.requests.memory` | Resources memory limit | `128M` |
 | `deviceconfig.service.name` | Name of the service | `mender-deviceconfig` |
 | `deviceconfig.service.annotations` | Annotations map for the service | `{}` |
 | `deviceconfig.service.type` | Service type | `ClusterIP` |
