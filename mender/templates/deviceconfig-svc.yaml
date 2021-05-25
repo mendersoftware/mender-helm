@@ -1,0 +1,40 @@
+{{- if .Values.deviceconfig.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deviceconfig.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: deviceconfig-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: deviceconfig
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.deviceconfig.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.deviceconfig.service.type }}
+  {{- if and (eq .Values.deviceconfig.service.type "ClusterIP") .Values.deviceconfig.service.clusterIP }}
+  clusterIP: {{ .Values.deviceconfig.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.deviceconfig.service.type "LoadBalancer") .Values.deviceconfig.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.deviceconfig.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.deviceconfig.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.deviceconfig.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.deviceconfig.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.deviceconfig.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.deviceconfig.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.deviceconfig.service.nodePort }}
+    nodePort: {{ .Values.deviceconfig.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: deviceconfig
+{{- end }}

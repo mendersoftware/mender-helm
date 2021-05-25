@@ -63,6 +63,12 @@ spec:
             path: /api/internal/v1/devauth/alive
             port: 8080
           periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /api/internal/v1/devauth/alive
+            port: 8080
+          failureThreshold: 36
+          periodSeconds: 5
 
         volumeMounts:
         - name: rsa
@@ -81,6 +87,8 @@ spec:
         - name: DEVICEAUTH_MIDDLEWARE
           value: {{ .Values.device_auth.env.DEVICEAUTH_MIDDLEWARE | quote }}
         {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
+        - name: DEVICEAUTH_HAVE_ADDONS
+          value: "true"
         - name: DEVICEAUTH_TENANTADM_ADDR
           value: {{ .Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
         {{- end }}

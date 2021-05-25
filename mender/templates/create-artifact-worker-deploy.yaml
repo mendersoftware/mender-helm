@@ -57,6 +57,8 @@ spec:
         env:
         - name: CREATE_ARTIFACT_GATEWAY_URL
           value: https://{{ .Values.api_gateway.service.name }}
+        - name: CREATE_ARTIFACT_SKIPVERIFY
+          value: "1"
         - name: CREATE_ARTIFACT_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
         envFrom:
