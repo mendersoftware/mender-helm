@@ -1,21 +1,21 @@
-{{- if .Values.deviceconnect.enabled }}
+{{- if .Values.deviceconfig.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deviceconnect
+  name: deviceconfig
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: deviceconnect
+    app.kubernetes.io/name: deviceconfig
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: deviceconnect
+    app.kubernetes.io/component: deviceconfig
     app.kubernetes.io/part-of: mender
     helm.sh/chart: "{{ .Chart.Name }}"
 spec:
-  replicas: {{ .Values.deviceconnect.replicas }}
+  replicas: {{ .Values.deviceconfig.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: deviceconnect
+      app.kubernetes.io/name: deviceconfig
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -33,20 +33,20 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: deviceconnect
+        app.kubernetes.io/name: deviceconfig
     spec:
-      {{- with .Values.deviceconnect.affinity }}
+      {{- with .Values.deviceconfig.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 
       containers:
-      - name: deviceconnect
-      ***REMOVED*** {{ .Values.deviceconnect.image.registry }}/{{ .Values.deviceconnect.image.repository }}:{{ .Values.deviceconnect.image.tag }}
+      - name: deviceconfig
+      ***REMOVED*** {{ .Values.deviceconfig.image.registry }}/{{ .Values.deviceconfig.image.repository }}:{{ .Values.deviceconfig.image.tag }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
-{{ toYaml .Values.deviceconnect.resources | indent 10 }}
+{{ toYaml .Values.deviceconfig.resources | indent 10 }}
 
-{{- if .Values.deviceconnect.automigrate }}
+{{- if .Values.deviceconfig.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
         args: ["server"]
@@ -55,40 +55,36 @@ spec:
         # Readiness/liveness probes
         readinessProbe:
           httpGet:
-            path: /api/internal/v1/deviceconnect/health
+            path: /api/internal/v1/deviceconfig/health
             port: 8080
           periodSeconds: 15
         livenessProbe:
           httpGet:
-            path: /api/internal/v1/deviceconnect/alive
+            path: /api/internal/v1/deviceconfig/alive
             port: 8080
           periodSeconds: 5
         startupProbe:
           httpGet:
-            path: /api/internal/v1/deviceconnect/alive
+            path: /api/internal/v1/deviceconfig/alive
             port: 8080
           failureThreshold: 36
           periodSeconds: 5
 
         env:
-        # NATS uri
-        - name: DEVICECONNECT_NATS_URI
-          value: "nats://nats:4222"
-
         # Enable audit logging
 {{- if .Values.global.auditlogs }}
-        - name: DEVICECONNECT_ENABLE_AUDIT
+        - name: DEVICECONFIG_ENABLE_AUDIT
           value: "true"
 {{- end }}
 
         # Workflows orchestrator address
-        - name: DEVICECONNECT_WORKFLOWS_URL
+        - name: DEVICECONFIG_WORKFLOWS_URL
           value: http://mender-workflows-server:8080/
 
-        # Supported configuration settings: https://github.com/mendersoftware/deviceconnect/blob/master/config.yaml
+        # Supported configuration settings: https://github.com/mendersoftware/deviceconfig/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
-        - prefix: DEVICECONNECT_
+        - prefix: DEVICECONFIG_
           secretRef:
             name: mongodb-common
 

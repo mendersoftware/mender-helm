@@ -8,14 +8,14 @@ Using `helm3`:
 
 ```bash
 $ make package
-$ helm install mender ./mender-2.6.0.tgz
+$ helm install mender ./mender-2.7.0.tgz
 ```
 
 or using `helm2`:
 
 ```bash
 $ make package
-$ helm install --name mender ./mender-2.6.0.tgz
+$ helm install --name mender ./mender-2.7.0.tgz
 ```
 
 ## Introduction
@@ -32,13 +32,13 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 To install the chart with the release name `my-release` using `helm3`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender-2.6.0.tgz
+$ helm install my-release -f values.yaml ./mender-2.7.0.tgz
 ```
 
 or using `helm2`:
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-2.6.0.tgz
+$ helm install --name my-release -f values.yaml ./mender-2.7.0.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -55,8 +55,6 @@ This is the minimum `values.yaml` file needed to install Mender:
 
 ***REMOVED***
 ***REMOVED***
-    dhparam: |-
-      LS0...
 ***REMOVED***
 ***REMOVED***
       MIIFcjCCBFq...
@@ -83,10 +81,9 @@ This is the minimum `values.yaml` file needed to install Mender:
       MIIEvgIBADA...
 ```
 
-You can generate your `dhparam`, `cert` and `key` for `api-gareway` using `openssl`:
+You can generate your `cert` and `key` for `api-gareway` using `openssl`:
 
 ```bash
-$ openssl dhparam -out dhparam.pem 2048
 $ openssl req -x509 -sha256 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) -keyout private.key -out certificate.crt -subj /CN="your.host.name"
 ```
 
@@ -116,7 +113,6 @@ The following table lists the global parameters supported by the chart and their
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `global.enterprise` | Enable the enterprise features | `true` |
 | `global.hosted` | Enabled Hosted Mender specific features | `false` |
-| `global.multitenant` | Enable multi tenancy | `true` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
@@ -127,6 +123,8 @@ The following table lists the global parameters supported by the chart and their
 | `global.s3.AWS_REGION` | AWS S3 region | `us-east-1` |
 | `global.s3.AWS_ACCESS_KEY_ID` | AWS S3 / MinIO key ID | `myaccesskey` |
 | `global.s3.AWS_SECRET_ACCESS_KEY` | AWS S3 / MinIO access key | `mysecretkey` |
+| `global.s3.AWS_FORCE_PATH_STYLE` | Set the AWS S3 URI style to path | `true` |
+| `global.s3.AWS_TAG_ARTIFACT` | Tag the artifact in the AWS S3 storage service with the tenant ID | `true` |
 | `global.smtp.EMAIL_SENDER` | SMTP email sender | `root@localhost` |
 | `global.smtp.SMTP_ADDRESS` | SMTP server address | `smtp.mailtrap.io` |
 | `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
@@ -138,13 +136,13 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```bash
 $ helm install my-release \
   --set mongodbRootPassword=secretpassword,mongodbUsername=my-user,mongodbPassword=my-password,mongodbDatabase=my-database \
-  ./mender-2.6.0.tgz
+  ./mender-2.7.0.tgz
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-2.6.0.tgz
+$ helm install --name my-release -f values.yaml ./mender-2.7.0.tgz
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -156,16 +154,17 @@ The following table lists the parameters for the `api-gateway` component and the
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `api_gateway.enabled` | Enable the component | `true` |
+| `api_gateway.dashboard` | Enable the Traefik dashboard (port 8080) | `false` |
 | `api_gateway.image.registry` | Docker image registry | `docker.io` |
-| `api_gateway.image.repository` | Docker image repository | `mendersoftware/api-gateway` |
-| `api_gateway.image.tag` | Docker image tag | `mender-2.6.0` |
+| `api_gateway.image.repository` | Docker image repository | `traefik` |
+| `api_gateway.image.tag` | Docker image tag | `v2.4` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `api_gateway.resources.limits.cpu` | Resources CPU limit | `500m` |
-| `api_gateway.resources.limits.memory` | Resources memory limit | `128M` |
-| `api_gateway.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `api_gateway.resources.requests.memory` | Resources memory limit | `50M` |
+| `api_gateway.resources.limits.cpu` | Resources CPU limit | `600m` |
+| `api_gateway.resources.limits.memory` | Resources memory limit | `1G` |
+| `api_gateway.resources.requests.cpu` | Resources CPU limit | `600m` |
+| `api_gateway.resources.requests.memory` | Resources memory limit | `512M` |
 | `api_gateway.service.name` | Name of the service | `mender-api-gateway` |
 | `api_gateway.service.annotations` | Annotations map for the service | `{}` |
 | `api_gateway.service.type` | Service type | `ClusterIP` |
@@ -175,9 +174,6 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpsPort` | Port for the HTTPS service | `443` |
 | `api_gateway.service.httpNodePort` | Node port for the HTTP service | `nil` |
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
-| `api_gateway.env.ALLOWED_HOSTS` | Set the ALLOWED_HOSTS variable | `[a-zA-Z0-9:.]+` |
-| `api_gateway.env.DNS_NAMES` | Set the DNS_NAMES variable | `mender-tenantadm mender-useradm mender-inventory mender-deployments mender-device-auth mender-gui` |
-| `api_gateway.env.IS_LOGS_FORMAT_JSON` | Set the IS_LOGS_FORMAT_JSON variable | `false` |
 | `api_gateway.env.SSL` | SSL termination flag | `true` |
 
 ### Parameters: deployments
@@ -188,16 +184,16 @@ The following table lists the parameters for the `deployments` component and the
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `deployments.enabled` | Enable the component | `true` |
 | `deployments.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `deployments.image.registry` | Docker image registry | `registry.mender.io` |
-| `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` |
-| `deployments.image.tag` | Docker image tag | `mender-2.6.0` |
+| `deployments.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` if `global.enterprise` is true, else `mendersoftware/deployments` |
+| `deployments.image.tag` | Docker image tag | `mender-2.7.0` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `deployments.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `deployments.resources.limits.cpu` | Resources CPU limit | `300m` |
 | `deployments.resources.limits.memory` | Resources memory limit | `128M` |
-| `deployments.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `deployments.resources.requests.memory` | Resources memory limit | `50M` |
+| `deployments.resources.requests.cpu` | Resources CPU limit | `300m` |
+| `deployments.resources.requests.memory` | Resources memory limit | `64M` |
 | `deployments.service.name` | Name of the service | `mender-deployments` |
 | `deployments.service.annotations` | Annotations map for the service | `{}` |
 | `deployments.service.type` | Service type | `ClusterIP` |
@@ -206,7 +202,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.service.port` | Port for the service | `8080` |
 | `deployments.service.nodePort` | Node port for the service | `nil` |
 | `deployments.env.DEPLOYMENTS_MIDDLEWARE` | Set the DEPLOYMENTS_MIDDLEWARE variable | `prod` |
-| `deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT` | Set the DEPLOYMENTS_AWS_TAG_ARTIFACT variable | `true` |
+| `deployments.env.DEPLOYMENTS_PRESIGN_SECRET` | Set the secret for generating signed url, must be a base64 encoded secret. | random value at start-up time |
 
 ### Parameters: device-auth
 
@@ -218,14 +214,14 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `device_auth.image.registry` | Docker image registry | `docker.io` |
 | `device_auth.image.repository` | Docker image repository | `mendersoftware/deviceauth` |
-| `device_auth.image.tag` | Docker image tag | `mender-2.6.0` |
+| `device_auth.image.tag` | Docker image tag | `mender-2.7.0` |
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `device_auth.replicas` | Number of replicas | `1` |
 | `device_auth.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `device_auth.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `device_auth.resources.limits.cpu` | Resources CPU limit | `350m` |
 | `device_auth.resources.limits.memory` | Resources memory limit | `128M` |
-| `device_auth.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `device_auth.resources.requests.memory` | Resources memory limit | `50M` |
+| `device_auth.resources.requests.cpu` | Resources CPU limit | `350m` |
+| `device_auth.resources.requests.memory` | Resources memory limit | `128M` |
 | `device_auth.service.name` | Name of the service | `mender-device-auth` |
 | `device_auth.service.annotations` | Annotations map for the service | `{}` |
 | `device_auth.service.type` | Service type | `ClusterIP` |
@@ -250,14 +246,14 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.enabled` | Enable the component | `true` |
 | `gui.image.registry` | Docker image registry | `docker.io` |
 | `gui.image.repository` | Docker image repository | `mendersoftware/gui` |
-| `gui.image.tag` | Docker image tag | `mender-2.6.0` |
+| `gui.image.tag` | Docker image tag | `mender-2.7.0` |
 | `gui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `gui.replicas` | Number of replicas | `1` |
 | `gui.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `gui.resources.limits.cpu` | Resources CPU limit | `20m` |
 | `gui.resources.limits.memory` | Resources memory limit | `64M` |
 | `gui.resources.requests.cpu` | Resources CPU limit | `5m` |
-| `gui.resources.requests.memory` | Resources memory limit | `16m` |
+| `gui.resources.requests.memory` | Resources memory limit | `16M` |
 | `gui.service.name` | Name of the service | `mender-gui` |
 | `gui.service.annotations` | Annotations map for the service | `{}` |
 | `gui.service.type` | Service type | `ClusterIP` |
@@ -265,8 +261,6 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `gui.service.port` | Port for the service | `80` |
 | `gui.service.nodePort` | Node port for the service | `nil` |
-| `gui.env.GATEWAY_IP` | Set the GATEWAY_IP variable | `k8s.hosted.mender.io` |
-| `gui.env.GATEWAY_PORT` | Set the GATEWAY_PORT variable | `443` |
 
 ### Parameters: inventory
 
@@ -276,16 +270,16 @@ The following table lists the parameters for the `inventory` component and their
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `inventory.enabled` | Enable the component | `true` |
 | `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `inventory.image.registry` | Docker image registry | `docker.io` |
-| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` |
-| `inventory.image.tag` | Docker image tag | `mender-2.6.0` |
+| `inventory.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` if `global.enterprise` is true, else `mendersoftware/inventory` |
+| `inventory.image.tag` | Docker image tag | `mender-2.7.0` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.replicas` | Number of replicas | `1` |
 | `inventory.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `inventory.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `inventory.resources.limits.cpu` | Resources CPU limit | `300m` |
 | `inventory.resources.limits.memory` | Resources memory limit | `128M` |
-| `inventory.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `inventory.resources.requests.memory` | Resources memory limit | `50M` |
+| `inventory.resources.requests.cpu` | Resources CPU limit | `300m` |
+| `inventory.resources.requests.memory` | Resources memory limit | `128M` |
 | `inventory.service.name` | Name of the service | `mender-inventory` |
 | `inventory.service.annotations` | Annotations map for the service | `{}` |
 | `inventory.service.type` | Service type | `ClusterIP` |
@@ -304,14 +298,14 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.enabled` | Enable the component | `true` |
 | `tenantadm.image.registry` | Docker image registry | `registry.mender.io` |
 | `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm-enterprise` |
-| `tenantadm.image.tag` | Docker image tag | `mender-2.6.0` |
+| `tenantadm.image.tag` | Docker image tag | `mender-2.7.0` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `tenantadm.replicas` | Number of replicas | `1` |
 | `tenantadm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `tenantadm.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `tenantadm.resources.limits.cpu` | Resources CPU limit | `150m` |
 | `tenantadm.resources.limits.memory` | Resources memory limit | `128M` |
-| `tenantadm.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `tenantadm.resources.requests.memory` | Resources memory limit | `50M` |
+| `tenantadm.resources.requests.cpu` | Resources CPU limit | `150m` |
+| `tenantadm.resources.requests.memory` | Resources memory limit | `64M` |
 | `tenantadm.service.name` | Name of the service | `mender-tenantadm` |
 | `tenantadm.service.annotations` | Annotations map for the service | `{}` |
 | `tenantadm.service.type` | Service type | `ClusterIP` |
@@ -332,16 +326,16 @@ The following table lists the parameters for the `useradm` component and their d
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `useradm.enabled` | Enable the component | `true` |
 | `useradm.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `useradm.image.registry` | Docker image registry | `registry.mender.io` |
-| `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` |
-| `useradm.image.tag` | Docker image tag | `mender-2.6.0` |
+| `useradm.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
+| `useradm.image.tag` | Docker image tag | `mender-2.7.0` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `useradm.replicas` | Number of replicas | `1` |
 | `useradm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `useradm.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `useradm.resources.limits.cpu` | Resources CPU limit | `150m` |
 | `useradm.resources.limits.memory` | Resources memory limit | `128M` |
-| `useradm.resources.requests.cpu` | Resources CPU limit | `100m` |
-| `useradm.resources.requests.memory` | Resources memory limit | `50M` |
+| `useradm.resources.requests.cpu` | Resources CPU limit | `150m` |
+| `useradm.resources.requests.memory` | Resources memory limit | `64M` |
 | `useradm.service.name` | Name of the service | `mender-useradm` |
 | `useradm.service.annotations` | Annotations map for the service | `{}` |
 | `useradm.service.type` | Service type | `ClusterIP` |
@@ -364,16 +358,16 @@ The following table lists the parameters for the `workflows-server` component an
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `workflows.enabled` | Enable the component | `true` |
 | `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `workflows.image.registry` | Docker image registry | `docker.io` |
-| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` |
-| `workflows.image.tag` | Docker image tag | `mender-2.6.0` |
+| `workflows.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
+| `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` if `global.enterprise` is true, else `mendersoftware/workflows` |
+| `workflows.image.tag` | Docker image tag | `mender-2.7.0` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `workflows.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `workflows.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `workflows.resources.limits.memory` | Resources memory limit | `128M` |
-| `workflows.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `workflows.resources.requests.memory` | Resources memory limit | `50M` |
+| `workflows.resources.requests.cpu` | Resources CPU limit | `10m` |
+| `workflows.resources.requests.memory` | Resources memory limit | `64M` |
 | `workflows.service.name` | Name of the service | `mender-workflows-server` |
 | `workflows.service.annotations` | Annotations map for the service | `{}` |
 | `workflows.service.type` | Service type | `ClusterIP` |
@@ -392,14 +386,14 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `create_artifact_worker.image.registry` | Docker image registry | `docker.io` |
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
-| `create_artifact_worker.image.tag` | Docker image tag | `mender-2.6.0` |
+| `create_artifact_worker.image.tag` | Docker image tag | `mender-2.7.0` |
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
 | `create_artifact_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `create_artifact_worker.resources.limits.cpu` | Resources CPU limit | `500m` |
-| `create_artifact_worker.resources.limits.memory` | Resources memory limit | `128M` |
-| `create_artifact_worker.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `create_artifact_worker.resources.requests.memory` | Resources memory limit | `50M` |
+| `create_artifact_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
+| `create_artifact_worker.resources.limits.memory` | Resources memory limit | `1024M` |
+| `create_artifact_worker.resources.requests.cpu` | Resources CPU limit | `100m` |
+| `create_artifact_worker.resources.requests.memory` | Resources memory limit | `128M` |
 
 ### Parameters: auditlogs
 
@@ -411,14 +405,14 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `auditlogs.image.registry` | Docker image registry | `registry.mender.io` |
 | `auditlogs.image.repository` | Docker image repository | `mendersoftware/auditlogs` |
-| `auditlogs.image.tag` | Docker image tag | `mender-2.6.0` |
+| `auditlogs.image.tag` | Docker image tag | `mender-2.7.0` |
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `auditlogs.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `auditlogs.resources.limits.cpu` | Resources CPU limit | `50m` |
 | `auditlogs.resources.limits.memory` | Resources memory limit | `128M` |
-| `auditlogs.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `auditlogs.resources.requests.memory` | Resources memory limit | `50M` |
+| `auditlogs.resources.requests.cpu` | Resources CPU limit | `50m` |
+| `auditlogs.resources.requests.memory` | Resources memory limit | `128M` |
 | `auditlogs.service.name` | Name of the service | `mender-auditlogs` |
 | `auditlogs.service.annotations` | Annotations map for the service | `{}` |
 | `auditlogs.service.type` | Service type | `ClusterIP` |
@@ -437,14 +431,14 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deviceconnect.image.registry` | Docker image registry | `docker.io` |
 | `deviceconnect.image.repository` | Docker image repository | `mendersoftware/deviceconnect` |
-| `deviceconnect.image.tag` | Docker image tag | `mender-2.6.0` |
+| `deviceconnect.image.tag` | Docker image tag | `mender-2.7.0` |
 | `deviceconnect.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconnect.replicas` | Number of replicas | `1` |
 | `deviceconnect.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `deviceconnect.resources.limits.cpu` | Resources CPU limit | `500m` |
+| `deviceconnect.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `deviceconnect.resources.limits.memory` | Resources memory limit | `128M` |
-| `deviceconnect.resources.requests.cpu` | Resources CPU limit | `200m` |
-| `deviceconnect.resources.requests.memory` | Resources memory limit | `50M` |
+| `deviceconnect.resources.requests.cpu` | Resources CPU limit | `100m` |
+| `deviceconnect.resources.requests.memory` | Resources memory limit | `128M` |
 | `deviceconnect.service.name` | Name of the service | `mender-deviceconnect` |
 | `deviceconnect.service.annotations` | Annotations map for the service | `{}` |
 | `deviceconnect.service.type` | Service type | `ClusterIP` |
@@ -452,6 +446,32 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `deviceconnect.service.port` | Port for the service | `8080` |
 | `deviceconnect.service.nodePort` | Node port for the service | `nil` |
+
+### Parameters: deviceconfig
+
+The following table lists the parameters for the `deviceconfig` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `deviceconfig.enabled` | Enable the component | `true` |
+| `deviceconfig.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `deviceconfig.image.registry` | Docker image registry | `docker.io` |
+| `deviceconfig.image.repository` | Docker image repository | `mendersoftware/deviceconfig` |
+| `deviceconfig.image.tag` | Docker image tag | `mender-2.7.0` |
+| `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deviceconfig.replicas` | Number of replicas | `1` |
+| `deviceconfig.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `deviceconfig.resources.limits.cpu` | Resources CPU limit | `100m` |
+| `deviceconfig.resources.limits.memory` | Resources memory limit | `128M` |
+| `deviceconfig.resources.requests.cpu` | Resources CPU limit | `100m` |
+| `deviceconfig.resources.requests.memory` | Resources memory limit | `128M` |
+| `deviceconfig.service.name` | Name of the service | `mender-deviceconfig` |
+| `deviceconfig.service.annotations` | Annotations map for the service | `{}` |
+| `deviceconfig.service.type` | Service type | `ClusterIP` |
+| `deviceconfig.service.loadBalancerIP` | Service load balancer IP | `nil` |
+| `deviceconfig.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
+| `deviceconfig.service.port` | Port for the service | `8080` |
+| `deviceconfig.service.nodePort` | Node port for the service | `nil` |
 
 ## External services required
 

@@ -41,7 +41,11 @@ spec:
 
       containers:
       - name: deployments
-      ***REMOVED*** {{ .Values.deployments.image.registry }}/{{ .Values.deployments.image.repository }}:{{ .Values.deployments.image.tag }}
+{{- if .Values.global.enterprise }}
+      ***REMOVED*** {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag }}
+{{- else }}
+      ***REMOVED*** {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
+{{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.deployments.resources | indent 10 }}
@@ -63,12 +67,24 @@ spec:
             path: /api/internal/v1/deployments/alive
             port: 8080
           periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /api/internal/v1/deployments/alive
+            port: 8080
+          failureThreshold: 36
+          periodSeconds: 5
 
         env:
         - name: DEPLOYMENTS_MIDDLEWARE
           value: {{ .Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
         - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
           value: {{ .Values.deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT | quote }}
+        - name: DEPLOYMENTS_PRESIGN_SECRET
+          value: {{ .Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET | quote }}
+{{- if .Values.global.auditlogs }}
+        - name: DEPLOYMENTS_ENABLE_AUDIT
+          value: "true"
+{{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.

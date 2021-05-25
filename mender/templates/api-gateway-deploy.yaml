@@ -43,11 +43,34 @@ spec:
       - name: api-gateway
       ***REMOVED*** {{ .Values.api_gateway.image.registry }}/{{ .Values.api_gateway.image.repository }}:{{ .Values.api_gateway.image.tag }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        args:
+            - --accesslog=true
+            - --accesslog.format=json
+{{- if .Values.api_gateway.dashboard }}
+            - --api=true
+            - --api.dashboard=true
+            - --api.insecure=true
+{{- end }}
+            - --entrypoints.http.address=:80
+            - --entrypoints.https.address=:443
+            - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
+            - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
+            - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
+            - --entrypoints.http.http.redirections.entryPoint.to=https
+            - --entrypoints.http.http.redirections.entryPoint.scheme=https
+            - --metrics=true
+            - --metrics.prometheus=true
+            - --metrics.prometheus.buckets=0.100000,0.300000,1.200000,5.000000
+            - --metrics.prometheus.addEntryPointsLabels=true
+            - --metrics.prometheus.addServicesLabels=true
+            - --providers.file.filename=/etc/traefik/config/traefik.yaml
         resources:
 {{ toYaml .Values.api_gateway.resources | indent 10 }}
 
         ports:
+{{- if .Values.api_gateway.env.SSL }}
         - containerPort: 443
+{{- end }}
         - containerPort: 80
 
         # Readiness/liveness probes
@@ -60,35 +83,23 @@ spec:
             port: 80
           periodSeconds: 15
 
-        env:
-        {{- if .Values.global.multitenant }}
-        - name: HAVE_MULTITENANT
-          value: {{ .Values.global.multitenant | quote }}
-        {{- end }}
-        - name: DNS_NAMES
-          value: {{ .Values.api_gateway.env.DNS_NAMES | quote }}
-        - name: IS_LOGS_FORMAT_JSON
-          value: {{ .Values.api_gateway.env.IS_LOGS_FORMAT_JSON | quote }}
-        - name: ALLOWED_HOSTS
-          value: {{ .Values.api_gateway.env.ALLOWED_HOSTS | quote }}
-        - name: SSL
-          value: {{ .Values.api_gateway.env.SSL | quote }}
-
-{{- if .Values.api_gateway.env.SSL }}
         volumeMounts:
+        - name: api-gateway-traefik
+          mountPath: /etc/traefik/config/traefik.yaml
+          subPath: traefik.yaml
+          readOnly: true
+{{- if .Values.api_gateway.env.SSL }}
         - name: certs
-          mountPath: /var/www/mendersoftware/cert/
+          mountPath: /etc/traefik/certs
           readOnly: true
-        - name: dhparam
-          mountPath: /usr/local/openresty/nginx/conf/dhparam.pem
-          subPath: dhparam.pem
-          readOnly: true
+{{- end }}
 
       volumes:
+      - name: api-gateway-traefik
+        configMap:
+          name: api-gateway-traefik
+{{- if .Values.api_gateway.env.SSL }}
       - name: certs
-        secret:
-          secretName: api-gateway
-      - name: dhparam
         secret:
           secretName: api-gateway
 {{- end }}
