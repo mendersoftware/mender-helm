@@ -10,10 +10,12 @@
     URL: mongodb://mongodb
   s3:
     AWS_URI: http://minio:9000
-    AWS_BUCKET: minio-hosted-mender-artifacts
+    AWS_BUCKET: mender-artifact-storage
     AWS_REGION: us-east-1
     AWS_ACCESS_KEY_ID: myaccesskey
     AWS_SECRET_ACCESS_KEY: mysecretkey
+    AWS_FORCE_PATH_STYLE: "true"
+    AWS_TAG_ARTIFACT: "true"
   smtp:
     EMAIL_SENDER: root@localhost
     SMTP_ADDRESS: smtp.mailtrap.io
@@ -71,7 +73,6 @@ deployments:
     port: 8080
   env:
     DEPLOYMENTS_MIDDLEWARE: prod
-    DEPLOYMENTS_AWS_TAG_ARTIFACT: true
     DEPLOYMENTS_PRESIGN_SECRET: ""
 
 ***REMOVED***

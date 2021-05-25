@@ -123,6 +123,8 @@ The following table lists the global parameters supported by the chart and their
 | `global.s3.AWS_REGION` | AWS S3 region | `us-east-1` |
 | `global.s3.AWS_ACCESS_KEY_ID` | AWS S3 / MinIO key ID | `myaccesskey` |
 | `global.s3.AWS_SECRET_ACCESS_KEY` | AWS S3 / MinIO access key | `mysecretkey` |
+| `global.s3.AWS_FORCE_PATH_STYLE` | Set the AWS S3 URI style to path | `true` |
+| `global.s3.AWS_TAG_ARTIFACT` | Tag the artifact in the AWS S3 storage service with the tenant ID | `true` |
 | `global.smtp.EMAIL_SENDER` | SMTP email sender | `root@localhost` |
 | `global.smtp.SMTP_ADDRESS` | SMTP server address | `smtp.mailtrap.io` |
 | `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
@@ -200,7 +202,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.service.port` | Port for the service | `8080` |
 | `deployments.service.nodePort` | Node port for the service | `nil` |
 | `deployments.env.DEPLOYMENTS_MIDDLEWARE` | Set the DEPLOYMENTS_MIDDLEWARE variable | `prod` |
-| `deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT` | Set the DEPLOYMENTS_AWS_TAG_ARTIFACT variable | `true` |
+| `deployments.env.DEPLOYMENTS_PRESIGN_SECRET` | Set the secret for generating signed url, must be a base64 encoded secret. | random value at start-up time |
 
 ### Parameters: device-auth
 
