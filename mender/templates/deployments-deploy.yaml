@@ -86,6 +86,11 @@ spec:
           value: "true"
 {{- end }}
 
+{{- if .Values.global.certs.rootCaCert }}
+        - name: STORAGE_BACKEND_CERT
+          value: /usr/local/share/ca-certificates/caCert.crt
+{{- end }}
+
         # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
@@ -95,6 +100,21 @@ spec:
         - prefix: DEPLOYMENTS_
           secretRef:
             name: s3-artifacts
+
+{{- if .Values.global.certs.rootCaCert }}
+        volumeMounts:
+        - name: ca-cert
+          mountPath: /usr/local/share/ca-certificates/caCert.crt
+          subPath: caCert.crt
+          readOnly: true
+{{- end }}
+
+{{- if .Values.global.certs.rootCaCert }}
+      volumes:
+      - name: ca-cert
+        secret:
+          secretName: ca-cert
+{{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
