@@ -22,6 +22,9 @@ global:
     SMTP_LOGIN: "null"
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
+  certs:
+    # if using self signed certs, must store the root CA cert
+    rootCaCert: ""
 
 api_gateway:
   enabled: true

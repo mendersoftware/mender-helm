@@ -130,6 +130,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
 | `global.smtp.SMTP_PASSWORD` | SMTP server password | `null` |
 | `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
+| `global.certs.rootCaCert` | Set the root CA certificate | nil |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
