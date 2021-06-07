@@ -1,0 +1,294 @@
+global:
+  image:
+    registry: docker.io
+  enterprise: false
+  auditlogs: false
+  mongodb:
+    URL: mongodb://mongodb
+  certs:
+    rootCaCert: |-
+      -----BEGIN CERTIFICATE-----
+      MIIFcTCCA1mgAwIBAgIUbq/jsfOe5KB/TmFSugsZwPX8qwwwDQYJKoZIhvcNAQEL
+      BQAwSDELMAkGA1UEBhMCVVMxEzARBgNVBAgMClNvbWUtU3RhdGUxETAPBgNVBAoM
+      CE15Um9vdENBMREwDwYDVQQDDAhNeVJvb3RDQTAeFw0yMTA1MjUwNzIwMTZaFw0y
+      NDAzMTQwNzIwMTZaMEgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApTb21lLVN0YXRl
+      MREwDwYDVQQKDAhNeVJvb3RDQTERMA8GA1UEAwwITXlSb290Q0EwggIiMA0GCSqG
+      SIb3DQEBAQUAA4ICDwAwggIKAoICAQCy+W1oiJgDkXYq/d5ls4iyKhKsgVe7MdJM
+      2vwJzD+ClY0QBni+Yz/ZWvquGkupQBMJ5bMuq2N4aJ9UnYkkBtM+caUZbFxn4/qR
+      C1Niyesp6tnZdhHG8wvuB4EaHN1UOryXWgZCRSjBzVLvamhSCM+v9/TFGPfcAla1
+      G0aW841KJ1PQBy7yled0AYidJTRxvd7YrgRlLp27bpVxh2ZqOfoBh/5/WLpgBl69
+      Al8TQsAyDATjPz+jXNWKDnBYaMniHERkUYgkR/XLCMkD26WNXb14AjbdUACmBDtj
+      /UCnnM9XTD4ndxzI4hq5Ak410uUAShxXZfVUUwTCwNAGm+GRkjLdW7jfWCxDyKq7
+      aWRjNY2ERq1H+BWphwjTkRskoOBBxU3QtO9tHB/XiX2udi1bD5tV0KineNSCIaJI
+      lQ9MIwM6sKgiBdvMSxzspOFsLe+bZajLY1WcS6SxSzL3zgayS86GIIui8fw2NJ9U
+      Lb0xAyJ+WfSuMs3/dSDbQVpjOSMxg8cOgEJACy9+wFhXxBCLZuBo3KJU6eNHArKQ
+      Yl54E7lbbpf+k8Gt1rMhsCKeVLUK8UnrkOihToqDVoSXV/UAqbDVKuqLEOzeBVpb
+      qu3gJEUI1xHu+JkyXl+9HbNTBcsbHU2zzYPEry0+nJOzw9DIJ4NiMN3ff6dKZ70Y
+      mVTLRoytBQIDAQABo1MwUTAdBgNVHQ4EFgQUfLxOhA2O0cYmLQ329WccjJ628v0w
+      HwYDVR0jBBgwFoAUfLxOhA2O0cYmLQ329WccjJ628v0wDwYDVR0TAQH/BAUwAwEB
+      /zANBgkqhkiG9w0BAQsFAAOCAgEAV8r7QpaQmefQic17sNM+XRsj1Ml8vxyvkQ8W
+      2RXS7Llh+May7zUiR4jym6lUrm1Se9UShRL8g7QTQhB/S1g+Z/8SaYs71wa5cQ3c
+      2U6NX2ZJQoihL2pVh+XBnJouG1ShBBW+kW0hJtQtQrgb6aabNWr/DQ99sfbawVGn
+      JkjLQuohk8j6GEFntNGmtYD6zHP30P1/TCMKWrv1y7NKi4HixGJGmA9fE7XSrGMj
+      amdKtbFBn6yRnDMyu8rg56dCOesBB//8XNC6pb6+K4mHCWUKOdz3But8D4d70rtt
+      eDECUnWl3aHlv6hpQubT2RWrSzw9n4VvGCAgmwkuhtCvPVpIlo2KM9eV+zs7ethJ
+      JXeWavBZMI19/sr4IdafFgnc7DzRU35JtEnYYgfJxjXR7UbGT8Bs8Qzvaw18eNQF
+      mhacxSYNB0cB7yRPLRRUs0IpExMksrKu3wjHOar3+Sb3PPNi975Tzl68cVExkk+Y
+      iEyRrCQbU5B4QfP4DoJ77Sp6X0EOmouZF+M0+DnfKEE3rmwr0UqvWq6YffpN3E4E
+      p9UF1yhvmDw6l0S8AXuM7sG1yX2QJiliNZd4kApMPcmK8snXQODQYQh1R3daTuM6
+      RxFCO5JZKqGoY6SDrpfaxqTEA4Bjtl5f2fJ9fQWFjsrUebKVfaelel65JgKV1GnA
+      LyTshs0=
+      -----END CERTIFICATE-----
+  s3:
+    # Customize with your selected S3 parameters.
+    AWS_URI: https://mender.example.com:9000
+    AWS_BUCKET: mender-artifact-storage
+    AWS_REGION: us-east-1
+    AWS_ACCESS_KEY_ID: myaccesskey
+    AWS_SECRET_ACCESS_KEY: mysecretkey
+    minio: 
+      enabled: true
+      service: 
+        # Your minio service name
+        name: minio
+        # Your installed minio service port
+        port: 9000
+
+api_gateway:
+  certs:
+    # Set the gateway's SSL certificate.
+    cert: |-
+      -----BEGIN CERTIFICATE-----
+      MIIFHDCCAwQCFF9HtJLKZ2GpdhLts0TtxGz2u6xeMA0GCSqGSIb3DQEBCwUAMEgx
+      CzAJBgNVBAYTAlVTMRMwEQYDVQQIDApTb21lLVN0YXRlMREwDwYDVQQKDAhNeVJv
+      b3RDQTERMA8GA1UEAwwITXlSb290Q0EwHhcNMjEwNTI1MDcyNDI4WhcNMjIxMDA3
+      MDcyNDI4WjBNMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFDASBgNVBAoMC015
+      T3JnLCBJbmMuMRswGQYDVQQDDBJtZW5kZXIuZXhhbXBsZS5jb20wggIiMA0GCSqG
+      SIb3DQEBAQUAA4ICDwAwggIKAoICAQCrn/wn4v7HB1V2lK1x5jkaK4XnpPl6TneV
+      8eTtv+uRxrnF7eQqhUQRHNakVbuSUT6jDaYIEvAprfkbo2R9Md0lx3TXKauRGD5V
+      GXidk2vAoysWfSncCdIdhQcPPR/HBdAtf6rn7w1LIJg4Rpou1eacnfczbAr7SPAS
+      Bqhoz95pX2ICjsLJX6c+BFoyUocvpP1FIsSWhE7Ec1xfJWAusb4OfS3vfXLirV+7
+      YvWmilg47wtQiJaqGX46dd4KANr/JxSyn8IG+0Os/nTUF2U2jrnU953Lram2ak4b
+      +s5Z0LFRHhb5k6ZmcuxTwIJOUi7ORq6sIHl54zJhuiwD4cnMVeqT0VwlZiWqO+Wy
+      wFw6ynMRepGA9cy60xaAZv09gjpkjSsQImyUbd/IdMaUO8yUiWQIAKa4/ELhdMFO
+      nK6NvwF/zFCm9MMf4FZ6t5WL8wfhqzyHZpltUUTR4AsSJ+MGsXvhChkCm7QjrJG9
+      GcbjUTmptTFKe0JamyJppyR6MIRvb4bRqL8BZUL0yCMw2slqRxXL6tAXIIUWt/xD
+      yPXt+I8sSN8W9WTsYQI1TRoZc/v0w3TdeyVBy8lNrW6omQiUMm4l4bMxAFh+yYY4
+      /SdSVLYFXgCXGaBvbicIFtYebNlwLwttIaezsxHriNWyR/HW+2iT0CgvHZ7kqHuj
+      I31LP6YR6wIDAQABMA0GCSqGSIb3DQEBCwUAA4ICAQCJSbF6BGoID4CoEC6aRrAx
+      1FZcimeFgXoowgzVU4Mfiq3SOHYFSXb8b8tnetrPrzfQJ6aJmvhmMnYQ/t0cNDhc
+      R7lxkCpdt3hbmGdcE4oOh88qOW/1+rBN/dAzLR3mpmYp1qSRk6AD0ULibl4qNc5t
+      Bsq0JNYRHWtXagNjgXWciXeSip6bR1d9yafocw4Hjh4y4pib8BW+7u83d0N1bgoh
+      wCP3kVHzrJKA9PeVwfK5nmVzxiXHLU/99/uVZeakFJpfbKyABeXiDTkYZoYaKyK4
+      jupsKHNN9D+A0AlhRFc7GSshuIAXaLL+YjGbewzEKnHtC/Bh7AwR+IYqke1oxVX0
+      Ir4j/yzbTPDJDji6pNiMJrFCCFTP6NT0WSSDnDMZp5MXJESurbYOuog/+oO1greR
+      wS90A6UxoQSzhay7MtqQcFYkAVGuFGGG3n20A/orrdQdzl/+2EGIgWIh5mlfl0f+
+      ixVdwl4kjJbcd5tugRZLot9YabRaTFbmZig3F0K2beRcSkZEdiO8sVO6USsk8fbG
+      Ms3k5D/XBtdgo1QhAa8iMFwync3ca8pBMgLqj5EQhxon9x+PYC6R66oVPJOrRlFS
+      vkgQ66XXcxynbDxfcmlBmC5elsG2EIErzJus3pCm+0WrN3KIonnPRUs30OPN2EIE
+      h0EXmfSzdUt8ejOQw08x8Q==
+      -----END CERTIFICATE-----
+      -----BEGIN CERTIFICATE-----
+      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
+      LyTshs0=
+      -----END CERTIFICATE-----
+    # Set the gateway's SSL private key.
+    key: |-
+      -----BEGIN RSA PRIVATE KEY-----
+      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
+      -----END RSA PRIVATE KEY-----
+  service:
+    # Port exposing minio storage on the gateway
+    minioPort: 9000
+
+deployments:
+  image: 
+    registry: docker.io
+    repository: mendersoftware/deployments
+    tag: mender-2.7.0
+    imagePullPolicy: IfNotPresent
+
+device_auth:
+  image: 
+    registry: docker.io
+    repository: mendersoftware/deviceauth
+    tag: mender-2.7.0
+    imagePullPolicy: IfNotPresent
+  certs:
+    # Set the private key for signing device JWT tokens.
+    key: |-
+      -----BEGIN RSA PRIVATE KEY-----
+      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
+      -----END RSA PRIVATE KEY-----
+
+useradm:
+  image: 
+    registry: docker.io
+    repository: mendersoftware/useradm
+    tag: mender-2.7.0
+    imagePullPolicy: IfNotPresent
+  certs: 
+    # Set the private key for signing user JWT tokens.
+    key: |-
+      -----BEGIN RSA PRIVATE KEY-----
+      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
+      -----END RSA PRIVATE KEY-----
+
+inventory:
+  image: 
+    repository: mendersoftware/inventory
+    tag: mender-2.7.0
+
+tenantadm:
+  enabled: false
+
+auditlogs:
+  enabled: false
