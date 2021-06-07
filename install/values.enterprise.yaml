@@ -1,0 +1,44 @@
+global:
+  image:
+    username: 
+    password: 
+  mongodb:
+    # URL of the deployed mongo service, e.g.: mongodb://mongodb
+    URL:
+  certs:
+    # Set root CA cert if using self-signed certificates
+    rootCaCert:
+  s3:
+    # Set to your selected S3 parameters.
+    AWS_URI:
+    AWS_BUCKET:
+    AWS_REGION:
+    AWS_ACCESS_KEY_ID:
+    AWS_SECRET_ACCESS_KEY:
+    minio:
+      enabled:
+      service:
+        # Your minio service name
+        name:
+        # Your installed minio service port
+        port:
+
+api_gateway:
+  certs:
+    # Set the gateway's SSL certificate.
+    cert: 
+    # Set the gateway's SSL private key.
+    key: 
+  service:
+    # Port exposing minio storage on the gateway
+    minioPort:
+
+device_auth:
+  certs:
+    # Set the private key for signing device JWT tokens.
+    key:
+
+useradm:
+  certs: 
+    # Set the private key for signing user JWT tokens.
+    key: 
