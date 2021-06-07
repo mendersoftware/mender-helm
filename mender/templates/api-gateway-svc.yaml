@@ -45,6 +45,12 @@ spec:
     nodePort: {{ .Values.api_gateway.service.httpNodePort }}
     {{- end }}
     name: http
+    {{- if .Values.api_gateway.service.minioPort }}
+  - port: {{ .Values.api_gateway.service.minioPort }}
+    protocol: TCP
+    targetPort: 9000
+    name: minio
+    {{- end }}
   selector:
     app.kubernetes.io/name: api-gateway
 {{- end }}

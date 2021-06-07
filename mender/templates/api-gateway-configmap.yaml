@@ -284,6 +284,17 @@ data:
           service: useradm
           tls: true
 
+        #
+        # minio
+        #
+{{- if .Values.global.s3.minio.enabled }}
+        minio:
+          entrypoints: minio 
+          rule: PathPrefix(`/`)
+          tls: true
+          service: {{ .Values.global.s3.minio.service.name}}
+{{- end }}
+
       #
       # Services
       #
@@ -338,6 +349,14 @@ data:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}"
+
+{{- if .Values.global.s3.minio.enabled }}
+        minio:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.global.s3.minio.service.name }}:{{ .Values.global.s3.minio.service.port }}"
+{{- end }}
+
 
       #
       # Middlewares

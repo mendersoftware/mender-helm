@@ -53,6 +53,9 @@ spec:
 {{- end }}
             - --entrypoints.http.address=:80
             - --entrypoints.https.address=:443
+{{- if .Values.global.s3.minio.enabled }}
+            - --entrypoints.minio.address=:9000
+{{- end }}
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
@@ -72,6 +75,9 @@ spec:
         - containerPort: 443
 {{- end }}
         - containerPort: 80
+{{- if .Values.global.s3.minio.enabled }}
+        - containerPort: 9000
+{{- end }}
 
         # Readiness/liveness probes
         livenessProbe:
