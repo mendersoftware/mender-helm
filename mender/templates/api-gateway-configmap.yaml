@@ -1,3 +1,5 @@
+{{ $entrypoint := ternary "https" "http" (.Values.api_gateway.env.SSL) }}
+{{ $isTls := ternary true false (.Values.api_gateway.env.SSL) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -23,7 +25,7 @@ data:
         # auditlogs
         #
         auditlogs:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
@@ -32,13 +34,13 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/auditlogs`)"
           service: auditlogs
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # deployments
         #
         deployments:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - devauth
           - sec-headers
@@ -49,10 +51,10 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deployments`)"
           service: deployments
-          tls: true
+          tls: {{ $isTls }}
 
         deploymentsDL:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - sec-headers
           - json-error-responder1
@@ -61,10 +63,10 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deployments/download`)"
           service: deployments
-          tls: true
+          tls: {{ $isTls }}
 
         deploymentsMgmt:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
@@ -73,22 +75,22 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deployments`)"
           service: deployments
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # deviceauth
         #
         deviceauth:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - sec-headers
           - compression
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/authentication`)"
           service: deviceauth
-          tls: true
+          tls: {{ $isTls }}
 
         deviceauthMgmt:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
@@ -97,13 +99,13 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devauth`)"
           service: deviceauth
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # deviceconfig
         #
         deviceconfig:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - devauth
           - sec-headers
@@ -114,10 +116,10 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deviceconfig`)"
           service: deviceconfig
-          tls: true
+          tls: {{ $isTls }}
 
         deviceconfigMgmt:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
@@ -126,13 +128,13 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconfig`)"
           service: deviceconfig
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # deviceconnect
         #
         deviceconnect:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - devauth
           - sec-headers
@@ -143,10 +145,10 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deviceconnect`)"
           service: deviceconnect
-          tls: true
+          tls: {{ $isTls }}
 
         deviceconnectMgmt:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
@@ -157,13 +159,13 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconnect`)"
           service: deviceconnect
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # gui
         #
         gui:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - ensure-ui-path
           - signup-redirect
@@ -176,13 +178,13 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/`)"
           service: gui
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # inventory
         #
         inventoryV1:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - devauth
           - inventoryV1-replacepathregex
@@ -194,10 +196,10 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/devices/v1/inventory`)"
           service: inventory
-          tls: true
+          tls: {{ $isTls }}
 
         inventoryV2:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - devauth
           - sec-headers
@@ -208,10 +210,10 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/devices/v2/inventory`)"
           service: inventory
-          tls: true
+          tls: {{ $isTls }}
 
         inventoryMgmtV1:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - inventoryMgmtV1-replacepathregex
@@ -221,10 +223,10 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/v1/inventory`)"
           service: inventory
-          tls: true
+          tls: {{ $isTls }}
 
         inventoryMgmtV2:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
@@ -233,23 +235,23 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/v2/inventory`)"
           service: inventory
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # tenantadm
         #
         tenantadm:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
           - compression
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/tenantadm`)"
           service: tenantadm
-          tls: true
+          tls: {{ $isTls }}
 
         tenantadmSignup:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - sec-headers
           - compression
@@ -257,13 +259,13 @@ data:
             Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants`) ||
             Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants/trial`)
           service: tenantadm
-          tls: true
+          tls: {{ $isTls }}
 
         #
         # useradm
         #
         useradm:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - userauth
           - sec-headers
@@ -272,17 +274,17 @@ data:
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/useradm`)"
           service: useradm
-          tls: true
+          tls: {{ $isTls }}
 
         useradmNoAuth:
-          entrypoints: https
+          entrypoints: {{ $entrypoint }}
           middlewares:
           - sec-headers
           - compression
           - json-error-responder4
           rule: "Path(`/api/management/{ver:v[0-9]+}/useradm/auth/login`)||PathPrefix(`/api/management/{ver:v[0-9]+}/useradm/{ep:(oauth2|auth/password-reset|auth/verify-email|auth/plan-verify)}`)"
           service: useradm
-          tls: true
+          tls: {{ $isTls }}
 
       #
       # Services
@@ -343,6 +345,7 @@ data:
       # Middlewares
       #
       middlewares:
+{{ $scheme := ternary "https" "http" (.Values.api_gateway.env.SSL) }}
 
         ui-stripprefix:
           stripprefix:
@@ -350,13 +353,13 @@ data:
 
         ensure-ui-path:
           redirectregex:
-            regex: "^(https?://[^/]+)(/[a-z]*)?$"
+            regex: "^({{ $scheme }}?://[^/]+)(/[a-z]*)?$"
             replacement: "${1}/ui/"
             permanent: true
 
         signup-redirect:
           redirectregex:
-            regex: "^(https://[^/]+)/signup"
+            regex: "^({{ $scheme }}://[^/]+)/signup"
             replacement: "${1}/ui/#/signup"
 
         sec-headers:
@@ -368,7 +371,7 @@ data:
             stsIncludeSubdomains: true
             browserXssFilter: true
             customRequestHeaders:
-              "X-Forwarded-Proto": "https"
+              "X-Forwarded-Proto": "{{ $scheme }}"
 
         compression:
           compress: true
@@ -417,10 +420,11 @@ data:
             regex: "^/api/management/v1/inventory/(.*)"
             replacement: "/api/0.1.0/$1"
 
+{{- if .Values.api_gateway.env.SSL }}
     tls:
       certificates:
         - certFile: /etc/traefik/certs/cert.crt
           keyFile: /etc/traefik/certs/private.key
           stores:
             - default
-
+{{- end }}
