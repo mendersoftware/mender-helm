@@ -123,7 +123,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.s3.AWS_REGION` | AWS S3 region | `us-east-1` |
 | `global.s3.AWS_ACCESS_KEY_ID` | AWS S3 / MinIO key ID | `myaccesskey` |
 | `global.s3.AWS_SECRET_ACCESS_KEY` | AWS S3 / MinIO access key | `mysecretkey` |
-| `global.s3.useServiceAccount` | Use K8s service account to access the bucket. if used then need to provide deplyments.serviceAccount=<account_name> | `false` |
+| `global.s3.useServiceAccount` | Use K8s service account instead of `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to access the bucket. if used then need to provide `deplyments.serviceAccountName=<account_name>` | `false` |
 | `global.s3.AWS_FORCE_PATH_STYLE` | Set the AWS S3 URI style to path | `true` |
 | `global.s3.AWS_TAG_ARTIFACT` | Tag the artifact in the AWS S3 storage service with the tenant ID | `true` |
 | `global.smtp.EMAIL_SENDER` | SMTP email sender | `root@localhost` |
@@ -191,7 +191,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `deployments.serviceAccountName` | Use k8s service account to access AWS resources | `` |
+| `deployments.serviceAccountName` | Use k8s service account to access AWS resources | `nil` |
 | `deployments.resources.limits.cpu` | Resources CPU limit | `300m` |
 | `deployments.resources.limits.memory` | Resources memory limit | `128M` |
 | `deployments.resources.requests.cpu` | Resources CPU limit | `300m` |
