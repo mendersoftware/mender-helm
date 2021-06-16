@@ -16,6 +16,7 @@ global:
     AWS_SECRET_ACCESS_KEY: mysecretkey
     AWS_FORCE_PATH_STYLE: "true"
     AWS_TAG_ARTIFACT: "true"
+    useServiceAccount: false
   smtp:
     EMAIL_SENDER: root@localhost
     SMTP_ADDRESS: smtp.mailtrap.io
