@@ -1,4 +1,4 @@
-{{ $entrypoint := ternary "https" "http" (.Values.api_gateway.env.SSL) }}
+{{ $scheme := ternary "https" "http" (.Values.api_gateway.env.SSL) }}
 {{ $isTls := ternary true false (.Values.api_gateway.env.SSL) }}
 apiVersion: v1
 kind: ConfigMap
@@ -25,7 +25,7 @@ data:
         # auditlogs
         #
         auditlogs:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -40,7 +40,7 @@ data:
         # deployments
         #
         deployments:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - devauth
           - sec-headers
@@ -54,7 +54,7 @@ data:
           tls: {{ $isTls }}
 
         deploymentsDL:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - sec-headers
           - json-error-responder1
@@ -66,7 +66,7 @@ data:
           tls: {{ $isTls }}
 
         deploymentsMgmt:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -81,7 +81,7 @@ data:
         # deviceauth
         #
         deviceauth:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - sec-headers
           - compression
@@ -90,7 +90,7 @@ data:
           tls: {{ $isTls }}
 
         deviceauthMgmt:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -105,7 +105,7 @@ data:
         # deviceconfig
         #
         deviceconfig:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - devauth
           - sec-headers
@@ -119,7 +119,7 @@ data:
           tls: {{ $isTls }}
 
         deviceconfigMgmt:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -134,7 +134,7 @@ data:
         # deviceconnect
         #
         deviceconnect:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - devauth
           - sec-headers
@@ -148,7 +148,7 @@ data:
           tls: {{ $isTls }}
 
         deviceconnectMgmt:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -165,7 +165,7 @@ data:
         # gui
         #
         gui:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - ensure-ui-path
           - signup-redirect
@@ -184,7 +184,7 @@ data:
         # inventory
         #
         inventoryV1:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - devauth
           - inventoryV1-replacepathregex
@@ -199,7 +199,7 @@ data:
           tls: {{ $isTls }}
 
         inventoryV2:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - devauth
           - sec-headers
@@ -213,7 +213,7 @@ data:
           tls: {{ $isTls }}
 
         inventoryMgmtV1:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - inventoryMgmtV1-replacepathregex
@@ -226,7 +226,7 @@ data:
           tls: {{ $isTls }}
 
         inventoryMgmtV2:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -241,7 +241,7 @@ data:
         # tenantadm
         #
         ***REMOVED***
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -251,7 +251,7 @@ data:
           tls: {{ $isTls }}
 
         tenantadmSignup:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - sec-headers
           - compression
@@ -265,7 +265,7 @@ data:
         # useradm
         #
         ***REMOVED***
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - userauth
           - sec-headers
@@ -277,7 +277,7 @@ data:
           tls: {{ $isTls }}
 
         useradmNoAuth:
-          entrypoints: {{ $entrypoint }}
+          entrypoints: {{ $scheme }}
           middlewares:
           - sec-headers
           - compression
@@ -345,7 +345,6 @@ data:
       # Middlewares
       #
       middlewares:
-{{ $scheme := ternary "https" "http" (.Values.api_gateway.env.SSL) }}
 
         ui-stripprefix:
           stripprefix:
@@ -420,7 +419,7 @@ data:
             regex: "^/api/management/v1/inventory/(.*)"
             replacement: "/api/0.1.0/$1"
 
-{{- if .Values.api_gateway.env.SSL }}
+{{- if $isTls }}
     tls:
       certificates:
         - certFile: /etc/traefik/certs/cert.crt
