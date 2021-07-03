@@ -38,8 +38,8 @@ spec:
       {{- with .Values.deployments.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-{{- if .Values.deployments.serviceAccountName }}
-      serviceAccountName: {{ .Values.deployments.serviceAccountName }}
+{{- if .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+      serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
 {{- end }}
       containers:
       - name: deployments
