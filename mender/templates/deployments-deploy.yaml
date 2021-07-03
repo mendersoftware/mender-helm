@@ -87,7 +87,7 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
-{{- if .Values.global.s3.useServiceAccount }}
+{{- if .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
   # this is required because deprecated func is used https://github.com/mendersoftware/deployments/blob/554b194e1ff389e50200644b8034bb012ede197a/s3/filestorage.go#L114
         - name: AWS_SDK_LOAD_CONFIG
           value: "1"
