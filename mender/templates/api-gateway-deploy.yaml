@@ -56,8 +56,10 @@ spec:
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
+{{- if .Values.api_gateway.env.SSL }}
             - --entrypoints.http.http.redirections.entryPoint.to=https
             - --entrypoints.http.http.redirections.entryPoint.scheme=https
+{{- end }}
             - --metrics=true
             - --metrics.prometheus=true
             - --metrics.prometheus.buckets=0.100000,0.300000,1.200000,5.000000
