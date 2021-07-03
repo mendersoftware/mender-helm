@@ -79,6 +79,10 @@ spec:
         - name: HAVE_MULTITENANT
           value: {{ .Values.global.enterprise | quote }}
         {{- end }}
+        {{- if .Values.auditlogs.enabled }}
+        - name: HAVE_AUDITLOGS
+          value: {{ .Values.auditlogs.enabled | quote }}
+        {{- end }}
         {{- if .Values.deviceconnect.enabled }}
         - name: HAVE_DEVICECONNECT
           value: {{ .Values.deviceconnect.enabled | quote }}
