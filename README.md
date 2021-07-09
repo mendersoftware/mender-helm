@@ -114,6 +114,7 @@ global:
   image:
     username: <your_user>
     password: <your_password>
+  url: http://mender.example.com
 
 api_gateway:
   certs:
@@ -193,6 +194,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
 | `global.smtp.SMTP_PASSWORD` | SMTP server password | `null` |
 | `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
+| `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -238,6 +240,8 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpNodePort` | Node port for the HTTP service | `nil` |
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
 | `api_gateway.env.SSL` | SSL termination flag | `true` |
+| `api_gateway.minio.enabled` | Enable routing of S3 requests to the minio service | `true` |
+| `api_gateway.minio.url` | URL of the minio service | `http://minio:9000` |
 
 ### Parameters: deployments
 

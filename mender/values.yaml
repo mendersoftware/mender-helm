@@ -9,7 +9,7 @@ global:
   mongodb:
     URL: mongodb://mongodb
   s3:
-    AWS_URI: http://minio:9000
+    AWS_URI: ""
     AWS_BUCKET: mender-artifact-storage
     AWS_REGION: us-east-1
     AWS_ACCESS_KEY_ID: myaccesskey
@@ -23,6 +23,7 @@ global:
     SMTP_LOGIN: "null"
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
+  url: "https://mender-api-gateway"
 
 api_gateway:
   enabled: true
@@ -49,6 +50,9 @@ api_gateway:
     httpsPort: 443
   env:
     SSL: true
+  minio:
+    enabled: true
+    url: "http://minio:9000"
 
 deployments:
   enabled: true
