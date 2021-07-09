@@ -56,7 +56,7 @@ spec:
         # Set in order, last value for the key will be used in case duplications.
         env:
         - name: CREATE_ARTIFACT_GATEWAY_URL
-          value: https://{{ .Values.api_gateway.service.name }}
+          value: {{ .Values.global.url }}
         - name: CREATE_ARTIFACT_SKIPVERIFY
           value: "1"
         - name: CREATE_ARTIFACT_DEPLOYMENTS_URL

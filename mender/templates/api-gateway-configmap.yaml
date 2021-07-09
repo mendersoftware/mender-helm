@@ -285,6 +285,18 @@ data:
           rule: "Path(`/api/management/{ver:v[0-9]+}/useradm/auth/login`)||PathPrefix(`/api/management/{ver:v[0-9]+}/useradm/{ep:(oauth2|auth/password-reset|auth/verify-email|auth/plan-verify)}`)"
           service: useradm
           tls: {{ $isTls }}
+{{- if .Values.api_gateway.minio.enabled }}
+
+        #
+        # minio
+        #
+        minio:
+          entrypoints: {{ $scheme }}
+          rule: "HeadersRegexp(`X-Amz-Date`, `.+`) || PathPrefix(`/{{ .Values.global.s3.AWS_BUCKET }}`)"
+          priority: 900
+          service: minio
+          tls: {{ $isTls }}
+{{- end }}
 
       #
       # Services
@@ -340,6 +352,13 @@ data:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}"
+{{- if .Values.api_gateway.minio.enabled }}
+
+        minio:
+          loadBalancer:
+            servers:
+            - url: "{{ .Values.api_gateway.minio.url }}"
+{{- end }}
 
       #
       # Middlewares
