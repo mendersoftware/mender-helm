@@ -27,6 +27,54 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 - Kubernetes 1.12+
 - Helm 2.11+ or Helm 3.0-beta3+
 
+## External services required
+
+This Helm chart does not install the following external services and dependencies which are required to run Mender:
+
+- mongodb
+- MinIO
+- NATS
+
+### Installing mongodb
+
+You can install mongodb using the official mongodb helm chart using `helm3`:
+
+```bash
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm repo update
+$ helm install mongodb --set "auth.enabled=false" bitnami/mongodb
+```
+
+or using `helm2`:
+
+```bash
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm repo update
+$ helm install --name mongodb --set "auth.enabled=false" bitnami/mongodb
+```
+
+### Installing MinIO
+
+You can install MinIO using the official MinIO helm chart using `helm3`:
+
+```bash
+$ helm repo add minio https://helm.min.io/
+$ helm repo update
+$ helm install minio minio/minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey"
+```
+
+or using `helm2`:
+
+```bash
+$ helm repo add minio https://helm.min.io/
+$ helm repo update
+$ helm install --name minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey" minio/minio
+```
+
+### Installing NATS
+
+Follow instructions from https://nats-io.github.io/k8s
+
 ## Installing the Chart
 
 To install the chart with the release name `my-release` using `helm3`:
@@ -473,52 +521,6 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `deviceconfig.service.port` | Port for the service | `8080` |
 | `deviceconfig.service.nodePort` | Node port for the service | `nil` |
-
-## External services required
-
-- mongodb
-- MinIO
-- NATS
-
-### Installing mongodb
-
-You can install mongodb using the official mongodb helm chart using `helm3`:
-
-```bash
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm repo update
-$ helm install mongodb --set "auth.enabled=false" bitnami/mongodb
-```
-
-or using `helm2`:
-
-```bash
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm repo update
-$ helm install --name mongodb --set "auth.enabled=false" bitnami/mongodb
-```
-
-### Installing MinIO
-
-You can install MinIO using the official MinIO helm chart using `helm3`:
-
-```bash
-$ helm repo add minio https://helm.min.io/
-$ helm repo update
-$ helm install minio minio/minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey"
-```
-
-or using `helm2`:
-
-```bash
-$ helm repo add minio https://helm.min.io/
-$ helm repo update
-$ helm install --name minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey" minio/minio
-```
-
-### Installing NATS
-
-Follow instructions from https://nats-io.github.io/k8s
 
 ## Create a tenant and a user from command line
 
