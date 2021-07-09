@@ -14,7 +14,7 @@ helm install mender-minio minio/minio \
 
 log "deploying dependencies: mongodb"
 helm install mender-mongo bitnami/mongodb \
-    --version 10.21.2 \
+    --version 10.21.1 \
     --set "image.tag=4.4.6-debian-10-r29" \
     --set "auth.enabled=false" \
     --set "persistence.enabled=false"
