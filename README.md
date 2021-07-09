@@ -4,18 +4,11 @@
 
 ## TL;DR;
 
-Using `helm3`:
+Using `helm`:
 
 ```bash
 $ make package
 $ helm install mender ./mender-2.7.0.tgz
-```
-
-or using `helm2`:
-
-```bash
-$ make package
-$ helm install --name mender ./mender-2.7.0.tgz
 ```
 
 ## Introduction
@@ -25,7 +18,7 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 ## Prerequisites
 
 - Kubernetes 1.12+
-- Helm 2.11+ or Helm 3.0-beta3+
+- Helm 3.0-beta3+
 
 ## External services required
 
@@ -37,7 +30,7 @@ This Helm chart does not install the following external services and dependencie
 
 ### Installing mongodb
 
-You can install mongodb using the official mongodb helm chart using `helm3`:
+You can install mongodb using the official mongodb Helm chart using `helm`:
 
 ```bash
 $ helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -45,17 +38,9 @@ $ helm repo update
 $ helm install mongodb --set "auth.enabled=false" bitnami/mongodb
 ```
 
-or using `helm2`:
-
-```bash
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm repo update
-$ helm install --name mongodb --set "auth.enabled=false" bitnami/mongodb
-```
-
 ### Installing MinIO
 
-You can install MinIO using the official MinIO helm chart using `helm3`:
+You can install MinIO using the official MinIO Helm chart using `helm`:
 
 ```bash
 $ helm repo add minio https://helm.min.io/
@@ -63,17 +48,9 @@ $ helm repo update
 $ helm install minio minio/minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey"
 ```
 
-or using `helm2`:
-
-```bash
-$ helm repo add minio https://helm.min.io/
-$ helm repo update
-$ helm install --name minio --version 6.0.5 --set "accessKey=myaccesskey,secretKey=mysecretkey" minio/minio
-```
-
 ### Installing NATS
 
-Follow instructions from https://nats-io.github.io/k8s using `helm3`
+Follow instructions from https://nats-io.github.io/k8s using `helm`:
 
 ```bash
 $ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
@@ -81,26 +58,12 @@ $ helm repo update
 $ helm install nats nats/nats
 ```
 
-or using `helm2`:
-
-```bash
-$ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-$ helm repo update
-$ helm install --name nats nats/nats
-```
-
 ## Installing the Chart
 
-To install the chart with the release name `my-release` using `helm3`:
+To install the chart with the release name `my-release` using `helm`:
 
 ```bash
 $ helm install my-release -f values.yaml ./mender-2.7.0.tgz
-```
-
-or using `helm2`:
-
-```bash
-$ helm install --name my-release -f values.yaml ./mender-2.7.0.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
