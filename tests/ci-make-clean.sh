@@ -6,4 +6,4 @@ set -x
 helm uninstall $(helm list -q)
 
 # Delete other resources remaining in the namespace
-kubectl delete deployments,statefulsets,pods,jobs,cronjobs --all
+kubectl delete configmaps,deployments,statefulsets,pods,jobs,cronjobs,services --all
