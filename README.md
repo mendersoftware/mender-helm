@@ -73,7 +73,21 @@ $ helm install --name minio --version 6.0.5 --set "accessKey=myaccesskey,secretK
 
 ### Installing NATS
 
-Follow instructions from https://nats-io.github.io/k8s
+Follow instructions from https://nats-io.github.io/k8s using `helm3`
+
+```bash
+$ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+$ helm repo update
+$ helm install nats nats/nats
+```
+
+or using `helm2`:
+
+```bash
+$ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+$ helm repo update
+$ helm install --name nats nats/nats
+```
 
 ## Installing the Chart
 
