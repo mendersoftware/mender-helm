@@ -12,7 +12,10 @@ helm install mender-minio minio/minio \
     --set accessKey=${MINIO_accessKey},secretKey=${MINIO_secretKey},persistence.enabled=false
 
 log "deploying dependencies: mongodb"
-helm install mender-mongo --set "auth.enabled=false,persistence.enabled=false" bitnami/mongodb
+helm install mender-mongo bitnami/mongodb \
+    --version 10.21.1 \
+    --set "auth.enabled=false,persistence.enabled=false"
 
 log "deploying dependencies: nats"
-find tests/nats -type f -name "*.yaml" -exec kubectl apply -f {} \;
+helm install nats nats/nats \
+    --version 0.8.2

@@ -11,12 +11,15 @@ chmod 755 get_helm.sh
 
 log "add helm repo: stable"
 helm repo add stable https://charts.helm.sh/stable
-helm repo update
 
 log "add helm repo: minio"
 helm repo add minio https://helm.min.io/
-helm repo update
 
 log "add helm repo: mongodb"
 helm repo add bitnami https://charts.bitnami.com/bitnami
+
+log "add helm repo: nats"
+helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+
+log "update help repositories"
 helm repo update
