@@ -35,7 +35,7 @@ You can install mongodb using the official mongodb Helm chart using `helm`:
 ```bash
 $ helm repo add bitnami https://charts.bitnami.com/bitnami
 $ helm repo update
-$ helm install mongodb --set "auth.enabled=false" bitnami/mongodb
+$ helm install mongodb bitnami/mongodb --version 10.21.1 --set "auth.enabled=false"
 ```
 
 ### Installing MinIO
@@ -55,7 +55,7 @@ Follow instructions from https://nats-io.github.io/k8s using `helm`:
 ```bash
 $ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 $ helm repo update
-$ helm install nats nats/nats
+$ helm install nats nats/nats --version 0.8.2
 ```
 
 ## Installing the Chart
