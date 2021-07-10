@@ -77,7 +77,7 @@ global:
   image:
     username: <your_user>
     password: <your_password>
-  url: http://mender.example.com
+  url: https://mender.example.com
 
 api_gateway:
   certs:
