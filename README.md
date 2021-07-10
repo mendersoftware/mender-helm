@@ -77,7 +77,7 @@ This is the minimum `values.yaml` file needed to install Mender:
 ***REMOVED***
     username: <your_user>
     password: <your_password>
-  url: http://mender.example.com
+  url: https://mender.example.com
 
 ***REMOVED***
 ***REMOVED***
