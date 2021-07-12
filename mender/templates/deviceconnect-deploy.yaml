@@ -73,7 +73,7 @@ spec:
         env:
         # NATS uri
         - name: DEVICECONNECT_NATS_URI
-          value: "nats://nats:4222"
+          value: "{{ .Values.global.nats.URL }}"
 
         # Enable audit logging
 {{- if .Values.global.auditlogs }}
