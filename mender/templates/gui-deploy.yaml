@@ -67,8 +67,6 @@ spec:
           value: "3.0.0"
         - name: MENDER_ARTIFACT_VERSION
           value: "3.6.0"
-        - name: MENDER_DEB_PACKAGE_VERSION
-          value: "3.0.0"
         {{- if .Values.global.hosted }}
         - name: MENDER_HOSTED
           value: {{ .Values.global.hosted | quote }}
