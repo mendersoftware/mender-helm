@@ -139,6 +139,7 @@ The following table lists the global parameters supported by the chart and their
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `global.enterprise` | Enable the enterprise features | `true` |
 | `global.hosted` | Enabled Hosted Mender specific features | `false` |
+| `global.auditlogs` | Enabled submitting auditlogs to auditlog service | `true` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
