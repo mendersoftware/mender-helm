@@ -72,7 +72,7 @@ spec:
 
         env:
         # Enable audit logging
-{{- if .Values.global.auditlogs }}
+{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: DEVICECONFIG_ENABLE_AUDIT
           value: "true"
 {{- end }}

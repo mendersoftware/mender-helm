@@ -76,7 +76,7 @@ spec:
         {{- end }}
         - name: USERADM_TOTP_ISSUER
           value: {{ .Values.useradm.env.USERADM_TOTP_ISSUER | quote }}
-{{- if .Values.global.auditlogs }}
+{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
