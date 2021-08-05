@@ -76,7 +76,7 @@ spec:
           value: "{{ .Values.global.nats.URL }}"
 
         # Enable audit logging
-{{- if .Values.global.auditlogs }}
+{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: DEVICECONNECT_ENABLE_AUDIT
           value: "true"
 {{- end }}
