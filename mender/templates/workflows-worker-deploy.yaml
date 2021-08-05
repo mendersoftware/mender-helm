@@ -59,15 +59,15 @@ spec:
         env:
         {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: HAVE_AUDITLOGS
-          value: {{ .Values.auditlogs.enabled | quote }}
+          value: "true"
         {{- end }}
         {{- if .Values.deviceconnect.enabled }}
         - name: HAVE_DEVICECONNECT
-          value: {{ .Values.deviceconnect.enabled | quote }}
+          value: "true"
         {{- end }}
         {{- if .Values.deviceconfig.enabled }}
         - name: HAVE_DEVICECONFIG
-          value: {{ .Values.deviceconfig.enabled | quote }}
+          value: "true"
         {{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/workflows-enterprise/blob/master/config.yaml

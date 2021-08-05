@@ -83,7 +83,7 @@ spec:
           value: {{ .Values.deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT | quote }}
         - name: DEPLOYMENTS_PRESIGN_SECRET
           value: {{ .Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET | quote }}
-{{- if .Values.global.auditlogs }}
+{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
