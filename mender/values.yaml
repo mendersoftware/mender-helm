@@ -71,7 +71,7 @@ deployments:
 ***REMOVED***
     registry: ""
     repository: ""
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deployments
@@ -97,7 +97,7 @@ deployments:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/deviceauth
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-device-auth
@@ -126,7 +126,7 @@ gui:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-gui
@@ -149,7 +149,7 @@ inventory:
 ***REMOVED***
     registry: ""
     repository: ""
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-inventory
@@ -173,7 +173,7 @@ inventory:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-tenantadm
@@ -201,7 +201,7 @@ inventory:
 ***REMOVED***
     registry: ""
     repository: ""
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-useradm
@@ -231,7 +231,7 @@ workflows:
 ***REMOVED***
     registry: ""
     repository: ""
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-workflows-server
@@ -254,7 +254,7 @@ create_artifact_worker:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
 
 auditlogs:
@@ -272,7 +272,7 @@ auditlogs:
 ***REMOVED***
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-auditlogs
@@ -295,7 +295,7 @@ deviceconnect:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deviceconnect
@@ -318,10 +318,33 @@ deviceconfig:
 ***REMOVED***
     registry: docker.io
     repository: mendersoftware/deviceconfig
-    tag: mender-3.0.0
+    tag: mender-3.1.0
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deviceconfig
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+
+devicemonitor:
+  enabled: true
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128M
+    requests:
+      cpu: 100m
+      memory: 128M
+  affinity: {}
+***REMOVED***
+    registry: registry.mender.io
+    repository: mendersoftware/devicemonitor
+    tag: mender-3.1.0
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-devicemonitor
     annotations: {}
     type: ClusterIP
     port: 8080
