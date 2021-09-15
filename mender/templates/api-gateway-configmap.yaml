@@ -162,6 +162,35 @@ data:
           tls: {{ $isTls }}
 
         #
+        # devicemonitor
+        #
+        devicemonitor:
+          entrypoints: {{ $scheme }}
+          middlewares:
+          - devauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder2
+          - json-error-responder3
+          - json-error-responder4
+          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/devicemonitor`)"
+          service: devicemonitor
+          tls: {{ $isTls }}
+
+        devicemonitorMgmt:
+          entrypoints: {{ $scheme }}
+          middlewares:
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devicemonitor`)"
+          service: devicemonitor
+          tls: {{ $isTls }}
+
+        #
         # gui
         #
         gui:
@@ -322,6 +351,11 @@ data:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.deviceconfig.service.name }}:{{ .Values.deviceconfig.service.port }}"
+
+        devicemonitor:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.devicemonitor.service.name }}:{{ .Values.devicemonitor.service.port }}"
 
         deployments:
           loadBalancer:
