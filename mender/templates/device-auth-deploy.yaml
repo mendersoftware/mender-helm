@@ -92,8 +92,6 @@ spec:
         - name: DEVICEAUTH_TENANTADM_ADDR
           value: {{ .Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
         {{- end }}
-        - name: DEVICEAUTH_MAX_DEVICES_LIMIT_DEFAULT
-          value: {{ .Values.device_auth.env.DEVICEAUTH_MAX_DEVICES_LIMIT_DEFAULT | quote }}
 
         # Supported configuration settings: https://github.com/mendersoftware/deviceauth/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
