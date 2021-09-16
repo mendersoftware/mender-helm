@@ -266,7 +266,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
 | `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-***REMOVED***8080` |
-| `device_auth.env.DEVICEAUTH_MAX_DEVICES_LIMIT_DEFAULT` | Set the DEVICEAUTH_MAX_DEVICES_LIMIT_DEFAULT variable | `500` |
 
 ### Parameters: gui
 
