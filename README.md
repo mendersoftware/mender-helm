@@ -186,7 +186,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.dashboard` | Enable the Traefik dashboard (port 8080) | `false` |
 | `api_gateway.image.registry` | Docker image registry | `docker.io` |
 | `api_gateway.image.repository` | Docker image repository | `traefik` |
-| `api_gateway.image.tag` | Docker image tag | `v2.4` |
+| `api_gateway.image.tag` | Docker image tag | `v2.5` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
