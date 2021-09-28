@@ -8,7 +8,7 @@ Using `helm`:
 
 ```bash
 $ make package
-$ helm install mender ./mender-3.0.0.tgz
+$ helm install mender ./mender-3.1.0.tgz
 ```
 
 ## Introduction
@@ -63,7 +63,7 @@ $ helm install nats nats/nats --version 0.8.2 --set "nats.image=nats:2.3.1-alpin
 To install the chart with the release name `my-release` using `helm`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender-3.0.0.tgz
+$ helm install my-release -f values.yaml ./mender-3.1.0.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -165,13 +165,13 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```bash
 $ helm install my-release \
   --set mongodbRootPassword=secretpassword,mongodbUsername=my-user,mongodbPassword=my-password,mongodbDatabase=my-database \
-  ./mender-3.0.0.tgz
+  ./mender-3.1.0.tgz
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-3.0.0.tgz
+$ helm install --name my-release -f values.yaml ./mender-3.1.0.tgz
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -186,7 +186,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.dashboard` | Enable the Traefik dashboard (port 8080) | `false` |
 | `api_gateway.image.registry` | Docker image registry | `docker.io` |
 | `api_gateway.image.repository` | Docker image repository | `traefik` |
-| `api_gateway.image.tag` | Docker image tag | `v2.4` |
+| `api_gateway.image.tag` | Docker image tag | `v2.5` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -217,7 +217,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deployments.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` if `global.enterprise` is true, else `mendersoftware/deployments` |
-| `deployments.image.tag` | Docker image tag | `mender-3.0.0` |
+| `deployments.image.tag` | Docker image tag | `mender-3.1.0` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -245,7 +245,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `device_auth.image.registry` | Docker image registry | `docker.io` |
 | `device_auth.image.repository` | Docker image repository | `mendersoftware/deviceauth` |
-| `device_auth.image.tag` | Docker image tag | `mender-3.0.0` |
+| `device_auth.image.tag` | Docker image tag | `mender-3.1.0` |
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `device_auth.replicas` | Number of replicas | `1` |
 | `device_auth.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -266,7 +266,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
 | `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
-| `device_auth.env.DEVICEAUTH_MAX_DEVICES_LIMIT_DEFAULT` | Set the DEVICEAUTH_MAX_DEVICES_LIMIT_DEFAULT variable | `500` |
 
 ### Parameters: gui
 
@@ -277,7 +276,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.enabled` | Enable the component | `true` |
 | `gui.image.registry` | Docker image registry | `docker.io` |
 | `gui.image.repository` | Docker image repository | `mendersoftware/gui` |
-| `gui.image.tag` | Docker image tag | `mender-3.0.0` |
+| `gui.image.tag` | Docker image tag | `mender-3.1.0` |
 | `gui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `gui.replicas` | Number of replicas | `1` |
 | `gui.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -303,7 +302,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `inventory.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` if `global.enterprise` is true, else `mendersoftware/inventory` |
-| `inventory.image.tag` | Docker image tag | `mender-3.0.0` |
+| `inventory.image.tag` | Docker image tag | `mender-3.1.0` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.replicas` | Number of replicas | `1` |
 | `inventory.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -329,7 +328,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.enabled` | Enable the component | `true` |
 | `tenantadm.image.registry` | Docker image registry | `registry.mender.io` |
 | `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm-enterprise` |
-| `tenantadm.image.tag` | Docker image tag | `mender-3.0.0` |
+| `tenantadm.image.tag` | Docker image tag | `mender-3.1.0` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `tenantadm.replicas` | Number of replicas | `1` |
 | `tenantadm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -359,7 +358,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `useradm.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
-| `useradm.image.tag` | Docker image tag | `mender-3.0.0` |
+| `useradm.image.tag` | Docker image tag | `mender-3.1.0` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `useradm.replicas` | Number of replicas | `1` |
 | `useradm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -391,7 +390,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `workflows.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` if `global.enterprise` is true, else `mendersoftware/workflows` |
-| `workflows.image.tag` | Docker image tag | `mender-3.0.0` |
+| `workflows.image.tag` | Docker image tag | `mender-3.1.0` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -417,7 +416,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `create_artifact_worker.image.registry` | Docker image registry | `docker.io` |
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
-| `create_artifact_worker.image.tag` | Docker image tag | `mender-3.0.0` |
+| `create_artifact_worker.image.tag` | Docker image tag | `mender-3.1.0` |
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
 | `create_artifact_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -436,7 +435,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `auditlogs.image.registry` | Docker image registry | `registry.mender.io` |
 | `auditlogs.image.repository` | Docker image repository | `mendersoftware/auditlogs` |
-| `auditlogs.image.tag` | Docker image tag | `mender-3.0.0` |
+| `auditlogs.image.tag` | Docker image tag | `mender-3.1.0` |
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -462,7 +461,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deviceconnect.image.registry` | Docker image registry | `docker.io` |
 | `deviceconnect.image.repository` | Docker image repository | `mendersoftware/deviceconnect` |
-| `deviceconnect.image.tag` | Docker image tag | `mender-3.0.0` |
+| `deviceconnect.image.tag` | Docker image tag | `mender-3.1.0` |
 | `deviceconnect.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconnect.replicas` | Number of replicas | `1` |
 | `deviceconnect.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -488,7 +487,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deviceconfig.image.registry` | Docker image registry | `docker.io` |
 | `deviceconfig.image.repository` | Docker image repository | `mendersoftware/deviceconfig` |
-| `deviceconfig.image.tag` | Docker image tag | `mender-3.0.0` |
+| `deviceconfig.image.tag` | Docker image tag | `mender-3.1.0` |
 | `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconfig.replicas` | Number of replicas | `1` |
 | `deviceconfig.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
@@ -503,6 +502,34 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `deviceconfig.service.port` | Port for the service | `8080` |
 | `deviceconfig.service.nodePort` | Node port for the service | `nil` |
+
+### Parameters: devicemonitor
+
+The following table lists the parameters for the `devicemonitor` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `devicemonitor.enabled` | Enable the component | `true` |
+| `devicemonitor.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `devicemonitor.image.registry` | Docker image registry | `registry.mender.io` |
+| `devicemonitor.image.repository` | Docker image repository | `mendersoftware/devicemonitor` |
+| `devicemonitor.image.tag` | Docker image tag | `mender-3.1.0` |
+| `devicemonitor.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `devicemonitor.replicas` | Number of replicas | `1` |
+| `devicemonitor.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `devicemonitor.resources.limits.cpu` | Resources CPU limit | `100m` |
+| `devicemonitor.resources.limits.memory` | Resources memory limit | `128M` |
+| `devicemonitor.resources.requests.cpu` | Resources CPU request | `100m` |
+| `devicemonitor.resources.requests.memory` | Resources memory request | `128M` |
+| `devicemonitor.service.name` | Name of the service | `mender-devicemonitor` |
+| `devicemonitor.service.annotations` | Annotations map for the service | `{}` |
+| `devicemonitor.service.type` | Service type | `ClusterIP` |
+| `devicemonitor.service.loadBalancerIP` | Service load balancer IP | `nil` |
+| `devicemonitor.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
+| `devicemonitor.service.port` | Port for the service | `8080` |
+| `devicemonitor.service.nodePort` | Node port for the service | `nil` |
+| `devicemonitor.env.DEVICEMONITOR_USERADM_URL` | Set the DEVICEMONITOR_USERADM_URL variable | `http://mender-useradm:8080/` |
+| `devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL` | Set the DEVICEMONITOR_WORKFLOWS_URL variable | `http://mender-workflows-server:8080` |
 
 ## Create a tenant and a user from command line
 

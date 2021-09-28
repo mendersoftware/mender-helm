@@ -1,0 +1,40 @@
+{{- if and .Values.devicemonitor.enabled .Values.global.enterprise }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.devicemonitor.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: devicemonitor-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: devicemonitor
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.devicemonitor.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.devicemonitor.service.type }}
+  {{- if and (eq .Values.devicemonitor.service.type "ClusterIP") .Values.devicemonitor.service.clusterIP }}
+  clusterIP: {{ .Values.devicemonitor.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.devicemonitor.service.type "LoadBalancer") .Values.devicemonitor.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.devicemonitor.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.devicemonitor.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.devicemonitor.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.devicemonitor.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.devicemonitor.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.devicemonitor.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.devicemonitor.service.nodePort }}
+    nodePort: {{ .Values.devicemonitor.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: devicemonitor
+{{- end }}
