@@ -28,7 +28,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: mendersoftware/api-gateway
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   replicas: 1
   resources:
@@ -65,7 +65,7 @@ deployments:
   image:
     registry: registry.mender.io
     repository: mendersoftware/deployments-enterprise
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deployments
@@ -91,7 +91,7 @@ device_auth:
   image:
     registry: docker.io
     repository: mendersoftware/deviceauth
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-device-auth
@@ -121,7 +121,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-gui
@@ -147,7 +147,7 @@ inventory:
   image:
     registry: registry.mender.io
     repository: mendersoftware/inventory-enterprise
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-inventory
@@ -171,7 +171,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-tenantadm
@@ -199,7 +199,7 @@ useradm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/useradm-enterprise
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-useradm
@@ -229,7 +229,7 @@ workflows:
   image:
     registry: registry.mender.io
     repository: mendersoftware/workflows-enterprise
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-workflows-server
@@ -252,7 +252,7 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
 
 auditlogs:
@@ -270,7 +270,7 @@ auditlogs:
   image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-auditlogs
@@ -293,7 +293,7 @@ deviceconnect:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-2.6.1
+    tag: mender-2.6.3
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deviceconnect
