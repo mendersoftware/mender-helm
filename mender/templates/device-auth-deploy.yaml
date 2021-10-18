@@ -41,8 +41,12 @@ spec:
 
       containers:
       - name: device-auth
-        image: {{ .Values.device_auth.image.registry }}/{{ .Values.device_auth.image.repository }}:{{ .Values.device_auth.image.tag }}
-        imagePullPolicy: {{ .Values.device_auth.image.imagePullPolicy }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag }}
+{{- else }}
+        image: {{ .Values.device_auth.image.registry | default "docker.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .Values.device_auth.image.tag }}
+{{- end }}
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.device_auth.resources | indent 10 }}
 
@@ -72,7 +76,11 @@ spec:
 
         volumeMounts:
         - name: rsa
+          {{- if .Values.global.enterprise }}
+          mountPath: "/etc/deviceauth-enterprise/rsa/"
+          {{- else }}
           mountPath: "/etc/deviceauth/rsa/"
+          {{- end }}
           readOnly: true
 
         env:

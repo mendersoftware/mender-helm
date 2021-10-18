@@ -95,8 +95,8 @@ device_auth:
       memory: 128M
   affinity: {}
   image:
-    registry: docker.io
-    repository: mendersoftware/deviceauth
+    registry: ""
+    repository: ""
     tag: mender-master
     imagePullPolicy: IfNotPresent
   service:
