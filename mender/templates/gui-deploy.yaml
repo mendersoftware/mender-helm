@@ -86,7 +86,7 @@ spec:
           value: "true"
         {{- end }}
         {{- if .Values.deviceconfig.enabled }}
-        - name: HAVE_DEVICECCONFIG
+        - name: HAVE_DEVICECONFIG
           value: "true"
         {{- end }}
         {{- if and .Values.devicemonitor.enabled .Values.global.enterprise }}
