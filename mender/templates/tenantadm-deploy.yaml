@@ -86,6 +86,10 @@ spec:
           secretRef:
             name: mongodb-common
 
+{{- with .Values.tenantadm.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
+
       volumes:
       - name: rsa
         secret:
