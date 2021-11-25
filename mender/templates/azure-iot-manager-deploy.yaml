@@ -1,0 +1,85 @@
+{{- if and .Values.azure_iot_manager.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-iot-manager
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: azure-iot-manager
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: azure-iot-manager
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.azure_iot_manager.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: azure-iot-manager
+
+  # if deployment is not completed within 10 min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+  progressDeadlineSeconds: 600
+
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: azure-iot-manager
+    spec:
+      {{- with .Values.azure_iot_manager.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: azure-iot-manager
+        image: {{ .Values.azure_iot_manager.image.registry }}/{{ .Values.azure_iot_manager.image.repository }}:{{ .Values.azure_iot_manager.image.tag }}
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.azure_iot_manager.resources | indent 10 }}
+
+{{- if .Values.azure_iot_manager.automigrate }}
+        args: ["server", "--automigrate"]
+{{- else -}}
+        args: ["server"]
+{{- end }}
+
+        # Readiness/liveness probes
+        readinessProbe:
+           httpGet:
+             path: /api/internal/v1/azure-iot-manager/health
+             port: 8080
+           periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/azure-iot-manager/alive
+            port: 8080
+          periodSeconds: 5
+        startupProbe:
+          httpGet:
+            path: /api/internal/v1/azure-iot-manager/alive
+            port: 8080
+          failureThreshold: 36
+          periodSeconds: 5
+
+        env:
+        # Supported configuration settings: https://github.com/mendersoftware/azure-iot-manager/blob/master/config.yaml
+        # Set in order, last value for the key will be used in case duplications.
+        envFrom:
+        - prefix: AZURE_IOT_MANAGER_
+          secretRef:
+            name: mongodb-common
+
+{{- if .Values.global.image.username }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
+{{- end }}

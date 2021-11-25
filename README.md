@@ -451,6 +451,33 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.service.port` | Port for the service | `8080` |
 | `auditlogs.service.nodePort` | Node port for the service | `nil` |
 
+
+### Parameters: azure-iot-manager
+
+The following table lists the parameters for the `azure-iot-manager` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `azure_iot_manager.enabled` | Enable the component | `true` |
+| `azure_iot_manager.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `azure_iot_manager.image.registry` | Docker image registry | `docker.io` |
+| `azure_iot_manager.image.repository` | Docker image repository | `mendersoftware/azure_iot_manager` |
+| `azure_iot_manager.image.tag` | Docker image tag | `mender-3.1.0` |
+| `azure_iot_manager.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `azure_iot_manager.replicas` | Number of replicas | `1` |
+| `azure_iot_manager.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `azure_iot_manager.resources.limits.cpu` | Resources CPU limit | `50m` |
+| `azure_iot_manager.resources.limits.memory` | Resources memory limit | `128M` |
+| `azure_iot_manager.resources.requests.cpu` | Resources CPU request | `50m` |
+| `azure_iot_manager.resources.requests.memory` | Resources memory request | `128M` |
+| `azure_iot_manager.service.name` | Name of the service | `mender-azure_iot_manager` |
+| `azure_iot_manager.service.annotations` | Annotations map for the service | `{}` |
+| `azure_iot_manager.service.type` | Service type | `ClusterIP` |
+| `azure_iot_manager.service.loadBalancerIP` | Service load balancer IP | `nil` |
+| `azure_iot_manager.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
+| `azure_iot_manager.service.port` | Port for the service | `8080` |
+| `azure_iot_manager.service.nodePort` | Node port for the service | `nil` |
+
 ### Parameters: deviceconnect
 
 The following table lists the parameters for the `deviceconnect` component and their default values:
