@@ -46,7 +46,7 @@ spec:
 {{- else }}
         image: {{ .Values.inventory.image.registry | default "docker.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .Values.inventory.image.tag }}
 {{- end }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.inventory.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.inventory.resources | indent 10 }}
 

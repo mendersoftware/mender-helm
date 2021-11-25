@@ -42,7 +42,7 @@ spec:
       containers:
       - name: deviceconnect
         image: {{ .Values.deviceconnect.image.registry }}/{{ .Values.deviceconnect.image.repository }}:{{ .Values.deviceconnect.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.deviceconnect.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.deviceconnect.resources | indent 10 }}
 
