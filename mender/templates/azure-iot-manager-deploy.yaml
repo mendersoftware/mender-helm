@@ -42,7 +42,7 @@ spec:
       containers:
       - name: azure-iot-manager
       ***REMOVED*** {{ .Values.azure_iot_manager.image.registry }}/{{ .Values.azure_iot_manager.image.repository }}:{{ .Values.azure_iot_manager.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.azure_iot_manager.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.azure_iot_manager.resources | indent 10 }}
 

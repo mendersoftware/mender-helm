@@ -48,7 +48,7 @@ spec:
 {{- else }}
       ***REMOVED*** {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
 {{- end }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.deployments.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.deployments.resources | indent 10 }}
 

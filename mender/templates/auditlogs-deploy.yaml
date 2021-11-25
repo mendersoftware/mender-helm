@@ -42,7 +42,7 @@ spec:
       containers:
       - name: auditlogs
       ***REMOVED*** {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.auditlogs.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.auditlogs.resources | indent 10 }}
 

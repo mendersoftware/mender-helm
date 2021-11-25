@@ -46,7 +46,7 @@ spec:
 {{- else }}
       ***REMOVED*** {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}-worker:{{ .Values.workflows.image.tag }}
 {{- end }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.workflows.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
 
