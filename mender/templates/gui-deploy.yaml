@@ -46,7 +46,7 @@ spec:
       containers:
       - name: gui
       ***REMOVED*** {{ .Values.gui.image.registry }}/{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.gui.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.device_auth.resources | indent 10 }}
 

@@ -42,7 +42,7 @@ spec:
       containers:
       - name: device-auth
       ***REMOVED*** {{ .Values.device_auth.image.registry }}/{{ .Values.device_auth.image.repository }}:{{ .Values.device_auth.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.device_auth.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.device_auth.resources | indent 10 }}
 

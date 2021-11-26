@@ -42,7 +42,7 @@ spec:
       containers:
       - name: workflows
       ***REMOVED*** {{ .Values.create_artifact_worker.image.registry }}/{{ .Values.create_artifact_worker.image.repository }}:{{ .Values.create_artifact_worker.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.create_artifact_worker.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.create_artifact_worker.resources | indent 10 }}
 

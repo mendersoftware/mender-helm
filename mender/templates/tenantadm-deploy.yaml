@@ -42,7 +42,7 @@ spec:
       containers:
       - name: tenantadm
       ***REMOVED*** {{ .Values.tenantadm.image.registry }}/{{ .Values.tenantadm.image.repository }}:{{ .Values.tenantadm.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.tenantadm.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.tenantadm.resources | indent 10 }}
 
