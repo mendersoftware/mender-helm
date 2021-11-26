@@ -55,7 +55,7 @@ Follow instructions from https://nats-io.github.io/k8s using `helm`:
 ```bash
 $ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 $ helm repo update
-$ helm install nats nats/nats --version 0.8.2 --set "nats.image=nats:2.3.1-alpine"
+$ helm install nats nats/nats --version 0.8.2 --set "nats.image=nats:2.6.5-alpine" --set "nats.jetstream.enabled=true"
 ```
 
 ## Installing the Chart
