@@ -42,7 +42,7 @@ spec:
       containers:
       - name: devicemonitor
         image: {{ .Values.devicemonitor.image.registry }}/{{ .Values.devicemonitor.image.repository }}:{{ .Values.devicemonitor.image.tag }}
-        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.devicemonitor.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.devicemonitor.resources | indent 10 }}
 
