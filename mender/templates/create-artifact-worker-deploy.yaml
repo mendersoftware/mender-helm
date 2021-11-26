@@ -55,6 +55,8 @@ spec:
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         env:
+        - name: WORKFLOWS_NATS_URI
+          value: "{{ .Values.global.nats.URL }}"
         - name: CREATE_ARTIFACT_GATEWAY_URL
           value: {{ .Values.global.url | default (ternary (printf "https://%s" .Values.api_gateway.service.name ) (printf "http://%s" .Values.api_gateway.service.name) (.Values.api_gateway.env.SSL)) }}
         - name: CREATE_ARTIFACT_SKIPVERIFY
