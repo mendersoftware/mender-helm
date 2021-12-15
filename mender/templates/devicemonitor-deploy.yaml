@@ -32,6 +32,10 @@ spec:
 
   template:
     metadata:
+      {{- with .Values.devicemonitor.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app.kubernetes.io/name: devicemonitor
     spec:
