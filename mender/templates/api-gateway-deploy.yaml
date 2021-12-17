@@ -56,16 +56,14 @@ spec:
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
-{{- if .Values.api_gateway.env.SSL }}
-            - --entrypoints.http.http.redirections.entryPoint.to=https
-            - --entrypoints.http.http.redirections.entryPoint.scheme=https
-{{- end }}
             - --metrics=true
             - --metrics.prometheus=true
             - --metrics.prometheus.buckets=0.100000,0.300000,1.200000,5.000000
             - --metrics.prometheus.addEntryPointsLabels=true
             - --metrics.prometheus.addServicesLabels=true
             - --providers.file.filename=/etc/traefik/config/traefik.yaml
+            - --ping=true
+            - --ping.manualrouting=true
         resources:
 {{ toYaml .Values.api_gateway.resources | indent 10 }}
 
@@ -75,15 +73,31 @@ spec:
 {{- end }}
         - containerPort: 80
 
-        # Readiness/liveness probes
+        # Readiness/liveness/startup probes
         livenessProbe:
           tcpSocket:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
             port: 80
+          initialDelaySeconds: 5
           periodSeconds: 5
         readinessProbe:
           tcpSocket:
+          failureThreshold: 1
+          httpGet:
+            path: /healthz
             port: 80
           periodSeconds: 15
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
 
         volumeMounts:
         - name: api-gateway-traefik
