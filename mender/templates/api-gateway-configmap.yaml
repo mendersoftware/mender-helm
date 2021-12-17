@@ -20,6 +20,26 @@ data:
       # Routers
       #
       routers:
+{{- if .Values.api_gateway.env.SSL }}
+        #
+        # redirection from http to https
+        #
+        redirect-to-https:
+          entrypoints: http
+          rule: "PathPrefix(`/`)"
+          middlewares:
+          - redirect-to-https
+          service: noop@internal
+          priority: 10
+{{- end }}
+        #
+        # healthz
+        #
+        healthz:
+          entrypoints: http
+          rule: "Path(`/healthz`)"
+          service: ping@internal
+          priority: 20
 
         #
         # auditlogs
@@ -418,10 +438,15 @@ data:
       # Middlewares
       #
       middlewares:
-
         ui-stripprefix:
           stripprefix:
             prefixes: "/ui"
+
+{{- if .Values.api_gateway.env.SSL }}
+        redirect-to-https:
+          redirectscheme:
+            scheme: https
+{{- end }}
 
         ensure-ui-path:
           redirectregex:
