@@ -280,7 +280,7 @@ auditlogs:
     type: ClusterIP
     port: 8080
 
-azure_iot_manager:
+iot_manager:
   enabled: true
   automigrate: true
   replicas: 1
@@ -294,11 +294,11 @@ azure_iot_manager:
   affinity: {}
   image:
     registry: docker.io
-    repository: mendersoftware/azure-iot-manager
+    repository: mendersoftware/iot-manager
     tag: mender-master
     imagePullPolicy: IfNotPresent
   service:
-    name: mender-azure-iot-manager
+    name: mender-iot-manager
     annotations: {}
     type: ClusterIP
     port: 8080
