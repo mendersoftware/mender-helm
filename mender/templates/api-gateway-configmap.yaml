@@ -37,9 +37,9 @@ data:
           tls: {{ $isTls }}
 
         #
-        # azure-iot-manager
+        # iot-manager
         #
-        azure-iot-manager:
+        iot-manager:
           entrypoints: {{ $scheme }}
           middlewares:
           - userauth
@@ -47,8 +47,8 @@ data:
           - compression
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/azure-iot-manager`)"
-          service: azure-iot-manager
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/iot-manager`)"
+          service: iot-manager
           tls: {{ $isTls }}
 
         #
@@ -352,10 +352,10 @@ data:
             servers:
             - url: "http://{{ .Values.auditlogs.service.name }}:{{ .Values.auditlogs.service.port }}"
 
-        azure-iot-manager:
+        iot-manager:
           loadBalancer:
             servers:
-            - url: "http://{{ .Values.azure_iot_manager.service.name }}:{{ .Values.azure_iot_manager.service.port }}"
+            - url: "http://{{ .Values.iot_manager.service.name }}:{{ .Values.iot_manager.service.port }}"
 
         deviceauth:
           loadBalancer:

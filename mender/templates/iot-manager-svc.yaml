@@ -1,0 +1,40 @@
+{{- if and .Values.iot_manager.enabled .Values.global.enterprise }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.iot_manager.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: iot-manager-svc
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: iot-manager
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+{{- with .Values.iot_manager.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.iot_manager.service.type }}
+  {{- if and (eq .Values.iot_manager.service.type "ClusterIP") .Values.iot_manager.service.clusterIP }}
+  clusterIP: {{ .Values.iot_manager.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.iot_manager.service.type "LoadBalancer") .Values.iot_manager.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.iot_manager.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.iot_manager.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.iot_manager.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.iot_manager.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.iot_manager.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.iot_manager.service.port }}
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.iot_manager.service.nodePort }}
+    nodePort: {{ .Values.iot_manager.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: iot-manager
+{{- end }}
