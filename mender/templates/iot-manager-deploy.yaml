@@ -74,7 +74,7 @@ spec:
         # Supported configuration settings: https://github.com/mendersoftware/iot-manager/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
-        - prefix: iot_MANAGER_
+        - prefix: IOT_MANAGER_
           secretRef:
             name: mongodb-common
 
