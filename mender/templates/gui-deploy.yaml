@@ -91,4 +91,8 @@ spec:
         - name: HAVE_DEVICECCONFIG
           value: {{ .Values.deviceconfig.enabled | quote }}
         {{- end }}
+{{- if .Values.global.image.username }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
 {{- end }}
