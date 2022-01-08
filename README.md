@@ -327,7 +327,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `tenantadm.enabled` | Enable the component | `true` |
 | `tenantadm.image.registry` | Docker image registry | `registry.mender.io` |
-| `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm-enterprise` |
+| `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm` |
 | `tenantadm.image.tag` | Docker image tag | `mender-3.1.0` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `tenantadm.replicas` | Number of replicas | `1` |
