@@ -375,7 +375,6 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.service.nodePort` | Node port for the service | `nil` |
 | `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable | `Mender Users` |
 | `useradm.env.USERADM_JWT_EXP_TIMEOUT` | Set the USERADM_JWT_EXP_TIMEOUT variable | `604800` |
-| `useradm.env.USERADM_SERVER_PRIV_KEY_PATH` | Set the USERADM_SERVER_PRIV_KEY_PATH variable | `/etc/useradm/rsa/private.pem` |
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
 | `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
