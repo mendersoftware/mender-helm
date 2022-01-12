@@ -17,7 +17,7 @@ echo "> Creating a new tenant: $TENANT_NAME"
 TENANT_ID=$(kubectl exec $TENANTADM -- tenantadm create-org --name $TENANT_NAME --username "$ADMIN_USERNAME" --password "$ADMIN_PASSWORD" --plan "enterprise")
 
 echo "> Creating a new user for the tenant: $USER_USERNAME / $USER_PASSWORD"
-kubectl exec $USERADM -- useradm create-user --username "$USER_USERNAME" --password "$USER_PASSWORD" --tenant-id "$TENANT_ID" --roles "RBAC_ROLE_PERMIT_ALL"
+kubectl exec $USERADM -- useradm-enterprise create-user --username "$USER_USERNAME" --password "$USER_PASSWORD" --tenant-id "$TENANT_ID" --roles "RBAC_ROLE_PERMIT_ALL"
 
 # sleep one second, to let the workflow execute
 sleep 1
