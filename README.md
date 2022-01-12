@@ -571,7 +571,7 @@ $ tenantadm create-org --name demo --username "admin@mender.io" --password "admi
 You can create additional useres from the command line of the `useradm` pod:
 
 ```bash
-$ useradm create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
+$ useradm-enterprise create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
 187b8101-4431-500f-88da-54709f51f2e6
 ```
 
