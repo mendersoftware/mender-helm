@@ -460,7 +460,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.enabled` | Enable the component | `true` |
 | `iot_manager.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `iot_manager.image.registry` | Docker image registry | `docker.io` |
-| `iot_manager.image.repository` | Docker image repository | `mendersoftware/iot_manager` |
+| `iot_manager.image.repository` | Docker image repository | `mendersoftware/iot-manager` |
 | `iot_manager.image.tag` | Docker image tag | `mender-3.1.0` |
 | `iot_manager.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `iot_manager.replicas` | Number of replicas | `1` |
