@@ -90,7 +90,6 @@ spec:
             port: 80
           periodSeconds: 15
           initialDelaySeconds: 5
-          periodSeconds: 5
         startupProbe:
           failureThreshold: 30
           httpGet:
