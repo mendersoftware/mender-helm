@@ -71,7 +71,7 @@ deployments:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deployments
@@ -97,7 +97,7 @@ device_auth:
   image:
     registry: docker.io
     repository: mendersoftware/deviceauth
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-device-auth
@@ -126,7 +126,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-gui
@@ -149,7 +149,7 @@ inventory:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-inventory
@@ -173,7 +173,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-tenantadm
@@ -201,7 +201,7 @@ useradm:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-useradm
@@ -231,7 +231,7 @@ workflows:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-workflows-server
@@ -254,7 +254,7 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
 
 auditlogs:
@@ -272,7 +272,7 @@ auditlogs:
   image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-auditlogs
@@ -295,7 +295,7 @@ deviceconnect:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deviceconnect
@@ -318,7 +318,7 @@ deviceconfig:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconfig
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-deviceconfig
@@ -341,7 +341,7 @@ devicemonitor:
   image:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
-    tag: mender-3.1.0
+    tag: mender-3.1.1
     imagePullPolicy: IfNotPresent
   service:
     name: mender-devicemonitor
