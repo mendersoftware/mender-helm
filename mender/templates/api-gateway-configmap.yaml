@@ -447,6 +447,11 @@ data:
           redirectscheme:
             scheme: https
 {{- end }}
+{{- with ( urlParse .Values.global.url).path }}
+        path-rewrite:
+          stripPrefix:
+            prefix: {{quote .}}
+{{- end }}
 
         ensure-ui-path:
           redirectregex:

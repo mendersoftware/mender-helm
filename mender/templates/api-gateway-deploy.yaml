@@ -56,6 +56,9 @@ spec:
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
+{{- with (urlParse .Values.global.url).path }}
+            - --entrypoints.https.http.middlewares=path-rewrite
+{{- end }}
             - --metrics=true
             - --metrics.prometheus=true
             - --metrics.prometheus.buckets=0.100000,0.300000,1.200000,5.000000
