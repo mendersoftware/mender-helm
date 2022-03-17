@@ -78,6 +78,9 @@ spec:
         - prefix: WORKFLOWS_
           secretRef:
             name: mongodb-common
+        - prefix: WORKFLOWS_
+          secretRef:
+            name: smtp
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
