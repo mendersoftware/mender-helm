@@ -306,6 +306,7 @@ iot_manager:
     repository: mendersoftware/iot-manager
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-iot-manager
     annotations: {}
