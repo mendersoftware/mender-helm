@@ -88,4 +88,8 @@ spec:
       imagePullSecrets:
       - name: docker-registry
 {{- end }}
+
+{{- with .Values.workflows.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
 {{- end }}

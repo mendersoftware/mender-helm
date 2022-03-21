@@ -109,6 +109,10 @@ spec:
             name: mongodb-common
           prefix: USERADM_
 
+{{- with .Values.useradm.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
+
       volumes:
       - name: rsa
         secret:
