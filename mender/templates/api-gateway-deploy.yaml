@@ -109,6 +109,10 @@ spec:
           readOnly: true
 {{- end }}
 
+{{- with .Values.api_gateway.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
+
       volumes:
       - name: api-gateway-traefik
         configMap:

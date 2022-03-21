@@ -44,6 +44,7 @@ api_gateway:
       cpu: 600m
       memory: 512M
   affinity: {}
+  nodeSelector: {}
   service:
     name: mender-api-gateway
     annotations: {}
@@ -73,6 +74,7 @@ deployments:
     repository: ""
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-deployments
     annotations: {}
@@ -99,6 +101,7 @@ device_auth:
     repository: ""
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-device-auth
     annotations: {}
@@ -128,6 +131,7 @@ gui:
     repository: mendersoftware/gui
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-gui
     annotations: {}
@@ -151,6 +155,7 @@ inventory:
     repository: ""
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-inventory
     annotations: {}
@@ -175,6 +180,7 @@ tenantadm:
     repository: mendersoftware/tenantadm
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-tenantadm
     annotations: {}
@@ -203,6 +209,7 @@ useradm:
     repository: ""
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-useradm
     annotations: {}
@@ -232,6 +239,7 @@ workflows:
     repository: ""
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-workflows-server
     annotations: {}
@@ -255,6 +263,7 @@ create_artifact_worker:
     repository: mendersoftware/create-artifact-worker
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
 
 auditlogs:
   enabled: true
@@ -273,6 +282,7 @@ auditlogs:
     repository: mendersoftware/auditlogs
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-auditlogs
     annotations: {}
@@ -296,6 +306,7 @@ iot_manager:
     repository: mendersoftware/iot-manager
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-iot-manager
     annotations: {}
@@ -319,6 +330,7 @@ deviceconnect:
     repository: mendersoftware/deviceconnect
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-deviceconnect
     annotations: {}
@@ -342,6 +354,7 @@ deviceconfig:
     repository: mendersoftware/deviceconfig
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-deviceconfig
     annotations: {}
@@ -365,6 +378,7 @@ devicemonitor:
     repository: mendersoftware/devicemonitor
     tag: mender-master
     imagePullPolicy: IfNotPresent
+  nodeSelector: {}
   service:
     name: mender-devicemonitor
     annotations: {}
