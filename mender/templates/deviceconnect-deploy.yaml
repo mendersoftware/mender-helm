@@ -85,6 +85,12 @@ spec:
         - name: DEVICECONNECT_WORKFLOWS_URL
           value: http://mender-workflows-server:8080/
 
+        - name: DEVICECONNECT_WS_ALLOWED_ORIGINS
+          value: >-
+            {{ with (urlParse .Values.global.url) -}}
+            {{.hostname}} https://{{.hostname}} wss://{{.hostname}}
+            {{- end }}
+
         # Supported configuration settings: https://github.com/mendersoftware/deviceconnect/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
