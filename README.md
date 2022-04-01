@@ -265,6 +265,12 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
+| `device_auth.env.DEVICEAUTH_REDIS_ADDR` | Set the DEVICEAUTH_REDIS_ADDR variable | `mender-redis:6379` |
+| `device_auth.env.DEVICEAUTH_REDIS_USERNAME` | Set the DEVICEAUTH_REDIS_USERNAME variable | `""` |
+| `device_auth.env.DEVICEAUTH_REDIS_PASSWORD` | Set the DEVICEAUTH_REDIS_PASSWORD variable | `""` |
+| `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable | `1` |
+| `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable | `1` |
+| `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-***REMOVED***8080` |
 
 ### Parameters: gui
@@ -347,6 +353,17 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH` | Set the TENANTADM_SERVER_PRIV_KEY_PATH variable | `/etc/tenantadm/rsa/private.pem` |
 | `tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR` | Set the TENANTADM_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080/` |
 | `tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY` | Set the TENANTADM_RECAPTCHA_URL_VERIFY variable | `https://www.google.com/recaptcha/api/siteverify` |
+| `tenantadm.env.TENANTADM_DEFAULT_API_LIMITS` | Set the TENANTADM_DEFAULT_API_LIMITS variable, defining the default rate limits | see below for the default values |
+
+The default value for the rate limits are:
+
+* Management APIs rate limits, per user:
+  * 600 API calls/minute/user
+* Device APIs rate limits, per device:
+  * 60 API calls/minute
+  * 1 API call/5 seconds for each API end-point
+
+You can customize the default API limits setting a custom JSON document. See the [default one here](./mender/templates/tenantadm-deploy.yaml#L82).
 
 ### Parameters: useradm
 
@@ -376,6 +393,12 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable | `Mender Users` |
 | `useradm.env.USERADM_JWT_EXP_TIMEOUT` | Set the USERADM_JWT_EXP_TIMEOUT variable | `604800` |
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
+| `useradm.env.USERADM_REDIS_ADDR` | Set the USERADM_REDIS_ADDR variable | `mender-redis:6379` |
+| `useradm.env.USERADM_REDIS_USERNAME` | Set the USERADM_REDIS_USERNAME variable | `""` |
+| `useradm.env.USERADM_REDIS_PASSWORD` | Set the USERADM_REDIS_PASSWORD variable | `""` |
+| `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable | `2` |
+| `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable | `1` |
+| `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-***REMOVED***8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 
@@ -556,6 +579,31 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.service.nodePort` | Node port for the service | `nil` |
 | `devicemonitor.env.DEVICEMONITOR_USERADM_URL` | Set the DEVICEMONITOR_USERADM_URL variable | `http://mender-***REMOVED***8080/` |
 | `devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL` | Set the DEVICEMONITOR_WORKFLOWS_URL variable | `http://mender-workflows-server:8080` |
+
+### Parameters: redis
+
+The following table lists the parameters for the `redis` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `redis.enabled` | Enable the component | `true` |
+| `redis.image.registry` | Docker image registry | `docker.io` |
+| `redis.image.repository` | Docker image repository | `redis` |
+| `redis.image.tag` | Docker image tag | `6.0.16-alpine` |
+| `redis.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `redis.replicas` | Number of replicas | `1` |
+| `redis.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `redis.resources.limits.cpu` | Resources CPU limit | `50m` |
+| `redis.resources.limits.memory` | Resources memory limit | `64M` |
+| `redis.resources.requests.cpu` | Resources CPU request | `100m` |
+| `redis.resources.requests.memory` | Resources memory request | `128M` |
+| `redis.service.name` | Name of the service | `mender-redis` |
+| `redis.service.annotations` | Annotations map for the service | `{}` |
+| `redis.service.type` | Service type | `ClusterIP` |
+| `redis.service.loadBalancerIP` | Service load balancer IP | `nil` |
+| `redis.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
+| `redis.service.port` | Port for the service | `6379` |
+| `redis.service.nodePort` | Node port for the service | `nil` |
 
 ## Create a tenant and a user from command line
 

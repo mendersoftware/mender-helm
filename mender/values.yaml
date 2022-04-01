@@ -110,6 +110,12 @@ deployments:
     DEVICEAUTH_JWT_ISSUER: Mender
     DEVICEAUTH_JWT_EXP_TIMEOUT: 604800
     DEVICEAUTH_MIDDLEWARE: prod
+    DEVICEAUTH_REDIS_ADDR: "mender-redis:6379"
+    DEVICEAUTH_REDIS_USERNAME: ""
+    DEVICEAUTH_REDIS_PASSWORD: ""
+    DEVICEAUTH_REDIS_DB: "1"
+    DEVICEAUTH_REDIS_TIMEOUT_SEC: "1"
+    DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
     DEVICEAUTH_TENANTADM_ADDR: http://mender-***REMOVED***8080
 
 gui:
@@ -181,6 +187,7 @@ inventory:
     type: ClusterIP
     port: 8080
   env:
+    TENANTADM_DEFAULT_API_LIMITS: '{"management":{"bursts":[],"quota":{"max_calls":600,"interval_sec":60}},"devices":{"bursts":[{"action":"POST","uri":"/api/devices/v1/authentication","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v2/deployments/device/deployments/next","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"PATCH","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5},{"action":"PUT","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5}],"quota":{"max_calls":60,"interval_sec":60}}}'
     TENANTADM_MIDDLEWARE: prod
     TENANTADM_SERVER_PRIV_KEY_PATH: /etc/tenantadm/rsa/private.pem
     TENANTADM_ORCHESTRATOR_ADDR: http://mender-workflows-server:8080/
@@ -212,6 +219,12 @@ inventory:
     USERADM_JWT_ISSUER: Mender Users
     USERADM_JWT_EXP_TIMEOUT: 604800
     USERADM_MIDDLEWARE: prod
+    USERADM_REDIS_ADDR: "mender-redis:6379"
+    USERADM_REDIS_USERNAME: ""
+    USERADM_REDIS_PASSWORD: ""
+    USERADM_REDIS_DB: "1"
+    USERADM_REDIS_TIMEOUT_SEC: "1"
+    USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
     USERADM_TENANTADM_ADDR: http://mender-***REMOVED***8080
     USERADM_TOTP_ISSUER: Mender
 
@@ -370,3 +383,25 @@ devicemonitor:
     annotations: {}
     type: ClusterIP
     port: 8080
+
+redis:
+  enabled: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128M
+    requests:
+      cpu: 50m
+      memory: 64M
+  affinity: {}
+***REMOVED***
+    registry: docker.io
+    repository: redis
+    tag: 6.0.16-alpine
+    imagePullPolicy: IfNotPresent
+  service:
+    name: mender-redis
+    annotations: {}
+    type: ClusterIP
+    port: 6379

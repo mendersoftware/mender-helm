@@ -78,6 +78,8 @@ spec:
           value: {{ .Values.tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR | quote }}
         - name: TENANTADM_RECAPTCHA_URL_VERIFY
           value: {{ .Values.tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY | quote }}
+        - name: TENANTADM_DEFAULT_API_LIMITS
+          value: {{ .Values.tenantadm.env.TENANTADM_DEFAULT_API_LIMITS | quote }}
 
         # Supported configuration settings: https://github.com/mendersoftware/tenantadm/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
