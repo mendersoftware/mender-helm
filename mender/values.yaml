@@ -55,6 +55,13 @@
   minio:
     enabled: true
     url: "http://minio:9000"
+  rateLimit:
+    average: 100
+    burst: 100
+    period: "1s"
+    sourceCriterion:
+      ipStrategy:
+        depth: 1
 
 deployments:
   enabled: true
