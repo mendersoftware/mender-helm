@@ -206,6 +206,10 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.env.SSL` | SSL termination flag | `true` |
 | `api_gateway.minio.enabled` | Enable routing of S3 requests to the minio service | `true` |
 | `api_gateway.minio.url` | URL of the minio service | `http://minio:9000` |
+| `api_gateway.rateLimit.average` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
+| `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
+| `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
+| `api_gateway.rateLimit.sourceCriterion` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `{"ipStrategy": {"depth": 1}}` |
 
 ### Parameters: deployments
 
