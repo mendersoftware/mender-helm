@@ -76,6 +76,20 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
+{{- if .Values.global.enterprise }}
+        - name: USERADM_REDIS_ADDR
+          value: {{ .Values.useradm.env.USERADM_REDIS_ADDR | quote }}
+        - name: USERADM_REDIS_USERNAME
+          value: {{ .Values.useradm.env.USERADM_REDIS_USERNAME | quote }}
+        - name: USERADM_REDIS_PASSWORD
+          value: {{ .Values.useradm.env.USERADM_REDIS_PASSWORD | quote }}
+        - name: USERADM_REDIS_DB
+          value: {{ .Values.useradm.env.USERADM_REDIS_DB | quote }}
+        - name: USERADM_REDIS_TIMEOUT_SEC
+          value: {{ .Values.useradm.env.USERADM_REDIS_TIMEOUT_SEC | quote }}
+        - name: USERADM_REDIS_LIMITS_EXPIRE_SEC
+          value: {{ .Values.useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC | quote }}
+{{- end }}
 
         # Readiness/liveness probes
         readinessProbe:
