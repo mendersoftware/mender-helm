@@ -35,7 +35,7 @@ You can install mongodb using the official mongodb Helm chart using `helm`:
 ```bash
 $ helm repo add bitnami https://charts.bitnami.com/bitnami
 $ helm repo update
-$ helm install mongodb bitnami/mongodb --version 10.21.1 --set "image.tag=4.4.6-debian-10-r29" --set "auth.enabled=false"
+$ helm install mongodb bitnami/mongodb --version 11.1.3 --set "image.tag=4.4.13-debian-10-r29" --set "auth.enabled=false"
 ```
 
 ### Installing MinIO
@@ -45,7 +45,7 @@ You can install MinIO using the official MinIO Helm chart using `helm`:
 ```bash
 $ helm repo add minio https://helm.min.io/
 $ helm repo update
-$ helm install minio minio/minio --version 8.0.10 --set "image.tag=RELEASE.2021-02-14T04-01-33Z" --set "accessKey=myaccesskey,secretKey=mysecretkey"
+$ helm install minio minio/minio --version 8.0.10 --set "image.tag=RELEASE.2021-02-14T04-01-33Z" --set "accessKey=myaccesskey,secretKey=mysecretkey" --set "resources.requests.memory=128M"
 ```
 
 ### Installing NATS
@@ -55,7 +55,7 @@ Follow instructions from https://nats-io.github.io/k8s using `helm`:
 ```bash
 $ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 $ helm repo update
-$ helm install nats nats/nats --version 0.8.2 --set "nats.image=nats:2.6.5-alpine" --set "nats.jetstream.enabled=true"
+$ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpine" --set "nats.jetstream.enabled=true"
 ```
 
 ## Installing the Chart
