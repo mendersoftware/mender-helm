@@ -47,6 +47,7 @@ data:
         auditlogs:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -62,6 +63,7 @@ data:
         iot-manager:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -77,6 +79,7 @@ data:
         deployments:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - devauth
           - sec-headers
           - compression
@@ -91,6 +94,7 @@ data:
         deploymentsDL:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - sec-headers
           - json-error-responder1
           - json-error-responder2
@@ -103,6 +107,7 @@ data:
         deploymentsMgmt:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -118,6 +123,7 @@ data:
         deviceauth:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - sec-headers
           - compression
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/authentication`)"
@@ -127,6 +133,7 @@ data:
         deviceauthMgmt:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -142,6 +149,7 @@ data:
         deviceconfig:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - devauth
           - sec-headers
           - compression
@@ -156,6 +164,7 @@ data:
         deviceconfigMgmt:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -171,6 +180,7 @@ data:
         deviceconnect:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - devauth
           - sec-headers
           - compression
@@ -185,6 +195,7 @@ data:
         deviceconnectMgmt:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -202,6 +213,7 @@ data:
         devicemonitor:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - devauth
           - sec-headers
           - compression
@@ -216,6 +228,7 @@ data:
         devicemonitorMgmt:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -231,6 +244,7 @@ data:
         gui:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - ensure-ui-path
           - signup-redirect
           - ui-stripprefix
@@ -250,6 +264,7 @@ data:
         inventoryV1:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - devauth
           - inventoryV1-replacepathregex
           - sec-headers
@@ -265,6 +280,7 @@ data:
         inventoryV2:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - devauth
           - sec-headers
           - compression
@@ -279,6 +295,7 @@ data:
         inventoryMgmtV1:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - inventoryMgmtV1-replacepathregex
           - sec-headers
@@ -292,6 +309,7 @@ data:
         inventoryMgmtV2:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -307,6 +325,7 @@ data:
         ***REMOVED***
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -317,6 +336,7 @@ data:
         tenantadmSignup:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - sec-headers
           - compression
           rule: >-
@@ -331,6 +351,7 @@ data:
         ***REMOVED***
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - userauth
           - sec-headers
           - compression
@@ -343,6 +364,7 @@ data:
         useradmNoAuth:
           entrypoints: {{ $scheme }}
           middlewares:
+          - ratelimit
           - sec-headers
           - compression
           - json-error-responder4
@@ -472,6 +494,10 @@ data:
 
         compression:
           compress: true
+
+        ratelimit:
+          rateLimit:
+{{ toYaml .Values.api_gateway.rateLimit | indent 12 }}
 
         devauth:
           forwardAuth:
