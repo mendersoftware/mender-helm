@@ -90,7 +90,6 @@ spec:
             port: 80
           periodSeconds: 15
           initialDelaySeconds: 5
-          periodSeconds: 5
         startupProbe:
           failureThreshold: 30
           httpGet:
@@ -108,6 +107,10 @@ spec:
         - name: certs
           mountPath: /etc/traefik/certs
           readOnly: true
+{{- end }}
+
+{{- with .Values.api_gateway.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}
 
       volumes:

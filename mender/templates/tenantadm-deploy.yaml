@@ -78,6 +78,12 @@ spec:
           value: {{ .Values.tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR | quote }}
         - name: TENANTADM_RECAPTCHA_URL_VERIFY
           value: {{ .Values.tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY | quote }}
+        - name: TENANTADM_DEFAULT_API_LIMITS
+          value: {{ .Values.tenantadm.env.TENANTADM_DEFAULT_API_LIMITS | quote }}
+{{- if .Values.global.hosted }}
+        - name: TENANTADM_ENABLE_SELF_SERVICE_SIGN_UP
+          value: {{ .Values.global.hosted | quote }}
+{{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/tenantadm/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
@@ -85,6 +91,10 @@ spec:
         - prefix: TENANTADM_
           secretRef:
             name: mongodb-common
+
+{{- with .Values.tenantadm.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
 
       volumes:
       - name: rsa
