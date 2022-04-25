@@ -94,12 +94,26 @@ spec:
           value: {{ .Values.device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT | quote }}
         - name: DEVICEAUTH_MIDDLEWARE
           value: {{ .Values.device_auth.env.DEVICEAUTH_MIDDLEWARE | quote }}
-        {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
         - name: DEVICEAUTH_HAVE_ADDONS
           value: "true"
         - name: DEVICEAUTH_TENANTADM_ADDR
           value: {{ .Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
-        {{- end }}
+{{- end }}
+{{- if .Values.global.enterprise }}
+        - name: DEVICEAUTH_REDIS_ADDR
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_ADDR | quote }}
+        - name: DEVICEAUTH_REDIS_USERNAME
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_USERNAME | quote }}
+        - name: DEVICEAUTH_REDIS_PASSWORD
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_PASSWORD | quote }}
+        - name: DEVICEAUTH_REDIS_DB
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_DB | quote }}
+        - name: DEVICEAUTH_REDIS_TIMEOUT_SEC
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_TIMEOUT_SEC | quote }}
+        - name: DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | quote }}
+{{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/deviceauth/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
@@ -107,6 +121,10 @@ spec:
         - prefix: DEVICEAUTH_
           secretRef:
             name: mongodb-common
+
+{{- with .Values.device_auth.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
 
       volumes:
       - name: rsa

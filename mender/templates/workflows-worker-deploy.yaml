@@ -59,6 +59,8 @@ spec:
         env:
         - name: WORKFLOWS_NATS_URI
           value: "{{ .Values.global.nats.URL }}"
+        - name: WORKFLOWS_MENDER_URL
+          value: "{{ .Values.global.url }}"
         {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: HAVE_AUDITLOGS
           value: "true"
@@ -78,9 +80,16 @@ spec:
         - prefix: WORKFLOWS_
           secretRef:
             name: mongodb-common
+        - prefix: WORKFLOWS_
+          secretRef:
+            name: smtp
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
+{{- end }}
+
+{{- with .Values.workflows.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}
 {{- end }}
