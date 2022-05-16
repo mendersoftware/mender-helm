@@ -121,7 +121,7 @@ spec:
             name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
         - prefix: DEPLOYMENTS_
           secretRef:
-            name: artifacts-storage
+            name: {{ .Values.global.s3.existingSecret | default "artifacts-storage" }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
