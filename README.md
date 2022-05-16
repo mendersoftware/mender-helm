@@ -141,7 +141,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.hosted` | Enabled Hosted Mender specific features | `false` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
-| `global.image.password` | Global Docker image registry username | `password` |
+| `global.image.password` | Global Docker image registry password | `password` |
 | `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.existingSecret` | MongoDB existing secret | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
