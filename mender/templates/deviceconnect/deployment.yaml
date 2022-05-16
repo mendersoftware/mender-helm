@@ -87,9 +87,10 @@ spec:
 
         env:
         # NATS uri
+{{- if not .Values.global.nats.existingSecret }}
         - name: DEVICECONNECT_NATS_URI
           value: {{ template "nats_uri" . }}
-
+{{- end }}
         # Enable audit logging
 {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: DEVICECONNECT_ENABLE_AUDIT
@@ -112,6 +113,11 @@ spec:
         - prefix: DEVICECONNECT_
           secretRef:
             name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
+{{- if .Values.global.nats.existingSecret }}
+        - prefix: DEVICECONNECT_
+          secretRef:
+            name: {{ .Values.global.nats.existingSecret }}
+{{- end -}}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

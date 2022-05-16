@@ -157,6 +157,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.tag` | Global Docker image registry tag | `mender-3.6.2` |
 | `global.mongodb.existingSecret` | MongoDB existing secret | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
+| `global.nats.existingSecret` | NATS existing secret | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
 | `global.redis.username` | Optional Redis Username  | `nil` |
 | `global.redis.password` | Optional Redis Password  | `nil` |
