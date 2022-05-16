@@ -145,6 +145,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.existingSecret` | MongoDB existing secret | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
+| `global.nats.existingSecret` | NATS existing secret | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
 | `global.s3.AWS_EXTERNAL_URI` | External AWS S3 / MinIO URI | `null` |
