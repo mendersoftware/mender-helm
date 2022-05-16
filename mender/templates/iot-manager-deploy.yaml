@@ -80,7 +80,7 @@ spec:
         envFrom:
         - prefix: IOT_MANAGER_
           secretRef:
-            name: mongodb-common
+            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

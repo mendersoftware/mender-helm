@@ -83,7 +83,7 @@ spec:
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:
-            name: mongodb-common
+            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
         - prefix: WORKFLOWS_
           secretRef:
             name: smtp

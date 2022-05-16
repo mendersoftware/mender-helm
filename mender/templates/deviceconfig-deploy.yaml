@@ -90,7 +90,7 @@ spec:
         envFrom:
         - prefix: DEVICECONFIG_
           secretRef:
-            name: mongodb-common
+            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

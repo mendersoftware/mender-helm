@@ -124,7 +124,7 @@ spec:
         envFrom:
         - prefix: DEVICEAUTH_
           secretRef:
-            name: mongodb-common
+            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
 
 {{- with .Values.device_auth.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
