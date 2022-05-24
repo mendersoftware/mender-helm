@@ -145,7 +145,8 @@ The following table lists the global parameters supported by the chart and their
 | `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
-| `global.s3.AWS_URI` | AWS S3 / MinIO URI | `http://minio:9000` |
+| `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
+| `global.s3.AWS_EXTERNAL_URI` | External AWS S3 / MinIO URI | `null` |
 | `global.s3.AWS_BUCKET` | AWS S3 / MinIO bucket | `minio-hosted-mender-artifacts` |
 | `global.s3.AWS_REGION` | AWS S3 region | `us-east-1` |
 | `global.s3.AWS_ACCESS_KEY_ID` | AWS S3 / MinIO key ID | `myaccesskey` |
