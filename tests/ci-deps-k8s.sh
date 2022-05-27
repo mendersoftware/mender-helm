@@ -5,9 +5,7 @@
 set -e
 
 log "installing helm"
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
-chmod 755 get_helm.sh
-./get_helm.sh
+curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
 
 log "add helm repo: stable"
 helm repo add stable https://charts.helm.sh/stable
