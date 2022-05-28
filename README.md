@@ -190,6 +190,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.image.tag` | Docker image tag | `v2.5` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `api_gateway.podAnnotations` | add custom pod annotations | `nil` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `api_gateway.resources.limits.cpu` | Resources CPU limit | `600m` |
@@ -213,6 +214,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
 | `api_gateway.rateLimit.sourceCriterion` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `{"ipStrategy": {"depth": 1}}` |
 
+
 ### Parameters: deployments
 
 The following table lists the parameters for the `deployments` component and their default values:
@@ -226,6 +228,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.image.tag` | Docker image tag | `mender-3.2.2` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `deployments.podAnnotations` | add custom pod annotations | `nil` |
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `deployments.resources.limits.cpu` | Resources CPU limit | `300m` |
@@ -255,6 +258,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.image.tag` | Docker image tag | `mender-3.2.2` |
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `device_auth.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `device_auth.podAnnotations` | add custom pod annotations | `nil` |
 | `device_auth.replicas` | Number of replicas | `1` |
 | `device_auth.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `device_auth.resources.limits.cpu` | Resources CPU limit | `350m` |
@@ -293,6 +297,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.image.tag` | Docker image tag | `mender-3.2.2` |
 | `gui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `gui.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `gui.podAnnotations` | add custom pod annotations | `nil` |
 | `gui.replicas` | Number of replicas | `1` |
 | `gui.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `gui.resources.limits.cpu` | Resources CPU limit | `20m` |
@@ -320,6 +325,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.image.tag` | Docker image tag | `mender-3.2.2` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `inventory.podAnnotations` | add custom pod annotations | `nil` |
 | `inventory.replicas` | Number of replicas | `1` |
 | `inventory.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `inventory.resources.limits.cpu` | Resources CPU limit | `300m` |
@@ -347,6 +353,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.image.tag` | Docker image tag | `mender-3.2.2` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `tenantadm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `tenantadm.podAnnotations` | add custom pod annotations | `nil` |
 | `tenantadm.replicas` | Number of replicas | `1` |
 | `tenantadm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `tenantadm.resources.limits.cpu` | Resources CPU limit | `150m` |
@@ -389,6 +396,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.image.tag` | Docker image tag | `mender-3.2.2` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `useradm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `useradm.podAnnotations` | add custom pod annotations | `nil` |
 | `useradm.replicas` | Number of replicas | `1` |
 | `useradm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `useradm.resources.limits.cpu` | Resources CPU limit | `150m` |
@@ -427,6 +435,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.image.tag` | Docker image tag | `mender-3.2.2` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `workflows.podAnnotations` | add custom pod annotations | `nil` |
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `workflows.resources.limits.cpu` | Resources CPU limit | `100m` |
@@ -454,6 +463,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.image.tag` | Docker image tag | `mender-3.2.2` |
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `create_artifact_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `create_artifact_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
 | `create_artifact_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `create_artifact_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
@@ -474,6 +484,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.image.tag` | Docker image tag | `mender-3.2.2` |
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `auditlogs.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `auditlogs.podAnnotations` | add custom pod annotations | `nil` |
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `auditlogs.resources.limits.cpu` | Resources CPU limit | `50m` |
@@ -502,6 +513,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.image.tag` | Docker image tag | `mender-3.2.2` |
 | `iot_manager.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `iot_manager.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `iot_manager.image.podAnnotations` | add custom pod annotations | `nil` |
 | `iot_manager.replicas` | Number of replicas | `1` |
 | `iot_manager.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `iot_manager.resources.limits.cpu` | Resources CPU limit | `50m` |
@@ -529,6 +541,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.image.tag` | Docker image tag | `mender-3.2.2` |
 | `deviceconnect.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconnect.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `deviceconnect.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconnect.replicas` | Number of replicas | `1` |
 | `deviceconnect.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `deviceconnect.resources.limits.cpu` | Resources CPU limit | `100m` |
@@ -556,6 +569,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.image.tag` | Docker image tag | `mender-3.2.2` |
 | `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconfig.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `deviceconfig.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconfig.replicas` | Number of replicas | `1` |
 | `deviceconfig.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `deviceconfig.resources.limits.cpu` | Resources CPU limit | `100m` |
@@ -583,6 +597,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.image.tag` | Docker image tag | `mender-3.2.2` |
 | `devicemonitor.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `devicemonitor.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `devicemonitor.podAnnotations` | add custom pod annotations | `nil` |
 | `devicemonitor.replicas` | Number of replicas | `1` |
 | `devicemonitor.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `devicemonitor.resources.limits.cpu` | Resources CPU limit | `100m` |
