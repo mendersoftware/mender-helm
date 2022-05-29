@@ -32,6 +32,10 @@ spec:
 
   template:
     metadata:
+      {{- with .Values.deployments.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app.kubernetes.io/name: deployments
     spec:

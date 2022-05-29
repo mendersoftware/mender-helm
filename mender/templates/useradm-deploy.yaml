@@ -33,6 +33,10 @@ spec:
 
   template:
     metadata:
+      {{- with .Values.useradm.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app.kubernetes.io/name: useradm
     spec:

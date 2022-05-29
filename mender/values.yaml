@@ -30,6 +30,7 @@
 
 ***REMOVED***
   enabled: true
+  podAnnotations: {}
   dashboard: false
 ***REMOVED***
     registry: docker.io
@@ -56,6 +57,7 @@
     SSL: true
   minio:
     enabled: true
+    podAnnotations: {}
     url: "http://minio:9000"
   rateLimit:
     average: 100
@@ -67,6 +69,7 @@
 
 deployments:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -94,6 +97,7 @@ deployments:
 
 ***REMOVED***
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -131,6 +135,7 @@ deployments:
 
 gui:
   enabled: true
+  podAnnotations: {}
   replicas: 1
   resources:
     limits:
@@ -154,6 +159,7 @@ gui:
 
 inventory:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -180,6 +186,7 @@ inventory:
 
 ***REMOVED***
   enabled: true
+  podAnnotations: {}
   replicas: 1
   resources:
     limits:
@@ -209,6 +216,7 @@ inventory:
 
 ***REMOVED***
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -245,6 +253,7 @@ inventory:
 
 workflows:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -269,6 +278,7 @@ workflows:
 
 create_artifact_worker:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -288,6 +298,7 @@ create_artifact_worker:
 
 auditlogs:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -312,6 +323,7 @@ auditlogs:
 
 iot_manager:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -336,6 +348,7 @@ iot_manager:
 
 deviceconnect:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -360,6 +373,7 @@ deviceconnect:
 
 deviceconfig:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
@@ -384,6 +398,7 @@ deviceconfig:
 
 devicemonitor:
   enabled: true
+  podAnnotations: {}
   automigrate: true
   replicas: 1
   resources:
