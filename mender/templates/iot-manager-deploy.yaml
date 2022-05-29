@@ -32,6 +32,10 @@ spec:
 
   template:
     metadata:
+      {{- with .Values.iot_manager.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app.kubernetes.io/name: iot-manager
     spec:

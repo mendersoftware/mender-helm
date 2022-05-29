@@ -32,6 +32,10 @@ spec:
 
   template:
     metadata:
+      {{- with .Values.create_artifact_worker.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app.kubernetes.io/name: create-artifact-worker
     spec:
