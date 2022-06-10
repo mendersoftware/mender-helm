@@ -55,8 +55,8 @@ spec:
             - --api.dashboard=true
             - --api.insecure=true
 {{- end }}
-            - --entrypoints.http.address=:80
-            - --entrypoints.https.address=:443
+            - --entrypoints.http.address=:{{- .Values.api_gateway.service.httpPort }}
+            - --entrypoints.https.address=:{{- .Values.api_gateway.service.httpsPort }}
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
