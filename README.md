@@ -149,7 +149,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.s3.AWS_EXTERNAL_URI` | External AWS S3 / MinIO URI | `null` |
 | `global.s3.AWS_BUCKET` | AWS S3 / MinIO bucket | `minio-hosted-mender-artifacts` |
 | `global.s3.AWS_REGION` | AWS S3 region | `us-east-1` |
-| `global.s3.AWS_ACCESS_KEY_ID` | AWS S3 / MinIO key ID | `myaccesskey` |
+| `global.s3.AWS_ACCESS_KEY_ID` | AWS S3 / MinIO key ID. An empty value will use credentials from the shared AWS credentials. | `myaccesskey` |
 | `global.s3.AWS_SECRET_ACCESS_KEY` | AWS S3 / MinIO access key | `mysecretkey` |
 | `global.s3.AWS_SERVICE_ACCOUNT_NAME` | Use K8s service account instead of `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to access the bucket. | `""` |
 | `global.s3.AWS_FORCE_PATH_STYLE` | Set the AWS S3 URI style to path | `true` |
