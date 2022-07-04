@@ -62,9 +62,9 @@ spec:
 
         env:
         - name: INTEGRATION_VERSION
-          value: "3.2.2"
+          value: "3.3.0"
         - name: MENDER_VERSION
-          value: "3.2.2"
+          value: "3.3.0"
         - name: MENDER_ARTIFACT_VERSION
           value: "3.7.1"
         {{- if .Values.global.hosted }}
