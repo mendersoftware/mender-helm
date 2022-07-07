@@ -32,7 +32,7 @@ spec:
 {{- if .Values.api_gateway.env.SSL }}
   - port: {{ .Values.api_gateway.service.httpsPort }}
     protocol: TCP
-    targetPort: {{ .Values.api_gateway.service.httpsPort }}
+    targetPort: {{ .Values.api_gateway.httpsPort }}
     {{- if .Values.api_gateway.httpsNodePort }}
     nodePort: {{ .Values.api_gateway.service.httpsNodePort }}
     {{- end }}
@@ -40,7 +40,7 @@ spec:
 {{- end }}
   - port: {{ .Values.api_gateway.service.httpPort }}
     protocol: TCP
-    targetPort: {{ .Values.api_gateway.service.httpPort }}
+    targetPort: {{ .Values.api_gateway.httpPort }}
     {{- if .Values.api_gateway.service.httpNodePort }}
     nodePort: {{ .Values.api_gateway.service.httpNodePort }}
     {{- end }}

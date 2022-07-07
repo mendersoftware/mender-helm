@@ -55,8 +55,8 @@ spec:
             - --api.dashboard=true
             - --api.insecure=true
 {{- end }}
-            - --entrypoints.http.address=:{{- .Values.api_gateway.service.httpPort }}
-            - --entrypoints.https.address=:{{- .Values.api_gateway.service.httpsPort }}
+            - --entrypoints.http.address=:{{- .Values.api_gateway.httpPort }}
+            - --entrypoints.https.address=:{{- .Values.api_gateway.httpsPort }}
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
@@ -73,9 +73,9 @@ spec:
 
         ports:
 {{- if .Values.api_gateway.env.SSL }}
-        - containerPort: 443
+        - containerPort: {{ .Values.api_gateway.httpsPort }}
 {{- end }}
-        - containerPort: 80
+        - containerPort: {{ .Values.api_gateway.httpPort }}
 
         # Readiness/liveness/startup probes
         livenessProbe:
@@ -83,7 +83,7 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /healthz
-            port: 80
+            port: {{ .Values.api_gateway.httpPort }}
           initialDelaySeconds: 5
           periodSeconds: 5
         readinessProbe:
@@ -91,14 +91,14 @@ spec:
           failureThreshold: 1
           httpGet:
             path: /healthz
-            port: 80
+            port: {{ .Values.api_gateway.httpPort }}
           periodSeconds: 15
           initialDelaySeconds: 5
         startupProbe:
           failureThreshold: 30
           httpGet:
             path: /healthz
-            port: 80
+            port: {{ .Values.api_gateway.httpPort }}
           initialDelaySeconds: 5
           periodSeconds: 5
 
