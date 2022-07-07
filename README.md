@@ -193,6 +193,8 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.podAnnotations` | add custom pod annotations | `nil` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `api_gateway.httpPort` | Port for the HTTP listener in the container | `80` |
+| `api_gateway.httpsPort` | Port for the HTTPS listener in the container | `443` |
 | `api_gateway.resources.limits.cpu` | Resources CPU limit | `600m` |
 | `api_gateway.resources.limits.memory` | Resources memory limit | `1G` |
 | `api_gateway.resources.requests.cpu` | Resources CPU request | `600m` |

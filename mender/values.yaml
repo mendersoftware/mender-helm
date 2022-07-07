@@ -47,6 +47,8 @@ api_gateway:
       memory: 512M
   affinity: {}
   nodeSelector: {}
+  httpPort: 80
+  httpsPort: 443
   service:
     name: mender-api-gateway
     annotations: {}
