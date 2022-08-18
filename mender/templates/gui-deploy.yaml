@@ -48,7 +48,7 @@ spec:
         image: {{ .Values.gui.image.registry }}/{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}
         imagePullPolicy: {{ .Values.gui.image.imagePullPolicy }}
         resources:
-{{ toYaml .Values.device_auth.resources | indent 10 }}
+{{ toYaml .Values.gui.resources | indent 10 }}
 
         # Readiness/liveness probes
         livenessProbe:
