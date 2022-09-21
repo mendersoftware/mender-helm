@@ -68,6 +68,8 @@ spec:
           value: {{ .Values.useradm.env.USERADM_JWT_ISSUER | quote }}
         - name: USERADM_JWT_EXP_TIMEOUT
           value: {{ .Values.useradm.env.USERADM_JWT_EXP_TIMEOUT | quote }}
+        - name: USERADM_BASE_URL
+          value: {{ .Values.global.url | quote }}
         {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
         - name: USERADM_HAVE_ADDONS
           value: "true"
