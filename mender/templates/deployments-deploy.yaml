@@ -105,7 +105,7 @@ spec:
         - prefix: DEPLOYMENTS_
           secretRef:
             name: s3-artifacts
-      {{ - if not .Values.global.s3.AWS_SECRET_NAME }}
+      {{- if .Values.global.s3.AWS_SECRET_NAME }}
         - prefix: DEPLOYMENTS_
           secretRef:
             name: { { .Values.global.s3.AWS_SECRET_NAME } }
