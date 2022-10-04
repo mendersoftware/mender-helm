@@ -25,11 +25,11 @@ lint: ## Lint the mender helm package
 .PHONY: package
 package: ## Create the mender helm package
 	helm package $(NAME)
-	helm repo index --url https://charts.mender.io .
+	helm repo index --url https://veselinuzunov.github.io/charts/ .
 
 .PHONY: upload
 upload: package ## Upload the mender helm package to the charts repository
-	curl --data-binary "@$(NAME)-$(VERSION).tgz" http://charts.mender.io/api/charts
+	curl --data-binary "@$(NAME)-$(VERSION).tgz" https://veselinuzunov.github.io/charts/
 
 .PHONY: template
 template: ## Render the mender helm chart template
