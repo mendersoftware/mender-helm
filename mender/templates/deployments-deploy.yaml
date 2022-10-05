@@ -53,8 +53,10 @@ spec:
         image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.deployments.image.imagePullPolicy }}
+        {{- with .Values.deployments.resources }}
         resources:
-          {{ toYaml .Values.deployments.resources | indent 10 }}
+          {{ tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
 {{- if .Values.deployments.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
