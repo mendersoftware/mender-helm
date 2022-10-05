@@ -33,7 +33,7 @@ upload: package ## Upload the mender helm package to the charts repository
 
 .PHONY: template
 template: ## Render the mender helm chart template
-	helm template $(NAME)/ -f values-enterprise.yaml > $(NAME)-$(VERSION).yaml
+	helm template -f $(NAME) values.yaml > ent.yaml
 
 .PHONY: test
 test: ## Run tests
