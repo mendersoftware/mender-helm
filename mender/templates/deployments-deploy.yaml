@@ -42,15 +42,15 @@ spec:
       {{- with .Values.deployments.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-{{- if .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+{{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
       serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
 {{- end }}
       containers:
       - name: deployments
 {{- if .Values.global.enterprise }}
-      ***REMOVED*** {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag }}
+        image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag }}
 {{- else }}
-      ***REMOVED*** {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
+        image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.deployments.image.imagePullPolicy }}
         resources:
@@ -81,6 +81,8 @@ spec:
           periodSeconds: 5
 
         env:
+        - name: DEPLOYMENTS_STORAGE_DEFAULT
+          value: {{ .Values.global.storage | quote }}
         - name: DEPLOYMENTS_MIDDLEWARE
           value: {{ .Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
         - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
@@ -91,7 +93,7 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
-{{- if or .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME (not .Values.global.s3.AWS_ACCESS_KEY_ID) }}
+{{- if and (eq .Values.global.storage "aws") or (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) (not .Values.global.s3.AWS_ACCESS_KEY_ID) }}
   # this is required because deprecated func is used https://github.com/mendersoftware/deployments/blob/554b194e1ff389e50200644b8034bb012ede197a/s3/filestorage.go#L114
         - name: AWS_SDK_LOAD_CONFIG
           value: "1"
@@ -104,7 +106,7 @@ spec:
             name: mongodb-common
         - prefix: DEPLOYMENTS_
           secretRef:
-            name: s3-artifacts
+            name: artifacts-storage
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

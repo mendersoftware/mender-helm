@@ -25,7 +25,7 @@ metadata:
 spec:
   containers:
     - name: ubuntu
-    ***REMOVED*** ubuntu
+      image: ubuntu
       command: ["/bin/bash", "-ec", "sleep 3600"]
 EOF
 kubectl apply -f "$TMPFILE"

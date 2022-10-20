@@ -33,7 +33,7 @@ spec:
 
       containers:
       - name: redis
-      ***REMOVED*** {{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+        image: {{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
         imagePullPolicy: {{ .Values.redis.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.redis.resources | indent 10 }}

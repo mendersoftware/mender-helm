@@ -45,7 +45,7 @@ spec:
 
       containers:
       - name: devicemonitor
-      ***REMOVED*** {{ .Values.devicemonitor.image.registry }}/{{ .Values.devicemonitor.image.repository }}:{{ .Values.devicemonitor.image.tag }}
+        image: {{ .Values.devicemonitor.image.registry }}/{{ .Values.devicemonitor.image.repository }}:{{ .Values.devicemonitor.image.tag }}
         imagePullPolicy: {{ .Values.devicemonitor.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.devicemonitor.resources | indent 10 }}

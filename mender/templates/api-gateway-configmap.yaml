@@ -322,7 +322,7 @@ data:
         #
         # tenantadm
         #
-        ***REMOVED***
+        tenantadm:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
@@ -348,7 +348,7 @@ data:
         #
         # useradm
         #
-        ***REMOVED***
+        useradm:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
@@ -439,12 +439,12 @@ data:
             servers:
             - url: "http://{{ .Values.inventory.service.name }}:{{ .Values.inventory.service.port }}"
 
-        ***REMOVED***
+        tenantadm:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.tenantadm.service.name }}:{{ .Values.tenantadm.service.port }}"
 
-        ***REMOVED***
+        useradm:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}"

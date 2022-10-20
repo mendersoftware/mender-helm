@@ -45,7 +45,7 @@ spec:
 
       containers:
       - name: deviceconfig
-      ***REMOVED*** {{ .Values.deviceconfig.image.registry }}/{{ .Values.deviceconfig.image.repository }}:{{ .Values.deviceconfig.image.tag }}
+        image: {{ .Values.deviceconfig.image.registry }}/{{ .Values.deviceconfig.image.repository }}:{{ .Values.deviceconfig.image.tag }}
         imagePullPolicy: {{ .Values.deviceconfig.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.deviceconfig.resources | indent 10 }}

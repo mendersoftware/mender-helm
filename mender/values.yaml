@@ -1,8 +1,8 @@
-***REMOVED***
+global:
   enterprise: true
   hosted: false
   auditlogs: true
-***REMOVED***
+  image:
     registry: registry.mender.io
     username: null
     password: null
@@ -10,6 +10,7 @@
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
+  storage: "aws"
   s3:
     AWS_URI: ""
     AWS_EXTERNAL_URI: ""
@@ -20,6 +21,11 @@
     AWS_FORCE_PATH_STYLE: "true"
     AWS_TAG_ARTIFACT: "true"
     AWS_SERVICE_ACCOUNT_NAME: ""
+  azure:
+    AZURE_AUTH_CONNECTION_STRING: mysecretconnstring
+    AZURE_AUTH_SHARED_KEY_ACCOUNT_NAME: ""
+    AZURE_AUTH_SHARED_KEY_ACCOUNT_KEY: myaccountkey
+    AZURE_AUTH_SHARED_KEY_URI: ""
   smtp:
     EMAIL_SENDER: root@localhost
     SMTP_ADDRESS: "localhost:25"
@@ -28,11 +34,11 @@
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
 
-***REMOVED***
+api_gateway:
   enabled: true
   podAnnotations: {}
   dashboard: false
-***REMOVED***
+  image:
     registry: docker.io
     repository: traefik
     tag: v2.5
@@ -82,7 +88,7 @@ deployments:
       cpu: 300m
       memory: 64M
   affinity: {}
-***REMOVED***
+  image:
     registry: ""
     repository: ""
     tag: mender-3.4.0
@@ -97,7 +103,7 @@ deployments:
     DEPLOYMENTS_MIDDLEWARE: prod
     DEPLOYMENTS_PRESIGN_SECRET: ""
 
-***REMOVED***
+device_auth:
   enabled: true
   podAnnotations: {}
   automigrate: true
@@ -110,7 +116,7 @@ deployments:
       cpu: 350m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: ""
     repository: ""
     tag: mender-3.4.0
@@ -133,7 +139,7 @@ deployments:
     DEVICEAUTH_REDIS_DB: "1"
     DEVICEAUTH_REDIS_TIMEOUT_SEC: "1"
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
-    DEVICEAUTH_TENANTADM_ADDR: http://mender-***REMOVED***8080
+    DEVICEAUTH_TENANTADM_ADDR: http://mender-tenantadm:8080
 
 gui:
   enabled: true
@@ -147,7 +153,7 @@ gui:
       cpu: 5m
       memory: 16M
   affinity: {}
-***REMOVED***
+  image:
     registry: docker.io
     repository: mendersoftware/gui
     tag: mender-3.4.0
@@ -172,7 +178,7 @@ inventory:
       cpu: 300m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: ""
     repository: ""
     tag: mender-3.4.0
@@ -186,7 +192,7 @@ inventory:
   env:
     INVENTORY_MIDDLEWARE: prod
 
-***REMOVED***
+tenantadm:
   enabled: true
   podAnnotations: {}
   replicas: 1
@@ -198,7 +204,7 @@ inventory:
       cpu: 150m
       memory: 64M
   affinity: {}
-***REMOVED***
+  image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
     tag: mender-3.4.0
@@ -216,7 +222,7 @@ inventory:
     TENANTADM_ORCHESTRATOR_ADDR: http://mender-workflows-server:8080/
     TENANTADM_RECAPTCHA_URL_VERIFY: https://www.google.com/recaptcha/api/siteverify
 
-***REMOVED***
+useradm:
   enabled: true
   podAnnotations: {}
   automigrate: true
@@ -229,7 +235,7 @@ inventory:
       cpu: 150m
       memory: 64M
   affinity: {}
-***REMOVED***
+  image:
     registry: ""
     repository: ""
     tag: mender-3.4.0
@@ -250,7 +256,7 @@ inventory:
     USERADM_REDIS_DB: "1"
     USERADM_REDIS_TIMEOUT_SEC: "1"
     USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
-    USERADM_TENANTADM_ADDR: http://mender-***REMOVED***8080
+    USERADM_TENANTADM_ADDR: http://mender-tenantadm:8080
     USERADM_TOTP_ISSUER: Mender
 
 workflows:
@@ -266,7 +272,7 @@ workflows:
       cpu: 10m
       memory: 64M
   affinity: {}
-***REMOVED***
+  image:
     registry: ""
     repository: ""
     tag: mender-3.4.0
@@ -291,7 +297,7 @@ create_artifact_worker:
       cpu: 100m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
     tag: mender-3.4.0
@@ -311,7 +317,7 @@ auditlogs:
       cpu: 50m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
     tag: mender-3.4.0
@@ -336,7 +342,7 @@ iot_manager:
       cpu: 50m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: docker.io
     repository: mendersoftware/iot-manager
     tag: mender-3.4.0
@@ -361,7 +367,7 @@ deviceconnect:
       cpu: 100m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
     tag: mender-3.4.0
@@ -386,7 +392,7 @@ deviceconfig:
       cpu: 100m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: docker.io
     repository: mendersoftware/deviceconfig
     tag: mender-3.4.0
@@ -411,7 +417,7 @@ devicemonitor:
       cpu: 100m
       memory: 128M
   affinity: {}
-***REMOVED***
+  image:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
     tag: mender-3.4.0
@@ -434,7 +440,7 @@ redis:
       cpu: 50m
       memory: 64M
   affinity: {}
-***REMOVED***
+  image:
     registry: docker.io
     repository: redis
     tag: 6.0.16-alpine

@@ -73,37 +73,37 @@ The command deploys Mender on the Kubernetes cluster in the default configuratio
 This is the minimum `values.yaml` file needed to install Mender:
 
 ```yaml
-***REMOVED***
-***REMOVED***
+global:
+  image:
     username: <your_user>
     password: <your_password>
   url: https://mender.example.com
 
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
+api_gateway:
+  certs:
+    cert: |-
+      -----BEGIN CERTIFICATE-----
       MIIFcjCCBFq...
-***REMOVED***
-***REMOVED***
+    key: |-
+      -----BEGIN PRIVATE KEY-----
       MIIEvgIBADA...
 
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
+device_auth:
+  certs:
+    key: |-
+      -----BEGIN RSA PRIVATE KEY-----
       MIIEvgIBADA...
 
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
+tenantadm:
+  certs:
+    key: |-
+      -----BEGIN RSA PRIVATE KEY-----
       MIIEvgIBADA...
 
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
+useradm:
+  certs:
+    key: |-
+      -----BEGIN RSA PRIVATE KEY-----
       MIIEvgIBADA...
 ```
 
@@ -285,7 +285,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
-| `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-***REMOVED***8080` |
+| `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 
 ### Parameters: gui
 
@@ -421,7 +421,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable | `2` |
 | `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable | `1` |
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
-| `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-***REMOVED***8080` |
+| `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 
 ### Parameters: workflows
@@ -613,7 +613,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `devicemonitor.service.port` | Port for the service | `8080` |
 | `devicemonitor.service.nodePort` | Node port for the service | `nil` |
-| `devicemonitor.env.DEVICEMONITOR_USERADM_URL` | Set the DEVICEMONITOR_USERADM_URL variable | `http://mender-***REMOVED***8080/` |
+| `devicemonitor.env.DEVICEMONITOR_USERADM_URL` | Set the DEVICEMONITOR_USERADM_URL variable | `http://mender-useradm:8080/` |
 | `devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL` | Set the DEVICEMONITOR_WORKFLOWS_URL variable | `http://mender-workflows-server:8080` |
 
 ### Parameters: redis

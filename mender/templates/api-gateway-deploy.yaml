@@ -45,7 +45,7 @@ spec:
 
       containers:
       - name: api-gateway
-      ***REMOVED*** {{ .Values.api_gateway.image.registry }}/{{ .Values.api_gateway.image.repository }}:{{ .Values.api_gateway.image.tag }}
+        image: {{ .Values.api_gateway.image.registry }}/{{ .Values.api_gateway.image.repository }}:{{ .Values.api_gateway.image.tag }}
         imagePullPolicy: {{ .Values.api_gateway.image.imagePullPolicy }}
         args:
             - --accesslog=true
