@@ -10,6 +10,7 @@ global:
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
+  storage: "aws"
   s3:
     AWS_URI: ""
     AWS_EXTERNAL_URI: ""
@@ -20,6 +21,12 @@ global:
     AWS_FORCE_PATH_STYLE: "true"
     AWS_TAG_ARTIFACT: "true"
     AWS_SERVICE_ACCOUNT_NAME: ""
+  azure:
+    AUTH_CONNECTION_STRING: ""
+    AUTH_SHARED_KEY_ACCOUNT_NAME: ""
+    AUTH_SHARED_KEY_ACCOUNT_KEY: ""
+    AUTH_SHARED_KEY_URI: ""
+    CONTAINER_NAME: mender-artifact-storage
   smtp:
     EMAIL_SENDER: root@localhost
     SMTP_ADDRESS: "localhost:25"

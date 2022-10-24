@@ -42,7 +42,7 @@ spec:
       {{- with .Values.deployments.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-{{- if .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+{{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
       serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
 {{- end }}
       containers:
@@ -81,6 +81,8 @@ spec:
           periodSeconds: 5
 
         env:
+        - name: DEPLOYMENTS_STORAGE_DEFAULT
+          value: {{ .Values.global.storage | quote }}
         - name: DEPLOYMENTS_MIDDLEWARE
           value: {{ .Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
         - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
@@ -99,7 +101,7 @@ spec:
             name: mongodb-common
         - prefix: DEPLOYMENTS_
           secretRef:
-            name: s3-artifacts
+            name: artifacts-storage
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
