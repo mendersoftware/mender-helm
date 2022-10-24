@@ -91,11 +91,6 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
-{{- if or .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME (not .Values.global.s3.AWS_ACCESS_KEY_ID) }}
-  # this is required because deprecated func is used https://github.com/mendersoftware/deployments/blob/554b194e1ff389e50200644b8034bb012ede197a/s3/filestorage.go#L114
-        - name: AWS_SDK_LOAD_CONFIG
-          value: "1"
-{{- end }}
         # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
