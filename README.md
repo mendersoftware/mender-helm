@@ -145,6 +145,7 @@ The following table lists the global parameters supported by the chart and their
 | `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
+| `global.storage` | Artifacts storage type  (available types: `aws` and `azure`) | `aws` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
 | `global.s3.AWS_EXTERNAL_URI` | External AWS S3 / MinIO URI | `null` |
 | `global.s3.AWS_BUCKET` | AWS S3 / MinIO bucket | `minio-hosted-mender-artifacts` |
@@ -154,6 +155,11 @@ The following table lists the global parameters supported by the chart and their
 | `global.s3.AWS_SERVICE_ACCOUNT_NAME` | Use K8s service account instead of `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to access the bucket. | `""` |
 | `global.s3.AWS_FORCE_PATH_STYLE` | Set the AWS S3 URI style to path | `true` |
 | `global.s3.AWS_TAG_ARTIFACT` | Tag the artifact in the AWS S3 storage service with the tenant ID | `true` |
+| `global.azure.AUTH_CONNECTION_STRING` | Azure Blob Storage connection string | `""` |
+| `global.azure.AUTH_SHARED_KEY_ACCOUNT_NAME` | Azure Blob Storage shared key account name | `""` |
+| `global.azure.AUTH_SHARED_KEY_ACCOUNT_KEY` | Azure Blob Storage shared key account key | `""` |
+| `global.azure.AUTH_SHARED_KEY_URI` | Azure Blob Storage shared key URI | `""` |
+| `global.azure.CONTAINER_NAME` | Azure Blob Storage container name | `mender-artifact-storage` |
 | `global.smtp.EMAIL_SENDER` | SMTP email sender | `root@localhost` |
 | `global.smtp.SMTP_ADDRESS` | SMTP server address | `smtp.mailtrap.io` |
 | `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
