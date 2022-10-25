@@ -64,6 +64,8 @@ spec:
         env:
         - name: USERADM_MIDDLEWARE
           value: {{ .Values.useradm.env.USERADM_MIDDLEWARE | quote }}
+        - name: USERADM_PROXY_COUNT
+          value: {{ .Values.useradm.env.USERADM_PROXY_COUNT | quote }}
         - name: USERADM_JWT_ISSUER
           value: {{ .Values.useradm.env.USERADM_JWT_ISSUER | quote }}
         - name: USERADM_JWT_EXP_TIMEOUT
