@@ -246,6 +246,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.service.nodePort` | Node port for the service | `nil` |
 | `deployments.env.DEPLOYMENTS_MIDDLEWARE` | Set the DEPLOYMENTS_MIDDLEWARE variable | `prod` |
 | `deployments.env.DEPLOYMENTS_PRESIGN_SECRET` | Set the secret for generating signed url, must be a base64 encoded secret. | random value at start-up time |
+| `deployments.env.DEPLOYMENTS_AWS_MAX_IMAGE_SIZE` | Set the max artifact image size in bytes. | `nil`, code defaults to 10GB |
 
 ### Parameters: device-auth
 

@@ -87,6 +87,8 @@ spec:
           value: {{ .Values.deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT | quote }}
         - name: DEPLOYMENTS_PRESIGN_SECRET
           value: {{ .Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET | quote }}
+        - name: DEPLOYMENTS_AWS_MAX_IMAGE_SIZE
+          value: {{ .Values.deployments.env.DEPLOYMENTS_AWS_MAX_IMAGE_SIZE | quote }}
 {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
