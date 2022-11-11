@@ -83,7 +83,7 @@ deployments:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -111,7 +111,7 @@ device_auth:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -148,7 +148,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -173,7 +173,7 @@ inventory:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -199,7 +199,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -230,7 +230,7 @@ useradm:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -267,7 +267,7 @@ workflows:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -292,7 +292,7 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
 
@@ -312,7 +312,7 @@ auditlogs:
   image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -337,7 +337,7 @@ iot_manager:
   image:
     registry: docker.io
     repository: mendersoftware/iot-manager
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -362,7 +362,7 @@ deviceconnect:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -387,7 +387,7 @@ deviceconfig:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconfig
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -412,7 +412,7 @@ devicemonitor:
   image:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
-    tag: mender-3.3.0
+    tag: mender-3.3.1
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
