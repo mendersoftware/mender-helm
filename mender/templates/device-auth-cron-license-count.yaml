@@ -1,0 +1,42 @@
+{{- if .Values.device_auth.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: device-auth-license-count
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: "7 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          {{- with .Values.device_auth.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          labels:
+            app.kubernetes.io/name: device-auth-license-count
+
+        spec:
+          {{- with .Values.device_auth.affinity }}
+          affinity: {{ toYaml . | nindent 8 }}
+          {{- end }}
+          containers:
+          - name: device-auth-license-count
+            image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag }}
+            command: ["/usr/bin/deviceauth-enterprise", "license-count"]
+
+            envFrom:
+            - prefix: DEVICEAUTH_
+              secretRef:
+                name: mongodb-common
+
+          restartPolicy: Never
+{{- if .Values.global.image.username }}
+          imagePullSecrets:
+          - name: docker-registry
+{{- end }}
+{{- end }}
