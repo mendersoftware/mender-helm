@@ -37,3 +37,16 @@ helm install nats nats/nats \
     --version 0.8.2 \
     --set "nats.image=nats:2.6.5-alpine" \
     --set "nats.jetstream.enabled=true"
+
+export OPENSEARCH_CONFIG=$(cat <<EOF
+cluster.name: opensearch-cluster
+network.host: 0.0.0.0
+plugins.security.disabled: true
+EOF
+)
+
+log "deploying dependencies: opensearch"
+helm install opensearch opensearch/opensearch \
+    --version 2.9.0 \
+    --set "persistence.enabled=false" \
+    --set "config.opensearch\\.yml=$OPENSEARCH_CONFIG"

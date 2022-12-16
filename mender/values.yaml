@@ -10,6 +10,8 @@ global:
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
+  opensearch:
+    URLs: http://opensearch-cluster-master:9200
   storage: "aws"
   s3:
     AWS_URI: ""
@@ -352,6 +354,31 @@ iot_manager:
   nodeSelector: {}
   service:
     name: mender-iot-manager
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+
+reporting:
+  enabled: true
+  podAnnotations: {}
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128M
+    requests:
+      cpu: 50m
+      memory: 128M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/reporting
+    tag: mender-3.4.0
+    imagePullPolicy: IfNotPresent
+  nodeSelector: {}
+  service:
+    name: mender-reporting
     annotations: {}
     type: ClusterIP
     port: 8080
