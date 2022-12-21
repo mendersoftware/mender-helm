@@ -35,7 +35,7 @@ You can install mongodb using the official mongodb Helm chart using `helm`:
 ```bash
 $ helm repo add bitnami https://charts.bitnami.com/bitnami
 $ helm repo update
-$ helm install mongodb bitnami/mongodb --version 11.1.3 --set "image.tag=4.4.13-debian-10-r29" --set "auth.enabled=false"
+$ helm install mongodb bitnami/mongodb --version 12.1.31 --set "image.tag=4.4.13-debian-10-r29" --set "auth.enabled=false"
 ```
 
 ### Installing MinIO
