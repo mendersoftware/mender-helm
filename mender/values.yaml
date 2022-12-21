@@ -10,6 +10,8 @@ global:
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
+  opensearch:
+    URLs: http://opensearch-cluster-master:9200
   storage: "aws"
   s3:
     AWS_URI: ""
@@ -92,7 +94,7 @@ deployments:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -120,7 +122,7 @@ device_auth:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -157,7 +159,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -182,7 +184,7 @@ inventory:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -208,7 +210,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -239,7 +241,7 @@ useradm:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -277,7 +279,7 @@ workflows:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -302,7 +304,7 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
 
@@ -322,7 +324,7 @@ auditlogs:
   image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -347,11 +349,36 @@ iot_manager:
   image:
     registry: docker.io
     repository: mendersoftware/iot-manager
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
     name: mender-iot-manager
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+
+reporting:
+  enabled: true
+  podAnnotations: {}
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128M
+    requests:
+      cpu: 50m
+      memory: 128M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/reporting
+    tag: mender-master
+    imagePullPolicy: IfNotPresent
+  nodeSelector: {}
+  service:
+    name: mender-reporting
     annotations: {}
     type: ClusterIP
     port: 8080
@@ -372,7 +399,7 @@ deviceconnect:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -397,7 +424,7 @@ deviceconfig:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconfig
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -422,7 +449,7 @@ devicemonitor:
   image:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
-    tag: mender-3.4.0
+    tag: mender-master
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
