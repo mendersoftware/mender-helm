@@ -60,7 +60,7 @@ $ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpi
 
 ### Installing OpenSearch
 
-Follow instructions from [Opensearch using `helm`](https://opensearch.org/docs/2.0/opensearch/install/helm/):
+Follow instructions from [Opensearch using `helm`](https://opensearch.org/docs/2.4/install-and-configure/install-opensearch/helm/):
 
 ```bash
 $ helm repo add opensearch https://opensearch-project.github.io/helm-charts/
