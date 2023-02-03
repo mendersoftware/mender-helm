@@ -509,3 +509,10 @@ redis:
     annotations: {}
     type: ClusterIP
     port: 6379
+
+dbmigration:
+  enable: true
+  annotations: {}
+  backoffLimit: 5
+  affinity: {}
+  nodeSelector: {}
