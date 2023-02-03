@@ -93,6 +93,8 @@ spec:
         - name: HAVE_MONITOR
           value: "true"
         {{- end }}
+        - name: HAVE_REPORTING
+          value: "{{ .Values.reporting.enabled }}"
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
