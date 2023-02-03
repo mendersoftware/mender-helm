@@ -93,6 +93,8 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
+        - name: DEPLOYMENTS_REPORTING_ADDR
+          value: "http://{{ .Values.reporting.service.name }}:{{ .Values.reporting.service.port }}"
         # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
