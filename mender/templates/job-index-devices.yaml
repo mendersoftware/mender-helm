@@ -1,0 +1,68 @@
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "index-reporting"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: index-reporting
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: reporting
+    app.kubernetes.io/part-of: mender
+  annotations:
+    "helm.sh/hook": post-upgrade,post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: index-devices
+      labels:
+        app.kubernetes.io/name: index-devices
+    spec:
+      containers:
+      - name: index-device-auth
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag }}
+{{- else }}
+        image: {{ .Values.device_auth.image.registry | default "docker.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .Values.device_auth.image.tag }}
+{{- end }}
+        args: ["propagate-reporting"]
+        env:
+        - name: DEVICEAUTH_ENABLE_REPORTING
+          value: "{{ .Values.reporting.enabled }}"
+        - name: DEVICEAUTH_INVENTORY_ADDR
+          value: {{ .Values.device_auth.env.DEVICEAUTH_INVENTORY_ADDR | quote }}
+        - name: DEVICEAUTH_ORCHESTRATOR_ADDR
+          value: {{ .Values.device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR | quote }}
+        - name: DEVICEAUTH_JWT_ISSUER
+          value: {{ .Values.device_auth.env.DEVICEAUTH_JWT_ISSUER | quote }}
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
+        - name: DEVICEAUTH_HAVE_ADDONS
+          value: "true"
+        - name: DEVICEAUTH_TENANTADM_ADDR
+          value: {{ .Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
+{{- end }}
+        envFrom:
+        - prefix: DEVICEAUTH_
+          secretRef:
+            name: mongodb-common
+      - name: index-deployments
+        imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
+{{- if .Values.global.enterprise }}
+        image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag }}
+{{- else }}
+        image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
+{{- end }}
+        args: ["propagate-reporting"]
+        env:
+        - name: DEPLOYMENTS_REPORTING_ADDR
+          value: "http://{{ .Values.reporting.service.name }}:{{ .Values.reporting.service.port }}"
+
+        envFrom:
+        - prefix: DEPLOYMENTS_
+          secretRef:
+            name: mongodb-common
+
+      restartPolicy: Never
