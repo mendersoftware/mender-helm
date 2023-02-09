@@ -37,6 +37,16 @@ global:
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
 
+dataMigration:
+  reindexReporting:
+    enable: true
+    annotations: {}
+    backoffLimit: 5
+    affinity: {}
+    nodeSelector: {}
+    tolerations: {}
+
+
 api_gateway:
   enabled: true
   podAnnotations: {}

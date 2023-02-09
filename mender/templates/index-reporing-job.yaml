@@ -1,4 +1,4 @@
-
+{{ if .Values.dataMigration.reindexReporting.enable -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -11,15 +11,24 @@ metadata:
     app.kubernetes.io/component: reporting
     app.kubernetes.io/part-of: mender
   annotations:
-    "helm.sh/hook": post-upgrade,post-install
-    "helm.sh/hook-delete-policy": hook-succeeded
+    helm.sh/hook: pre-upgrade,pre-install
+    helm.sh/hook-delete-policy: before-hook-creation
+    {{- with .Values.dataMigration.reindexReporting.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
+  backoffLimit: {{ .Values.dataMigration.reindexReporting.backoffLimit | default 5 }}
   template:
     metadata:
       name: index-devices
       labels:
         app.kubernetes.io/name: index-devices
     spec:
+      {{- with .Values.dataMigration.reindexReporting.affinity }}
+      affinity:
+        {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
       containers:
       - name: index-device-auth
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
@@ -65,4 +74,15 @@ spec:
           secretRef:
             name: mongodb-common
 
+      imagePullSecrets:
+      - name: docker-registry
+      {{- with .Values.dataMigration.reindexReporting.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       restartPolicy: Never
+      {{- with .Values.dataMigration.reindexReporting.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end -}}
