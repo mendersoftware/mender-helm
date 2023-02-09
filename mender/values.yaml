@@ -144,6 +144,26 @@ device_auth:
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
     DEVICEAUTH_TENANTADM_ADDR: http://mender-tenantadm:8080
 
+generate_delta_worker:
+  enabled: true
+  podAnnotations: {}
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 1024M
+    requests:
+      cpu: 100m
+      memory: 128M
+  affinity: {}
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/generate-delta-worker
+    tag: mender-master
+    imagePullPolicy: IfNotPresent
+  nodeSelector: {}
+
 gui:
   enabled: true
   podAnnotations: {}
