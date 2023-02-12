@@ -42,6 +42,9 @@ spec:
       {{- with .Values.inventory.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+{{- if .Values.inventory.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.inventory.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: inventory
@@ -51,6 +54,9 @@ spec:
         image: {{ .Values.inventory.image.registry | default "docker.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .Values.inventory.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.inventory.image.imagePullPolicy }}
+{{- if .Values.inventory.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.inventory.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.inventory.resources | indent 10 }}
 

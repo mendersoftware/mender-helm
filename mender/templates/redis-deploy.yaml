@@ -30,11 +30,17 @@ spec:
       {{- with .Values.redis.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+{{- if .Values.redis.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.redis.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: redis
         image: {{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
         imagePullPolicy: {{ .Values.redis.image.imagePullPolicy }}
+{{- if .Values.redis.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.redis.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.redis.resources | indent 10 }}
 
