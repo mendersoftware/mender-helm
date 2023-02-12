@@ -54,8 +54,8 @@ api_gateway:
       memory: 512M
   affinity: {}
   nodeSelector: {}
-  httpPort: 80
-  httpsPort: 443
+  httpPort: 9080
+  httpsPort: 9443
   service:
     name: mender-api-gateway
     annotations: {}
@@ -75,6 +75,14 @@ api_gateway:
     sourceCriterion:
       ipStrategy:
         depth: 1
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 deployments:
   enabled: true
@@ -103,6 +111,14 @@ deployments:
   env:
     DEPLOYMENTS_MIDDLEWARE: prod
     DEPLOYMENTS_PRESIGN_SECRET: ""
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 device_auth:
   enabled: true
@@ -141,6 +157,14 @@ device_auth:
     DEVICEAUTH_REDIS_TIMEOUT_SEC: "1"
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
     DEVICEAUTH_TENANTADM_ADDR: http://mender-tenantadm:8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 gui:
   enabled: true
@@ -165,6 +189,15 @@ gui:
     annotations: {}
     type: ClusterIP
     port: 80
+  httpPort: 80
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 inventory:
   enabled: true
@@ -192,6 +225,14 @@ inventory:
     port: 8080
   env:
     INVENTORY_MIDDLEWARE: prod
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 tenantadm:
   enabled: true
@@ -222,6 +263,14 @@ tenantadm:
     TENANTADM_SERVER_PRIV_KEY_PATH: /etc/tenantadm/rsa/private.pem
     TENANTADM_ORCHESTRATOR_ADDR: http://mender-workflows-server:8080/
     TENANTADM_RECAPTCHA_URL_VERIFY: https://www.google.com/recaptcha/api/siteverify
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 useradm:
   enabled: true
@@ -260,6 +309,14 @@ useradm:
     USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
     USERADM_TENANTADM_ADDR: http://mender-tenantadm:8080
     USERADM_TOTP_ISSUER: Mender
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 workflows:
   enabled: true
@@ -285,6 +342,14 @@ workflows:
     annotations: {}
     type: ClusterIP
     port: 8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 create_artifact_worker:
   enabled: true
@@ -305,6 +370,14 @@ create_artifact_worker:
     tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 auditlogs:
   enabled: true
@@ -330,6 +403,14 @@ auditlogs:
     annotations: {}
     type: ClusterIP
     port: 8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 iot_manager:
   enabled: true
@@ -355,6 +436,14 @@ iot_manager:
     annotations: {}
     type: ClusterIP
     port: 8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 deviceconnect:
   enabled: true
@@ -380,6 +469,14 @@ deviceconnect:
     annotations: {}
     type: ClusterIP
     port: 8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 deviceconfig:
   enabled: true
@@ -405,6 +502,14 @@ deviceconfig:
     annotations: {}
     type: ClusterIP
     port: 8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 devicemonitor:
   enabled: true
@@ -430,6 +535,14 @@ devicemonitor:
     annotations: {}
     type: ClusterIP
     port: 8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
 
 redis:
   enabled: true
@@ -452,3 +565,22 @@ redis:
     annotations: {}
     type: ClusterIP
     port: 6379
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 999
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 999
+
+dbmigration:
+  enable: true
+  annotations: {}
+  backoffLimit: 5
+  affinity: {}
+  nodeSelector: {}
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 999

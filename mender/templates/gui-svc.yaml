@@ -31,7 +31,7 @@ spec:
   ports:
   - port: {{ .Values.gui.service.port }}
     protocol: TCP
-    targetPort: 80
+    targetPort: {{ .Values.gui.httpPort }}
     {{- if .Values.gui.service.nodePort }}
     nodePort: {{ .Values.gui.service.nodePort }}
     {{- end }}
