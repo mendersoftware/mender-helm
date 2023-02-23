@@ -10,6 +10,9 @@ global:
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
+  opensearch:
+    URLs: http://opensearch-cluster-master:9200
+  storage: "aws"
   s3:
     AWS_URI: ""
     AWS_EXTERNAL_URI: ""
@@ -20,6 +23,12 @@ global:
     AWS_FORCE_PATH_STYLE: "true"
     AWS_TAG_ARTIFACT: "true"
     AWS_SERVICE_ACCOUNT_NAME: ""
+  azure:
+    AUTH_CONNECTION_STRING: ""
+    AUTH_SHARED_KEY_ACCOUNT_NAME: ""
+    AUTH_SHARED_KEY_ACCOUNT_KEY: ""
+    AUTH_SHARED_KEY_URI: ""
+    CONTAINER_NAME: mender-artifact-storage
   smtp:
     EMAIL_SENDER: root@localhost
     SMTP_ADDRESS: "localhost:25"
@@ -27,6 +36,16 @@ global:
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
+
+dataMigration:
+  reindexReporting:
+    enable: true
+    annotations: {}
+    backoffLimit: 5
+    affinity: {}
+    nodeSelector: {}
+    tolerations: {}
+
 
 api_gateway:
   enabled: true
@@ -85,7 +104,7 @@ deployments:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -113,7 +132,7 @@ device_auth:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -135,6 +154,26 @@ device_auth:
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
     DEVICEAUTH_TENANTADM_ADDR: http://mender-tenantadm:8080
 
+generate_delta_worker:
+  enabled: true
+  podAnnotations: {}
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 1024M
+    requests:
+      cpu: 100m
+      memory: 128M
+  affinity: {}
+  image:
+    registry: registry.mender.io
+    repository: mendersoftware/generate-delta-worker
+    tag: mender-3.5.0
+    imagePullPolicy: IfNotPresent
+  nodeSelector: {}
+
 gui:
   enabled: true
   podAnnotations: {}
@@ -150,7 +189,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -175,7 +214,7 @@ inventory:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -201,7 +240,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -232,7 +271,7 @@ useradm:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -270,7 +309,7 @@ workflows:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -295,7 +334,7 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
 
@@ -315,7 +354,7 @@ auditlogs:
   image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -340,11 +379,36 @@ iot_manager:
   image:
     registry: docker.io
     repository: mendersoftware/iot-manager
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
     name: mender-iot-manager
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+
+reporting:
+  enabled: true
+  podAnnotations: {}
+  automigrate: true
+  replicas: 1
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128M
+    requests:
+      cpu: 50m
+      memory: 128M
+  affinity: {}
+  image:
+    registry: docker.io
+    repository: mendersoftware/reporting
+    tag: mender-3.5.0
+    imagePullPolicy: IfNotPresent
+  nodeSelector: {}
+  service:
+    name: mender-reporting
     annotations: {}
     type: ClusterIP
     port: 8080
@@ -365,7 +429,7 @@ deviceconnect:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -390,7 +454,7 @@ deviceconfig:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconfig
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -415,7 +479,7 @@ devicemonitor:
   image:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:

@@ -245,9 +245,6 @@ data:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
-          - ensure-ui-path
-          - signup-redirect
-          - ui-stripprefix
           - sec-headers
           - compression
           - json-error-responder1
@@ -318,6 +315,21 @@ data:
           rule: "PathPrefix(`/api/management/v2/inventory`)"
           service: inventory
           tls: {{ $isTls }}
+
+{{- if .Values.reporting.enabled }}
+        reporting:
+          entrypoints: {{ $scheme }}
+          middlewares:
+          - ratelimit
+          - userauth
+          - sec-headers
+          - compression
+          - json-error-responder1
+          - json-error-responder4
+          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/reporting`)"
+          service: reporting
+          tls: {{ $isTls }}
+{{- end }}
 
         #
         # tenantadm
@@ -439,6 +451,13 @@ data:
             servers:
             - url: "http://{{ .Values.inventory.service.name }}:{{ .Values.inventory.service.port }}"
 
+{{- if .Values.reporting.enabled }}
+        reporting:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.reporting.service.name }}:{{ .Values.reporting.service.port }}"
+{{- end }}
+
         tenantadm:
           loadBalancer:
             servers:
@@ -460,26 +479,11 @@ data:
       # Middlewares
       #
       middlewares:
-        ui-stripprefix:
-          stripprefix:
-            prefixes: "/ui"
-
 {{- if .Values.api_gateway.env.SSL }}
         redirect-to-https:
           redirectscheme:
             scheme: https
 {{- end }}
-
-        ensure-ui-path:
-          redirectregex:
-            regex: "^({{ $scheme }}?://[^/]+)(/[a-z]*)?$"
-            replacement: "${1}/ui/"
-            permanent: true
-
-        signup-redirect:
-          redirectregex:
-            regex: "^({{ $scheme }}://[^/]+)/signup"
-            replacement: "${1}/ui/#/signup"
 
         sec-headers:
           headers:

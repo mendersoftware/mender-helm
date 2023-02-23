@@ -1,0 +1,85 @@
+{{- if and .Values.global.enterprise .Values.generate_delta_worker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: generate-delta-worker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: generate-delta-worker
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: workflows
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.generate_delta_worker.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: generate-delta-worker
+
+  # if deployment is not completed within 10 min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+  progressDeadlineSeconds: 600
+
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      {{- with .Values.generate_delta_worker.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: generate-delta-worker
+    spec:
+      {{- with .Values.generate_delta_worker.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: workflows
+        image: {{ .Values.generate_delta_worker.image.registry }}/{{ .Values.generate_delta_worker.image.repository }}:{{ .Values.generate_delta_worker.image.tag }}
+        imagePullPolicy: {{ .Values.generate_delta_worker.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.generate_delta_worker.resources | indent 10 }}
+
+{{- if .Values.workflows.automigrate }}
+        command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
+{{- else -}}
+        command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]
+{{- end }}
+
+        # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
+        # Set in order, last value for the key will be used in case duplications.
+        env:
+        - name: WORKFLOWS_NATS_URI
+          value: "{{ .Values.global.nats.URL }}"
+        - name: WORKFLOWS_MENDER_URL
+          value: "{{ .Values.global.url }}"
+        - name: GENERATE_DELTA_GATEWAY_URL
+          value: {{ .Values.global.url | default (ternary (printf "https://%s" .Values.api_gateway.service.name ) (printf "http://%s" .Values.api_gateway.service.name) (.Values.api_gateway.env.SSL)) }}
+        - name: GENERATE_DELTA_SKIPVERIFY
+          value: "1"
+        - name: GENERATE_DELTA_DEPLOYMENTS_URL
+          value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
+        envFrom:
+        - prefix: WORKFLOWS_
+          secretRef:
+            name: mongodb-common
+
+{{- if .Values.global.image.username }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
+
+{{- with .Values.generate_delta_worker.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
+{{- end }}
