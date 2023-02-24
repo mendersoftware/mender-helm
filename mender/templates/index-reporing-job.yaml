@@ -12,7 +12,8 @@ metadata:
     app.kubernetes.io/part-of: mender
   annotations:
     helm.sh/hook: pre-upgrade,pre-install
-    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: hook-succeeded
     {{- with .Values.dataMigration.reindexReporting.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -56,7 +57,7 @@ spec:
         envFrom:
         - prefix: DEVICEAUTH_
           secretRef:
-            name: mongodb-common
+            name: mongodb-common-prerelease
       - name: index-deployments
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
 {{- if .Values.global.enterprise }}
@@ -72,10 +73,13 @@ spec:
         envFrom:
         - prefix: DEPLOYMENTS_
           secretRef:
-            name: mongodb-common
+            name: mongodb-common-prerelease
 
+{{- if .Values.global.image.username }}
       imagePullSecrets:
-      - name: docker-registry
+      - name: docker-registry-prerelease
+{{- end }}
+
       {{- with .Values.dataMigration.reindexReporting.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
