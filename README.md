@@ -8,7 +8,7 @@ Using `helm`:
 
 ```bash
 $ make package
-$ helm install mender ./mender-3.5.0.tgz
+$ helm install mender ./mender-3.5.1.tgz
 ```
 
 ## Introduction
@@ -80,7 +80,7 @@ $ helm install opensearch opensearch/opensearch --version 2.9.0 --set "config.op
 To install the chart with the release name `my-release` using `helm`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender-3.5.0.tgz
+$ helm install my-release -f values.yaml ./mender-3.5.1.tgz
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -190,13 +190,13 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```bash
 $ helm install my-release \
   --set mongodbRootPassword=secretpassword,mongodbUsername=my-user,mongodbPassword=my-password,mongodbDatabase=my-database \
-  ./mender-3.5.0.tgz
+  ./mender-3.5.1.tgz
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender-3.5.0.tgz
+$ helm install --name my-release -f values.yaml ./mender-3.5.1.tgz
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -251,7 +251,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deployments.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` if `global.enterprise` is true, else `mendersoftware/deployments` |
-| `deployments.image.tag` | Docker image tag | `mender-3.5.0` |
+| `deployments.image.tag` | Docker image tag | `mender-3.5.1` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deployments.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deployments.podAnnotations` | add custom pod annotations | `nil` |
@@ -281,7 +281,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `device_auth.image.registry` | Docker image registry | `docker.io` |
 | `device_auth.image.repository` | Docker image repository | `mendersoftware/deviceauth` |
-| `device_auth.image.tag` | Docker image tag | `mender-3.5.0` |
+| `device_auth.image.tag` | Docker image tag | `mender-3.5.1` |
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `device_auth.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `device_auth.podAnnotations` | add custom pod annotations | `nil` |
@@ -320,7 +320,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.enabled` | Enable the component | `true` |
 | `gui.image.registry` | Docker image registry | `docker.io` |
 | `gui.image.repository` | Docker image repository | `mendersoftware/gui` |
-| `gui.image.tag` | Docker image tag | `mender-3.5.0` |
+| `gui.image.tag` | Docker image tag | `mender-3.5.1` |
 | `gui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `gui.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `gui.podAnnotations` | add custom pod annotations | `nil` |
@@ -348,7 +348,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `inventory.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` if `global.enterprise` is true, else `mendersoftware/inventory` |
-| `inventory.image.tag` | Docker image tag | `mender-3.5.0` |
+| `inventory.image.tag` | Docker image tag | `mender-3.5.1` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `inventory.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `inventory.podAnnotations` | add custom pod annotations | `nil` |
@@ -377,7 +377,7 @@ The following table lists the parameters for the `reporting` component and their
 | `reporting.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `reporting.image.registry` | Docker image registry | `docker.io` |
 | `reporting.image.repository` | Docker image repository | `mendersoftware/reporting` |
-| `reporting.image.tag` | Docker image tag | `mender-3.5.0` |
+| `reporting.image.tag` | Docker image tag | `mender-3.5.1` |
 | `reporting.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `reporting.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `reporting.image.podAnnotations` | add custom pod annotations | `nil` |
@@ -404,7 +404,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.enabled` | Enable the component | `true` |
 | `tenantadm.image.registry` | Docker image registry | `registry.mender.io` |
 | `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm` |
-| `tenantadm.image.tag` | Docker image tag | `mender-3.5.0` |
+| `tenantadm.image.tag` | Docker image tag | `mender-3.5.1` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `tenantadm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `tenantadm.podAnnotations` | add custom pod annotations | `nil` |
@@ -447,7 +447,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `useradm.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
-| `useradm.image.tag` | Docker image tag | `mender-3.5.0` |
+| `useradm.image.tag` | Docker image tag | `mender-3.5.1` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `useradm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `useradm.podAnnotations` | add custom pod annotations | `nil` |
@@ -487,7 +487,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `workflows.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` if `global.enterprise` is true, else `mendersoftware/workflows` |
-| `workflows.image.tag` | Docker image tag | `mender-3.5.0` |
+| `workflows.image.tag` | Docker image tag | `mender-3.5.1` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `workflows.podAnnotations` | add custom pod annotations | `nil` |
@@ -515,7 +515,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `create_artifact_worker.image.registry` | Docker image registry | `docker.io` |
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
-| `create_artifact_worker.image.tag` | Docker image tag | `mender-3.5.0` |
+| `create_artifact_worker.image.tag` | Docker image tag | `mender-3.5.1` |
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `create_artifact_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `create_artifact_worker.podAnnotations` | add custom pod annotations | `nil` |
@@ -536,7 +536,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `auditlogs.image.registry` | Docker image registry | `registry.mender.io` |
 | `auditlogs.image.repository` | Docker image repository | `mendersoftware/auditlogs` |
-| `auditlogs.image.tag` | Docker image tag | `mender-3.5.0` |
+| `auditlogs.image.tag` | Docker image tag | `mender-3.5.1` |
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `auditlogs.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `auditlogs.podAnnotations` | add custom pod annotations | `nil` |
@@ -564,7 +564,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `iot_manager.image.registry` | Docker image registry | `docker.io` |
 | `iot_manager.image.repository` | Docker image repository | `mendersoftware/iot-manager` |
-| `iot_manager.image.tag` | Docker image tag | `mender-3.5.0` |
+| `iot_manager.image.tag` | Docker image tag | `mender-3.5.1` |
 | `iot_manager.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `iot_manager.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `iot_manager.image.podAnnotations` | add custom pod annotations | `nil` |
@@ -592,7 +592,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deviceconnect.image.registry` | Docker image registry | `docker.io` |
 | `deviceconnect.image.repository` | Docker image repository | `mendersoftware/deviceconnect` |
-| `deviceconnect.image.tag` | Docker image tag | `mender-3.5.0` |
+| `deviceconnect.image.tag` | Docker image tag | `mender-3.5.1` |
 | `deviceconnect.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconnect.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deviceconnect.podAnnotations` | add custom pod annotations | `nil` |
@@ -620,7 +620,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `deviceconfig.image.registry` | Docker image registry | `docker.io` |
 | `deviceconfig.image.repository` | Docker image repository | `mendersoftware/deviceconfig` |
-| `deviceconfig.image.tag` | Docker image tag | `mender-3.5.0` |
+| `deviceconfig.image.tag` | Docker image tag | `mender-3.5.1` |
 | `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `deviceconfig.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deviceconfig.podAnnotations` | add custom pod annotations | `nil` |
@@ -648,7 +648,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `devicemonitor.image.registry` | Docker image registry | `registry.mender.io` |
 | `devicemonitor.image.repository` | Docker image repository | `mendersoftware/devicemonitor` |
-| `devicemonitor.image.tag` | Docker image tag | `mender-3.5.0` |
+| `devicemonitor.image.tag` | Docker image tag | `mender-3.5.1` |
 | `devicemonitor.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `devicemonitor.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `devicemonitor.podAnnotations` | add custom pod annotations | `nil` |
@@ -678,7 +678,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `generate_delta_worker.image.registry` | Docker image registry | `registry.mender.io` |
 | `generate_delta_worker.image.repository` | Docker image repository | `mendersoftware/generate-delta-worker` |
-| `generate_delta_worker.image.tag` | Docker image tag | `mender-3.5.0` |
+| `generate_delta_worker.image.tag` | Docker image tag | `mender-3.5.1` |
 | `generate_delta_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `generate_delta_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `generate_delta_worker.podAnnotations` | add custom pod annotations | `nil` |
