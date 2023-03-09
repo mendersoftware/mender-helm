@@ -7,7 +7,7 @@ metadata:
   annotations:
     helm.sh/hook: pre-upgrade,pre-install
     helm.sh/hook-weight: "-10"
-    helm.sh/hook-delete-policy: hook-succeeded
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
   {{- with .Values.dbmigration.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
