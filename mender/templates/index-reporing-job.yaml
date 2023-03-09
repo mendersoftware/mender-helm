@@ -1,4 +1,4 @@
-{{ if .Values.dataMigration.reindexReporting.enable -}}
+{{ if and .Values.dataMigration.reindexReporting.enable .Values.reporting.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
