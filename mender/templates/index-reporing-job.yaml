@@ -1,4 +1,4 @@
-{{ if .Values.dataMigration.reindexReporting.enable -}}
+{{ if and .Values.dataMigration.reindexReporting.enable .Values.reporting.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -13,7 +13,7 @@ metadata:
   annotations:
     helm.sh/hook: pre-upgrade,pre-install
     helm.sh/hook-weight: "-10"
-    helm.sh/hook-delete-policy: hook-succeeded
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     {{- with .Values.dataMigration.reindexReporting.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
