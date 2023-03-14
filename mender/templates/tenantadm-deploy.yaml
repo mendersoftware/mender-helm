@@ -42,11 +42,17 @@ spec:
       {{- with .Values.tenantadm.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+{{- if .Values.tenantadm.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.tenantadm.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: tenantadm
         image: {{ .Values.tenantadm.image.registry }}/{{ .Values.tenantadm.image.repository }}:{{ .Values.tenantadm.image.tag }}
         imagePullPolicy: {{ .Values.tenantadm.image.imagePullPolicy }}
+{{- if .Values.tenantadm.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.tenantadm.resources | indent 10 }}
 

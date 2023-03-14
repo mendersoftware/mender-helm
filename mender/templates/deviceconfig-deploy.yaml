@@ -42,11 +42,17 @@ spec:
       {{- with .Values.deviceconfig.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+{{- if .Values.deviceconfig.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.deviceconfig.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: deviceconfig
         image: {{ .Values.deviceconfig.image.registry }}/{{ .Values.deviceconfig.image.repository }}:{{ .Values.deviceconfig.image.tag }}
         imagePullPolicy: {{ .Values.deviceconfig.image.imagePullPolicy }}
+{{- if .Values.deviceconfig.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.deviceconfig.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.deviceconfig.resources | indent 10 }}
 

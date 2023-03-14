@@ -217,8 +217,8 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.podAnnotations` | add custom pod annotations | `nil` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `api_gateway.httpPort` | Port for the HTTP listener in the container | `80` |
-| `api_gateway.httpsPort` | Port for the HTTPS listener in the container | `443` |
+| `api_gateway.httpPort` | Port for the HTTP listener in the container | `9080` |
+| `api_gateway.httpsPort` | Port for the HTTPS listener in the container | `9443` |
 | `api_gateway.resources.limits.cpu` | Resources CPU limit | `600m` |
 | `api_gateway.resources.limits.memory` | Resources memory limit | `1G` |
 | `api_gateway.resources.requests.cpu` | Resources CPU request | `600m` |
@@ -239,7 +239,12 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
 | `api_gateway.rateLimit.sourceCriterion` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `{"ipStrategy": {"depth": 1}}` |
-
+| `api_gateway.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `api_gateway.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `api_gateway.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `api_gateway.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `api_gateway.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `api_gateway.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: deployments
 
@@ -270,6 +275,12 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.service.nodePort` | Node port for the service | `nil` |
 | `deployments.env.DEPLOYMENTS_MIDDLEWARE` | Set the DEPLOYMENTS_MIDDLEWARE variable | `prod` |
 | `deployments.env.DEPLOYMENTS_PRESIGN_SECRET` | Set the secret for generating signed url, must be a base64 encoded secret. | random value at start-up time |
+| `deployments.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `deployments.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `deployments.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `deployments.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `deployments.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `deployments.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: device-auth
 
@@ -310,6 +321,12 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
+| `device_auth.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `device_auth.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `device_auth.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `device_auth.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `device_auth.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `device_auth.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: gui
 
@@ -337,6 +354,13 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `gui.service.port` | Port for the service | `80` |
 | `gui.service.nodePort` | Node port for the service | `nil` |
+| `gui.httpPort` | Port for the HTTP listener in the container | `80` |
+| `gui.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `gui.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `gui.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `gui.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `gui.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `gui.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: inventory
 
@@ -366,6 +390,12 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.service.port` | Port for the service | `8080` |
 | `inventory.service.nodePort` | Node port for the service | `nil` |
 | `inventory.env.INVENTORY_MIDDLEWARE` | Set the INVENTORY_MIDDLEWARE variable | `prod` |
+| `inventory.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `inventory.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `inventory.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `inventory.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `inventory.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `inventory.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: reporting
 
@@ -426,6 +456,12 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR` | Set the TENANTADM_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080/` |
 | `tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY` | Set the TENANTADM_RECAPTCHA_URL_VERIFY variable | `https://www.google.com/recaptcha/api/siteverify` |
 | `tenantadm.env.TENANTADM_DEFAULT_API_LIMITS` | Set the TENANTADM_DEFAULT_API_LIMITS variable, defining the default rate limits | see below for the default values |
+| `tenantadm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `tenantadm.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `tenantadm.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `tenantadm.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `tenantadm.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `tenantadm.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 The default value for the rate limits are:
 
@@ -476,6 +512,12 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
+| `useradm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `useradm.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `useradm.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `useradm.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `useradm.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `useradm.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: workflows
 
@@ -504,6 +546,12 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `workflows.service.port` | Port for the service | `8080` |
 | `workflows.service.nodePort` | Node port for the service | `nil` |
+| `workflows.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `workflows.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `workflows.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `workflows.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `workflows.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `workflows.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: create_artifact_worker
 
@@ -525,6 +573,12 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.resources.limits.memory` | Resources memory limit | `1024M` |
 | `create_artifact_worker.resources.requests.cpu` | Resources CPU request | `100m` |
 | `create_artifact_worker.resources.requests.memory` | Resources memory request | `128M` |
+| `create_artifact_worker.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `create_artifact_worker.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `create_artifact_worker.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `create_artifact_worker.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `create_artifact_worker.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `create_artifact_worker.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: auditlogs
 
@@ -553,6 +607,12 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `auditlogs.service.port` | Port for the service | `8080` |
 | `auditlogs.service.nodePort` | Node port for the service | `nil` |
+| `auditlogs.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `auditlogs.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `auditlogs.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `auditlogs.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `auditlogs.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `auditlogs.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: iot-manager
 
@@ -581,6 +641,12 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `iot_manager.service.port` | Port for the service | `8080` |
 | `iot_manager.service.nodePort` | Node port for the service | `nil` |
+| `iot_manager.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `iot_manager.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `iot_manager.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `iot_manager.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `iot_manager.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `iot_manager.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: deviceconnect
 
@@ -609,6 +675,12 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `deviceconnect.service.port` | Port for the service | `8080` |
 | `deviceconnect.service.nodePort` | Node port for the service | `nil` |
+| `deviceconnect.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `deviceconnect.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `deviceconnect.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `deviceconnect.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `deviceconnect.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `deviceconnect.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: deviceconfig
 
@@ -637,6 +709,12 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `deviceconfig.service.port` | Port for the service | `8080` |
 | `deviceconfig.service.nodePort` | Node port for the service | `nil` |
+| `deviceconfig.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `deviceconfig.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `deviceconfig.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `deviceconfig.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `deviceconfig.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `deviceconfig.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: devicemonitor
 
@@ -667,6 +745,12 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.service.nodePort` | Node port for the service | `nil` |
 | `devicemonitor.env.DEVICEMONITOR_USERADM_URL` | Set the DEVICEMONITOR_USERADM_URL variable | `http://mender-useradm:8080/` |
 | `devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL` | Set the DEVICEMONITOR_WORKFLOWS_URL variable | `http://mender-workflows-server:8080` |
+| `devicemonitor.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `devicemonitor.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `devicemonitor.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `devicemonitor.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `devicemonitor.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `devicemonitor.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: generate_delta_worker
 
@@ -713,6 +797,12 @@ The following table lists the parameters for the `redis` component and their def
 | `redis.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `redis.service.port` | Port for the service | `6379` |
 | `redis.service.nodePort` | Node port for the service | `nil` |
+| `redis.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `redis.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `redis.podSecurityContext.runAsUser` | User ID for the pod | `999` |
+| `redis.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `redis.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
+| `redis.containerSecurityContext.runAsUser` | User ID for the container | `999` |
 
 ## Create a tenant and a user from command line
 

@@ -45,6 +45,9 @@ spec:
 {{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
       serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
 {{- end }}
+{{- if .Values.deployments.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.deployments.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
       containers:
       - name: deployments
 {{- if .Values.global.enterprise }}
@@ -53,6 +56,9 @@ spec:
         image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.deployments.image.imagePullPolicy }}
+{{- if .Values.deployments.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.deployments.resources | indent 10 }}
 
