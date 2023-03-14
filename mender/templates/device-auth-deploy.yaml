@@ -1,4 +1,5 @@
 {{- if .Values.device_auth.enabled }}
+{{- $merged := merge (deepCopy .Values.device_auth) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,8 +40,11 @@ spec:
       labels:
         app.kubernetes.io/name: device-auth
     spec:
-      {{- with .Values.device_auth.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 {{- if .Values.device_auth.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.device_auth.podSecurityContext "enabled" | toYaml | nindent 8 }}

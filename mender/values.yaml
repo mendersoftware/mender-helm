@@ -35,6 +35,14 @@ global:
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
 
+# default values:
+# these values applies to all resouces
+# and are applied when specific service values are not
+# present
+default:
+  affinity: {}
+  tolerations: {}
+
 api_gateway:
   enabled: true
   podAnnotations: {}

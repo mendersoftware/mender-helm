@@ -1,4 +1,5 @@
 {{- if .Values.inventory.enabled }}
+{{- $merged := merge (deepCopy .Values.inventory) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,8 +40,11 @@ spec:
       labels:
         app.kubernetes.io/name: inventory
     spec:
-      {{- with .Values.inventory.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 {{- if .Values.inventory.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.inventory.podSecurityContext "enabled" | toYaml | nindent 8 }}

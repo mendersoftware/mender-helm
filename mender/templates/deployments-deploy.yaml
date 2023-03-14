@@ -1,4 +1,5 @@
 {{- if .Values.deployments.enabled }}
+{{- $merged := merge (deepCopy .Values.deployments) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,8 +40,11 @@ spec:
       labels:
         app.kubernetes.io/name: deployments
     spec:
-      {{- with .Values.deployments.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 {{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
       serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
