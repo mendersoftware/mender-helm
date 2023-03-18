@@ -16,4 +16,3 @@
 * Added `device-auth-license-count` cronjob
 * Added Security Context
 * Added Helm Chart Hooks: it runs db migration before the a Helm upgrade/install.
-
