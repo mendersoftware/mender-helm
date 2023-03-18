@@ -15,3 +15,9 @@ maintainers:
 - name: Northern.tech AS
   email: contact@northern.tech
   url: https://northern.tech
+
+dependencies:
+- name: mongodb
+  version: ~13.9.1
+  repository: "https://charts.bitnami.com/bitnami"
+  condition: mongodb.enabled

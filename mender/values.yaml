@@ -45,6 +45,27 @@ default:
   affinity: {}
   tolerations: {}
 
+# Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
+mongodb:
+  enabled: false
+  architecture: standalone
+  auth:
+    enabled: false
+  global:
+    storageClass: "standard"
+  commonAnnotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "-100"
+
+dataMigration:
+  reindexReporting:
+    enable: true
+    annotations: {}
+    backoffLimit: 5
+    affinity: {}
+    nodeSelector: {}
+    tolerations: {}
+
 api_gateway:
   enabled: true
   podAnnotations: {}
