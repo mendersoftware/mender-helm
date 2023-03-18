@@ -1,5 +1,9 @@
 # Mender Helm chart
 
+
+# version 10.0.1
+* Included MongoDB as optional dependency
+
 # Version 4.0.2
 * [fix: device-auth-license-count ImagePullBackOff](https://github.com/mendersoftware/mender-helm/pull/151)
 
