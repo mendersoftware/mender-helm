@@ -1,4 +1,5 @@
 {{- if and .Values.reporting.enabled }}
+{{- $merged := merge (deepCopy .Values.reporting) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,8 +40,11 @@ spec:
       labels:
         app.kubernetes.io/name: reporting
     spec:
-      {{- with .Values.reporting.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 
       containers:

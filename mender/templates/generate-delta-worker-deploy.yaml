@@ -1,4 +1,5 @@
 {{- if and .Values.global.enterprise .Values.generate_delta_worker.enabled }}
+{{- $merged := merge (deepCopy .Values.generate_delta_worker) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,8 +40,11 @@ spec:
       labels:
         app.kubernetes.io/name: generate-delta-worker
     spec:
-      {{- with .Values.generate_delta_worker.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 
       containers:

@@ -1,4 +1,5 @@
 {{- if .Values.create_artifact_worker.enabled }}
+{{- $merged := merge (deepCopy .Values.create_artifact_worker) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,8 +40,11 @@ spec:
       labels:
         app.kubernetes.io/name: create-artifact-worker
     spec:
-      {{- with .Values.create_artifact_worker.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 {{- if .Values.create_artifact_worker.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.create_artifact_worker.podSecurityContext "enabled" | toYaml | nindent 8 }}
