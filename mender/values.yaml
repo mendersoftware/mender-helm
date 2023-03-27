@@ -105,6 +105,9 @@ deployments:
       cpu: 300m
       memory: 64M
   affinity: {}
+  directUpload:
+    enabled: true
+  daemonSchedule: "15 * * * *"
   image:
     registry: ""
     repository: ""
