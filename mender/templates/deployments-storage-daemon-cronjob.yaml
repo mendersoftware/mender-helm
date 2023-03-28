@@ -1,0 +1,70 @@
+{{- if .Values.deployments.directUpload.enabled }}
+{{- $merged := merge (deepCopy .Values.deployments) (deepCopy (default (dict) .Values.default)) -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: deployments-storage-daemon
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: {{default "15 * * * *" .Values.deployments.daemonSchedule | quote}}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          {{- with .Values.deployments.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
+          labels:
+            app.kubernetes.io/name: deployments-storage-daemon
+
+        spec:
+          {{- with $merged.affinity }}
+          affinity: {{ tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          {{- with $merged.tolerations }}
+          tolerations: {{ tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          {{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
+          serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+          {{- end }}
+          {{- if .Values.deployments.podSecurityContext.enabled }}
+          securityContext: {{- omit .Values.deployments.podSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          containers:
+          - name: deployments-storage-daemon
+            image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.deployments.image.tag }}
+            args: ["storage-daemon"]
+            env:
+            - name: DEPLOYMENTS_STORAGE_DEFAULT
+              value: {{ .Values.global.storage | quote }}
+            {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
+            - name: DEPLOYMENTS_ENABLE_AUDIT
+              value: "true"
+            {{- end }}
+            {{- if .Values.reporting.enabled }}
+            - name: DEPLOYMENTS_REPORTING_ADDR
+              value: "http://{{ .Values.reporting.service.name }}:{{ .Values.reporting.service.port }}"
+            {{- end }}
+            envFrom:
+            - prefix: DEPLOYMENTS_
+              secretRef:
+                name: mongodb-common
+            - prefix: DEPLOYMENTS_
+              secretRef:
+                name: artifacts-storage
+            {{- if .Values.deployments.containerSecurityContext.enabled }}
+            securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 14 }}
+            {{- end }}
+          restartPolicy: Never
+          {{- if .Values.global.image.username }}
+          imagePullSecrets:
+          - name: docker-registry
+          {{- end }}
+          {{- with .Values.deployments.nodeSelector }}
+          nodeSelector: {{ toYaml . | nindent 8 }}
+          {{- end }}
+{{- end }}
