@@ -179,8 +179,9 @@ The following table lists the global parameters supported by the chart and their
 | `global.azure.AUTH_SHARED_KEY_URI` | Azure Blob Storage shared key URI | `""` |
 | `global.azure.CONTAINER_NAME` | Azure Blob Storage container name | `mender-artifact-storage` |
 | `global.smtp.EMAIL_SENDER` | SMTP email sender | `root@localhost` |
-| `global.smtp.SMTP_ADDRESS` | SMTP server address | `smtp.mailtrap.io` |
-| `global.smtp.SMTP_LOGIN` | SMTP server username | `null` |
+| `global.smtp.SMTP_HOST` | SMTP server address | `localhost:25` |
+| `global.smtp.SMTP_AUTH_MECHANISM` | SMTP auth mechanism (Valid values: PLAIN, CRAM-MD5) | `PLAIN` |
+| `global.smtp.SMTP_USERNAME` | SMTP server username | `null` |
 | `global.smtp.SMTP_PASSWORD` | SMTP server password | `null` |
 | `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
