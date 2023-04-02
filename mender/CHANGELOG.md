@@ -3,6 +3,7 @@
 
 # version 10.0.1
 * Included MongoDB as optional dependency
+* Included NATS as optional dependency
 * added `_helpers.tpl` file
 
 # Version 4.0.2

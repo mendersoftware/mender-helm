@@ -21,3 +21,11 @@ dependencies:
   version: ~13.9.1
   repository: "https://charts.bitnami.com/bitnami"
   condition: mongodb.enabled
+- name: opensearch
+  version: ~2.9.1
+  repository: "https://opensearch-project.github.io/helm-charts/"
+  condition: opensearch.enabled
+- name: nats
+  version: ~0.8.2
+  repository: "https://nats-io.github.io/k8s/helm/charts/"
+  condition: nats.enabled

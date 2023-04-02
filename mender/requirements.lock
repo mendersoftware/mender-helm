@@ -1,6 +1,12 @@
 dependencies:
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
-  version: 13.9.1
-digest: sha256:9a2e114ab5c3c8897c2fa75cd50b0592374e8f59ab893a68807c75fd1cd130f7
-generated: "2023-03-18T22:07:02.221995553+01:00"
+  version: 13.9.3
+- name: opensearch
+  repository: https://opensearch-project.github.io/helm-charts/
+  version: 2.9.1
+- name: nats
+  repository: https://nats-io.github.io/k8s/helm/charts/
+  version: 0.8.9
+digest: sha256:7308666ece7d203214dbd41bc0654829db1ed5e907f3e7a6419c04b4f0567763
+generated: "2023-03-25T08:18:23.228083429+01:00"

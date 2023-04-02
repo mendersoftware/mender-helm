@@ -54,8 +54,60 @@ mongodb:
   global:
     storageClass: "standard"
   commonAnnotations:
-    helm.sh/hook: pre-install
+    helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-100"
+
+# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+nats:
+  enabled: false
+  cluster:
+    enabled: true
+    replicas: 3
+  nats:
+    image: "nats:2.3.1-alpine"
+    jetstream:
+      enabled: true
+  
+      memStorage:
+        enabled: true
+        size: "1Gi"
+  
+      fileStorage:
+        enabled: true
+        size: "2Gi"
+        storageDirectory: /data/
+        storageClassName: "local-path"
+
+# Using default values from https://opensearch.org/docs/latest/install-and-configure/install-opensearch/helm/
+opensearch:
+  enabled: false
+  # for testing environment you can use singleNode:
+  # singleNode: true
+  roles:
+    - master
+    - ingest
+    - data
+    #- remote_cluster_client
+  config:
+    opensearch.yml: |
+      cluster.name: opensearch-cluster
+      # Bind to all interfaces because we don't know what IP address Docker will assign to us.
+      network.host: 0.0.0.0
+      # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
+      # Implicitly done if ".singleNode" is set to "true".
+      # discovery.type: single-node
+      plugins:
+        security:
+          disabled: true
+  podAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-90"
+  service:
+    annotations:
+      helm.sh/hook: "pre-install,post-delete"
+      helm.sh/hook-weight: "-90"
+      
+
 
 dataMigration:
   reindexReporting:
