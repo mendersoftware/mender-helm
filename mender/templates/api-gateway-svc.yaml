@@ -1,8 +1,9 @@
 {{- if .Values.api_gateway.enabled }}
+{{- $fullName := include "mender.serviceName" . -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.api_gateway.service.name }}
+  name: {{ $fullName }}
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: api-gateway-svc
