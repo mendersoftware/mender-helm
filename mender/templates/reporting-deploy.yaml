@@ -1,22 +1,22 @@
-{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
-{{- $merged := merge (deepCopy .Values.auditlogs) (deepCopy (default (dict) .Values.default)) -}}
+{{- if and .Values.reporting.enabled }}
+{{- $merged := merge (deepCopy .Values.reporting) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auditlogs
+  name: reporting
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: auditlogs
+    app.kubernetes.io/name: reporting
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: auditlogs
+    app.kubernetes.io/component: reporting
     app.kubernetes.io/part-of: mender
     helm.sh/chart: "{{ .Chart.Name }}"
 spec:
-  replicas: {{ .Values.auditlogs.replicas }}
+  replicas: {{ .Values.reporting.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: auditlogs
+      app.kubernetes.io/name: reporting
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -33,12 +33,12 @@ spec:
 
   template:
     metadata:
-      {{- with .Values.auditlogs.podAnnotations }}
+      {{- with .Values.reporting.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: auditlogs
+        app.kubernetes.io/name: reporting
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -46,21 +46,15 @@ spec:
       {{- with $merged.tolerations }}
       tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-{{- if .Values.auditlogs.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.auditlogs.podSecurityContext "enabled" | toYaml | nindent 8 }}
-{{- end }}
 
       containers:
-      - name: auditlogs
-        image: {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.auditlogs.image.imagePullPolicy }}
-{{- if .Values.auditlogs.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.auditlogs.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
+      - name: reporting
+        image: {{ .Values.reporting.image.registry }}/{{ .Values.reporting.image.repository }}:{{ .Values.reporting.image.tag }}
+        imagePullPolicy: {{ .Values.reporting.image.imagePullPolicy }}
         resources:
-{{ toYaml .Values.auditlogs.resources | indent 10 }}
+{{ toYaml .Values.reporting.resources | indent 10 }}
 
-{{- if .Values.auditlogs.automigrate }}
+{{- if .Values.reporting.automigrate }}
         args: ["server", "--automigrate"]
 {{- else -}}
         args: ["server"]
@@ -69,26 +63,29 @@ spec:
         # Readiness/liveness probes
         readinessProbe:
            httpGet:
-             path: /api/internal/v1/auditlogs/health
+             path: /api/internal/v1/reporting/health
              port: 8080
            periodSeconds: 15
         livenessProbe:
           httpGet:
-            path: /api/internal/v1/auditlogs/alive
+            path: /api/internal/v1/reporting/alive
             port: 8080
           periodSeconds: 5
         startupProbe:
           httpGet:
-            path: /api/internal/v1/auditlogs/alive
+            path: /api/internal/v1/reporting/alive
             port: 8080
           failureThreshold: 36
           periodSeconds: 5
 
         env:
-        # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
+        # Supported configuration settings: https://github.com/mendersoftware/reporting/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
+        - name: REPORTING_OPENSEARCH_ADDRESSES
+          value: {{ .Values.global.opensearch.URLs | quote }}
+
         envFrom:
-        - prefix: AUDITLOGS_
+        - prefix: REPORTING_
           secretRef:
             name: mongodb-common
 
@@ -97,7 +94,7 @@ spec:
       - name: docker-registry
 {{- end }}
 
-{{- with .Values.auditlogs.nodeSelector }}
+{{- with .Values.reporting.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}
 {{- end }}

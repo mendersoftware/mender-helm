@@ -145,7 +145,7 @@ spec:
         secret:
           secretName: rsa-device-auth
 
-{{- if .Values.global.image.username }}
+{{- if or (.Values.global.image.username) (.Values.global.image.dockerconfigjson) }}
       imagePullSecrets:
       - name: docker-registry
 {{- end }}

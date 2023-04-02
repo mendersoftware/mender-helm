@@ -255,7 +255,7 @@ spec:
         args: ["migrate"]
 
 
-{{- if .Values.global.image.username }}
+{{- if or (.Values.global.image.username) (.Values.global.image.dockerconfigjson) }}
       imagePullSecrets:
       - name: docker-registry-prerelease
 {{- end }}

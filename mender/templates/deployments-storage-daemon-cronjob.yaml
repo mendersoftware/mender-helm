@@ -60,7 +60,7 @@ spec:
             securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 14 }}
             {{- end }}
           restartPolicy: Never
-          {{- if .Values.global.image.username }}
+          {{- if or (.Values.global.image.username) (.Values.global.image.dockerconfigjson) }}
           imagePullSecrets:
           - name: docker-registry
           {{- end }}

@@ -1,0 +1,84 @@
+{{- if and .Values.reporting.enabled }}
+{{- $merged := merge (deepCopy .Values.reporting) (deepCopy (default (dict) .Values.default)) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-indexer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: reporting-indexer
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: reporting
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.reporting.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: reporting-indexer
+
+  # if deployment is not completed within 10 min, consider it failed,
+  # as result deployment Reason=ProgressDeadlineExceeded
+  # needs to be big enough to rollout to complete
+  progressDeadlineSeconds: 600
+
+  # Rollout upgrade one by one
+  # In this case we warranty there are always instances online.
+  # In case any issues, they will be detected early and deployment be stopped.
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      {{- with .Values.reporting.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: reporting-indexer
+    spec:
+      {{- with $merged.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: reporting
+        image: {{ .Values.reporting.image.registry }}/{{ .Values.reporting.image.repository }}:{{ .Values.reporting.image.tag }}
+        imagePullPolicy: {{ .Values.reporting.image.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.reporting.resources | indent 10 }}
+
+{{- if .Values.reporting.automigrate }}
+        args: ["indexer", "--automigrate"]
+{{- else -}}
+        args: ["indexer"]
+{{- end }}
+
+        env:
+        # Supported configuration settings: https://github.com/mendersoftware/reporting/blob/master/config.yaml
+        # Set in order, last value for the key will be used in case duplications.
+        - name: REPORTING_OPENSEARCH_ADDRESSES
+          value: {{ .Values.global.opensearch.URLs | quote }}
+        - name: REPORTING_NATS_URI
+          value: "{{ .Values.global.nats.URL }}"
+
+        envFrom:
+        - prefix: REPORTING_
+          secretRef:
+            name: mongodb-common
+
+{{- if or (.Values.global.image.username) (.Values.global.image.dockerconfigjson) }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- end }}
+
+{{- with .Values.reporting.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
+{{- end }}

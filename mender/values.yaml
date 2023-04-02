@@ -6,6 +6,8 @@ global:
     registry: registry.mender.io
     username: null
     password: null
+    # Alternatively you can use a .docerconfigjson file:
+    # dockerconfigjson: '{"auths":{"https://registry.mender.io/v1/":{"username":"my_username","password":"my_password","email":"me@example.org","auth":"b64 basic auth"}}}'
     tag: mender-3.4
   mongodb:
     URL: mongodb://mongodb
