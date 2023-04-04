@@ -5,6 +5,9 @@
 * Included MongoDB as optional dependency
 * Included NATS as optional dependency
 * added `_helpers.tpl` file
+* added internal Ingress resource
+* added support for plain `.dockerconfigjson` to create an `imagePullSecret` resource
+* autogenerate private keys by default if no key is set
 
 # Version 4.0.2
 * [fix: device-auth-license-count ImagePullBackOff](https://github.com/mendersoftware/mender-helm/pull/151)
