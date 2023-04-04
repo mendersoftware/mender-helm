@@ -108,3 +108,27 @@ Return if ingress supports ingressClassName.
 
   {{- end }}
 {{- end }}
+
+{{- define "tenantadm_key" }}
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) (empty .Values.tenantadm.certs.key)}}
+  {{- printf "%s" ( genPrivateKey "rsa" | b64enc ) }}  
+{{- else }}
+  {{- printf "%s" ( .Values.tenantadm.certs.key | b64enc ) }}  
+{{- end }}
+{{- end }}
+
+{{- define "useradm_key" }}
+{{- if and (.Values.global.enterprise) (.Values.useradm.enabled) (empty .Values.useradm.certs.key)}}
+  {{- printf "%s" ( genPrivateKey "rsa" | b64enc ) }}  
+{{- else }}
+  {{- printf "%s" ( .Values.useradm.certs.key | b64enc ) }}  
+{{- end }}
+{{- end }}
+
+{{- define "device_auth_key" }}
+{{- if and (.Values.global.enterprise) (.Values.device_auth.enabled) (empty .Values.device_auth.certs.key)}}
+  {{- printf "%s" ( genPrivateKey "rsa" | b64enc ) }}  
+{{- else }}
+  {{- printf "%s" ( .Values.device_auth.certs.key | b64enc ) }}  
+{{- end }}
+{{- end }}

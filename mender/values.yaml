@@ -233,6 +233,8 @@ deployments:
 device_auth:
   enabled: true
   podAnnotations: {}
+  certs:
+    key: {}
   automigrate: true
   replicas: 1
   resources:
@@ -367,6 +369,8 @@ inventory:
 tenantadm:
   enabled: true
   podAnnotations: {}
+  certs:
+    key: {}
   replicas: 1
   resources:
     limits:
@@ -406,6 +410,8 @@ useradm:
   podAnnotations: {}
   automigrate: true
   replicas: 1
+  certs:
+    key: {}
   resources:
     limits:
       cpu: 150m
