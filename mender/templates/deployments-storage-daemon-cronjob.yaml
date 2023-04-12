@@ -36,7 +36,11 @@ spec:
           {{- end }}
           containers:
           - name: deployments-storage-daemon
-            image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.deployments.image.tag }}
+            {{- if .Values.global.enterprise }}
+            image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag }}
+            {{- else }}
+            image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
+            {{- end }}
             args: ["storage-daemon"]
             env:
             - name: DEPLOYMENTS_STORAGE_DEFAULT
