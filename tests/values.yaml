@@ -3,3 +3,19 @@ global:
     URL: mongodb://mender-mongo-mongodb
   s3:
     AWS_URI: http://mender-minio:9000
+
+default:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node.kubernetes.io/nodegroup
+            operator: In
+            values:
+            - mender
+  tolerations:
+    - effect: NoSchedule
+      key: mender
+      operator: Equal
+      value: "true"

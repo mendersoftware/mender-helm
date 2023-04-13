@@ -1,4 +1,5 @@
-{{ if .Values.dataMigration.reindexReporting.enable -}}
+{{ if and .Values.dataMigration.reindexReporting.enable .Values.reporting.enabled -}}
+{{- $merged := merge (deepCopy .Values.dataMigration) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -12,7 +13,8 @@ metadata:
     app.kubernetes.io/part-of: mender
   annotations:
     helm.sh/hook: pre-upgrade,pre-install
-    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     {{- with .Values.dataMigration.reindexReporting.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -24,9 +26,11 @@ spec:
       labels:
         app.kubernetes.io/name: index-devices
     spec:
-      {{- with .Values.dataMigration.reindexReporting.affinity }}
-      affinity:
-        {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- with $merged.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 
       containers:
@@ -56,7 +60,7 @@ spec:
         envFrom:
         - prefix: DEVICEAUTH_
           secretRef:
-            name: mongodb-common
+            name: mongodb-common-prerelease
       - name: index-deployments
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
 {{- if .Values.global.enterprise }}
@@ -72,17 +76,16 @@ spec:
         envFrom:
         - prefix: DEPLOYMENTS_
           secretRef:
-            name: mongodb-common
+            name: mongodb-common-prerelease
 
+{{- if .Values.global.image.username }}
       imagePullSecrets:
-      - name: docker-registry
+      - name: docker-registry-prerelease
+{{- end }}
+
       {{- with .Values.dataMigration.reindexReporting.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       restartPolicy: Never
-      {{- with .Values.dataMigration.reindexReporting.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
 {{ end -}}

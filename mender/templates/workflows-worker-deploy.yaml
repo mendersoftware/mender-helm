@@ -1,4 +1,5 @@
 {{- if .Values.workflows.enabled }}
+{{- $merged := merge (deepCopy .Values.workflows) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,9 +40,15 @@ spec:
       labels:
         app.kubernetes.io/name: workflows-worker
     spec:
-      {{- with .Values.workflows.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.workflows.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.workflows.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: workflows
@@ -51,6 +58,9 @@ spec:
         image: {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}-worker:{{ .Values.workflows.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.workflows.image.imagePullPolicy }}
+{{- if .Values.workflows.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.workflows.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
 

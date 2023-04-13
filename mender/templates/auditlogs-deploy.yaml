@@ -1,4 +1,5 @@
 {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
+{{- $merged := merge (deepCopy .Values.auditlogs) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,14 +40,23 @@ spec:
       labels:
         app.kubernetes.io/name: auditlogs
     spec:
-      {{- with .Values.auditlogs.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.auditlogs.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.auditlogs.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: auditlogs
         image: {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag }}
         imagePullPolicy: {{ .Values.auditlogs.image.imagePullPolicy }}
+{{- if .Values.auditlogs.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.auditlogs.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.auditlogs.resources | indent 10 }}
 

@@ -1,4 +1,5 @@
 {{- if .Values.deployments.enabled }}
+{{- $merged := merge (deepCopy .Values.deployments) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,11 +40,17 @@ spec:
       labels:
         app.kubernetes.io/name: deployments
     spec:
-      {{- with .Values.deployments.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
 {{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
       serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+{{- end }}
+{{- if .Values.deployments.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.deployments.podSecurityContext "enabled" | toYaml | nindent 8 }}
 {{- end }}
       containers:
       - name: deployments
@@ -53,6 +60,9 @@ spec:
         image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.deployments.image.imagePullPolicy }}
+{{- if .Values.deployments.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.deployments.resources | indent 10 }}
 
@@ -93,8 +103,15 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
+{{- if .Values.reporting.enabled }}
         - name: DEPLOYMENTS_REPORTING_ADDR
           value: "http://{{ .Values.reporting.service.name }}:{{ .Values.reporting.service.port }}"
+{{- end }}
+{{- if .Values.deployments.directUpload.enabled }}
+        - name: DEPLOYMENTS_STORAGE_ENABLE_DIRECT_UPLOAD
+          value: "true"
+{{- end }}
+
         # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:

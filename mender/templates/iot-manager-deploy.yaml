@@ -1,4 +1,5 @@
 {{- if and .Values.iot_manager.enabled }}
+{{- $merged := merge (deepCopy .Values.iot_manager) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,14 +40,23 @@ spec:
       labels:
         app.kubernetes.io/name: iot-manager
     spec:
-      {{- with .Values.iot_manager.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.iot_manager.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.iot_manager.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: iot-manager
         image: {{ .Values.iot_manager.image.registry }}/{{ .Values.iot_manager.image.repository }}:{{ .Values.iot_manager.image.tag }}
         imagePullPolicy: {{ .Values.iot_manager.image.imagePullPolicy }}
+{{- if .Values.iot_manager.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.iot_manager.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.iot_manager.resources | indent 10 }}
 

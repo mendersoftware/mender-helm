@@ -1,4 +1,5 @@
 {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
+{{- $merged := merge (deepCopy .Values.tenantadm) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,14 +40,23 @@ spec:
       labels:
         app.kubernetes.io/name: tenantadm
     spec:
-      {{- with .Values.tenantadm.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.tenantadm.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.tenantadm.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: tenantadm
         image: {{ .Values.tenantadm.image.registry }}/{{ .Values.tenantadm.image.repository }}:{{ .Values.tenantadm.image.tag }}
         imagePullPolicy: {{ .Values.tenantadm.image.imagePullPolicy }}
+{{- if .Values.tenantadm.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.tenantadm.resources | indent 10 }}
 

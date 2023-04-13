@@ -1,4 +1,5 @@
 {{- if .Values.deviceconnect.enabled }}
+{{- $merged := merge (deepCopy .Values.deviceconnect) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,14 +40,23 @@ spec:
       labels:
         app.kubernetes.io/name: deviceconnect
     spec:
-      {{- with .Values.deviceconnect.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.deviceconnect.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.deviceconnect.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: deviceconnect
         image: {{ .Values.deviceconnect.image.registry }}/{{ .Values.deviceconnect.image.repository }}:{{ .Values.deviceconnect.image.tag }}
         imagePullPolicy: {{ .Values.deviceconnect.image.imagePullPolicy }}
+{{- if .Values.deviceconnect.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.deviceconnect.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.deviceconnect.resources | indent 10 }}
 

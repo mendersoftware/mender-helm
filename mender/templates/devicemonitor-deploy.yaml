@@ -1,4 +1,5 @@
 {{- if and .Values.devicemonitor.enabled .Values.global.enterprise }}
+{{- $merged := merge (deepCopy .Values.devicemonitor) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,14 +40,23 @@ spec:
       labels:
         app.kubernetes.io/name: devicemonitor
     spec:
-      {{- with .Values.devicemonitor.affinity }}
+      {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.devicemonitor.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.devicemonitor.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: devicemonitor
         image: {{ .Values.devicemonitor.image.registry }}/{{ .Values.devicemonitor.image.repository }}:{{ .Values.devicemonitor.image.tag }}
         imagePullPolicy: {{ .Values.devicemonitor.image.imagePullPolicy }}
+{{- if .Values.devicemonitor.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.devicemonitor.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
 {{ toYaml .Values.devicemonitor.resources | indent 10 }}
 
