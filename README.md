@@ -59,7 +59,7 @@ $ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpi
 
 ### Installing OpenSearch
 
-Opensearch is configured as a Mender sub-chart and it's enabled by default.
+OpenSearch is configured as a Mender sub-chart and it's enabled by default.
 You can disable it by overriding its settings in your custom `values.yaml`:
 
 ```
