@@ -60,20 +60,36 @@ $ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpi
 
 ### Installing OpenSearch
 
-Follow instructions from [Opensearch using `helm`](https://opensearch.org/docs/2.4/install-and-configure/install-opensearch/helm/):
+OpenSearch is configured as a Mender sub-chart and it's enabled by default.
+You can disable it by overriding its settings in your custom `values.yaml`:
 
-```bash
-$ helm repo add opensearch https://opensearch-project.github.io/helm-charts/
-$ helm repo update
-$ export OPENSEARCH_CONFIG=$(cat <<EOF
-cluster.name: opensearch-cluster
-network.host: 0.0.0.0
-plugins.security.disabled: true
-EOF
-)
-$ helm install opensearch opensearch/opensearch --version 2.9.0 --set "config.opensearch\\.yml=$OPENSEARCH_CONFIG"
+```
+opensearch:
+  enabled: false
 ```
 
+You can customize the [OpenSearch Helm provider](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/helm/)
+provider settings, adding values under the `opensearch` key, for example:
+
+```
+opensearch:
+  enabled: true
+    config:
+      opensearch.yml: |
+        cluster.name: myopensearch-cluster
+        network.host: 0.0.0.0
+        plugins:
+          security:
+            disabled: true
+```
+
+**Note: make sure the linux setting `vm.max_map_count` is at least 262144**:
+
+```
+vm.max_map_count=262144
+```
+
+Reference: https://opensearch.org/docs/2.4/install-and-configure/install-opensearch/index/#important-settings
 
 ## Installing the Chart
 
