@@ -46,6 +46,35 @@ default:
   affinity: {}
   tolerations: {}
 
+# Using default values from https://opensearch.org/docs/2.4/install-and-configure/install-opensearch/helm/
+opensearch:
+  enabled: true
+  # for testing environment you can use singleNode:
+  # singleNode: true
+  roles:
+    - master
+    - ingest
+    - data
+    #- remote_cluster_client
+  config:
+    opensearch.yml: |
+      cluster.name: opensearch-cluster
+      # Bind to all interfaces because we don't know what IP address Docker will assign to us.
+      network.host: 0.0.0.0
+      # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
+      # Implicitly done if ".singleNode" is set to "true".
+      # discovery.type: single-node
+      plugins:
+        security:
+          disabled: true
+  podAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-90"
+  service:
+    annotations:
+      helm.sh/hook: "pre-install,post-delete"
+      helm.sh/hook-weight: "-90"
+
 dataMigration:
   reindexReporting:
     enable: true
