@@ -31,8 +31,9 @@ global:
     CONTAINER_NAME: mender-artifact-storage
   smtp:
     EMAIL_SENDER: root@localhost
-    SMTP_ADDRESS: "localhost:25"
-    SMTP_LOGIN: "null"
+    SMTP_HOST: "localhost:25"
+    SMTP_AUTH_MECHANISM: "PLAIN"
+    SMTP_USERNAME: "null"
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
@@ -53,7 +54,6 @@ dataMigration:
     affinity: {}
     nodeSelector: {}
     tolerations: {}
-
 
 api_gateway:
   enabled: true
