@@ -1,6 +1,14 @@
+variables:
+  # Update container image to use in staging for a given service. Triggered from each
+  # repo's CI on merges to <repo>/staging. Requires SYNC_CONTAINER_NAME and SYNC_IMAGE_TAG
+  TRIGGER_SYNC_STAGING_COMPONENT: "false"
+  SYNC_CONTAINER_NAME: "unknown"
+  SYNC_IMAGE_TAG: "unknown"
+
 stages:
   - build
   - test
+  - staging-deploy-poc
   - publish
 
 include:
@@ -79,6 +87,66 @@ test:helm_chart_install:
     - *setup_eks_cluster_staging
     - tests/ci-make-clean.sh
 
+    - aws cloudfront create-invalidation --distribution-id ${S3_HELM_CHART_CDN_DISTRIBUTION_ID} --paths "/*"
+helm-version-bump:staging-component:
+  only:
+    variables:
+      - $TRIGGER_SYNC_STAGING_COMPONENT == "true"
+  stage: staging-deploy-poc
+  image: debian:buster
+  before_script:
+    - apt update && apt install -yyq git yq
+    # Prepare SSH key
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    # Configure git
+    - git config --global user.email "mender@northern.tech"
+    - git config --global user.name "Mender Test Bot"
+  script:
+    # Add GitHub repo
+    - git remote add github git@github.com:mendersoftware/mender-helm.git
+      #- git fetch github staging:staging-overlay-version-bump
+    - git fetch github staging-poc:staging-overlay-version-bump
+    - git checkout staging-overlay-version-bump
+    # todo: version bump
+    - "echo Mender container: $SYNC_CONTAINER_NAME"
+    - "echo Image version: $SYNC_IMAGE_TAG"
+    - |
+      echo "INFO - mapping source project to values.yaml project:"
+      case $SYNC_CONTAINER_NAME in
+        "placeholder-tobefound")
+          VALUES_REF="generate_delta_worker"
+          ;;
+        "*")
+          VALUES_REF_TMP=${SYNC_CONTAINER_NAME#"mender-"}  #removes prefix: mender-
+          VALUES_REF=${VALUES_REF_TMP//-/_} #replaces - with _
+      esac
+    - echo "INFO - bumping version ${SYNC_IMAGE_TAG} to ${VALUES_REF} container: "
+      yq -i e ".${VALUES_REF}.image.tag |= ${SYNC_IMAGE_TAG}" mender/values.yaml
+      git add mender/values.yaml
+    - |
+      echo "INFO - bumping helm chart version"
+      local FULL_VERSION=$(yq ".version" mender/Chart.yaml)
+      local MAJOR_VERSION=$(echo $FULL_VERSION | cut -f1 -d.)
+      local MINOR_VERSION=$(echo $FULL_VERSION | cut -f2 -d.)
+      yq -i e ".version = \"${MAJOR_VERSION}.${MINOR_VERSION}.${HELM_PATCH_VERSION}\"" mender/Chart.yaml
+      git add mender/Chart.yaml
+    # Commit
+    - git commit -sm "[Mender CI/CD] bump helm chart at staging"
+    # Push (5 retries)
+    - for retry in $(seq 5); do
+    -   if git push github staging-overlay-sync:staging-poc; then
+    -     exit 0
+    -   fi
+    -   git fetch github staging-poc
+    -   git rebase github/staging-poc
+    - done
+    - exit 1
+
+
 publish:helm_chart_publishing:
   rules:
     - if: '$CI_COMMIT_TAG'
@@ -99,4 +167,3 @@ publish:helm_chart_publishing:
   script:
     - helm repo add mender s3://${S3_HELM_CHART_REPO}
     - helm s3 push --acl="public-read" --relative --timeout=60s ./mender-*.tgz mender
-    - aws cloudfront create-invalidation --distribution-id ${S3_HELM_CHART_CDN_DISTRIBUTION_ID} --paths "/*"
