@@ -1,6 +1,6 @@
 #!/bin/bash
-# Copyright 2022 Northern.tech AS
-#    
+# Copyright 2023 Northern.tech AS
+#
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
@@ -35,5 +35,5 @@ helm install mender-mongo bitnami/mongodb \
 log "deploying dependencies: nats"
 helm install nats nats/nats \
     --version 0.8.2 \
-    --set "nats.image=nats:2.6.5-alpine" \
+    --set "nats.image=nats:2.7.4-scratch" \
     --set "nats.jetstream.enabled=true"
