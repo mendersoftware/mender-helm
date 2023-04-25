@@ -1,6 +1,6 @@
 #!/bin/bash
-# Copyright 2022 Northern.tech AS
-#    
+# Copyright 2023 Northern.tech AS
+#
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
@@ -19,4 +19,4 @@ set -x
 helm uninstall $(helm list -q)
 
 # Delete other resources remaining in the namespace
-kubectl delete configmaps,deployments,statefulsets,pods,jobs,cronjobs,services --all
+kubectl delete configmaps,deployments,statefulsets,pods,jobs,cronjobs,services,poddisruptionbudgets --all
