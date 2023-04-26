@@ -15,9 +15,3 @@ maintainers:
 - name: Northern.tech AS
   email: contact@northern.tech
   url: https://northern.tech
-
-dependencies:
-- name: opensearch
-  version: ~2.9.1
-  repository: "https://opensearch-project.github.io/helm-charts/"
-  condition: opensearch.enabled
