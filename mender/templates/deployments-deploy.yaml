@@ -103,10 +103,6 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
-{{- if .Values.reporting.enabled }}
-        - name: DEPLOYMENTS_REPORTING_ADDR
-          value: "http://{{ .Values.reporting.service.name }}:{{ .Values.reporting.service.port }}"
-{{- end }}
 {{- if .Values.deployments.directUpload.enabled }}
         - name: DEPLOYMENTS_STORAGE_ENABLE_DIRECT_UPLOAD
           value: "true"
