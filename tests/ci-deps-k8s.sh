@@ -32,8 +32,5 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 log "add helm repo: nats"
 helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 
-log "add helm repo: opensearch"
-helm repo add opensearch https://opensearch-project.github.io/helm-charts/
-
 log "update help repositories"
 helm repo update

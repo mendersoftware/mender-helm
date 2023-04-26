@@ -58,39 +58,6 @@ $ helm repo update
 $ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpine" --set "nats.jetstream.enabled=true"
 ```
 
-### Installing OpenSearch
-
-OpenSearch is configured as a Mender sub-chart and it's enabled by default.
-You can disable it by overriding its settings in your custom `values.yaml`:
-
-```
-opensearch:
-  enabled: false
-```
-
-You can customize the [OpenSearch Helm provider](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/helm/)
-provider settings, adding values under the `opensearch` key, for example:
-
-```
-opensearch:
-  enabled: true
-    config:
-      opensearch.yml: |
-        cluster.name: myopensearch-cluster
-        network.host: 0.0.0.0
-        plugins:
-          security:
-            disabled: true
-```
-
-**Note: make sure the linux setting `vm.max_map_count` is at least 262144**:
-
-```
-vm.max_map_count=262144
-```
-
-Reference: https://opensearch.org/docs/2.4/install-and-configure/install-opensearch/index/#important-settings
-
 ## Installing the Chart
 
 To install the chart with the release name `my-release` using `helm`:
@@ -178,7 +145,6 @@ The following table lists the global parameters supported by the chart and their
 | `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
-| `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |
 | `global.storage` | Artifacts storage type  (available types: `aws` and `azure`) | `aws` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
 | `global.s3.AWS_EXTERNAL_URI` | External AWS S3 / MinIO URI | `null` |
@@ -417,34 +383,6 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `inventory.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
-### Parameters: reporting
-
-The following table lists the parameters for the `reporting` component and their default values:
-
-| Parameter | Description | Default |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `reporting.enabled` | Enable the component | `true` |
-| `reporting.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `reporting.image.registry` | Docker image registry | `docker.io` |
-| `reporting.image.repository` | Docker image repository | `mendersoftware/reporting` |
-| `reporting.image.tag` | Docker image tag | `mender-3.5.0` |
-| `reporting.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `reporting.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
-| `reporting.image.podAnnotations` | add custom pod annotations | `nil` |
-| `reporting.replicas` | Number of replicas | `1` |
-| `reporting.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `reporting.resources.limits.cpu` | Resources CPU limit | `50m` |
-| `reporting.resources.limits.memory` | Resources memory limit | `128M` |
-| `reporting.resources.requests.cpu` | Resources CPU request | `50m` |
-| `reporting.resources.requests.memory` | Resources memory request | `128M` |
-| `reporting.service.name` | Name of the service | `mender-reporting` |
-| `reporting.service.annotations` | Annotations map for the service | `{}` |
-| `reporting.service.type` | Service type | `ClusterIP` |
-| `reporting.service.loadBalancerIP` | Service load balancer IP | `nil` |
-| `reporting.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
-| `reporting.service.port` | Port for the service | `8080` |
-| `reporting.service.nodePort` | Node port for the service | `nil` |
-
 ### Parameters: tenantadm
 
 The following table lists the parameters for the `tenantadm` component and their default values:
@@ -633,6 +571,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `auditlogs.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `auditlogs.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+
 
 ### Parameters: iot-manager
 
