@@ -712,27 +712,6 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `devicemonitor.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
-### Parameters: generate_delta_worker
-
-The following table lists the parameters for the `generate-delta-worker` component and their default values:
-
-| Parameter | Description | Default |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `generate_delta_worker.enabled` | Enable the component | `true` |
-| `generate_delta_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
-| `generate_delta_worker.image.registry` | Docker image registry | `registry.mender.io` |
-| `generate_delta_worker.image.repository` | Docker image repository | `mendersoftware/generate-delta-worker` |
-| `generate_delta_worker.image.tag` | Docker image tag | `mender-3.5.0` |
-| `generate_delta_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `generate_delta_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
-| `generate_delta_worker.podAnnotations` | add custom pod annotations | `nil` |
-| `generate_delta_worker.replicas` | Number of replicas | `1` |
-| `generate_delta_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `generate_delta_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
-| `generate_delta_worker.resources.limits.memory` | Resources memory limit | `1024M` |
-| `generate_delta_worker.resources.requests.cpu` | Resources CPU request | `100m` |
-| `generate_delta_worker.resources.requests.memory` | Resources memory request | `128M` |
-
 ### Parameters: redis
 
 The following table lists the parameters for the `redis` component and their default values:

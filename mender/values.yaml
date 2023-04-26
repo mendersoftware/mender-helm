@@ -216,26 +216,6 @@ device_auth:
     allowPrivilegeEscalation: false
     runAsUser: 65534
 
-generate_delta_worker:
-  enabled: true
-  podAnnotations: {}
-  automigrate: true
-  replicas: 1
-  resources:
-    limits:
-      cpu: 100m
-      memory: 1024M
-    requests:
-      cpu: 100m
-      memory: 128M
-  affinity: {}
-  image:
-    registry: registry.mender.io
-    repository: mendersoftware/generate-delta-worker
-    tag: mender-3.5.0
-    imagePullPolicy: IfNotPresent
-  nodeSelector: {}
-
 gui:
   enabled: true
   podAnnotations: {}
