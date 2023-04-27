@@ -1,0 +1,36 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: api-gateway-internal-routers
+  namespace: default
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  entryPoints:
+    - http
+  routes:
+{{- if .Values.api_gateway.env.SSL }}
+    #
+    # redirection from http to https
+    #
+    - kind: Rule
+      match: "PathPrefix(`/`)"
+      services:
+        - name: noop@internal
+          kind: TraefikService
+      priority: 10
+{{- end }}
+    #
+    # healthz
+    #
+    - kind: Rule
+      match: "Path(`/healthz`)"
+      services:
+        - name: ping@internal
+          kind: TraefikService
+      priority: 20

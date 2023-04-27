@@ -1,0 +1,21 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: mgmt-default-chain
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+spec:
+  chain:
+    middlewares:
+{{- if.Values.api_gateway.rateLimit }}
+      - name: ratelimit
+{{- end }}
+      - name: userauth
+      - name: secure-headers
+      - name: json-error-responder

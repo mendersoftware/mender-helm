@@ -36,6 +36,10 @@ spec:
     nodePort: {{ .Values.gui.service.nodePort }}
     {{- end }}
     name: http
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: error-responder
   selector:
     app.kubernetes.io/name: gui
 {{- end }}

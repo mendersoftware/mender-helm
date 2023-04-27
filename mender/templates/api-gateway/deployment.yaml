@@ -57,6 +57,7 @@ spec:
 {{- if .Values.api_gateway.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.api_gateway.podSecurityContext "enabled" | toYaml | nindent 8 }}
 {{- end }}
+      serviceAccountName: traefik-ingress-controller
 
       containers:
       - name: api-gateway
@@ -83,7 +84,9 @@ spec:
             - --metrics.prometheus.buckets=0.100000,0.300000,1.200000,5.000000
             - --metrics.prometheus.addEntryPointsLabels=true
             - --metrics.prometheus.addServicesLabels=true
-            - --providers.file.filename=/etc/traefik/config/traefik.yaml
+            - --providers.kubernetescrd
+            - --providers.kubernetescrd.namespaces={{ .Release.Namespace }}
+            - --providers.kubernetescrd.labelselector=app.kubernetes.io/component=api-gateway
             - --ping=true
             - --ping.manualrouting=true
         resources:
@@ -120,29 +123,9 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
 
-        volumeMounts:
-        - name: api-gateway-traefik
-          mountPath: /etc/traefik/config/traefik.yaml
-          subPath: traefik.yaml
-          readOnly: true
-{{- if .Values.api_gateway.env.SSL }}
-        - name: certs
-          mountPath: /etc/traefik/certs
-          readOnly: true
-{{- end }}
 
 {{- with .Values.api_gateway.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
-{{- end }}
-
-      volumes:
-      - name: api-gateway-traefik
-        configMap:
-          name: api-gateway-traefik
-{{- if .Values.api_gateway.env.SSL }}
-      - name: certs
-        secret:
-          secretName: api-gateway
 {{- end }}
 
 {{- if .Values.global.image.username }}
