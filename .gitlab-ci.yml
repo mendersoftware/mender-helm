@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - publish
 
 include:
   - project: 'Northern.tech/Mender/mendertesting'
@@ -47,9 +48,16 @@ build:
   - aws eks --region $CI_JOBS_AWS_REGION_STAGING update-kubeconfig --name $CI_JOBS_AWS_EKS_CLUSTER_NAME_STAGING
   - kubectl config set-context --current --namespace=mender-helm-tests
 
+.setup_s3_helm_chart_repo: &setup_s3_helm_chart_repo
+  # Configure AWS CLI for the S3 repository
+  - export AWS_ACCESS_KEY_ID=$S3_HELM_CHART_REPO_AWS_ACCESS_KEY_ID
+  - export AWS_SECRET_ACCESS_KEY=$S3_HELM_CHART_REPO_AWS_SECRET_ACCESS_KEY
+  - export AWS_DEFAULT_REGION=$S3_HELM_CHART_REPO_AWS_REGION
+  - export AWS_S3_SSE=AES256
+
 test:helm_chart_install:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true"'
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   stage: test
   dependencies:
     - build
@@ -71,3 +79,24 @@ test:helm_chart_install:
     - *setup_eks_cluster_staging
     - tests/ci-make-clean.sh
 
+publish:helm_chart_publishing:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      changes:
+        - mender/Chart.yaml
+      when: manual
+  stage: publish
+  dependencies:
+    - build
+  image: debian:buster
+  before_script:
+    - apt-get update -y
+    - apt-get install -y curl make git
+    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
+    - *get_kubectl_and_tools
+    - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0
+    - *setup_s3_helm_chart_repo
+  script:
+    - helm repo add mender s3://${S3_HELM_CHART_REPO}
+    - helm s3 push --acl="public-read" --timeout=60s ./mender-*.tgz mender
+    - aws cloudfront create-invalidation --distribution-id ${S3_HELM_CHART_CDN_DISTRIBUTION_ID} --paths "/*"
