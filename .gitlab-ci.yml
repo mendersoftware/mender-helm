@@ -167,3 +167,4 @@ publish:helm_chart_publishing:
   script:
     - helm repo add mender s3://${S3_HELM_CHART_REPO}
     - helm s3 push --acl="public-read" --relative --timeout=60s ./mender-*.tgz mender
+    - aws cloudfront create-invalidation --distribution-id ${S3_HELM_CHART_CDN_DISTRIBUTION_ID} --paths "/*"
