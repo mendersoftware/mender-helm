@@ -1,0 +1,22 @@
+{{- if .Values.api_gateway.minio.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-minio-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: api-gateway-traefik
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: mender
+    helm.sh/chart: "{{ .Chart.Name }}"
+data:
+  minio.yaml: |-
+    http:
+      services:
+        minio:
+          loadBalancer:
+            servers:
+            - url: "{{ .Values.api_gateway.minio.url }}"
+{{- end }}

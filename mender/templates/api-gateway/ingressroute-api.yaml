@@ -267,6 +267,17 @@ spec:
         - name: {{ .Values.useradm.service.name }}
           port: {{ .Values.useradm.service.port }}
 
+
+{{- if .Values.api_gateway.minio.enabled }}
+    - kind: Rule
+      match: >-
+        HeadersRegexp(`X-Amz-Date`, `.+`) ||
+        PathPrefix(`/{{ .Values.global.s3.AWS_BUCKET }}`)
+      services:
+        - name: minio@file
+          kind: TraefikService
+{{- end }}
+
   {{- if .Values.api_gateway.env.SSL }}
   tls:
     secretName: api-gateway

@@ -87,6 +87,9 @@ spec:
             - --providers.kubernetescrd
             - --providers.kubernetescrd.namespaces={{ .Release.Namespace }}
             - --providers.kubernetescrd.labelselector=app.kubernetes.io/component=api-gateway
+{{- if .Values.api_gateway.minio.enabled }}
+            - --providers.file.filename=/etc/traefik/config/minio.yaml
+{{- end }}
             - --ping=true
             - --ping.manualrouting=true
         resources:
@@ -123,6 +126,18 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
 
+{{- if .Values.api_gateway.minio.enabled }}
+        volumeMounts:
+        - name: minio-service
+          mountPath: /etc/traefik/config/minio.yaml
+          subPath: minio.yaml
+          readOnly: true
+
+      volumes:
+      - name: minio-service
+        configMap:
+          name: api-gateway-minio-service
+{{- end }}
 
 {{- with .Values.api_gateway.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
