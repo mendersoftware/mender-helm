@@ -102,8 +102,6 @@ spec:
           value: {{ .Values.device_auth.env.DEVICEAUTH_INVENTORY_ADDR | quote }}
         - name: DEVICEAUTH_ORCHESTRATOR_ADDR
           value: {{ .Values.device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR | quote }}
-        - name: DEVICEAUTH_ENABLE_REPORTING
-          value: {{ .Values.reporting.enabled | quote }}
         - name: DEVICEAUTH_JWT_ISSUER
           value: {{ .Values.device_auth.env.DEVICEAUTH_JWT_ISSUER | quote }}
         - name: DEVICEAUTH_JWT_EXP_TIMEOUT

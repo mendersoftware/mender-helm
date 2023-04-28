@@ -316,21 +316,6 @@ data:
           service: inventory
           tls: {{ $isTls }}
 
-{{- if .Values.reporting.enabled }}
-        reporting:
-          entrypoints: {{ $scheme }}
-          middlewares:
-          - ratelimit
-          - userauth
-          - sec-headers
-          - compression
-          - json-error-responder1
-          - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/reporting`)"
-          service: reporting
-          tls: {{ $isTls }}
-{{- end }}
-
         #
         # tenantadm
         #
@@ -450,13 +435,6 @@ data:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.inventory.service.name }}:{{ .Values.inventory.service.port }}"
-
-{{- if .Values.reporting.enabled }}
-        reporting:
-          loadBalancer:
-            servers:
-            - url: "http://{{ .Values.reporting.service.name }}:{{ .Values.reporting.service.port }}"
-{{- end }}
 
         tenantadm:
           loadBalancer:
