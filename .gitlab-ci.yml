@@ -96,7 +96,6 @@ publish:helm_chart_publishing:
     - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
     - *get_kubectl_and_tools
     - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0
-    - *setup_eks_cluster_staging
     - *setup_s3_helm_chart_repo
   script:
     - helm repo add mender s3://mender-helm-charts-dev
