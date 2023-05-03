@@ -773,12 +773,14 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 
 ### Parameters: generate_delta_worker
+Please notice that this feature is still under active development and it is
+disabled by default
 
 The following table lists the parameters for the `generate-delta-worker` component and their default values:
 
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `generate_delta_worker.enabled` | Enable the component | `true` |
+| `generate_delta_worker.enabled` | Enable the component | `false` |
 | `generate_delta_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
 | `generate_delta_worker.image.registry` | Docker image registry | `registry.mender.io` |
 | `generate_delta_worker.image.repository` | Docker image repository | `mendersoftware/generate-delta-worker` |

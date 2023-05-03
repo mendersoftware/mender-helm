@@ -178,8 +178,11 @@ device_auth:
     allowPrivilegeEscalation: false
     runAsUser: 65534
 
+# Generate Delta Worker feature
+# Experimental feature, still in beta
+# will be released in the next Mender versions
 generate_delta_worker:
-  enabled: true
+  enabled: false
   podAnnotations: {}
   automigrate: true
   replicas: 1
@@ -194,7 +197,7 @@ generate_delta_worker:
   image:
     registry: registry.mender.io
     repository: mendersoftware/generate-delta-worker
-    tag: mender-3.4.0
+    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
 
