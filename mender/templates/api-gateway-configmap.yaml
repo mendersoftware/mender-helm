@@ -245,6 +245,9 @@ data:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
+          - ensure-ui-path
+          - signup-redirect
+          - ui-stripprefix
           - sec-headers
           - compression
           - json-error-responder1
@@ -457,11 +460,26 @@ data:
       # Middlewares
       #
       middlewares:
+        ui-stripprefix:
+          stripprefix:
+            prefixes: "/ui"
+
 {{- if .Values.api_gateway.env.SSL }}
         redirect-to-https:
           redirectscheme:
             scheme: https
 {{- end }}
+
+        ensure-ui-path:
+          redirectregex:
+            regex: "^({{ $scheme }}?://[^/]+)(/[a-z]*)?$"
+            replacement: "${1}/ui/"
+            permanent: true
+
+        signup-redirect:
+          redirectregex:
+            regex: "^({{ $scheme }}://[^/]+)/signup"
+            replacement: "${1}/ui/#/signup"
 
         sec-headers:
           headers:
