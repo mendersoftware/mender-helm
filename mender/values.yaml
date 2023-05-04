@@ -10,8 +10,6 @@ global:
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
-  opensearch:
-    URLs: http://opensearch-cluster-master:9200
   storage: "aws"
   s3:
     AWS_URI: ""
@@ -45,44 +43,6 @@ global:
 default:
   affinity: {}
   tolerations: {}
-
-# Using default values from https://opensearch.org/docs/2.4/install-and-configure/install-opensearch/helm/
-opensearch:
-  enabled: true
-  # for testing environment you can use singleNode:
-  # singleNode: true
-  roles:
-    - master
-    - ingest
-    - data
-    #- remote_cluster_client
-  config:
-    opensearch.yml: |
-      cluster.name: opensearch-cluster
-      # Bind to all interfaces because we don't know what IP address Docker will assign to us.
-      network.host: 0.0.0.0
-      # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
-      # Implicitly done if ".singleNode" is set to "true".
-      # discovery.type: single-node
-      plugins:
-        security:
-          disabled: true
-  podAnnotations:
-    helm.sh/hook: "pre-install"
-    helm.sh/hook-weight: "-90"
-  service:
-    annotations:
-      helm.sh/hook: "pre-install,post-delete"
-      helm.sh/hook-weight: "-90"
-
-dataMigration:
-  reindexReporting:
-    enable: true
-    annotations: {}
-    backoffLimit: 5
-    affinity: {}
-    nodeSelector: {}
-    tolerations: {}
 
 api_gateway:
   enabled: true
@@ -152,7 +112,7 @@ deployments:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -188,7 +148,7 @@ device_auth:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -218,8 +178,11 @@ device_auth:
     allowPrivilegeEscalation: false
     runAsUser: 65534
 
+# Generate Delta Worker feature
+# Experimental feature, still in beta
+# will be released in the next Mender versions
 generate_delta_worker:
-  enabled: true
+  enabled: false
   podAnnotations: {}
   automigrate: true
   replicas: 1
@@ -253,7 +216,7 @@ gui:
   image:
     registry: docker.io
     repository: mendersoftware/gui
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -287,7 +250,7 @@ inventory:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -321,7 +284,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -360,7 +323,7 @@ useradm:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -406,7 +369,7 @@ workflows:
   image:
     registry: ""
     repository: ""
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -439,7 +402,7 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   podSecurityContext:
@@ -467,7 +430,7 @@ auditlogs:
   image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -500,7 +463,7 @@ iot_manager:
   image:
     registry: docker.io
     repository: mendersoftware/iot-manager
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -516,31 +479,6 @@ iot_manager:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
-reporting:
-  enabled: true
-  podAnnotations: {}
-  automigrate: true
-  replicas: 1
-  resources:
-    limits:
-      cpu: 50m
-      memory: 128M
-    requests:
-      cpu: 50m
-      memory: 128M
-  affinity: {}
-  image:
-    registry: docker.io
-    repository: mendersoftware/reporting
-    tag: mender-3.5.0
-    imagePullPolicy: IfNotPresent
-  nodeSelector: {}
-  service:
-    name: mender-reporting
-    annotations: {}
-    type: ClusterIP
-    port: 8080
 
 deviceconnect:
   enabled: true
@@ -558,7 +496,7 @@ deviceconnect:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -591,7 +529,7 @@ deviceconfig:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconfig
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -624,7 +562,7 @@ devicemonitor:
   image:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
-    tag: mender-3.5.0
+    tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
