@@ -7,8 +7,7 @@
 Using `helm`:
 
 ```bash
-$ make package
-$ helm install mender ./mender-3.5.0.tgz
+$ helm install mender ./mender
 ```
 
 ## Introduction
@@ -58,45 +57,12 @@ $ helm repo update
 $ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpine" --set "nats.jetstream.enabled=true"
 ```
 
-### Installing OpenSearch
-
-OpenSearch is configured as a Mender sub-chart and it's enabled by default.
-You can disable it by overriding its settings in your custom `values.yaml`:
-
-```
-opensearch:
-  enabled: false
-```
-
-You can customize the [OpenSearch Helm provider](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/helm/)
-provider settings, adding values under the `opensearch` key, for example:
-
-```
-opensearch:
-  enabled: true
-    config:
-      opensearch.yml: |
-        cluster.name: myopensearch-cluster
-        network.host: 0.0.0.0
-        plugins:
-          security:
-            disabled: true
-```
-
-**Note: make sure the linux setting `vm.max_map_count` is at least 262144**:
-
-```
-vm.max_map_count=262144
-```
-
-Reference: https://opensearch.org/docs/2.4/install-and-configure/install-opensearch/index/#important-settings
-
 ## Installing the Chart
 
 To install the chart with the release name `my-release` using `helm`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender-3.5.0.tgz
+$ helm install my-release -f values.yaml ./mender
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
