@@ -52,7 +52,7 @@ spec:
 
       containers:
       - name: iot-manager
-        image: {{ .Values.iot_manager.image.registry }}/{{ .Values.iot_manager.image.repository }}:{{ .Values.iot_manager.image.tag }}
+        image: {{ .Values.iot_manager.image.registry }}/{{ .Values.iot_manager.image.repository }}:{{ .Values.iot_manager.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.iot_manager.image.imagePullPolicy }}
 {{- if .Values.iot_manager.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.iot_manager.containerSecurityContext "enabled" | toYaml | nindent 10 }}

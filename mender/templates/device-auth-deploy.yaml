@@ -53,9 +53,9 @@ spec:
       containers:
       - name: device-auth
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag }}
+        image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.device_auth.image.registry | default "docker.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .Values.device_auth.image.tag }}
+        image: {{ .Values.device_auth.image.registry | default "docker.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
 {{- if .Values.device_auth.containerSecurityContext.enabled }}

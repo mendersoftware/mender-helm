@@ -52,7 +52,7 @@ spec:
 
       containers:
       - name: deviceconnect
-        image: {{ .Values.deviceconnect.image.registry }}/{{ .Values.deviceconnect.image.repository }}:{{ .Values.deviceconnect.image.tag }}
+        image: {{ .Values.deviceconnect.image.registry }}/{{ .Values.deviceconnect.image.repository }}:{{ .Values.deviceconnect.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.deviceconnect.image.imagePullPolicy }}
 {{- if .Values.deviceconnect.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.deviceconnect.containerSecurityContext "enabled" | toYaml | nindent 10 }}

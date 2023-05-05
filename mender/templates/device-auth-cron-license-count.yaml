@@ -30,7 +30,7 @@ spec:
           {{- end }}
           containers:
           - name: device-auth-license-count
-            image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag }}
+            image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
             command: ["/usr/bin/deviceauth-enterprise", "license-count"]
 
             envFrom:

@@ -52,7 +52,7 @@ spec:
 
       containers:
       - name: deviceconfig
-        image: {{ .Values.deviceconfig.image.registry }}/{{ .Values.deviceconfig.image.repository }}:{{ .Values.deviceconfig.image.tag }}
+        image: {{ .Values.deviceconfig.image.registry }}/{{ .Values.deviceconfig.image.repository }}:{{ .Values.deviceconfig.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.deviceconfig.image.imagePullPolicy }}
 {{- if .Values.deviceconfig.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.deviceconfig.containerSecurityContext "enabled" | toYaml | nindent 10 }}

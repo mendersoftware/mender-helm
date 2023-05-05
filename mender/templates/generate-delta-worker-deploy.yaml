@@ -49,7 +49,7 @@ spec:
 
       containers:
       - name: workflows
-        image: {{ .Values.generate_delta_worker.image.registry }}/{{ .Values.generate_delta_worker.image.repository }}:{{ .Values.generate_delta_worker.image.tag }}
+        image: {{ .Values.generate_delta_worker.image.registry }}/{{ .Values.generate_delta_worker.image.repository }}:{{ .Values.generate_delta_worker.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.generate_delta_worker.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.generate_delta_worker.resources | indent 10 }}
