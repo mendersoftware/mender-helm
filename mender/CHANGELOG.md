@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+# Version 4.0.1
+* Using global `registry.image.tag` instead of specifying it in every deployment
+
 # Version 4.0.0
 * **BREAKING CHANGE**: drop Helm v2 support: bump Helm ApiVersion to v2.
 * Decoupling Helm Chart version (`version: 4.0.0`) from Mender version (`appVersion: "3.4.0"`): from now on, they can be updated independently.

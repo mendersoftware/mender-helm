@@ -52,7 +52,7 @@ spec:
 
       containers:
       - name: tenantadm
-        image: {{ .Values.tenantadm.image.registry }}/{{ .Values.tenantadm.image.repository }}:{{ .Values.tenantadm.image.tag }}
+        image: {{ .Values.tenantadm.image.registry }}/{{ .Values.tenantadm.image.repository }}:{{ .Values.tenantadm.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.tenantadm.image.imagePullPolicy }}
 {{- if .Values.tenantadm.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 10 }}

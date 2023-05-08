@@ -52,7 +52,7 @@ spec:
 
       containers:
       - name: gui
-        image: {{ .Values.gui.image.registry }}/{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}
+        image: {{ .Values.gui.image.registry }}/{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.gui.image.imagePullPolicy }}
 {{- if .Values.gui.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.gui.containerSecurityContext "enabled" | toYaml | nindent 10 }}

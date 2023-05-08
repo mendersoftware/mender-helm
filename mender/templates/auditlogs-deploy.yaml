@@ -52,7 +52,7 @@ spec:
 
       containers:
       - name: auditlogs
-        image: {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag }}
+        image: {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.auditlogs.image.imagePullPolicy }}
 {{- if .Values.auditlogs.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.auditlogs.containerSecurityContext "enabled" | toYaml | nindent 10 }}

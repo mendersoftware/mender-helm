@@ -45,7 +45,7 @@ spec:
 
 {{- if .Values.global.enterprise }}
       - name: tenantadm-migration
-        image: {{ .Values.tenantadm.image.registry | default "registry.mender.io" }}/{{ .Values.tenantadm.image.repository | default "mendersoftware/tenantadm-enterprise" }}:{{ .Values.tenantadm.image.tag }}
+        image: {{ .Values.tenantadm.image.registry | default "registry.mender.io" }}/{{ .Values.tenantadm.image.repository | default "mendersoftware/tenantadm-enterprise" }}:{{ .Values.tenantadm.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.tenantadm.image.imagePullPolicy }}
 {{- if .Values.tenantadm.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 10 }}
@@ -62,9 +62,9 @@ spec:
 
       - name: deployments-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag }}
+        image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag }}
+        image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.deployments.image.imagePullPolicy }}
 {{- if .Values.deployments.containerSecurityContext.enabled }}
@@ -82,9 +82,9 @@ spec:
 
       - name: device-auth-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag }}
+        image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.device_auth.image.registry | default "docker.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .Values.device_auth.image.tag }}
+        image: {{ .Values.device_auth.image.registry | default "docker.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.device_auth.image.imagePullPolicy }}
 {{- if .Values.device_auth.containerSecurityContext.enabled }}
@@ -102,9 +102,9 @@ spec:
 
       - name: deviceconfig-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.deviceconfig.image.registry | default "registry.mender.io" }}/{{ .Values.deviceconfig.image.repository | default "mendersoftware/deviceconfig-enterprise" }}:{{ .Values.deviceconfig.image.tag }}
+        image: {{ .Values.deviceconfig.image.registry | default "registry.mender.io" }}/{{ .Values.deviceconfig.image.repository | default "mendersoftware/deviceconfig-enterprise" }}:{{ .Values.deviceconfig.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.deviceconfig.image.registry | default "docker.io" }}/{{ .Values.deviceconfig.image.repository | default "mendersoftware/deviceconfig" }}:{{ .Values.deviceconfig.image.tag }}
+        image: {{ .Values.deviceconfig.image.registry | default "docker.io" }}/{{ .Values.deviceconfig.image.repository | default "mendersoftware/deviceconfig" }}:{{ .Values.deviceconfig.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.deviceconfig.image.imagePullPolicy }}
 {{- if .Values.deviceconfig.containerSecurityContext.enabled }}
@@ -121,7 +121,7 @@ spec:
 
 {{- if .Values.global.enterprise }}
       - name: devicemonitor-migration
-        image: {{ .Values.devicemonitor.image.registry | default "registry.mender.io" }}/{{ .Values.devicemonitor.image.repository | default "mendersoftware/devicemonitor-enterprise" }}:{{ .Values.devicemonitor.image.tag }}
+        image: {{ .Values.devicemonitor.image.registry | default "registry.mender.io" }}/{{ .Values.devicemonitor.image.repository | default "mendersoftware/devicemonitor-enterprise" }}:{{ .Values.devicemonitor.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.devicemonitor.image.imagePullPolicy }}
 {{- if .Values.devicemonitor.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.devicemonitor.containerSecurityContext "enabled" | toYaml | nindent 10 }}
@@ -138,9 +138,9 @@ spec:
 
       - name: deviceconnect-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.deviceconnect.image.registry | default "registry.mender.io" }}/{{ .Values.deviceconnect.image.repository | default "mendersoftware/deviceconnect-enterprise" }}:{{ .Values.deviceconnect.image.tag }}
+        image: {{ .Values.deviceconnect.image.registry | default "registry.mender.io" }}/{{ .Values.deviceconnect.image.repository | default "mendersoftware/deviceconnect-enterprise" }}:{{ .Values.deviceconnect.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.deviceconnect.image.registry | default "docker.io" }}/{{ .Values.deviceconnect.image.repository | default "mendersoftware/deviceconnect" }}:{{ .Values.deviceconnect.image.tag }}
+        image: {{ .Values.deviceconnect.image.registry | default "docker.io" }}/{{ .Values.deviceconnect.image.repository | default "mendersoftware/deviceconnect" }}:{{ .Values.deviceconnect.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.deviceconnect.image.imagePullPolicy }}
 {{- if .Values.deviceconnect.containerSecurityContext.enabled }}
@@ -157,9 +157,9 @@ spec:
 
       - name: inventory-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.inventory.image.registry | default "registry.mender.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory-enterprise" }}:{{ .Values.inventory.image.tag }}
+        image: {{ .Values.inventory.image.registry | default "registry.mender.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory-enterprise" }}:{{ .Values.inventory.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.inventory.image.registry | default "docker.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .Values.inventory.image.tag }}
+        image: {{ .Values.inventory.image.registry | default "docker.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .Values.inventory.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.inventory.image.imagePullPolicy }}
 {{- if .Values.inventory.containerSecurityContext.enabled }}
@@ -176,9 +176,9 @@ spec:
 
       - name: useradm-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.useradm.image.registry | default "registry.mender.io" }}/{{ .Values.useradm.image.repository | default "mendersoftware/useradm-enterprise" }}:{{ .Values.useradm.image.tag }}
+        image: {{ .Values.useradm.image.registry | default "registry.mender.io" }}/{{ .Values.useradm.image.repository | default "mendersoftware/useradm-enterprise" }}:{{ .Values.useradm.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.useradm.image.registry | default "docker.io" }}/{{ .Values.useradm.image.repository | default "mendersoftware/useradm" }}:{{ .Values.useradm.image.tag }}
+        image: {{ .Values.useradm.image.registry | default "docker.io" }}/{{ .Values.useradm.image.repository | default "mendersoftware/useradm" }}:{{ .Values.useradm.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.useradm.image.imagePullPolicy }}
 {{- if .Values.useradm.containerSecurityContext.enabled }}
@@ -197,9 +197,9 @@ spec:
 
       - name: workflows-server-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.workflows.image.registry | default "registry.mender.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}:{{ .Values.workflows.image.tag }}
+        image: {{ .Values.workflows.image.registry | default "registry.mender.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}:{{ .Values.workflows.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}:{{ .Values.workflows.image.tag }}
+        image: {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}:{{ .Values.workflows.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.workflows.image.imagePullPolicy }}
 {{- if .Values.workflows.containerSecurityContext.enabled }}
@@ -216,7 +216,7 @@ spec:
 
 {{- if .Values.global.enterprise }}
       - name: auditlogs-migration
-        image: {{ .Values.auditlogs.image.registry | default "registry.mender.io" }}/{{ .Values.auditlogs.image.repository | default "mendersoftware/auditlogs-enterprise" }}:{{ .Values.auditlogs.image.tag }}
+        image: {{ .Values.auditlogs.image.registry | default "registry.mender.io" }}/{{ .Values.auditlogs.image.repository | default "mendersoftware/auditlogs-enterprise" }}:{{ .Values.auditlogs.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.auditlogs.image.imagePullPolicy }}
         env:
         - name: AUDITLOGS_USERADM_ADDRESS
@@ -238,9 +238,9 @@ spec:
 
       - name: iot-manager-migration
 {{- if .Values.global.enterprise }}
-        image: {{ .Values.iot_manager.image.registry | default "registry.mender.io" }}/{{ .Values.iot_manager.image.repository | default "mendersoftware/iot-manager-enterprise" }}:{{ .Values.iot_manager.image.tag }}
+        image: {{ .Values.iot_manager.image.registry | default "registry.mender.io" }}/{{ .Values.iot_manager.image.repository | default "mendersoftware/iot-manager-enterprise" }}:{{ .Values.iot_manager.image.tag | default .Values.global.image.tag }}
 {{- else }}
-        image: {{ .Values.iot_manager.image.registry | default "docker.io" }}/{{ .Values.iot_manager.image.repository | default "mendersoftware/iot-manager" }}:{{ .Values.iot_manager.image.tag }}
+        image: {{ .Values.iot_manager.image.registry | default "docker.io" }}/{{ .Values.iot_manager.image.repository | default "mendersoftware/iot-manager" }}:{{ .Values.iot_manager.image.tag | default .Values.global.image.tag }}
 {{- end }}
         imagePullPolicy: {{ .Values.iot_manager.image.imagePullPolicy }}
 {{- if .Values.iot_manager.containerSecurityContext.enabled }}

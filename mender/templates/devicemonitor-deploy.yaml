@@ -52,7 +52,7 @@ spec:
 
       containers:
       - name: devicemonitor
-        image: {{ .Values.devicemonitor.image.registry }}/{{ .Values.devicemonitor.image.repository }}:{{ .Values.devicemonitor.image.tag }}
+        image: {{ .Values.devicemonitor.image.registry }}/{{ .Values.devicemonitor.image.repository }}:{{ .Values.devicemonitor.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.devicemonitor.image.imagePullPolicy }}
 {{- if .Values.devicemonitor.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.devicemonitor.containerSecurityContext "enabled" | toYaml | nindent 10 }}
