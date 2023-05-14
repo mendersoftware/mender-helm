@@ -1,4 +1,5 @@
-{{- if and (.Values.device_auth.enabled) (.Values.global.enterprise) }}
+{{- if and (.Values.device_auth.enabled) (.Values.global.enterprise)
+           (.Values.device_license_count.enabled) }}
 {{- $merged := merge (deepCopy .Values.device_auth) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: batch/v1
 kind: CronJob
