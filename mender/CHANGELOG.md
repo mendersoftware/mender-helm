@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+# Version 4.0.2
+* [fix: device-auth-license-count ImagePullBackOff](https://github.com/mendersoftware/mender-helm/pull/151)
+
 # Version 4.0.1
 * Using global `registry.image.tag` instead of specifying it in every deployment
 
