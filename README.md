@@ -132,7 +132,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Complete list of parameters
 
-The following table lists the global parameters supported by the chart and their default values.
+The following table lists the global, default, and other parameters supported by the chart and their default values.
 
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
@@ -168,6 +168,19 @@ The following table lists the global parameters supported by the chart and their
 | `global.smtp.SMTP_PASSWORD` | SMTP server password | `null` |
 | `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
+| `default.affinity` | Optional affinity values that applies to all the resources | `nil` |
+| `default.toleration` | Optional toleration values that applies to all the resources | `nil` |
+| `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
+| `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
+| `dbmigration.backoffLimit` | BackoffLimit for the DB Migration utility  | `5` |
+| `dbmigration.affinity` | Affinity rules for the DB Migration utility  | `nil` |
+| `dbmigration.nodeSelector` | Node Selector rules for the DB Migration utility  | `nil` |
+| `dbmigration.pod` | Node Selector rules for the DB Migration utility  | `nil` |
+| `dbmigration.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
+| `dbmigration.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
+| `dbmigration.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
+| `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
+
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
