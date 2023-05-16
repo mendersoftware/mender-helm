@@ -121,13 +121,14 @@ helm-version-bump:staging-component:
     - |
       echo "INFO - mapping source project to values.yaml project:"
       case $SYNC_CONTAINER_NAME in
-        "placeholder-tobefound")
+        placeholder-tobefound)
           VALUES_REF="generate_delta_worker"
           ;;
-        "*")
+        *)
           VALUES_REF_TMP=${SYNC_CONTAINER_NAME#"mender-"}  #removes prefix: mender-
           VALUES_REF=${VALUES_REF_TMP//-/_} #replaces - with _
       esac
+      echo "DEBUG - container name inside values file: ${VALUES_REF}"
     - |
       echo "INFO - bumping version ${SYNC_IMAGE_TAG} to ${VALUES_REF} container: "
       THIS_KEY=".${VALUES_REF}.image.tag" THIS_VALUE="${SYNC_IMAGE_TAG}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
