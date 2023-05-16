@@ -2,30 +2,29 @@ apiVersion: v2
 appVersion: "3.4.0"
 description: Mender is a robust and secure way to update all your software and deploy your IoT devices at scale with support for customization
 name: mender
-version: 10.0.1
+version: 10.0.868742331
 keywords:
-- mender
-- iot
-- ota
+  - mender
+  - iot
+  - ota
 home: https://mender.io
 icon: https://github.com/mendersoftware/mender/raw/master/mender_logo.png
 sources:
-- https://github.com/mendersoftware/mender-helm
+  - https://github.com/mendersoftware/mender-helm
 maintainers:
-- name: Northern.tech AS
-  email: contact@northern.tech
-  url: https://northern.tech
-
+  - name: Northern.tech AS
+    email: contact@northern.tech
+    url: https://northern.tech
 dependencies:
-- name: mongodb
-  version: ~13.9.1
-  repository: "https://charts.bitnami.com/bitnami"
-  condition: mongodb.enabled
-- name: opensearch
-  version: ~2.9.1
-  repository: "https://opensearch-project.github.io/helm-charts/"
-  condition: opensearch.enabled
-- name: nats
-  version: ~0.8.2
-  repository: "https://nats-io.github.io/k8s/helm/charts/"
-  condition: nats.enabled
+  - name: mongodb
+    version: ~13.9.1
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: mongodb.enabled
+  - name: opensearch
+    version: ~2.9.1
+    repository: "https://opensearch-project.github.io/helm-charts/"
+    condition: opensearch.enabled
+  - name: nats
+    version: ~0.8.2
+    repository: "https://nats-io.github.io/k8s/helm/charts/"
+    condition: nats.enabled

@@ -40,7 +40,6 @@ global:
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
-
 # default values:
 # these values applies to all resources
 # and are applied when specific service values are not
@@ -48,7 +47,6 @@ global:
 default:
   affinity: {}
   tolerations: {}
-
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false
@@ -57,11 +55,11 @@ ingress:
   # ingressClassName: nginx
 
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-    # kubernetes.io/ingress.class: gce
-    # kubernetes.io/ingress.class: alb
-    # alb.ingress.kubernetes.io/healthcheck-path: /ui/
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/ingress.class: gce
+  # kubernetes.io/ingress.class: alb
+  # alb.ingress.kubernetes.io/healthcheck-path: /ui/
   path: /
   hosts:
     - mender.example.org
@@ -69,7 +67,6 @@ ingress:
   #  - secretName: mender-example-org-tls
   #    hosts:
   #      - mender.example.org
-
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
   enabled: false
@@ -81,7 +78,6 @@ mongodb:
   commonAnnotations:
     helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-100"
-
 # Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
   enabled: false
@@ -92,17 +88,14 @@ nats:
     image: "nats:2.3.1-alpine"
     jetstream:
       enabled: true
-  
       memStorage:
         enabled: true
         size: "1Gi"
-  
       fileStorage:
         enabled: true
         size: "2Gi"
         storageDirectory: /data/
         storageClassName: "local-path"
-
 # Using default values from https://opensearch.org/docs/latest/install-and-configure/install-opensearch/helm/
 opensearch:
   enabled: false
@@ -131,10 +124,8 @@ opensearch:
     annotations:
       helm.sh/hook: "pre-install,post-delete"
       helm.sh/hook-weight: "-90"
-      
 reporting:
   enabled: false
-
 dataMigration:
   reindexReporting:
     enable: true
@@ -143,7 +134,6 @@ dataMigration:
     affinity: {}
     nodeSelector: {}
     tolerations: {}
-
 api_gateway:
   enabled: true
   podAnnotations: {}
@@ -192,7 +182,6 @@ api_gateway:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 deployments:
   enabled: true
   podAnnotations: {}
@@ -230,7 +219,6 @@ deployments:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 device_auth:
   enabled: true
   podAnnotations: {}
@@ -277,7 +265,6 @@ device_auth:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 # Generate Delta Worker feature
 # Experimental feature, still in beta
 # will be released in the next Mender versions
@@ -300,7 +287,6 @@ generate_delta_worker:
     tag: mender-3.4.0
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
-
 gui:
   enabled: true
   podAnnotations: {}
@@ -317,6 +303,7 @@ gui:
     registry: docker.io
     repository: mendersoftware/gui
     imagePullPolicy: IfNotPresent
+    tag: MC-6387-helm-staging-poc_11b94212ce16230a1cdb921ebdc032cdd79fd489
   nodeSelector: {}
   service:
     name: mender-gui
@@ -332,7 +319,6 @@ gui:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 inventory:
   enabled: true
   podAnnotations: {}
@@ -366,7 +352,6 @@ inventory:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 tenantadm:
   enabled: true
   podAnnotations: {}
@@ -405,7 +390,6 @@ tenantadm:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 useradm:
   enabled: true
   podAnnotations: {}
@@ -452,7 +436,6 @@ useradm:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 workflows:
   enabled: true
   podAnnotations: {}
@@ -484,7 +467,6 @@ workflows:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
@@ -511,7 +493,6 @@ create_artifact_worker:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 auditlogs:
   enabled: true
   podAnnotations: {}
@@ -543,7 +524,6 @@ auditlogs:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 iot_manager:
   enabled: true
   podAnnotations: {}
@@ -575,7 +555,6 @@ iot_manager:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 deviceconnect:
   enabled: true
   podAnnotations: {}
@@ -607,7 +586,6 @@ deviceconnect:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 deviceconfig:
   enabled: true
   podAnnotations: {}
@@ -639,7 +617,6 @@ deviceconfig:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 devicemonitor:
   enabled: true
   podAnnotations: {}
@@ -671,7 +648,6 @@ devicemonitor:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
-
 redis:
   enabled: true
   replicas: 1
@@ -701,7 +677,6 @@ redis:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 999
-
 dbmigration:
   enable: true
   annotations: {}
@@ -712,7 +687,6 @@ dbmigration:
     enabled: false
     runAsNonRoot: true
     runAsUser: 999
-
 # Feature preview: Device License Count
 # Only available from version 3.6,
 # and available in Mender Enterprise
