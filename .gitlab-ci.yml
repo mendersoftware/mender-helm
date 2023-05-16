@@ -93,9 +93,13 @@ helm-version-bump:staging-component:
     variables:
       - $TRIGGER_SYNC_STAGING_COMPONENT == "true"
   stage: staging-deploy-poc
-  image: debian:buster
+  image: debian:bullseye
   before_script:
-    - apt update && apt install -yyq git yq
+    - apt update && apt install -yyq git wget
+    - |
+      echo "INFO - installing yq"
+      wget https://github.com/mikefarah/yq/releases/download/v4.33.2/yq_linux_amd64.tar.gz -O - |\
+      tar xz && mv yq_linux_amd64 /usr/bin/yq
     # Prepare SSH key
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
@@ -109,7 +113,7 @@ helm-version-bump:staging-component:
     # Add GitHub repo
     - git remote add github git@github.com:mendersoftware/mender-helm.git
       #- git fetch github staging:staging-overlay-version-bump
-    - git fetch github staging-poc:staging-overlay-version-bump
+    - git fetch github MC-6387-helm-staging-poc:staging-overlay-version-bump
     - git checkout staging-overlay-version-bump
     # todo: version bump
     - "echo Mender container: $SYNC_CONTAINER_NAME"
@@ -124,25 +128,26 @@ helm-version-bump:staging-component:
           VALUES_REF_TMP=${SYNC_CONTAINER_NAME#"mender-"}  #removes prefix: mender-
           VALUES_REF=${VALUES_REF_TMP//-/_} #replaces - with _
       esac
-    - echo "INFO - bumping version ${SYNC_IMAGE_TAG} to ${VALUES_REF} container: "
-      yq -i e ".${VALUES_REF}.image.tag |= ${SYNC_IMAGE_TAG}" mender/values.yaml
+    - |
+      echo "INFO - bumping version ${SYNC_IMAGE_TAG} to ${VALUES_REF} container: "
+      THIS_KEY=".${VALUES_REF}.image.tag" THIS_VALUE="${SYNC_IMAGE_TAG}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
       git add mender/values.yaml
     - |
       echo "INFO - bumping helm chart version"
       local FULL_VERSION=$(yq ".version" mender/Chart.yaml)
       local MAJOR_VERSION=$(echo $FULL_VERSION | cut -f1 -d.)
       local MINOR_VERSION=$(echo $FULL_VERSION | cut -f2 -d.)
-      yq -i e ".version = \"${MAJOR_VERSION}.${MINOR_VERSION}.${HELM_PATCH_VERSION}\"" mender/Chart.yaml
+      THIS_VALUE="${MAJOR_VERSION}.${MINOR_VERSION}.${HELM_PATCH_VERSION}" yq -i '.version = strenv(THIS_VALUE)' mender/Chart.yaml
       git add mender/Chart.yaml
     # Commit
-    - git commit -sm "[Mender CI/CD] bump helm chart at staging"
+    - git commit -sm "[Mender CI/CD] bump helm chart at MC-6387-helm-staging-poc"
     # Push (5 retries)
     - for retry in $(seq 5); do
-    -   if git push github staging-overlay-sync:staging-poc; then
+    -   if git push github staging-overlay-sync:MC-6387-helm-staging-poc; then
     -     exit 0
     -   fi
-    -   git fetch github staging-poc
-    -   git rebase github/staging-poc
+    -   git fetch github MC-6387-helm-staging-poc
+    -   git rebase github/MC-6387-helm-staging-poc
     - done
     - exit 1
 
