@@ -144,7 +144,7 @@ helm-version-bump:staging-component:
     - git commit -sm "[Mender CI/CD] bump helm chart at MC-6387-helm-staging-poc"
     # Push (5 retries)
     - for retry in $(seq 5); do
-    -   if git push github staging-overlay-sync:MC-6387-helm-staging-poc; then
+    -   if git push github staging-overlay-version-bump:MC-6387-helm-staging-poc; then
     -     exit 0
     -   fi
     -   git fetch github MC-6387-helm-staging-poc
