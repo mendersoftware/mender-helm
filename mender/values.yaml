@@ -132,7 +132,8 @@ opensearch:
       helm.sh/hook: "pre-install,post-delete"
       helm.sh/hook-weight: "-90"
       
-
+reporting:
+  enabled: false
 
 dataMigration:
   reindexReporting:
