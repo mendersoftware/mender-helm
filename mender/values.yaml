@@ -124,8 +124,16 @@ opensearch:
     annotations:
       helm.sh/hook: "pre-install,post-delete"
       helm.sh/hook-weight: "-90"
+
+# Cert Manager subchart
+certmanager:
+  enabled: false
+  namespace: cert-manager
+  installCRDs: true
+
 reporting:
   enabled: false
+
 dataMigration:
   reindexReporting:
     enable: true
@@ -134,6 +142,7 @@ dataMigration:
     affinity: {}
     nodeSelector: {}
     tolerations: {}
+
 api_gateway:
   enabled: true
   podAnnotations: {}
