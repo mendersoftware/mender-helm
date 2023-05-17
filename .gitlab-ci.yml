@@ -134,12 +134,14 @@ helm-version-bump:staging-component:
       THIS_KEY=".${VALUES_REF}.image.tag" THIS_VALUE="${SYNC_IMAGE_TAG}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
       git add mender/values.yaml
     - |
+      echo "DEBUG - container registry is: $CONTAINER_REGISTRY"
       if [[ -n "${CONTAINER_REGISTRY}" ]]; then
         echo "INFO - bumping registry ${CONTAINER_REGISTRY} to ${VALUES_REF} container: "
         THIS_KEY=".${VALUES_REF}.image.registry" THIS_VALUE="${CONTAINER_REGISTRY}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
         git add mender/values.yaml
       fi
     - |
+      echo "DEBUG - container repository is: $CONTAINER_REPOSITORY"
       if [[ -n "${CONTAINER_REPOSITORY}" ]]; then
         echo "INFO - bumping repository ${CONTAINER_REPOSITORY} to ${VALUES_REF} container: "
         THIS_KEY=".${VALUES_REF}.image.repository" THIS_VALUE="${CONTAINER_REPOSITORY}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
