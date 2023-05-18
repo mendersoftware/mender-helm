@@ -1,6 +1,14 @@
+variables:
+  # Update container image to use in staging for a given service. Triggered from each
+  # repo's CI on merges to <repo>/staging. Requires SYNC_CONTAINER_NAME and SYNC_IMAGE_TAG
+  TRIGGER_SYNC_STAGING_COMPONENT: "false"
+  SYNC_CONTAINER_NAME: "unknown"
+  SYNC_IMAGE_TAG: "unknown"
+
 stages:
   - build
   - test
+  - staging-deploy-poc
   - publish
 
 include:
@@ -100,3 +108,81 @@ publish:helm_chart_publishing:
     - helm repo add mender s3://${S3_HELM_CHART_REPO}
     - helm s3 push --acl="public-read" --relative --timeout=60s ./mender-*.tgz mender
     - aws cloudfront create-invalidation --distribution-id ${S3_HELM_CHART_CDN_DISTRIBUTION_ID} --paths "/*"
+
+helm-version-bump:staging-component:
+  only:
+    variables:
+      - $TRIGGER_SYNC_STAGING_COMPONENT == "true"
+  stage: staging-deploy-poc
+  image: debian:bullseye
+  before_script:
+    - apt update && apt install -yyq git wget
+    - |
+      echo "INFO - installing yq"
+      wget https://github.com/mikefarah/yq/releases/download/v4.33.2/yq_linux_amd64.tar.gz -O - |\
+      tar xz && mv yq_linux_amd64 /usr/bin/yq
+    # Prepare SSH key
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    # Configure git
+    - git config --global user.email "mender@northern.tech"
+    - git config --global user.name "Mender Test Bot"
+  script:
+    # Add GitHub repo
+    - git remote add github git@github.com:mendersoftware/mender-helm.git
+      #- git fetch github staging:staging-overlay-version-bump
+    - git fetch github MC-6387-helm-staging-poc:staging-overlay-version-bump
+    - git checkout staging-overlay-version-bump
+    # todo: version bump
+    - "echo Mender container: $SYNC_CONTAINER_NAME"
+    - "echo Image version: $SYNC_IMAGE_TAG"
+    - |
+      echo "INFO - mapping source project to values.yaml project:"
+      case $SYNC_CONTAINER_NAME in
+        placeholder-tobefound)
+          VALUES_REF="generate_delta_worker"
+          ;;
+        *)
+          VALUES_REF_TMP=${SYNC_CONTAINER_NAME#"mender-"}  #removes prefix: mender-
+          VALUES_REF=${VALUES_REF_TMP//-/_} #replaces - with _
+      esac
+      echo "DEBUG - container name inside values file: ${VALUES_REF}"
+    - |
+      echo "INFO - bumping version ${SYNC_IMAGE_TAG} to ${VALUES_REF} container: "
+      THIS_KEY=".${VALUES_REF}.image.tag" THIS_VALUE="${SYNC_IMAGE_TAG}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
+      git add mender/values.yaml
+    - |
+      echo "DEBUG - container registry is: $CONTAINER_REGISTRY"
+      if [[ -n "${CONTAINER_REGISTRY}" ]]; then
+        echo "INFO - bumping registry ${CONTAINER_REGISTRY} to ${VALUES_REF} container: "
+        THIS_KEY=".${VALUES_REF}.image.registry" THIS_VALUE="${CONTAINER_REGISTRY}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
+        git add mender/values.yaml
+      fi
+    - |
+      echo "DEBUG - container repository is: $CONTAINER_REPOSITORY"
+      if [[ -n "${CONTAINER_REPOSITORY}" ]]; then
+        echo "INFO - bumping repository ${CONTAINER_REPOSITORY} to ${VALUES_REF} container: "
+        THIS_KEY=".${VALUES_REF}.image.repository" THIS_VALUE="${CONTAINER_REPOSITORY}" yq -i 'eval(strenv(THIS_KEY)) = strenv(THIS_VALUE)' mender/values.yaml
+        git add mender/values.yaml
+      fi
+    - |
+      echo "INFO - bumping helm chart version"
+      FULL_VERSION=$(yq ".version" mender/Chart.yaml)
+      MAJOR_VERSION=$(echo $FULL_VERSION | cut -f1 -d.)
+      MINOR_VERSION=$(echo $FULL_VERSION | cut -f2 -d.)
+      THIS_VALUE="${MAJOR_VERSION}.${MINOR_VERSION}.${HELM_PATCH_VERSION}" yq -i '.version = strenv(THIS_VALUE)' mender/Chart.yaml
+      git add mender/Chart.yaml
+    # Commit
+    - git commit -sm "[Mender CI/CD] bump helm chart at MC-6387-helm-staging-poc"
+    # Push (5 retries)
+    - for retry in $(seq 5); do
+    -   if git push github staging-overlay-version-bump:MC-6387-helm-staging-poc; then
+    -     exit 0
+    -   fi
+    -   git fetch github MC-6387-helm-staging-poc
+    -   git rebase github/MC-6387-helm-staging-poc
+    - done
+    - exit 1
