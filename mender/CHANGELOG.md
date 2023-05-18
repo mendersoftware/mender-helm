@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+# Version 4.0.3
+* [fix: issues with Amazon S3 artifact storage](https://northerntech.atlassian.net/browse/MEN-6482)
+
 # Version 4.0.2
 * [fix: device-auth-license-count ImagePullBackOff](https://github.com/mendersoftware/mender-helm/pull/151)
 
