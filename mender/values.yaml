@@ -124,16 +124,13 @@ opensearch:
     annotations:
       helm.sh/hook: "pre-install,post-delete"
       helm.sh/hook-weight: "-90"
-
 # Cert Manager subchart
 certmanager:
   enabled: false
   namespace: cert-manager
   installCRDs: true
-
 reporting:
   enabled: false
-
 dataMigration:
   reindexReporting:
     enable: true
@@ -142,7 +139,6 @@ dataMigration:
     affinity: {}
     nodeSelector: {}
     tolerations: {}
-
 api_gateway:
   enabled: true
   podAnnotations: {}
@@ -312,7 +308,7 @@ gui:
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mendersoftware/gui
     imagePullPolicy: IfNotPresent
-    tag: MC-6387-helm-staging-poc_c126eddedabe2e80cc7a047b5a7feeff3a20c29a
+    tag: MC-6387-helm-staging-poc_6ea4298537661e6f57e4c1fe55ee0d1cf4673600
   nodeSelector: {}
   service:
     name: mender-gui
