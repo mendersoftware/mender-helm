@@ -314,9 +314,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
-| `device_auth.env.DEVICEAUTH_REDIS_ADDR` | Set the DEVICEAUTH_REDIS_ADDR variable | `mender-redis:6379` |
-| `device_auth.env.DEVICEAUTH_REDIS_USERNAME` | Set the DEVICEAUTH_REDIS_USERNAME variable | `""` |
-| `device_auth.env.DEVICEAUTH_REDIS_PASSWORD` | Set the DEVICEAUTH_REDIS_PASSWORD variable | `""` |
 | `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
@@ -504,9 +501,6 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable | `Mender Users` |
 | `useradm.env.USERADM_JWT_EXP_TIMEOUT` | Set the USERADM_JWT_EXP_TIMEOUT variable | `604800` |
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
-| `useradm.env.USERADM_REDIS_ADDR` | Set the USERADM_REDIS_ADDR variable | `mender-redis:6379` |
-| `useradm.env.USERADM_REDIS_USERNAME` | Set the USERADM_REDIS_USERNAME variable | `""` |
-| `useradm.env.USERADM_REDIS_PASSWORD` | Set the USERADM_REDIS_PASSWORD variable | `""` |
 | `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable | `2` |
 | `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable | `1` |
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |

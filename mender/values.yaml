@@ -11,6 +11,9 @@ global:
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
+  redis:
+    username: null
+    password: null
   storage: "aws"
   s3:
     AWS_URI: ""
@@ -161,9 +164,6 @@ device_auth:
     DEVICEAUTH_JWT_ISSUER: Mender
     DEVICEAUTH_JWT_EXP_TIMEOUT: 604800
     DEVICEAUTH_MIDDLEWARE: prod
-    DEVICEAUTH_REDIS_ADDR: "mender-redis:6379"
-    DEVICEAUTH_REDIS_USERNAME: ""
-    DEVICEAUTH_REDIS_PASSWORD: ""
     DEVICEAUTH_REDIS_DB: "1"
     DEVICEAUTH_REDIS_TIMEOUT_SEC: "1"
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
@@ -331,9 +331,6 @@ useradm:
     USERADM_JWT_ISSUER: Mender Users
     USERADM_JWT_EXP_TIMEOUT: 604800
     USERADM_MIDDLEWARE: prod
-    USERADM_REDIS_ADDR: "mender-redis:6379"
-    USERADM_REDIS_USERNAME: ""
-    USERADM_REDIS_PASSWORD: ""
     USERADM_REDIS_DB: "1"
     USERADM_REDIS_TIMEOUT_SEC: "1"
     USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
@@ -567,35 +564,31 @@ devicemonitor:
     allowPrivilegeEscalation: false
     runAsUser: 65534
 
+# Redis as a subchart
+# Using a standalone bitnami helm chart by default = test usage only
+# It's recommended to use a suitable Redis Cluster for Production
 redis:
   enabled: true
-  replicas: 1
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128M
-    requests:
-      cpu: 50m
-      memory: 64M
-  affinity: {}
-  image:
-    registry: docker.io
-    repository: redis
-    tag: 6.0.16-alpine
-    imagePullPolicy: IfNotPresent
-  service:
-    name: mender-redis
-    annotations: {}
-    type: ClusterIP
-    port: 6379
-  podSecurityContext:
+  architecture: standalone
+  auth:
     enabled: false
-    runAsNonRoot: true
-    runAsUser: 999
-  containerSecurityContext:
-    enabled: false
-    allowPrivilegeEscalation: false
-    runAsUser: 999
+  master:
+    podAnnotations:
+      helm.sh/hook: "pre-install"
+      helm.sh/hook-weight: "-100"
+    service:
+      annotations:
+        helm.sh/hook: "pre-install"
+        helm.sh/hook-weight: "-100"
+  replica:
+    podAnnotations:
+      helm.sh/hook: "pre-install"
+      helm.sh/hook-weight: "-100"
+    service:
+      annotations:
+        helm.sh/hook: "pre-install"
+        helm.sh/hook-weight: "-100"
+
 
 dbmigration:
   enable: true
