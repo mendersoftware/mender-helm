@@ -195,6 +195,7 @@ spec:
 {{ toYaml .Values.useradm.resources | indent 10 }}
         args: ["migrate"]
 
+{{- if .Values.workflows.enabled }}
       - name: workflows-server-migration
 {{- if .Values.global.enterprise }}
         image: {{ .Values.workflows.image.registry | default "registry.mender.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}:{{ .Values.workflows.image.tag | default .Values.global.image.tag }}
@@ -215,6 +216,7 @@ spec:
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
         args: ["migrate"]
+{{- end }}
 
 
 {{- if .Values.global.enterprise }}
