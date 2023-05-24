@@ -209,6 +209,9 @@ spec:
         - prefix: WORKFLOWS_
           secretRef:
             name: mongodb-common-prerelease
+        env:
+        - name: WORKFLOWS_NATS_URI
+          value: "{{ .Values.global.nats.URL }}"
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
         args: ["migrate"]
