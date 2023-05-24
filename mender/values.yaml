@@ -146,7 +146,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v2.5
+    tag: v2.9.6
     imagePullPolicy: IfNotPresent
   replicas: 1
   resources:
@@ -206,6 +206,7 @@ deployments:
   image:
     registry: ""
     repository: ""
+    tag: staging_5e30c2657eb3a536fc4bd299b17965208de9992f
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -242,6 +243,7 @@ device_auth:
   image:
     registry: ""
     repository: ""
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -289,7 +291,7 @@ generate_delta_worker:
   image:
     registry: registry.mender.io
     repository: mendersoftware/generate-delta-worker
-    tag: mender-3.4.0
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
 gui:
@@ -340,6 +342,7 @@ inventory:
   image:
     registry: ""
     repository: ""
+    tag: staging_56b732976756b84a5b951ef3f0e1c87ae40d6575
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -374,6 +377,7 @@ tenantadm:
   image:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -413,6 +417,7 @@ useradm:
   image:
     registry: ""
     repository: ""
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -457,6 +462,7 @@ workflows:
   image:
     registry: ""
     repository: ""
+    tag: staging_6b99df26ddd05680245e86642caa9c266d2e2fdf
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -488,6 +494,7 @@ create_artifact_worker:
   image:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   podSecurityContext:
@@ -514,6 +521,7 @@ auditlogs:
   image:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -545,6 +553,7 @@ iot_manager:
   image:
     registry: docker.io
     repository: mendersoftware/iot-manager
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -576,6 +585,7 @@ deviceconnect:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconnect
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -607,6 +617,7 @@ deviceconfig:
   image:
     registry: docker.io
     repository: mendersoftware/deviceconfig
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
@@ -638,6 +649,7 @@ devicemonitor:
   image:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
+    tag: saas-v2023.04.28
     imagePullPolicy: IfNotPresent
   nodeSelector: {}
   service:
