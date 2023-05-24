@@ -85,7 +85,7 @@ nats:
     enabled: true
     replicas: 3
   nats:
-    image: "nats:2.3.1-alpine"
+    image: "nats:2.7.4-scratch"
     jetstream:
       enabled: true
       memStorage:
@@ -96,6 +96,16 @@ nats:
         size: "2Gi"
         storageDirectory: /data/
         storageClassName: "local-path"
+  podAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-100"
+  statefulSetAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-100"
+  serviceAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-100"
+
 # Using default values from https://opensearch.org/docs/latest/install-and-configure/install-opensearch/helm/
 opensearch:
   enabled: false
