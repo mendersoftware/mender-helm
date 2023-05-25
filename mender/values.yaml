@@ -105,7 +105,6 @@ nats:
   serviceAnnotations:
     helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-100"
-
 # Using default values from https://opensearch.org/docs/latest/install-and-configure/install-opensearch/helm/
 opensearch:
   enabled: false
@@ -320,7 +319,7 @@ gui:
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mendersoftware/gui
     imagePullPolicy: IfNotPresent
-    tag: MC-6387-helm-staging-poc_6ea4298537661e6f57e4c1fe55ee0d1cf4673600
+    tag: pr_3703_e01f13c090e7d3bdc7dc095c69f5210114a797c8
   nodeSelector: {}
   service:
     name: mender-gui
