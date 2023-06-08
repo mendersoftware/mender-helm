@@ -46,3 +46,16 @@ Mongodb_uri
     {{- fail "Internal mongodb is not enabled and global.mongodb.URL is not set" }}
   {{- end }}
 {{- end }}
+
+{{/*
+nats_uri
+*/}}
+{{- define "nats_uri" }}
+  {{- if and ( not .Values.nats.enabled ) ( .Values.global.nats.URL ) }}
+    {{- printf .Values.global.nats.URL | quote }}
+  {{- else if and ( .Values.nats.enabled ) ( not .Values.nats.auth.enabled ) }}
+      {{- printf "nats://%s-%s" .Release.Name "nats" | quote }}
+  {{- else }}
+    {{- fail "nats sub-chart is not enabled and global.nats.URL is not set" }}
+  {{- end }}
+{{- end }}

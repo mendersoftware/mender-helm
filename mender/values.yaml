@@ -51,7 +51,9 @@ default:
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
   enabled: false
-  architecture: standalone
+  architecture: replicaset
+  image:
+    tag: "4.4.13-debian-10-r63"
   auth:
     enabled: false
   global:
@@ -59,6 +61,32 @@ mongodb:
   commonAnnotations:
     helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-100"
+
+# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+nats:
+  enabled: false
+  cluster:
+    enabled: true
+    replicas: 3
+  nats:
+    image: "nats:2.7.4-scratch"
+    jetstream:
+      enabled: true
+      memStorage:
+        enabled: true
+        size: "1Gi"
+      fileStorage:
+        enabled: true
+        size: "2Gi"
+        storageDirectory: /data/
+        storageClassName: ""
+  # NATS cannot use pre-install hook until it supports
+  # ConfigMap annnotations.
+  # See: https://github.com/nats-io/k8s/pull/735
+  podAnnotations: {}
+  statefulSetAnnotations: {}
+  serviceAnnotations: {}
+
 api_gateway:
   enabled: true
   podAnnotations: {}

@@ -90,7 +90,7 @@ spec:
 
         env:
         - name: WORKFLOWS_NATS_URI
-          value: "{{ .Values.global.nats.URL }}"
+          value: {{ template "nats_uri" . }}
 
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
