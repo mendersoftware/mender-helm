@@ -29,3 +29,20 @@ Create chart name and version as used by the chart label.
 {{- define "redis_address" }}
   {{- printf "%s-%s" $.Release.Name "redis-master:6379" | default "mender-redis:6379" | quote }}
 {{- end }}
+
+{{/*
+Mongodb_uri
+*/}}
+{{- define "mongodb_uri" }}
+  {{- if and ( not .Values.mongodb.enabled ) ( .Values.global.mongodb.URL ) }}
+    {{- printf .Values.global.mongodb.URL | b64enc }}
+  {{- else if and ( .Values.mongodb.enabled ) ( not .Values.mongodb.auth.enabled ) }}
+    {{- if eq .Values.mongodb.architecture "replicaset" }}
+    {{- printf "mongodb://%s-%s" .Release.Name "mongodb-headless" | b64enc }}
+    {{- else }}
+      {{- printf "mongodb://%s-%s" .Release.Name "mongodb" | b64enc }}
+    {{- end }}
+  {{- else }}
+    {{- fail "Internal mongodb is not enabled and global.mongodb.URL is not set" }}
+  {{- end }}
+{{- end }}
