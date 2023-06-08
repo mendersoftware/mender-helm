@@ -28,3 +28,8 @@ dependencies:
     version: ~0.15.1
     repository: "https://nats-io.github.io/k8s/helm/charts/"
     condition: nats.enabled
+  - name: cert-manager
+    version: v1.11.0
+    repository: https://charts.jetstack.io
+    alias: certmanager
+    condition: certmanager.enabled

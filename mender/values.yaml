@@ -87,6 +87,22 @@ nats:
   statefulSetAnnotations: {}
   serviceAnnotations: {}
 
+# Cert Manager subchart
+certmanager:
+  enabled: false
+  namespace: cert-manager
+  installCRDs: true
+reporting:
+  enabled: false
+dataMigration:
+  reindexReporting:
+    enable: true
+    annotations: {}
+    backoffLimit: 5
+    affinity: {}
+    nodeSelector: {}
+    tolerations: {}
+
 api_gateway:
   enabled: true
   podAnnotations: {}
