@@ -1,18 +1,18 @@
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/arch
-          operator: In
-          values:
-            - amd64
-        - key: node.kubernetes.io/lifecycle
-          operator: NotIn
-          values:
-            - spot
-        - key: node.kubernetes.io/nodegroup
-          operator: In
-          values:
-            - infra
-
+affinity: {}
+#  nodeAffinity:
+#    requiredDuringSchedulingIgnoredDuringExecution:
+#      nodeSelectorTerms:
+#      - matchExpressions:
+#        - key: kubernetes.io/arch
+#          operator: In
+#          values:
+#            - amd64
+#        - key: node.kubernetes.io/lifecycle
+#          operator: NotIn
+#          values:
+#            - spot
+#        - key: node.kubernetes.io/nodegroup
+#          operator: In
+#          values:
+#            - infra
+#
