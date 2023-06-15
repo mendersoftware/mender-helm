@@ -1,5 +1,5 @@
 variables:
-  PIPELINE_TOOLBOX_IMAGE: "registry.gitlab.com/northern.tech/mender/mender-test-containers:aws-k8s-v1"
+  PIPELINE_TOOLBOX_IMAGE: "registry.gitlab.com/northern.tech/mender/mender-test-containers:aws-k8s-v1-master"
   EKS_CLUSTER_NAME: "helmci-${CI_PIPELINE_ID}"
 
 stages:
