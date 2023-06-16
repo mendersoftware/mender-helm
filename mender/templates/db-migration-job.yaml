@@ -35,7 +35,7 @@ spec:
 {{- if .Values.dbmigration.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.dbmigration.podSecurityContext "enabled" | toYaml | nindent 8 }}
 {{- end }}
-
+      
 {{- if .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
       serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
 {{- end }}
@@ -211,7 +211,7 @@ spec:
             name: mongodb-common-prerelease
         resources:
 {{ toYaml .Values.workflows.resources | indent 10 }}
-        args: ["migrate", "--skip-nats"]
+        args: ["migrate"]
 
 
 {{- if .Values.global.enterprise }}
