@@ -1,3 +1,7 @@
+variables:
+  PIPELINE_TOOLBOX_IMAGE: "registry.gitlab.com/northern.tech/mender/mender-test-containers:aws-k8s-v1-master"
+  EKS_CLUSTER_NAME: "helmci-${CI_PIPELINE_ID}"
+
 stages:
   - build
   - test
@@ -10,6 +14,35 @@ include:
     file: '.gitlab-ci-check-license.yml'
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-github-status-updates.yml'
+
+.set_eks_helmci_vars: &set_eks_helmci_vars
+  - export AWS_ACCESS_KEY_ID=$CI_EKSCTL_ACCESS_KEY_ID_TEST
+  - export AWS_SECRET_ACCESS_KEY=$CI_EKSCTL_AWS_SECRET_ACCESS_KEY_TEST
+  - export AWS_DEFAULT_REGION=eu-central-1
+
+build:setup_eks_cluster:
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: .pre
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  before_script:
+  script:
+    - *set_eks_helmci_vars
+    - |
+      echo "INFO - Temporary EKS cluster setup"
+      eksctl create cluster \
+        --name ${EKS_CLUSTER_NAME} \
+        --tags "env=helm-ci-test" \
+        --asg-access \
+        --spot \
+        --instance-types m6a.xlarge,t3.xlarge \
+        --nodes 4
+    - echo "INFO - assigning SSO roles for debugging failed tests:"
+    - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
+    - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
+    - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_EKSAccess_8c2574e21d9fc21c --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
+    - echo "DEBUG - kubectl cluster version:"
+    - kubectl version
 
 build:
   stage: build
@@ -56,28 +89,204 @@ build:
   - export AWS_S3_SSE=AES256
 
 test:helm_chart_install:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
-  stage: test
-  dependencies:
-    - build
-  image: debian:buster
+  variables:
+    NAMESPACE: "mender-setup-test"
   before_script:
-    - *get_kubectl_and_tools
-    - *setup_eks_cluster_staging
-    # Install test dependencies
-    - apt install -yyq make uuid-runtime
-    - tests/ci-deps-k8s.sh
-    # Clean possible leftovers from an unfinished run
-    - tests/ci-test-teardown.sh || true
-    - tests/ci-make-clean.sh || true
+    - *set_eks_helmci_vars
+    - |
+      eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+      kubectl create ns ${NAMESPACE}
+      kubectl config set-context --current --namespace=${NAMESPACE}
+    - |
+      echo "DEBUG - get kubectl nodes"
+      kubectl config current-context
+      kubectl get nodes
+    - |
+      echo "INFO - installing helm from scratch"
+      tests/ci-deps-k8s.sh
   script:
     - tests/ci-make-deps.sh
-    - tests/ci-make-helm.sh
+    - |
+      echo "INFO - installing mender"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        --wait \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace mender-setup-test \
+        ./mender || exit 3;
     - make test
-  after_script:
-    - *setup_eks_cluster_staging
-    - tests/ci-make-clean.sh
+
+test:helm_chart_upgrade_from3.3:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  variables:
+    NAMESPACE: "mender-upgrade-test-3-3"
+  before_script:
+    - *set_eks_helmci_vars
+    - |
+      eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+      kubectl create ns ${NAMESPACE}
+      kubectl config set-context --current --namespace=${NAMESPACE}
+    - |
+      echo "DEBUG - get kubectl nodes"
+      kubectl config current-context
+      kubectl get nodes
+    - |
+      echo "INFO - installing helm from scratch"
+      tests/ci-deps-k8s.sh
+  script:
+    - tests/ci-make-deps.sh
+    - |
+      echo "INFO - installing mender 3.3"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        --wait \
+        --set global.image.tag="mender-3.3" \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace mender-upgrade-test-3-3 \
+        mender/mender || exit 3;
+    - bash tests/test-001-wait-for-pods-to-be-ready.sh
+    - |
+      echo "INFO - installing this mender"
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        --wait \
+        --set global.image.tag="mender-3.4" \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace mender-upgrade-test-3-3 \
+        ./mender || exit 3;
+    - helm history mender
+    - make test
+
+test:helm_chart_upgrade_from3.4:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  variables:
+    NAMESPACE: "mender-upgrade-test-3-4"
+  before_script:
+    - *set_eks_helmci_vars
+    - |
+      eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+      kubectl create ns ${NAMESPACE}
+      kubectl config set-context --current --namespace=${NAMESPACE}
+    - |
+      echo "DEBUG - get kubectl nodes"
+      kubectl config current-context
+      kubectl get nodes
+    - |
+      echo "INFO - installing helm from scratch"
+      tests/ci-deps-k8s.sh
+  script:
+    - tests/ci-make-deps.sh
+    - |
+      echo "INFO - installing mender 3.4"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        --wait \
+        --set global.image.tag="mender-3.4" \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace mender-upgrade-test-3-4 \
+        mender/mender || exit 3;
+    - bash tests/test-001-wait-for-pods-to-be-ready.sh
+    - |
+      echo "INFO - installing this mender"
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        --wait \
+        --set global.image.tag="mender-3.4" \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace mender-upgrade-test-3-4 \
+        ./mender || exit 3;
+    - helm history mender
+    - make test
+
+test:kubeconform_tests:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  before_script:
+    - *set_eks_helmci_vars
+  script:
+    - |
+      echo "INFO - running kubeconform tests:"
+      while IFS= read -r version; do
+        full_version=${version}.0
+        echo "INFO - testing version ${full_version}"
+        helm template mender/ \
+          -f mender/values.yaml \
+          -f tests/keys.yaml \
+          -f tests/values-helmci.yaml \
+          --kube-version ${full_version} \
+        | kubeconform --kubernetes-version ${full_version}
+      done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
+    - | 
+      echo "DEBUG - run failed kubeconform tests: this should fail"
+      sed -i 's/apps\/v1/fakeapps\/v42/' mender/templates/gui-deploy.yaml
+      while IFS= read -r version; do
+        full_version=${version}.0
+        echo "INFO - testing version ${full_version}"
+        helm template mender/ \
+          -f mender/values.yaml \
+          -f tests/keys.yaml \
+          -f tests/values-helmci.yaml \
+          --kube-version ${full_version} \
+        | kubeconform --kubernetes-version ${full_version} \
+        || echo "INFO - test failed with version ${kubeversion}: this is expected"
+      done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
 
 publish:helm_chart_publishing:
   rules:
@@ -100,3 +309,29 @@ publish:helm_chart_publishing:
     - helm repo add mender s3://${S3_HELM_CHART_REPO}
     - helm s3 push --acl="public-read" --relative --timeout=60s ./mender-*.tgz mender
     - aws cloudfront create-invalidation --distribution-id ${S3_HELM_CHART_CDN_DISTRIBUTION_ID} --paths "/*"
+
+.eks_cleanup: &eks_cleanup
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: .post
+  allow_failure: true # can't find a way to avoid eks cleanup when no eks is setup, so let's allow to fail for now
+  dependencies:
+    - build:setup_eks_cluster
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  before_script:
+    - *set_eks_helmci_vars
+  script:
+    - echo "INFO - deleting the temporary EKS cluster"
+    - eksctl delete cluster -n ${EKS_CLUSTER_NAME}
+
+cleanup_eks_cluster:failed:
+  when: on_failure
+  <<: *eks_cleanup
+
+cleanup_eks_cluster:success:
+  when: on_success
+  <<: *eks_cleanup
+
+cleanup_eks_cluster:failed:manual:
+  when: manual
+  <<: *eks_cleanup

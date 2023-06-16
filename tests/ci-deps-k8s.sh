@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2022 Northern.tech AS
+# Copyright 2023 Northern.tech AS
 #    
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 
 set -e
 
-log "installing helm"
-curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
 
 log "add helm repo: stable"
 helm repo add stable https://charts.helm.sh/stable
@@ -34,6 +32,9 @@ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 
 log "add helm repo: opensearch"
 helm repo add opensearch https://opensearch-project.github.io/helm-charts/
+
+log "add helm repo: mender"
+helm repo add mender https://charts.mender.io
 
 log "update help repositories"
 helm repo update
