@@ -18,6 +18,8 @@
 
 set -e
 
+local_minio_only=${1:-"false"}
+
 log "deploying dependencies: minio"
 helm install mender-minio minio/minio \
     --version 8.0.10 \
@@ -25,17 +27,25 @@ helm install mender-minio minio/minio \
     --set resources.requests.memory=100Mi \
     --set accessKey=${MINIO_accessKey},secretKey=${MINIO_secretKey},persistence.enabled=false
 
-log "deploying dependencies: mongodb"
-helm install mender-mongo bitnami/mongodb \
-    --version 12.1.31 \
-    --set "image.tag=4.4.13-debian-10-r63" \
-    --set "auth.enabled=false" \
-    --set "persistence.enabled=false" \
-    -f ./tests/affinity-x86_64-standard.yaml
+if [[ "$local_minio_only" == "true" ]]; then
+  log "not deploying mongodb"
+else
+  log "deploying dependencies: mongodb"
+  helm install mender-mongo bitnami/mongodb \
+      --version 12.1.31 \
+      --set "image.tag=4.4.13-debian-10-r63" \
+      --set "auth.enabled=false" \
+      --set "persistence.enabled=false" \
+      -f ./tests/affinity-x86_64-standard.yaml
+fi
 
+if [[ "$local_minio_only" == "true" ]]; then
+  log "not deploying nats"
+else
 log "deploying dependencies: nats"
 helm install nats nats/nats \
     --version 0.8.2 \
     --set "nats.image=nats:2.7.4-scratch" \
     --set "nats.jetstream.enabled=true" \
     -f ./tests/affinity-x86_64-standard.yaml
+fi
