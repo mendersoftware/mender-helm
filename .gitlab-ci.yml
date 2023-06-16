@@ -131,6 +131,46 @@ test:helm_chart_install:
         ./mender || exit 3;
     - make test
 
+test:helm_chart_install_sub_charts:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  variables:
+    NAMESPACE: "mender-setup-test-sub-charts"
+  before_script:
+    - *set_eks_helmci_vars
+    - |
+      eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+      kubectl create ns ${NAMESPACE}
+      kubectl config set-context --current --namespace=${NAMESPACE}
+    - |
+      echo "DEBUG - get kubectl nodes"
+      kubectl config current-context
+      kubectl get nodes
+  script:
+    - |
+      echo "INFO - installing mender"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        -f tests/values-helmci-internal-backing-services.yaml \
+        --wait \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace ${NAMESPACE} \
+        ./mender || exit 3;
+    - make test
+
 test:helm_chart_upgrade_from3.3:
   tags:
     - mender-qa-worker-generic-light

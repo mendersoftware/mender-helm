@@ -7,7 +7,7 @@ global:
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
   enabled: true
-  architecture: replicaset
+  architecture: standalone
   persistence:
     enabled: false
   global:
@@ -38,7 +38,7 @@ nats:
 # Using a standalone bitnami helm chart by default = test usage only
 # It's recommended to use a suitable Redis Cluster for Production
 redis:
-  enabled: false
+  enabled: true
   architecture: standalone
   auth:
     enabled: false
