@@ -1,6 +1,15 @@
 dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 17.11.2
-digest: sha256:1c8bc5ad48aa9822d05cc6fecc8af593e74d4282c1c8302b1a9e67d42692daff
-generated: "2023-05-20T22:53:09.587850428+02:00"
+  version: 17.11.5
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 13.9.4
+- name: nats
+  repository: https://nats-io.github.io/k8s/helm/charts/
+  version: 0.15.1
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.11.0
+digest: sha256:55a50401558df749c30174ab43c21c7cf3cc8dc89a402a0dd99ec2e43f60ad15
+generated: "2023-06-16T10:01:25.493261439+02:00"
