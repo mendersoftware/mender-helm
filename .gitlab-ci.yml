@@ -35,7 +35,7 @@ build:setup_eks_cluster:
         --tags "env=helm-ci-test" \
         --asg-access \
         --spot \
-        --instance-types m6a.xlarge,t3.xlarge \
+        --instance-types m5d.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge \
         --nodes 4
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
