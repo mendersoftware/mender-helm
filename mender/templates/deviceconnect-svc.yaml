@@ -5,12 +5,9 @@ metadata:
   name: {{ .Values.deviceconnect.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: deviceconnect-svc
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: deviceconnect
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 {{- with .Values.deviceconnect.service.annotations }}
   annotations: {{ tpl (toYaml .) $ | nindent 4 }}
 {{- end }}
@@ -36,5 +33,5 @@ spec:
     nodePort: {{ .Values.deviceconnect.service.nodePort }}
     {{- end }}
   selector:
-    app.kubernetes.io/name: deviceconnect
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
 {{- end }}

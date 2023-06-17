@@ -26,12 +26,31 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{/*
+Common labels
+*/}}
+{{- define "mender.labels" -}}
+helm.sh/chart: {{ include "mender.chart" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/part-of: mender
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+{{- with .Values.labels }}
+{{ toYaml . }}
+{{- end }}
+{{- end }}
+
+{{/*
+Redis address
+*/}}
 {{- define "redis_address" }}
   {{- printf "%s-%s" $.Release.Name "redis-master:6379" | default "mender-redis:6379" | quote }}
 {{- end }}
 
 {{/*
-Mongodb_uri
+MongoDB URI
 */}}
 {{- define "mongodb_uri" }}
   {{- if and ( not .Values.mongodb.enabled ) ( .Values.global.mongodb.URL ) }}
