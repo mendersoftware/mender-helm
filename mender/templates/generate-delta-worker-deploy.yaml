@@ -61,7 +61,7 @@ spec:
         # Set in order, last value for the key will be used in case duplications.
         env:
         - name: WORKFLOWS_NATS_URI
-          value: "{{ .Values.global.nats.URL }}"
+          value: {{ template "nats_uri" . }}
         - name: WORKFLOWS_MENDER_URL
           value: "{{ .Values.global.url }}"
         - name: GENERATE_DELTA_GATEWAY_URL

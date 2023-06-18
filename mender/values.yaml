@@ -75,6 +75,26 @@ mongodb:
   service:
     nameOverride: ""
 
+# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+nats:
+  enabled: false
+  cluster:
+    enabled: true
+    replicas: 3
+  fullnameOverride: "" 
+  nats:
+    image: "nats:2.7.4-scratch"
+    jetstream:
+      enabled: true
+      memStorage:
+        enabled: true
+        size: "1Gi"
+      fileStorage:
+        enabled: true
+        size: "2Gi"
+        storageDirectory: /data/
+        storageClassName: ""
+
 api_gateway:
   enabled: true
   podAnnotations: {}

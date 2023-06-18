@@ -24,7 +24,6 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 This Helm chart does not install the following external services and dependencies which are required to run Mender:
 
 - MinIO
-- NATS
 
 ### Installing mongodb
 
@@ -55,13 +54,20 @@ $ helm install minio minio/minio --version 8.0.10 --set "image.tag=RELEASE.2021-
 
 ### Installing NATS
 
-Follow instructions from https://nats-io.github.io/k8s using `helm`:
+NATS is integrated as a sub-chart deployment: you can enable it with
+the following settings:
 
-```bash
-$ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-$ helm repo update
-$ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpine" --set "nats.jetstream.enabled=true"
 ```
+nats:
+  enabled: true
+
+# or via the --set argument:
+--set="nats.enabled=true"
+```
+
+You can customize it by following the [provider's](https://docs.nats.io/running-a-nats-service/nats-kubernetes/helm-charts)
+specifications.  
+It's recommended to use an external deployment in Production.
 
 ## Installing the Chart
 

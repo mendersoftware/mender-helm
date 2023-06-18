@@ -69,7 +69,7 @@ spec:
 
         env:
         - name: WORKFLOWS_NATS_URI
-          value: "{{ .Values.global.nats.URL }}"
+          value: {{ template "nats_uri" . }}
         - name: WORKFLOWS_MENDER_URL
           value: "{{ .Values.global.url }}"
         {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}

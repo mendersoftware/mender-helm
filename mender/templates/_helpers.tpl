@@ -78,3 +78,13 @@ MongoDB URI
   {{- end }}
 {{- end }}
 
+{{/*
+nats_uri
+*/}}
+{{- define "nats_uri" }}
+  {{- if and .Values.nats.enabled ( not .Values.global.nats.URL ) }}
+    {{- printf "nats://%s" ( include "nats.fullname" .Subcharts.nats ) -}}
+  {{- else }}
+    {{- printf .Values.global.nats.URL | quote }}
+  {{- end }}
+{{- end }}
