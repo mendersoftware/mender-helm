@@ -35,12 +35,15 @@ build:setup_eks_cluster:
         --tags "env=helm-ci-test" \
         --asg-access \
         --spot \
-        --instance-types m6a.xlarge,t3.xlarge \
+        --instance-types m5d.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge \
         --nodes 4
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_EKSAccess_8c2574e21d9fc21c --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
+    - eksctl utils associate-iam-oidc-provider --cluster ${EKS_CLUSTER_NAME} --approve
+    - eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKS_EBS_CSI_DriverRole --role-only --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --approve
+    - eksctl create addon --name aws-ebs-csi-driver --cluster ${EKS_CLUSTER_NAME} --service-account-role-arn arn:aws:iam::017659451055:role/AmazonEKS_EBS_CSI_DriverRole --force
     - echo "DEBUG - kubectl cluster version:"
     - kubectl version
 
@@ -123,6 +126,7 @@ test:helm_chart_install:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
@@ -166,6 +170,7 @@ test:helm_chart_upgrade_from3.3:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.3" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
@@ -181,6 +186,7 @@ test:helm_chart_upgrade_from3.3:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.4" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
@@ -226,6 +232,7 @@ test:helm_chart_upgrade_from3.4:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.4" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
@@ -241,6 +248,7 @@ test:helm_chart_upgrade_from3.4:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.4" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
