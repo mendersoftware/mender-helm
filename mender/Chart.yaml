@@ -20,3 +20,7 @@ dependencies:
     version: ~17.11.2
     repository: "https://charts.bitnami.com/bitnami"
     condition: redis.enabled
+  - name: mongodb
+    version: ~13.9.1
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: mongodb.enabled

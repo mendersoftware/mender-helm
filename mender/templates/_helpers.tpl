@@ -53,3 +53,28 @@ Redis address
   {{- end }}
 {{- end }}
 
+{{/*
+MongoDB URI
+*/}}
+{{- define "mongodb_uri" }}
+  {{- if and .Values.mongodb.enabled ( not .Values.global.mongodb.URL ) }}
+    {{- if and (eq .Values.mongodb.architecture "replicaset") .Values.mongodb.externalAccess.enabled (eq .Values.mongodb.externalAccess.service.type "ClusterIP") }}
+      {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.username .Values.mongodb.auth.password }}
+        {{- printf "mongodb://%s:%s@%s-0" .Values.mongodb.auth.username .Values.mongodb.auth.password ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- else }}
+        {{- printf "mongodb://%s-0" ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- end }}
+    {{- else if not (eq .Values.architecture "replicaset") }}
+      {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.username .Values.mongodb.auth.password }}
+        {{- printf "mongodb://%s:%s@%s" .Values.mongodb.auth.username .Values.mongodb.auth.password ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- else }}
+        {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- end }}
+    {{- else }}
+      {{- fail "Failed: not implemented here." }}      
+    {{- end }}
+  {{- else }}
+    {{- printf .Values.global.mongodb.URL | b64enc | quote }}
+  {{- end }}
+{{- end }}
+

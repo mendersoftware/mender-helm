@@ -23,19 +23,25 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 
 This Helm chart does not install the following external services and dependencies which are required to run Mender:
 
-- mongodb
 - MinIO
 - NATS
 
 ### Installing mongodb
 
-You can install mongodb using the official mongodb Helm chart using `helm`:
+MongoDB is integrated as a sub-chart deployment: you can enable it with
+the following settings:
 
-```bash
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm repo update
-$ helm install mongodb bitnami/mongodb --version 12.1.31 --set "image.tag=4.4.13-debian-10-r29" --set "auth.enabled=false"
 ```
+mongodb:
+  enabled: true
+
+# or via the --set argument:
+--set="mongodb.enabled=true"
+```
+
+You can customize it by following the [provider's](https://artifacthub.io/packages/helm/bitnami/mongodb)
+specifications.  
+It's recommended to use an external deployment in Production.
 
 ### Installing MinIO
 

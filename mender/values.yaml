@@ -40,6 +40,8 @@ global:
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
+  # guardrails for subcharts
+  namespaceOverride: ""
 
 # default values:
 # these values applies to all resources
@@ -48,6 +50,30 @@ global:
 default:
   affinity: {}
   tolerations: {}
+
+# Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
+mongodb:
+  enabled: false
+  architecture: replicaset
+  externalAccess:
+    enabled: false
+    service:
+      type: LoadBalancer
+  image:
+    tag: "4.4.13-debian-10-r63"
+  auth:
+    enabled: false
+    username: ""
+    password: ""
+    # reference to Bitnami chart only: the database name is managed by Mender only
+    database: ""
+  global:
+    storageClass: ""
+  commonAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-100"
+  service:
+    nameOverride: ""
 
 api_gateway:
   enabled: true
