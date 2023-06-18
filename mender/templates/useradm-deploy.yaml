@@ -94,19 +94,19 @@ spec:
         - name: DEPLOYMENTS_ENABLE_AUDIT
           value: "true"
 {{- end }}
-{{- if .Values.global.enterprise }}
+{{- if and .Values.global.enterprise .Values.redis.enabled }}
         - name: USERADM_REDIS_ADDR
-          value: {{ .Values.useradm.env.USERADM_REDIS_ADDR | quote }}
+          value: {{ include "redis_address" . }}
         - name: USERADM_REDIS_USERNAME
-          value: {{ .Values.useradm.env.USERADM_REDIS_USERNAME | quote }}
+          value: {{ .Values.global.redis.username | default "" | quote }}
         - name: USERADM_REDIS_PASSWORD
-          value: {{ .Values.useradm.env.USERADM_REDIS_PASSWORD | quote }}
+          value: {{ .Values.global.redis.password | default "" | quote }}
         - name: USERADM_REDIS_DB
-          value: {{ .Values.useradm.env.USERADM_REDIS_DB | quote }}
+          value: {{ .Values.useradm.env.USERADM_REDIS_DB | default "1" | quote }}
         - name: USERADM_REDIS_TIMEOUT_SEC
-          value: {{ .Values.useradm.env.USERADM_REDIS_TIMEOUT_SEC | quote }}
+          value: {{ .Values.useradm.env.USERADM_REDIS_TIMEOUT_SEC | default "1" | quote }}
         - name: USERADM_REDIS_LIMITS_EXPIRE_SEC
-          value: {{ .Values.useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC | quote }}
+          value: {{ .Values.useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
 {{- end }}
 
         # Readiness/liveness probes
