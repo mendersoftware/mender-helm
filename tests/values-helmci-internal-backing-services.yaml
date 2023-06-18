@@ -1,0 +1,55 @@
+global:
+  mongodb:
+    URL: ""
+  nats:
+    URL: ""
+  redis:
+    URL: ""
+
+# Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
+mongodb:
+  enabled: true
+  architecture: standalone
+  persistence:
+    enabled: false
+  global:
+    storageClass: ""
+  commonAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-100"
+
+# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+nats:
+  enabled: true
+  cluster:
+    enabled: false
+  nats:
+    image: "nats:2.7.4-scratch"
+    jetstream:
+      enabled: true
+      memStorage:
+        enabled: true
+        size: "1Gi"
+      fileStorage:
+        enabled: false
+  podAnnotations: {}
+  statefulSetAnnotations: {}
+  serviceAnnotations: {}
+ 
+# Redis as a subchart
+# Using a standalone bitnami helm chart by default = test usage only
+# It's recommended to use a suitable Redis Cluster for Production
+redis:
+  enabled: true
+  architecture: standalone
+  commonAnnotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+    helm.sh/hook-weight: "-50"
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: false
+  replica:
+    persistence:
+      enabled: false
