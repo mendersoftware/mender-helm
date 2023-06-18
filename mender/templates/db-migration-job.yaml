@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: db-data-migration
+  name: {{ include "mender.fullname" . }}-db-data-migration
   namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: pre-upgrade,pre-install
@@ -13,18 +13,15 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
-    app.kubernetes.io/name: db-data-migration
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-db-data-migration
     app.kubernetes.io/component: job
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 spec:
   backoffLimit: {{ .Values.dbmigration.backoffLimit | default 5 }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: db-data-migration
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-db-data-migration
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}

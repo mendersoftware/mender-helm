@@ -3,20 +3,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: workflows-worker
+  name: {{ include "mender.fullname" . }}-workflows-worker
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: workflows-worker
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-workflows-worker
     app.kubernetes.io/component: workflows
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 spec:
   replicas: {{ .Values.workflows.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: workflows-worker
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-workflows-worker
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -38,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: workflows-worker
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-workflows-worker
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}

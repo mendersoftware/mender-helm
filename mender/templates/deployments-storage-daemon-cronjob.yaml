@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: deployments-storage-daemon
+  name: {{ include "mender.fullname" . }}-deployments-storage-daemon
   namespace: {{ .Release.Namespace }}
 spec:
   schedule: {{default "15 * * * *" .Values.deployments.daemonSchedule | quote}}
@@ -19,7 +19,7 @@ spec:
             {{- toYaml . | nindent 8 }}
           {{- end }}
           labels:
-            app.kubernetes.io/name: deployments-storage-daemon
+            app.kubernetes.io/name: {{ include "mender.fullname" . }}-deployments-storage-daemon
 
         spec:
           {{- with $merged.affinity }}

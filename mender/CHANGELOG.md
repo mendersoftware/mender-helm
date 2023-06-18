@@ -7,6 +7,7 @@
     services. You cannot use two different Redis Clusters.  
     It's recommended to use an external Redis Cluster in Production, instead
     of the integrated sub-chart, which is enabled by default.
+* Added Chart Name prefix to the Resource names
 ## Version 4.0.3
 * [fix: issues with Amazon S3 artifact storage](https://northerntech.atlassian.net/browse/MEN-6482)
 

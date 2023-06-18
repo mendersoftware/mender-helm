@@ -5,12 +5,9 @@ metadata:
   name: {{ .Values.tenantadm.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: tenantadm
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm
     app.kubernetes.io/component: tenantadm-svc
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 {{- with .Values.tenantadm.service.annotations }}
   annotations: {{ tpl (toYaml .) $ | nindent 4 }}
 {{- end }}
@@ -36,5 +33,5 @@ spec:
     nodePort: {{ .Values.tenantadm.service.nodePort }}
     {{- end }}
   selector:
-    app.kubernetes.io/name: tenantadm
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm
 {{- end }}

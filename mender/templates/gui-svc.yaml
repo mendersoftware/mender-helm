@@ -5,12 +5,9 @@ metadata:
   name: {{ .Values.gui.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: gui-svc
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: gui
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 {{- with .Values.gui.service.annotations }}
   annotations: {{ tpl (toYaml .) $ | nindent 4 }}
 {{- end }}
@@ -37,5 +34,5 @@ spec:
     {{- end }}
     name: http
   selector:
-    app.kubernetes.io/name: gui
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
 {{- end }}
