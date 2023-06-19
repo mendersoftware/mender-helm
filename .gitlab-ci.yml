@@ -35,8 +35,8 @@ build:setup_eks_cluster:
         --tags "env=helm-ci-test" \
         --asg-access \
         --spot \
-        --instance-types m5d.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge \
-        --nodes 4
+        --instance-types m6a.xlarge,t3.xlarge,m5d.xlarge,m6i.xlarge \
+        --nodes ${CI_EKS_NUMBER_OF_NODES:-5} 
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
@@ -131,9 +131,12 @@ test:helm_chart_install:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace mender-setup-test \
+        --namespace ${NAMESPACE} \
         ./mender || exit 3;
     - make test
+  after_script:
+    - echo "INFO - cleaning up to save resources"
+    - helm delete -n ${NAMESPACE} mender 
 
 test:helm_chart_install_sub_charts:
   tags:
@@ -180,6 +183,9 @@ test:helm_chart_install_sub_charts:
         --namespace ${NAMESPACE} \
         ./mender || exit 3;
     - make test
+  after_script:
+    - echo "INFO - cleaning up resources"
+    - helm delete -n ${NAMESPACE} mender 
 
 test:helm_chart_upgrade_from3.3:
   tags:
