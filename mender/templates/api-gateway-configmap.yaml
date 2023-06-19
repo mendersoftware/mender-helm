@@ -229,6 +229,17 @@ data:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
+{{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( le (int (include "menderVersionMinor" .)) 4 ) }}
+          #
+          # redirection rules valid up to 3.4 version
+          #
+          - ensure-ui-path
+          - signup-redirect
+          - ui-stripprefix
+          #
+          # end of redirection rules valid up to 3.4 version
+          #
+{{- end }}
           - userauth
           - sec-headers
           - compression
@@ -457,10 +468,41 @@ data:
       # Middlewares
       #
       middlewares:
+{{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( le (int (include "menderVersionMinor" .)) 4 ) }}
+        #
+        # redirection rules valid up to 3.4 version
+        #
+        ui-stripprefix:
+          stripprefix:
+            prefixes: "/ui"
+        #
+        # end of redirection rules valid up to 3.4 version
+        #
+{{- end }}
 {{- if .Values.api_gateway.env.SSL }}
         redirect-to-https:
           redirectscheme:
             scheme: https
+{{- end }}
+{{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( le (int (include "menderVersionMinor" .)) 4 ) }}
+
+        #
+        # redirection rules valid up to 3.4 version
+        #
+        ensure-ui-path:
+          redirectregex:
+            regex: "^({{ $scheme }}?://[^/]+)(/[a-z]*)?$"
+            replacement: "${1}/ui/"
+            permanent: true
+
+        signup-redirect:
+          redirectregex:
+            regex: "^({{ $scheme }}://[^/]+)/signup"
+            replacement: "${1}/ui/#/signup"
+        #
+        # end of redirection rules valid up to 3.4 version
+        #
+
 {{- end }}
 
         sec-headers:
