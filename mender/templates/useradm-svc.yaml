@@ -5,12 +5,9 @@ metadata:
   name: {{ .Values.useradm.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: useradm-svc
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/component: useradm
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 {{- with .Values.useradm.service.annotations }}
   annotations: {{ tpl (toYaml .) $ | nindent 4 }}
 {{- end }}
@@ -36,5 +33,5 @@ spec:
     nodePort: {{ .Values.useradm.service.nodePort }}
     {{- end }}
   selector:
-    app.kubernetes.io/name: useradm
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-useradm
 {{- end }}

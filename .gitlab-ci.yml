@@ -35,12 +35,15 @@ build:setup_eks_cluster:
         --tags "env=helm-ci-test" \
         --asg-access \
         --spot \
-        --instance-types m6a.xlarge,t3.xlarge \
-        --nodes 4
+        --instance-types m6a.xlarge,t3.xlarge,m5d.xlarge,m6i.xlarge \
+        --nodes ${CI_EKS_NUMBER_OF_NODES:-5} 
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_EKSAccess_8c2574e21d9fc21c --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
+    - eksctl utils associate-iam-oidc-provider --cluster ${EKS_CLUSTER_NAME} --approve
+    - eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKS_EBS_CSI_DriverRole --role-only --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --approve
+    - eksctl create addon --name aws-ebs-csi-driver --cluster ${EKS_CLUSTER_NAME} --service-account-role-arn arn:aws:iam::017659451055:role/AmazonEKS_EBS_CSI_DriverRole --force
     - echo "DEBUG - kubectl cluster version:"
     - kubectl version
 
@@ -123,13 +126,66 @@ test:helm_chart_install:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace mender-setup-test \
+        --namespace ${NAMESPACE} \
         ./mender || exit 3;
     - make test
+  after_script:
+    - echo "INFO - cleaning up to save resources"
+    - helm delete -n ${NAMESPACE} mender 
+
+test:helm_chart_install_sub_charts:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  variables:
+    NAMESPACE: "mender-setup-test-sub-charts"
+    INSTALL_MINIO_DEP_ONLY: "true"
+  before_script:
+    - *set_eks_helmci_vars
+    - |
+      eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+      kubectl create ns ${NAMESPACE}
+      kubectl config set-context --current --namespace=${NAMESPACE}
+    - |
+      echo "DEBUG - get kubectl nodes"
+      kubectl config current-context
+      kubectl get nodes
+    - |
+      echo "INFO - installing helm from scratch"
+      tests/ci-deps-k8s.sh
+  script:
+    - tests/ci-make-deps.sh $INSTALL_MINIO_DEP_ONLY
+    - |
+      echo "INFO - installing mender"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        -f tests/values-helmci-internal-backing-services.yaml \
+        --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace ${NAMESPACE} \
+        ./mender || exit 3;
+    - make test
+  after_script:
+    - echo "INFO - cleaning up resources"
+    - helm delete -n ${NAMESPACE} mender 
 
 test:helm_chart_upgrade_from3.3:
   tags:
@@ -166,6 +222,7 @@ test:helm_chart_upgrade_from3.3:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.3" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
@@ -181,6 +238,7 @@ test:helm_chart_upgrade_from3.3:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.4" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
@@ -226,6 +284,7 @@ test:helm_chart_upgrade_from3.4:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.4" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
@@ -241,6 +300,7 @@ test:helm_chart_upgrade_from3.4:
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
         --set global.image.tag="mender-3.4" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \

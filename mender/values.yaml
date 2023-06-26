@@ -11,6 +11,10 @@ global:
     URL: mongodb://mongodb
   nats:
     URL: nats://nats:4222
+  redis:
+    username: null
+    password: null
+    URL: ""
   storage: "aws"
   s3:
     AWS_URI: ""
@@ -36,6 +40,8 @@ global:
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
   url: "https://mender-api-gateway"
+  # guardrails for subcharts
+  namespaceOverride: ""
 
 # default values:
 # these values applies to all resources
@@ -44,6 +50,50 @@ global:
 default:
   affinity: {}
   tolerations: {}
+
+# Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
+mongodb:
+  enabled: false
+  architecture: replicaset
+  externalAccess:
+    enabled: false
+    service:
+      type: LoadBalancer
+  image:
+    tag: "4.4.13-debian-10-r63"
+  auth:
+    enabled: false
+    username: ""
+    password: ""
+    # reference to Bitnami chart only: the database name is managed by Mender only
+    database: ""
+  global:
+    storageClass: ""
+  commonAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-100"
+  service:
+    nameOverride: ""
+
+# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+nats:
+  enabled: false
+  cluster:
+    enabled: true
+    replicas: 3
+  fullnameOverride: "" 
+  nats:
+    image: "nats:2.7.4-scratch"
+    jetstream:
+      enabled: true
+      memStorage:
+        enabled: true
+        size: "1Gi"
+      fileStorage:
+        enabled: true
+        size: "2Gi"
+        storageDirectory: /data/
+        storageClassName: ""
 
 api_gateway:
   enabled: true
@@ -161,9 +211,6 @@ device_auth:
     DEVICEAUTH_JWT_ISSUER: Mender
     DEVICEAUTH_JWT_EXP_TIMEOUT: 604800
     DEVICEAUTH_MIDDLEWARE: prod
-    DEVICEAUTH_REDIS_ADDR: "mender-redis:6379"
-    DEVICEAUTH_REDIS_USERNAME: ""
-    DEVICEAUTH_REDIS_PASSWORD: ""
     DEVICEAUTH_REDIS_DB: "1"
     DEVICEAUTH_REDIS_TIMEOUT_SEC: "1"
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
@@ -331,9 +378,6 @@ useradm:
     USERADM_JWT_ISSUER: Mender Users
     USERADM_JWT_EXP_TIMEOUT: 604800
     USERADM_MIDDLEWARE: prod
-    USERADM_REDIS_ADDR: "mender-redis:6379"
-    USERADM_REDIS_USERNAME: ""
-    USERADM_REDIS_PASSWORD: ""
     USERADM_REDIS_DB: "1"
     USERADM_REDIS_TIMEOUT_SEC: "1"
     USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
@@ -567,35 +611,28 @@ devicemonitor:
     allowPrivilegeEscalation: false
     runAsUser: 65534
 
+# Redis as a subchart
+# Using a bitnami sub-chart by default = test usage only
+# It's recommended to use a suitable Redis Cluster for Production
 redis:
   enabled: true
-  replicas: 1
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128M
-    requests:
-      cpu: 50m
-      memory: 64M
-  affinity: {}
-  image:
-    registry: docker.io
-    repository: redis
-    tag: 6.0.16-alpine
-    imagePullPolicy: IfNotPresent
-  service:
-    name: mender-redis
-    annotations: {}
-    type: ClusterIP
-    port: 6379
-  podSecurityContext:
+  architecture: replication
+  commonAnnotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+    helm.sh/hook-weight: "-50"
+  auth:
     enabled: false
-    runAsNonRoot: true
-    runAsUser: 999
-  containerSecurityContext:
-    enabled: false
-    allowPrivilegeEscalation: false
-    runAsUser: 999
+  commonConfiguration: |-
+    appendonly no
+    save ""
+    tcp-keepalive 0
+  master:
+    persistence:
+      enabled: false
+  replica:
+    persistence:
+      enabled: false
+  fullnameOverride: "" 
 
 dbmigration:
   enable: true
