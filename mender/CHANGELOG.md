@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.0.1
+* Fix: workaround for a [known issue](https://github.com/bitnami/charts/issues/10843) with `bitnami/mongodb` when replicaset and auth are enabled
+
 ## Version 5.0.0
 * **BREAKING CHANGES**:
   * Switch Redis service to an optional sub Chart: now Redis is a global
