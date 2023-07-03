@@ -62,11 +62,12 @@ mongodb:
   image:
     tag: "4.4.13-debian-10-r63"
   auth:
-    enabled: false
-    username: ""
-    password: ""
+    enabled: true
+    rootPassword: "pleasechangeme"
+    replicaSetKey: "pleasechangeme"
+    username: "mender"
     # reference to Bitnami chart only: the database name is managed by Mender only
-    database: ""
+    database: "mender"
   global:
     storageClass: ""
   commonAnnotations:

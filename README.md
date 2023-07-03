@@ -17,7 +17,7 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 ## Prerequisites
 
 - Kubernetes 1.12+
-- Helm 3.0-beta3+
+- Helm >= 3.7.0
 
 ## External services required
 

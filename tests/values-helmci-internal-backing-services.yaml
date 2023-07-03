@@ -9,7 +9,13 @@ global:
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
   enabled: true
-  architecture: standalone
+  architecture: replicaset
+  auth:
+    enabled: true
+    rootPassword: "changemetest"
+    replicaSetKey: "changemetest"
+    username: "mender"
+    database: "mender"
   persistence:
     enabled: false
   global:
@@ -41,7 +47,7 @@ nats:
 # It's recommended to use a suitable Redis Cluster for Production
 redis:
   enabled: true
-  architecture: standalone
+  architecture: replication
   commonAnnotations:
     helm.sh/hook: "pre-install,pre-upgrade"
     helm.sh/hook-weight: "-50"
