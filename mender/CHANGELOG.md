@@ -2,6 +2,7 @@
 
 ## Version 5.1.0
 * Upgrade to Mender version `3.6.0`.
+* Added `auditlogs.logRetentionSeconds` conf parameter for tuning auditlog settings
 * **BREAKING CHANGES**:
   * This version of the Helm chart is not compatible with Mender versions older than `3.6.0`.
 

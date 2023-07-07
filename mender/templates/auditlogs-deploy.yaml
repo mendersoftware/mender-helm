@@ -82,6 +82,8 @@ spec:
           periodSeconds: 5
 
         env:
+        - name: AUDITLOGS_AUDITLOG_EXPIRE_SECONDS
+          value: {{ .Values.auditlogs.logRetentionSeconds | quote }}
         # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
