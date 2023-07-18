@@ -1,5 +1,10 @@
 # Mender Helm chart
 
+## Version 5.1.0
+* Upgrade to Mender version `3.6.0`.
+* **BREAKING CHANGES**:
+  * This version of the Helm chart is not compatible with Mender versions older than `3.6.0`.
+
 ## Version 5.0.1
 * Fix: workaround for a [known issue](https://github.com/bitnami/charts/issues/10843) with `bitnami/mongodb` when replicaset and auth are enabled
 
