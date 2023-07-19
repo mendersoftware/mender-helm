@@ -17,25 +17,30 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 ## Prerequisites
 
 - Kubernetes 1.12+
-- Helm 3.0-beta3+
+- Helm >= 3.7.0
 
 ## External services required
 
 This Helm chart does not install the following external services and dependencies which are required to run Mender:
 
-- mongodb
 - MinIO
-- NATS
 
 ### Installing mongodb
 
-You can install mongodb using the official mongodb Helm chart using `helm`:
+MongoDB is integrated as a sub-chart deployment: you can enable it with
+the following settings:
 
-```bash
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm repo update
-$ helm install mongodb bitnami/mongodb --version 12.1.31 --set "image.tag=4.4.13-debian-10-r29" --set "auth.enabled=false"
 ```
+mongodb:
+  enabled: true
+
+# or via the --set argument:
+--set="mongodb.enabled=true"
+```
+
+You can customize it by following the [provider's](https://artifacthub.io/packages/helm/bitnami/mongodb)
+specifications.  
+It's recommended to use an external deployment in Production.
 
 ### Installing MinIO
 
@@ -49,13 +54,20 @@ $ helm install minio minio/minio --version 8.0.10 --set "image.tag=RELEASE.2021-
 
 ### Installing NATS
 
-Follow instructions from https://nats-io.github.io/k8s using `helm`:
+NATS is integrated as a sub-chart deployment: you can enable it with
+the following settings:
 
-```bash
-$ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-$ helm repo update
-$ helm install nats nats/nats --version 0.15.1 --set "nats.image=nats:2.7.4-alpine" --set "nats.jetstream.enabled=true"
 ```
+nats:
+  enabled: true
+
+# or via the --set argument:
+--set="nats.enabled=true"
+```
+
+You can customize it by following the [provider's](https://docs.nats.io/running-a-nats-service/nats-kubernetes/helm-charts)
+specifications.  
+It's recommended to use an external deployment in Production.
 
 ## Installing the Chart
 
@@ -141,10 +153,13 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
-| `global.image.tag` | Global Docker image registry tag | `mender-3.4` |
+| `global.image.tag` | Global Docker image registry tag | `mender-3.6` |
 | `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
+| `global.redis.username` | Optional Redis Username  | `nil` |
+| `global.redis.password` | Optional Redis Password  | `nil` |
+| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `mender-redis:6379` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |
 | `global.storage` | Artifacts storage type  (available types: `aws` and `azure`) | `aws` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
@@ -314,9 +329,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
-| `device_auth.env.DEVICEAUTH_REDIS_ADDR` | Set the DEVICEAUTH_REDIS_ADDR variable | `mender-redis:6379` |
-| `device_auth.env.DEVICEAUTH_REDIS_USERNAME` | Set the DEVICEAUTH_REDIS_USERNAME variable | `""` |
-| `device_auth.env.DEVICEAUTH_REDIS_PASSWORD` | Set the DEVICEAUTH_REDIS_PASSWORD variable | `""` |
 | `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
@@ -504,9 +516,6 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable | `Mender Users` |
 | `useradm.env.USERADM_JWT_EXP_TIMEOUT` | Set the USERADM_JWT_EXP_TIMEOUT variable | `604800` |
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
-| `useradm.env.USERADM_REDIS_ADDR` | Set the USERADM_REDIS_ADDR variable | `mender-redis:6379` |
-| `useradm.env.USERADM_REDIS_USERNAME` | Set the USERADM_REDIS_USERNAME variable | `""` |
-| `useradm.env.USERADM_REDIS_PASSWORD` | Set the USERADM_REDIS_PASSWORD variable | `""` |
 | `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable | `2` |
 | `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable | `1` |
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |

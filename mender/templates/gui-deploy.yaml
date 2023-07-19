@@ -3,20 +3,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gui
+  name: {{ include "mender.fullname" . }}-gui
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: gui
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
     app.kubernetes.io/component: gui
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 spec:
   replicas: {{ .Values.gui.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: gui
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -38,7 +35,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: gui
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}

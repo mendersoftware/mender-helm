@@ -4,7 +4,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: device-auth-license-count
+  name: {{ include "mender.fullname" . }}-device-auth-license-count
   namespace: {{ .Release.Namespace }}
 spec:
   schedule: "7 3 * * *"
@@ -20,7 +20,7 @@ spec:
             {{- toYaml . | nindent 8 }}
           {{- end }}
           labels:
-            app.kubernetes.io/name: device-auth-license-count
+            app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth-license-count
 
         spec:
           {{- with $merged.affinity }}

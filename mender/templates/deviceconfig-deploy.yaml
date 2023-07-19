@@ -3,20 +3,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deviceconfig
+  name: {{ include "mender.fullname" . }}-deviceconfig
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: deviceconfig
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconfig
     app.kubernetes.io/component: deviceconfig
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 spec:
   replicas: {{ .Values.deviceconfig.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: deviceconfig
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconfig
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -38,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: deviceconfig
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconfig
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}

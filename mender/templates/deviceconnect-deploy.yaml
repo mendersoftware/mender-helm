@@ -3,20 +3,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deviceconnect
+  name: {{ include "mender.fullname" . }}-deviceconnect
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: deviceconnect
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
     app.kubernetes.io/component: deviceconnect
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 spec:
   replicas: {{ .Values.deviceconnect.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: deviceconnect
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -38,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: deviceconnect
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -87,7 +84,7 @@ spec:
         env:
         # NATS uri
         - name: DEVICECONNECT_NATS_URI
-          value: "{{ .Values.global.nats.URL }}"
+          value: {{ template "nats_uri" . }}
 
         # Enable audit logging
 {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}

@@ -3,20 +3,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: device-auth
+  name: {{ include "mender.fullname" . }}-device-auth
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: device-auth
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth
     app.kubernetes.io/component: device-auth
-    app.kubernetes.io/part-of: mender
-    helm.sh/chart: "{{ .Chart.Name }}"
 spec:
   replicas: {{ .Values.device_auth.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: device-auth
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -38,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: device-auth
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -114,19 +111,19 @@ spec:
         - name: DEVICEAUTH_TENANTADM_ADDR
           value: {{ .Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
 {{- end }}
-{{- if .Values.global.enterprise }}
+{{- if and .Values.global.enterprise .Values.redis.enabled }}
         - name: DEVICEAUTH_REDIS_ADDR
-          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_ADDR | quote }}
+          value: {{ include "redis_address" . }}
         - name: DEVICEAUTH_REDIS_USERNAME
-          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_USERNAME | quote }}
+          value: {{ .Values.global.redis.username | default "" | quote }}
         - name: DEVICEAUTH_REDIS_PASSWORD
-          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_PASSWORD | quote }}
+          value: {{ .Values.global.redis.password | default "" | quote }}
         - name: DEVICEAUTH_REDIS_DB
-          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_DB | quote }}
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_DB | default "1" | quote }}
         - name: DEVICEAUTH_REDIS_TIMEOUT_SEC
-          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_TIMEOUT_SEC | quote }}
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_TIMEOUT_SEC | default "1" | quote }}
         - name: DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC
-          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | quote }}
+          value: {{ .Values.useradm.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
 {{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/deviceauth/blob/master/config.yaml
