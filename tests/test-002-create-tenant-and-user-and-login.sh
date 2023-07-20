@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2022 Northern.tech AS
+# Copyright 2023 Northern.tech AS
 #    
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ sleep 1
 
 # log in
 echo "> Log in with credentials"
-JWT=$(kubectl exec ubuntu -- curl -s -k https://mender-api-gateway/api/management/v1/useradm/auth/login -u $USER_USERNAME:$USER_PASSWORD -X POST -H "Content-Type: application/json" -f)
+JWT=$(kubectl exec ubuntu -- curl -s -k http://mender-api-gateway/api/management/v1/useradm/auth/login -u $USER_USERNAME:$USER_PASSWORD -X POST -H "Content-Type: application/json" -f)
 if [ -z "$JWT" ]; then
     echo "> Login failed, aborting"
     exit 1
@@ -52,7 +52,7 @@ fi
 
 # get the list of deployments
 echo "> Get the list of deployments"
-RESPONSE=$(kubectl exec ubuntu -- curl -s -k https://mender-api-gateway/api/management/v1/deployments/deployments -H "Authorization: Bearer $JWT" -H "Content-Type: application/json" -f)
+RESPONSE=$(kubectl exec ubuntu -- curl -s -k http://mender-api-gateway/api/management/v1/deployments/deployments -H "Authorization: Bearer $JWT" -H "Content-Type: application/json" -f)
 echo "> Got: $RESPONSE"
 
 if [ "$RESPONSE" != "[]" ]; then
@@ -61,7 +61,7 @@ fi
 
 # get the list of accepted devices
 echo "> Get the list of accepted devices"
-RESPONSE=$(kubectl exec ubuntu -- curl -s -k https://mender-api-gateway/api/management/v2/devauth/devices/count?status=accepted -H "Authorization: Bearer $JWT" -H "Content-Type: application/json" -f)
+RESPONSE=$(kubectl exec ubuntu -- curl -s -k http://mender-api-gateway/api/management/v2/devauth/devices/count?status=accepted -H "Authorization: Bearer $JWT" -H "Content-Type: application/json" -f)
 echo "> Got: $RESPONSE"
 
 if [ "$RESPONSE" != '{"count":0}' ]; then
