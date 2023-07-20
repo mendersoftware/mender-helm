@@ -50,6 +50,8 @@ build:setup_eks_cluster:
     - eksctl create addon --name aws-ebs-csi-driver --cluster ${EKS_CLUSTER_NAME} --service-account-role-arn arn:aws:iam::017659451055:role/AmazonEKS_EBS_CSI_DriverRole --force
     - echo "DEBUG - kubectl cluster version:"
     - kubectl version
+    - helm repo add jetstack https://charts.jetstack.io
+    - helm install cert-manager jetstack/cert-manager --wait --set installCRDs=true
 
 build:
   stage: build
@@ -171,6 +173,22 @@ test:helm_chart_install_sub_charts:
   script:
     - tests/ci-make-deps.sh $INSTALL_MINIO_DEP_ONLY
     - |
+      kubectl apply -f - <<EOS
+      apiVersion: cert-manager.io/v1
+      kind: Issuer
+      metadata:
+        name: letsencrypt
+      spec:
+        acme:
+          server: "https://acme-staging-v02.api.letsencrypt.org/directory"
+          email: ${LETSENCRYPT_EMAIL:-roberto.giovanardi+letsencrypt@northern.tech}
+          privateKeySecretRef:
+            name: letsencrypt
+          solvers:
+          - http01:
+              ingress: {}
+      EOS
+    - |
       echo "INFO - installing mender"
       source ./tests/variables.sh
       helm upgrade -i mender \
@@ -186,7 +204,11 @@ test:helm_chart_install_sub_charts:
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
         --namespace ${NAMESPACE} \
         ./mender || exit 3;
-    - make test
+    - SKIP_TEARDOWN="true" make test
+    - |
+      echo "INFO - testing ingress"
+      bash tests/ingress-internal-test.sh
+    - bash tests/ci-test-teardown.sh || true
   after_script:
     - echo "INFO - cleaning up resources"
     - helm delete -n ${NAMESPACE} mender 
