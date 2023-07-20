@@ -66,6 +66,11 @@ ingress:
   # alb.ingress.kubernetes.io/healthcheck-path: /ui/
   # cert-manager.io/issuer: "letsencrypt"
   path: /
+  extraPaths: [] 
+    # - path: /*
+    #   backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
   hosts:
     - mender.example.org
   tls:
