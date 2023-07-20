@@ -185,6 +185,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
 | `default.affinity` | Optional affinity values that applies to all the resources | `nil` |
 | `default.toleration` | Optional toleration values that applies to all the resources | `nil` |
+| `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
 | `dbmigration.backoffLimit` | BackoffLimit for the DB Migration utility  | `5` |
