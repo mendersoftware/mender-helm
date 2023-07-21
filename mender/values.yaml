@@ -239,7 +239,7 @@ api_gateway:
     httpPort: 80
     httpsPort: 443
   env:
-    SSL: true
+    SSL: false
   minio:
     enabled: true
     podAnnotations: {}

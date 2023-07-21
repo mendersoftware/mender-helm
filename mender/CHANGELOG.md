@@ -27,6 +27,7 @@
 * Autogenerate missing required secrets.
   * `device_auth.certs.key` and `useradm.certs.key` are automatically generated if value is missing.
 * Changed gui httpPort default from privileged 80 to unpriviliged 8090
+* Changed default `api_gateway.env.SSL` to `false`
 
 ## Version 5.10.1
 * Fix invalid regexp in default storage proxy rule.
