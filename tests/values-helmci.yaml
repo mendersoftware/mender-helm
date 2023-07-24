@@ -13,3 +13,7 @@ redis:
   replica:
     persistence:
       enabled: false
+
+api_gateway:
+  env:
+    SSL: false

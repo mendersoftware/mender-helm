@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2022 Northern.tech AS
+# Copyright 2023 Northern.tech AS
 #    
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ echo -n "> Waiting for all the PODs to become ready"
 n=0
 max_wait=512
 while [ $n -lt $max_wait ]; do
-    NOT_READY=$(kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready | egrep -e 'false$' -e '<none>$' | wc -l)
+    NOT_READY=$(kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready | grep -v 'mender-deployments-storage-daemon' | egrep -e 'false$' -e '<none>$' | wc -l)
     if [ $NOT_READY -eq 0 ]; then
         echo -e "\n> PODs are ready:"
         kubectl get pods -o custom-columns=NAMESPACE:metadata.namespace,POD:metadata.name,READY-true:status.containerStatuses[*].ready
