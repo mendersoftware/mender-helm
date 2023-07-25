@@ -5,6 +5,7 @@
 * Added optional `api_gateway.security_redirect` parameter to add a custom redirection to a company security policy
 * Added optional `api_gateway.minio.customRule` to custom redirects
 * Added optional `api_gateway.authRateLimit` as a custom ratelimit for Auth module only
+* Added `contentTypeNosniff` to the Traefik configuration
 
 ## Version 5.1.0
 * Upgrade to Mender version `3.6.0`.
