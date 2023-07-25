@@ -404,7 +404,11 @@ data:
         useradmNoAuth:
           entrypoints: {{ $scheme }}
           middlewares:
+{{- if .Values.api_gateway.authRateLimit }}
+          - authRatelimit
+{{- else }}
           - ratelimit
+{{- end }}
           - sec-headers
 {{- if .Values.api_gateway.compression }}
           - compression
@@ -534,8 +538,14 @@ data:
 {{- end }}
 
         ratelimit:
-          rateLimit:
+          ratelimit:
 {{ toYaml .Values.api_gateway.rateLimit | indent 12 }}
+
+{{- if .Values.api_gateway.authRateLimit }}
+        authRateLimit:
+          ratelimit:
+{{ toYaml .Values.api_gateway.authRateLimit | indent 12 }}
+{{- end }}
 
         devauth:
           forwardAuth:
