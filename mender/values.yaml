@@ -158,6 +158,7 @@ api_gateway:
     podAnnotations: {}
     url: "http://minio:9000"
   compression: true
+  security_redirect: null
   rateLimit:
     average: 100
     burst: 100

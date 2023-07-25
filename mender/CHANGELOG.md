@@ -2,6 +2,7 @@
 
 ## Version x
 * Added `api_gateway.compression` parameter for Traefik compression
+* Added `api_gateway.security_redirect` parameter to add a custom redirection to a company security policy
 
 ## Version 5.1.0
 * Upgrade to Mender version `3.6.0`.

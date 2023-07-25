@@ -269,6 +269,9 @@ data:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
+{{- if .Values.api_gateway.security_redirect }}
+          - security-redirect
+{{- end }}
           - sec-headers
 {{- if .Values.api_gateway.compression }}
           - compression
@@ -504,6 +507,11 @@ data:
           redirectscheme:
             scheme: https
 {{- end }}
+
+{{- if .Values.api_gateway.security_redirect }}
+        security-redirect:
+          {{- toYaml .Values.api_gateway.security_redirect | nindent 10 }}
+{{- end}}
 
         sec-headers:
           headers:

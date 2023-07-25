@@ -259,6 +259,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `api_gateway.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `api_gateway.compression` | Enable Traefik Compression | `true` |
+| `api_gateway.security_redirect` | Custom redirect to a company security page | `null` |
 
 ### Parameters: deployments
 
