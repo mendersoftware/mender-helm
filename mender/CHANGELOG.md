@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version x
+* Added `api_gateway.compression` parameter for Traefik compression
+
 ## Version 5.1.0
 * Upgrade to Mender version `3.6.0`.
 * Added `auditlogs.logRetentionSeconds` conf parameter for tuning auditlog settings

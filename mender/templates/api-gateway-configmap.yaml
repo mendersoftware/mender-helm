@@ -50,7 +50,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/auditlogs`)"
@@ -66,7 +68,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/iot-manager`)"
@@ -82,7 +86,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -110,7 +116,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deployments`)"
@@ -125,7 +133,9 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/authentication`)"
           service: deviceauth
           tls: {{ $isTls }}
@@ -136,7 +146,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devauth`)"
@@ -152,7 +164,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -167,7 +181,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconfig`)"
@@ -183,7 +199,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -198,7 +216,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -216,7 +236,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -231,7 +253,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devicemonitor`)"
@@ -246,7 +270,9 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -265,7 +291,9 @@ data:
           - devauth
           - inventoryV1-replacepathregex
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -280,7 +308,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -296,7 +326,9 @@ data:
           - userauth
           - inventoryMgmtV1-replacepathregex
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/v1/inventory`)"
@@ -309,7 +341,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/v2/inventory`)"
@@ -325,7 +359,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/tenantadm`)"
           service: tenantadm
           tls: {{ $isTls }}
@@ -335,7 +371,9 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           rule: >-
             Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants`) ||
             Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants/trial`)
@@ -351,7 +389,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/useradm`)"
@@ -363,7 +403,9 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder4
           rule: "!Path(`/api/management/{ver:v[0-9]+}/useradm/auth/logout`)&&PathPrefix(`/api/management/{ver:v[0-9]+}/useradm/{ep:(auth|oauth2)}`)"
           service: useradm
@@ -475,7 +517,11 @@ data:
               "X-Forwarded-Proto": "{{ $scheme }}"
 
         compression:
+{{- if .Values.api_gateway.compression }}
           compress: true
+{{- else }}
+          compress: false
+{{- end }}
 
         ratelimit:
           rateLimit:

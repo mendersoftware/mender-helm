@@ -258,6 +258,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `api_gateway.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `api_gateway.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `api_gateway.compression` | Enable Traefik Compression | `true` |
 
 ### Parameters: deployments
 
