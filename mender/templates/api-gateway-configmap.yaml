@@ -420,7 +420,9 @@ data:
         #
         minio:
           entrypoints: {{ $scheme }}
-          rule: "HeadersRegexp(`X-Amz-Date`, `.+`) || PathPrefix(`/{{ .Values.global.s3.AWS_BUCKET }}`)"
+          middlewares:
+          - ratelimit
+          rule: {{ template "minioRule" . }}
           priority: 900
           service: minio
           tls: {{ $isTls }}

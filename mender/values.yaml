@@ -157,6 +157,7 @@ api_gateway:
     enabled: true
     podAnnotations: {}
     url: "http://minio:9000"
+    customRule: null
   compression: true
   security_redirect: null
   rateLimit:
