@@ -37,6 +37,8 @@ spec:
       {{- end }}
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-useradm
+        {{- include "mender.labels" . | nindent 8 }}
+        app.kubernetes.io/component: useradm
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
