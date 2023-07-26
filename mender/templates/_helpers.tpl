@@ -47,7 +47,7 @@ Redis address
 */}}
 {{- define "redis_address" }}
   {{- if and .Values.redis.enabled ( not .Values.global.redis.URL ) }}
-    {{- printf "%s-headless:6379" ( include "common.names.fullname" .Subcharts.redis ) -}}
+    {{- printf "%s-master:6379" ( include "common.names.fullname" .Subcharts.redis ) -}}
   {{- else }}
     {{- printf .Values.global.redis.URL | quote }}
   {{- end }}
