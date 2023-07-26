@@ -653,7 +653,7 @@ redis:
   enabled: true
   architecture: replication
   commonAnnotations:
-    helm.sh/hook: "pre-install,pre-upgrade"
+    helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-50"
   auth:
     enabled: false
