@@ -122,3 +122,14 @@ Return if ingress supports ingressClassName.
 {{- define "mender.ingress.supportsIngressClassName" -}}
   {{- or (eq (include "mender.ingress.isStable" .) "true") (and (eq (include "mender.ingress.apiVersion" .) "networking.k8s.io/v1beta1") (semverCompare ">= 1.18-0" .Capabilities.KubeVersion.Version)) -}}
 {{- end -}}
+
+{{/*
+MinIO Rule
+*/}}
+{{- define "minioRule" -}}
+  {{- if .Values.api_gateway.minio.customRule }}
+    {{- printf .Values.api_gateway.minio.customRule | quote }}
+  {{- else }}
+    {{- printf "HeadersRegexp(`X-Amz-Date`, `.+`) || PathPrefix(`/%s`)" .Values.global.s3.AWS_BUCKET | quote }}
+  {{- end }}
+{{- end -}}

@@ -252,12 +252,16 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
 | `api_gateway.rateLimit.sourceCriterion` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `{"ipStrategy": {"depth": 1}}` |
+| `api_gateway.authRateLimit` | Optional rate limiting for the Auth module only. See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `null` |
 | `api_gateway.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `api_gateway.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `api_gateway.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
 | `api_gateway.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `api_gateway.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `api_gateway.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `api_gateway.compression` | Enable Traefik Compression | `true` |
+| `api_gateway.security_redirect` | Custom redirect to a company security page | `null` |
+| `api_gateway.minio.customRule` | Custom redirect for MinIO. Uses the default one if not specified | `null` |
 
 ### Parameters: deployments
 

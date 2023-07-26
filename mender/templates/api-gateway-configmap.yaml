@@ -50,7 +50,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/auditlogs`)"
@@ -66,7 +68,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/iot-manager`)"
@@ -82,7 +86,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -110,7 +116,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deployments`)"
@@ -125,7 +133,9 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/authentication`)"
           service: deviceauth
           tls: {{ $isTls }}
@@ -136,7 +146,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devauth`)"
@@ -152,7 +164,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -167,7 +181,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconfig`)"
@@ -183,7 +199,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -198,7 +216,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -216,7 +236,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -231,7 +253,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devicemonitor`)"
@@ -245,8 +269,13 @@ data:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
+{{- if .Values.api_gateway.security_redirect }}
+          - security-redirect
+{{- end }}
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -265,7 +294,9 @@ data:
           - devauth
           - inventoryV1-replacepathregex
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -280,7 +311,9 @@ data:
           - ratelimit
           - devauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder2
           - json-error-responder3
@@ -296,7 +329,9 @@ data:
           - userauth
           - inventoryMgmtV1-replacepathregex
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/v1/inventory`)"
@@ -309,7 +344,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/v2/inventory`)"
@@ -325,7 +362,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/tenantadm`)"
           service: tenantadm
           tls: {{ $isTls }}
@@ -335,7 +374,9 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           rule: >-
             Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants`) ||
             Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants/trial`)
@@ -351,7 +392,9 @@ data:
           - ratelimit
           - userauth
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder1
           - json-error-responder4
           rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/useradm`)"
@@ -361,9 +404,15 @@ data:
         useradmNoAuth:
           entrypoints: {{ $scheme }}
           middlewares:
+{{- if .Values.api_gateway.authRateLimit }}
+          - authRatelimit
+{{- else }}
           - ratelimit
+{{- end }}
           - sec-headers
+{{- if .Values.api_gateway.compression }}
           - compression
+{{- end }}
           - json-error-responder4
           rule: "!Path(`/api/management/{ver:v[0-9]+}/useradm/auth/logout`)&&PathPrefix(`/api/management/{ver:v[0-9]+}/useradm/{ep:(auth|oauth2)}`)"
           service: useradm
@@ -375,7 +424,9 @@ data:
         #
         minio:
           entrypoints: {{ $scheme }}
-          rule: "HeadersRegexp(`X-Amz-Date`, `.+`) || PathPrefix(`/{{ .Values.global.s3.AWS_BUCKET }}`)"
+          middlewares:
+          - ratelimit
+          rule: {{ template "minioRule" . }}
           priority: 900
           service: minio
           tls: {{ $isTls }}
@@ -463,6 +514,11 @@ data:
             scheme: https
 {{- end }}
 
+{{- if .Values.api_gateway.security_redirect }}
+        security-redirect:
+          {{- toYaml .Values.api_gateway.security_redirect | nindent 10 }}
+{{- end}}
+
         sec-headers:
           headers:
             referrerPolicy: "no-referrer"
@@ -470,16 +526,27 @@ data:
             forceSTSHeader: true
             stsPreload: true
             stsIncludeSubdomains: true
+            contentTypeNosniff: true
             browserXssFilter: true
             customRequestHeaders:
               "X-Forwarded-Proto": "{{ $scheme }}"
 
         compression:
+{{- if .Values.api_gateway.compression }}
           compress: true
+{{- else }}
+          compress: false
+{{- end }}
 
         ratelimit:
-          rateLimit:
+          ratelimit:
 {{ toYaml .Values.api_gateway.rateLimit | indent 12 }}
+
+{{- if .Values.api_gateway.authRateLimit }}
+        authRateLimit:
+          ratelimit:
+{{ toYaml .Values.api_gateway.authRateLimit | indent 12 }}
+{{- end }}
 
         devauth:
           forwardAuth:

@@ -6,6 +6,11 @@
 * Added Mender Ingress Resource
 * **BREAKING CHANGES**:
   * This version of the Helm chart is not compatible with Mender versions older than `3.6.0`.
+* Added optional `api_gateway.compression` parameter for Traefik compression
+* Added optional `api_gateway.security_redirect` parameter to add a custom redirection to a company security policy
+* Added optional `api_gateway.minio.customRule` to custom redirects
+* Added optional `api_gateway.authRateLimit` as a custom ratelimit for Auth module only
+* Added `contentTypeNosniff` to the Traefik configuration
 
 ## Version 5.0.1
 * Fix: workaround for a [known issue](https://github.com/bitnami/charts/issues/10843) with `bitnami/mongodb` when replicaset and auth are enabled

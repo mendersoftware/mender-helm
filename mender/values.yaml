@@ -157,6 +157,9 @@ api_gateway:
     enabled: true
     podAnnotations: {}
     url: "http://minio:9000"
+    customRule: null
+  compression: true
+  security_redirect: null
   rateLimit:
     average: 100
     burst: 100
@@ -164,6 +167,7 @@ api_gateway:
     sourceCriterion:
       ipStrategy:
         depth: 1
+  authRateLimit: null
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
