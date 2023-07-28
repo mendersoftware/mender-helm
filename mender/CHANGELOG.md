@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.0.3
+* Fix: using the correct variables for useradm auditlogs settings
+
 ## Version 5.0.2
 * Fix: always using the redis `master` address instead of the `headless` one, which leads to sporadic errors in writing when you have replicas in place.
 
