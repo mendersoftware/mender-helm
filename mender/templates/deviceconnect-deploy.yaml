@@ -36,6 +36,8 @@ spec:
       {{- end }}
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
+        {{- include "mender.labels" . | nindent 8 }}
+        app.kubernetes.io/component: deviceconnect
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}

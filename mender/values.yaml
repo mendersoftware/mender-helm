@@ -6,7 +6,7 @@ global:
     registry: registry.mender.io
     username: null
     password: null
-    tag: mender-3.4
+    tag: mender-3.6.0-build9
   mongodb:
     URL: mongodb://mongodb
   nats:
@@ -51,6 +51,34 @@ default:
   affinity: {}
   tolerations: {}
 
+# Enabling this will publically expose your Mender instance.
+ingress:
+  enabled: false
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+  # ingressClassName: nginx
+
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/ingress.class: gce
+  # kubernetes.io/ingress.class: alb
+  # alb.ingress.kubernetes.io/healthcheck-path: /ui/
+  # cert-manager.io/issuer: "letsencrypt"
+  path: /
+  extraPaths: [] 
+    # - path: /*
+    #   backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
+  hosts:
+    - mender.example.org
+  tls:
+  # this secret must exists or can be created from a working cert-manager instance
+   - secretName: mender-ingress-tls
+     hosts:
+       - mender.example.org
+ 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
   enabled: false
@@ -103,7 +131,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v2.5
+    tag: v2.8
     imagePullPolicy: IfNotPresent
   replicas: 1
   resources:
@@ -129,6 +157,9 @@ api_gateway:
     enabled: true
     podAnnotations: {}
     url: "http://minio:9000"
+    customRule: null
+  compression: true
+  security_redirect: null
   rateLimit:
     average: 100
     burst: 100
@@ -136,6 +167,7 @@ api_gateway:
     sourceCriterion:
       ipStrategy:
         depth: 1
+  authRateLimit: null
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
@@ -456,6 +488,8 @@ auditlogs:
   enabled: true
   podAnnotations: {}
   automigrate: true
+  # logRetentionSeconds gives the number of seconds before an audit event is evicted from the database
+  logRetentionSeconds: 2592000
   replicas: 1
   resources:
     limits:
@@ -619,7 +653,7 @@ redis:
   enabled: true
   architecture: replication
   commonAnnotations:
-    helm.sh/hook: "pre-install,pre-upgrade"
+    helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-50"
   auth:
     enabled: false

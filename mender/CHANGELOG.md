@@ -1,5 +1,17 @@
 # Mender Helm chart
 
+## Version 5.1.0
+* Upgrade to Mender version `3.6.0`.
+* Added `auditlogs.logRetentionSeconds` conf parameter for tuning auditlog settings
+* Added Mender Ingress Resource
+* **BREAKING CHANGES**:
+  * This version of the Helm chart is not compatible with Mender versions older than `3.6.0`.
+* Added optional `api_gateway.compression` parameter for Traefik compression
+* Added optional `api_gateway.security_redirect` parameter to add a custom redirection to a company security policy
+* Added optional `api_gateway.minio.customRule` to custom redirects
+* Added optional `api_gateway.authRateLimit` as a custom ratelimit for Auth module only
+* Added `contentTypeNosniff` to the Traefik configuration
+
 ## Version 5.0.3
 * Fix: using the correct variables for useradm auditlogs settings
 

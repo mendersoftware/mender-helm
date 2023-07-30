@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2022 Northern.tech AS
+# Copyright 2023 Northern.tech AS
 #    
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -32,6 +32,14 @@ for i in tests/test-*.sh; do
         errors=1
     fi
 done
+
+if [[ "${SKIP_TEARDOWN}" == "true" ]]; then
+  if [ "$errors" -gt 0 ]; then
+      exit 1
+  else
+      exit 0
+  fi
+fi
 
 bash tests/ci-test-teardown.sh || true
 

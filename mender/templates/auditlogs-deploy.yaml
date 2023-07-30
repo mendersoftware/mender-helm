@@ -36,6 +36,8 @@ spec:
       {{- end }}
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs
+        {{- include "mender.labels" . | nindent 8 }}
+        app.kubernetes.io/component: auditlogs
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -82,6 +84,8 @@ spec:
           periodSeconds: 5
 
         env:
+        - name: AUDITLOGS_AUDITLOG_EXPIRE_SECONDS
+          value: {{ .Values.auditlogs.logRetentionSeconds | int | toString | quote }}
         # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:

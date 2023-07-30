@@ -153,7 +153,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
-| `global.image.tag` | Global Docker image registry tag | `mender-3.4` |
+| `global.image.tag` | Global Docker image registry tag | `mender-3.6` |
 | `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
@@ -185,6 +185,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
 | `default.affinity` | Optional affinity values that applies to all the resources | `nil` |
 | `default.toleration` | Optional toleration values that applies to all the resources | `nil` |
+| `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
 | `dbmigration.backoffLimit` | BackoffLimit for the DB Migration utility  | `5` |
@@ -251,12 +252,16 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
 | `api_gateway.rateLimit.sourceCriterion` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `{"ipStrategy": {"depth": 1}}` |
+| `api_gateway.authRateLimit` | Optional rate limiting for the Auth module only. See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `null` |
 | `api_gateway.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `api_gateway.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `api_gateway.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
 | `api_gateway.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `api_gateway.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `api_gateway.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `api_gateway.compression` | Enable Traefik Compression | `true` |
+| `api_gateway.security_redirect` | Custom redirect to a company security page | `null` |
+| `api_gateway.minio.customRule` | Custom redirect for MinIO. Uses the default one if not specified | `null` |
 
 ### Parameters: deployments
 
@@ -603,6 +608,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `auditlogs.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `auditlogs.podAnnotations` | add custom pod annotations | `nil` |
+| `auditlogs.logRetentionSeconds` | Seconds before an audit event is evicted from the database | `2592000` |
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `auditlogs.resources.limits.cpu` | Resources CPU limit | `50m` |

@@ -36,6 +36,8 @@ spec:
       {{- end }}
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-deployments
+        {{- include "mender.labels" . | nindent 8 }}
+        app.kubernetes.io/component: deployments
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
