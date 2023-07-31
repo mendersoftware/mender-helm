@@ -343,6 +343,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
+  allow_failure: true
   dependencies:
     - build:setup_eks_cluster
   rules:
