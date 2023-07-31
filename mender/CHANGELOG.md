@@ -11,6 +11,7 @@
 * Added optional `api_gateway.minio.customRule` to custom redirects
 * Added optional `api_gateway.authRateLimit` as a custom ratelimit for Auth module only
 * Added `contentTypeNosniff` to the Traefik configuration
+* Fix: missing WORKFLOWS_NATS_URI in the db-migration-job
 
 ## Version 5.0.3
 * Fix: using the correct variables for useradm auditlogs settings
