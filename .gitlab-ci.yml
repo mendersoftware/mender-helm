@@ -113,8 +113,8 @@ test:helm_chart_install:
     - *set_eks_helmci_vars
     - |
       eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-      kubectl create ns ${NAMESPACE}
-      kubectl config set-context --current --namespace=${NAMESPACE}
+      kubectl create ns "${NAMESPACE}"
+      kubectl config set-context --current --namespace="${NAMESPACE}"
     - |
       echo "DEBUG - get kubectl nodes"
       kubectl config current-context
@@ -137,12 +137,12 @@ test:helm_chart_install:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         ./mender || exit 3;
     - make test
   after_script:
     - echo "INFO - cleaning up to save resources"
-    - helm delete -n ${NAMESPACE} mender 
+    - helm delete -n "${NAMESPACE}" mender
 
 test:helm_chart_install_sub_charts:
   tags:
@@ -161,8 +161,8 @@ test:helm_chart_install_sub_charts:
     - *set_eks_helmci_vars
     - |
       eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-      kubectl create ns ${NAMESPACE}
-      kubectl config set-context --current --namespace=${NAMESPACE}
+      kubectl create ns "${NAMESPACE}"
+      kubectl config set-context --current --namespace="${NAMESPACE}"
     - |
       echo "DEBUG - get kubectl nodes"
       kubectl config current-context
@@ -202,7 +202,7 @@ test:helm_chart_install_sub_charts:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         ./mender || exit 3;
     - SKIP_TEARDOWN="true" make test
     - |
@@ -211,7 +211,7 @@ test:helm_chart_install_sub_charts:
     - bash tests/ci-test-teardown.sh || true
   after_script:
     - echo "INFO - cleaning up resources"
-    - helm delete -n ${NAMESPACE} mender 
+    - helm delete -n "${NAMESPACE}" mender
  
 test:helm_chart_upgrade_from_previous_lts_to_current_lts:
   tags:
@@ -229,8 +229,8 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
     - *set_eks_helmci_vars
     - |
       eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-      kubectl create ns ${NAMESPACE}
-      kubectl config set-context --current --namespace=${NAMESPACE}
+      kubectl create ns "${NAMESPACE}"
+      kubectl config set-context --current --namespace="${NAMESPACE}"
     - |
       echo "DEBUG - get kubectl nodes"
       kubectl config current-context
@@ -254,7 +254,7 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         mender/mender --version ${MENDER_LTS_HELM_VERSION:-5.0.1} || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
@@ -270,7 +270,7 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         ./mender || exit 3;
     - helm history mender
     - make test
@@ -291,8 +291,8 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
     - *set_eks_helmci_vars
     - |
       eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-      kubectl create ns ${NAMESPACE}
-      kubectl config set-context --current --namespace=${NAMESPACE}
+      kubectl create ns "${NAMESPACE}"
+      kubectl config set-context --current --namespace="${NAMESPACE}"
     - |
       echo "DEBUG - get kubectl nodes"
       kubectl config current-context
@@ -316,7 +316,7 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         mender/mender --version ${MENDER_LTS_HELM_VERSION:-5.0.1} || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
@@ -332,7 +332,7 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         ./mender || exit 3;
     - helm history mender
     - make test
@@ -354,8 +354,8 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
     - *set_eks_helmci_vars
     - |
       eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-      kubectl create ns ${NAMESPACE}
-      kubectl config set-context --current --namespace=${NAMESPACE}
+      kubectl create ns "${NAMESPACE}"
+      kubectl config set-context --current --namespace="${NAMESPACE}"
     - |
       echo "DEBUG - get kubectl nodes"
       kubectl config current-context
@@ -379,7 +379,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         mender/mender || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
@@ -395,7 +395,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
-        --namespace ${NAMESPACE} \
+        --namespace "${NAMESPACE}" \
         ./mender || exit 3;
     - helm history mender
     - make test
