@@ -1,5 +1,12 @@
 # Mender Helm chart
 
+## Version 5.2.0
+* Bump MongoDB dependency Docker image to 5.0
+
+> If your running an existing cluster with MongoDB 4.4, we recommend following
+> the upgrade procedure from the
+> [official documentation](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-replica-set/).
+
 ## Version 5.1.0
 * Upgrade to Mender version `3.6.0`.
 * Added `auditlogs.logRetentionSeconds` conf parameter for tuning auditlog settings
