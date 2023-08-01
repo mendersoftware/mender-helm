@@ -66,7 +66,7 @@ ingress:
   # alb.ingress.kubernetes.io/healthcheck-path: /ui/
   # cert-manager.io/issuer: "letsencrypt"
   path: /
-  extraPaths: [] 
+  extraPaths: []
     # - path: /*
     #   backend:
     #     serviceName: ssl-redirect
@@ -78,7 +78,7 @@ ingress:
    - secretName: mender-ingress-tls
      hosts:
        - mender.example.org
- 
+
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
   enabled: false
@@ -87,6 +87,20 @@ mongodb:
     enabled: false
     service:
       type: LoadBalancer
+  # replicaCount sets the number of secondaries (min: 2)
+  replicaCount: 2
+  # updateStrategy ensure that the nodes are updated one at the time to avoid downtime.
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  # PodDisruptionBudget ensure that the majority of nodes are available.
+  # Make sure to update the PodDisruptionBudget if you increase the number of
+  # replicas.
+  pdb:
+    enabled: true
+    minAvailable: 2
+    maxUnavailable: 1
   image:
     tag: "5.0.19-debian-11-r13"
   auth:
@@ -110,7 +124,7 @@ nats:
   cluster:
     enabled: true
     replicas: 3
-  fullnameOverride: "" 
+  fullnameOverride: ""
   nats:
     image: "nats:2.7.4-scratch"
     jetstream:
@@ -667,7 +681,7 @@ redis:
   replica:
     persistence:
       enabled: false
-  fullnameOverride: "" 
+  fullnameOverride: ""
 
 dbmigration:
   enable: true

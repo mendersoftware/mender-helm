@@ -1,7 +1,10 @@
 # Mender Helm chart
 
 ## Version 5.2.0
-* Bump MongoDB dependency Docker image to 5.0
+* MongoDB sub-chart
+  * Bump app version to MongoDB 5.0 (tag: `5.0.19-debian-11-r13`)
+  * Set default update strategy
+  * Set default Pod Disruption Budget
 
 > If your running an existing cluster with MongoDB 4.4, we recommend following
 > the upgrade procedure from the
@@ -33,7 +36,7 @@
 * **BREAKING CHANGES**:
   * Switch Redis service to an optional sub Chart: now Redis is a global
     service: the same Redis Cluster is used by both `useradm` and `device-auth`
-    services. You cannot use two different Redis Clusters.  
+    services. You cannot use two different Redis Clusters.
     It's recommended to use an external Redis Cluster in Production, instead
     of the integrated sub-chart, which is enabled by default.
 * Added Chart Name prefix to the Resource names
