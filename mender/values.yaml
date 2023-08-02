@@ -74,10 +74,10 @@ ingress:
   hosts:
     - mender.example.org
   tls:
-  # this secret must exists or can be created from a working cert-manager instance
-   - secretName: mender-ingress-tls
-     hosts:
-       - mender.example.org
+    # this secret must exists or can be created from a working cert-manager instance
+    - secretName: mender-ingress-tls
+      hosts:
+        - mender.example.org
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
@@ -206,6 +206,7 @@ deployments:
   affinity: {}
   directUpload:
     enabled: true
+    skipVerify: false
   daemonSchedule: "15 * * * *"
   image:
     registry: ""
