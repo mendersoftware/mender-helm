@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs
     app.kubernetes.io/component: auditlogs
 spec:
+  {{- if not (or .Values.auditlogs.hpa .Values.default.hpa ) }}
   replicas: {{ .Values.auditlogs.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs

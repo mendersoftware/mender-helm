@@ -1,0 +1,3 @@
+{{- $servicename := "useradm" }}
+{{- $context := (dict "default" .Values.default "override" .Values.useradm "name" (printf "%s-%s" (include "mender.fullname" . ) $servicename ) ) -}}
+{{- include "mender.autoscaler" $context }}

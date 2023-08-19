@@ -51,6 +51,14 @@ default:
   affinity: {}
   tolerations: {}
 
+  # HorizontalPodAutoscaler default resources
+  hpa: {}
+    #enabled: true
+    #minReplicas: 1
+    #maxReplicas: 3
+    #metrics: {}
+    #behavior: {}
+
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false
@@ -190,6 +198,7 @@ api_gateway:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 deployments:
   enabled: true
@@ -230,6 +239,7 @@ deployments:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 device_auth:
   enabled: true
@@ -272,6 +282,7 @@ device_auth:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -362,6 +373,7 @@ inventory:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 tenantadm:
   enabled: true
@@ -399,6 +411,7 @@ tenantadm:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 useradm:
   enabled: true
@@ -441,6 +454,7 @@ useradm:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 workflows:
   enabled: true
@@ -534,6 +548,7 @@ auditlogs:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 iot_manager:
   enabled: true
@@ -566,6 +581,7 @@ iot_manager:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 deviceconnect:
   enabled: true
@@ -598,6 +614,7 @@ deviceconnect:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 deviceconfig:
   enabled: true
@@ -630,6 +647,7 @@ deviceconfig:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 devicemonitor:
   enabled: true
@@ -662,6 +680,7 @@ devicemonitor:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only

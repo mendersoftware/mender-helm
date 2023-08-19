@@ -133,3 +133,34 @@ MinIO Rule
     {{- printf "HeadersRegexp(`X-Amz-Date`, `.+`) || PathPrefix(`/%s`)" .Values.global.s3.AWS_BUCKET | quote }}
   {{- end }}
 {{- end -}}
+
+{{- define "mender.autoscaler" -}}
+{{- $autoscaling := dict }}
+{{- if .default.hpa }}
+{{- $_ := (mergeOverwrite $autoscaling .default.hpa) }}
+{{- end }}
+{{- if .override.hpa }}
+{{- $_ := (mergeOverwrite $autoscaling .override.hpa) }}
+{{- end }}
+{{- if and $autoscaling.enabled $autoscaling.metrics}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .name }}
+  minReplicas: {{ $autoscaling.minReplicas | default 1 }}
+  maxReplicas: {{ $autoscaling.maxReplicas | default 1 }}
+  metrics:
+  {{- if $autoscaling.metrics }}
+    {{- toYaml $autoscaling.metrics | nindent 4 }}
+  {{- end }}
+  {{- if $autoscaling.behavior }}
+  behavior:
+    {{- toYaml $autoscaling.behavior | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

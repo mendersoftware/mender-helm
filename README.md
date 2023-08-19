@@ -185,6 +185,12 @@ The following table lists the global, default, and other parameters supported by
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
 | `default.affinity` | Optional affinity values that applies to all the resources | `nil` |
 | `default.toleration` | Optional toleration values that applies to all the resources | `nil` |
+| `default.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `default.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `default.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `default.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `default.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `default.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
@@ -262,6 +268,12 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.compression` | Enable Traefik Compression | `true` |
 | `api_gateway.security_redirect` | Custom redirect to a company security page | `null` |
 | `api_gateway.minio.customRule` | Custom redirect for MinIO. Uses the default one if not specified | `null` |
+| `api_gateway.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `api_gateway.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `api_gateway.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `api_gateway.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `api_gateway.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `api_gateway.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: deployments
 
@@ -302,6 +314,12 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `deployments.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `deployments.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `deployments.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `deployments.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `deployments.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `deployments.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `deployments.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `deployments.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: device-auth
 
@@ -345,6 +363,12 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `device_auth.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `device_auth.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `device_auth.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `device_auth.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `device_auth.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `device_auth.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `device_auth.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `device_auth.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: gui
 
@@ -415,6 +439,12 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `inventory.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `inventory.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `inventory.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `inventory.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `inventory.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `inventory.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `inventory.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `inventory.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: reporting
 
@@ -481,6 +511,12 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `tenantadm.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `tenantadm.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `tenantadm.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `tenantadm.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `tenantadm.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `tenantadm.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `tenantadm.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `tenantadm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 The default value for the rate limits are:
 
@@ -534,6 +570,12 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `useradm.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `useradm.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `useradm.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `useradm.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `useradm.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `useradm.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `useradm.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `useradm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: workflows
 
@@ -630,6 +672,12 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `auditlogs.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `auditlogs.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `auditlogs.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `auditlogs.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `auditlogs.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `auditlogs.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `auditlogs.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `auditlogs.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: iot-manager
 
@@ -664,6 +712,12 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `iot_manager.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `iot_manager.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `iot_manager.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `iot_manager.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `iot_manager.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `iot_manager.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `iot_manager.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `iot_manager.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -698,6 +752,12 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `deviceconnect.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `deviceconnect.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `deviceconnect.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `deviceconnect.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `deviceconnect.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `deviceconnect.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `deviceconnect.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `deviceconnect.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -732,6 +792,12 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `deviceconfig.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `deviceconfig.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `deviceconfig.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `deviceconfig.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `deviceconfig.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `deviceconfig.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `deviceconfig.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `deviceconfig.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -768,6 +834,12 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `devicemonitor.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `devicemonitor.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `devicemonitor.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `devicemonitor.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `devicemonitor.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `devicemonitor.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `devicemonitor.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `devicemonitor.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is
