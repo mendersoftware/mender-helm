@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.2.1
+* Upgrade to Mender version `3.6.1`.
+
 ## Version 5.2.0
 * MongoDB sub-chart
   * Bump app version to MongoDB 5.0 (tag: `5.0.19-debian-11-r13`)
