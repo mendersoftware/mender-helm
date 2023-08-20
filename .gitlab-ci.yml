@@ -36,7 +36,7 @@ build:setup_eks_cluster:
         --asg-access \
         --spot \
         --instance-types m6a.xlarge,t3.xlarge,m5d.xlarge,m6i.xlarge \
-        --nodes ${CI_EKS_NUMBER_OF_NODES:-5} 
+        --nodes ${CI_EKS_NUMBER_OF_NODES:-6} 
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
@@ -274,6 +274,9 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
         ./mender || exit 3;
     - helm history mender
     - make test
+  after_script:
+    - echo "INFO - cleaning up resources"
+    - helm delete -n "${NAMESPACE}" mender
 
 test:helm_chart_upgrade_from_previous_release_to_current_lts:
   tags:
@@ -336,6 +339,9 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
         ./mender || exit 3;
     - helm history mender
     - make test
+  after_script:
+    - echo "INFO - cleaning up resources"
+    - helm delete -n "${NAMESPACE}" mender
 
 test:helm_chart_upgrade_from_current_lts_to_current_release:
   tags:
@@ -399,6 +405,9 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         ./mender || exit 3;
     - helm history mender
     - make test
+  after_script:
+    - echo "INFO - cleaning up resources"
+    - helm delete -n "${NAMESPACE}" mender
 
 test:kubeconform_tests:
   tags:
