@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.2.2
+* Added the `deployments.directUpload.skipVerify` parameter, defaults to `false`.
+
 ## Version 5.2.1
 * Upgrade to Mender version `3.6.1`.
 

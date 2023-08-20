@@ -105,6 +105,10 @@ spec:
 {{- if .Values.deployments.directUpload.enabled }}
         - name: DEPLOYMENTS_STORAGE_ENABLE_DIRECT_UPLOAD
           value: "true"
+{{- if .Values.deployments.directUpload.skipVerify }}
+        - name: DEPLOYMENTS_STORAGE_DIRECT_UPLOAD_SKIP_VERIFY
+          value: "true"
+{{- end }}
 {{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
