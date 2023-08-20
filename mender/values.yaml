@@ -206,6 +206,7 @@ deployments:
   affinity: {}
   directUpload:
     enabled: true
+    jitter: "3s"
     skipVerify: false
   daemonSchedule: "15 * * * *"
   image:
