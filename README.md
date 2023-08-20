@@ -372,6 +372,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `gui.service.port` | Port for the service | `80` |
 | `gui.service.nodePort` | Node port for the service | `nil` |
+| `gui.service.portError` | Port for the Error server block | `8080` |
 | `gui.httpPort` | Port for the HTTP listener in the container | `80` |
 | `gui.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `gui.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |

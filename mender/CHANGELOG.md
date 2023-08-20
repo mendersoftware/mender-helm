@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.2.3
+* `gui` service: added option for the error server block
+
 ## Version 5.2.2
 * Added the `deployments.directUpload.skipVerify` parameter, defaults to `false`.
 * Fix: use the `deployments.directUpload.jitter` parameter in the deployments-storage-daemon cronjob.

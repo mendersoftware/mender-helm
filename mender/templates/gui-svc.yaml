@@ -33,6 +33,11 @@ spec:
     nodePort: {{ .Values.gui.service.nodePort }}
     {{- end }}
     name: http
+{{- if .Values.gui.service.portError }}
+  - port: {{ .Values.gui.service.portError | int }}
+    protocol: TCP
+    name: errors
+{{- end }}
   selector:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
 {{- end }}
