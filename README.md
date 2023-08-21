@@ -280,7 +280,8 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `deployments.directUpload.enabled` | Enable direct upload feature | `true` |
-| `deployments.directUpload.jitter` | Clock jitter - margin for removing expired objects | `"1s"` |
+| `deployments.directUpload.jitter` | Clock jitter - margin for removing expired objects | `"3s"` |
+| `deployments.directUpload.skipVerify`  | Skip verification of artifact uploaded through direct upload. Only advised if you verified the direct upload through other means. | `false` |
 | `deployments.daemonSchedule` | Cron schedule for running the storage daemon | `"15 * * * *"` |
 | `deployments.resources.limits.cpu` | Resources CPU limit | `300m` |
 | `deployments.resources.limits.memory` | Resources memory limit | `128M` |
