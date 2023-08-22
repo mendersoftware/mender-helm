@@ -3,6 +3,7 @@
 ## Version 5.2.5
 * Added support to external Image Pull Secrets
 * Added support to extraArgs to the `api_gateway` service
+* Traefik updated to `v2.10.4`
 
 ## Version 5.2.4
 * Added HPA to the most critical services
