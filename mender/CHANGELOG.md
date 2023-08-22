@@ -1,6 +1,7 @@
 # Mender Helm chart
 
 ## Version 5.2.5
+* Added support to external Image Pull Secrets
 * Added support to extraArgs to the `api_gateway` service
 
 ## Version 5.2.4

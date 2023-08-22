@@ -2,11 +2,15 @@ global:
   enterprise: true
   hosted: false
   auditlogs: true
+  priorityClassName: ""
+
+
   image:
     registry: registry.mender.io
     username: null
     password: null
     tag: mender-3.6.2
+
   mongodb:
     URL: mongodb://mongodb
   nats:
@@ -155,6 +159,7 @@ api_gateway:
     repository: traefik
     tag: v2.10
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   replicas: 1
   resources:
     limits:
@@ -223,6 +228,7 @@ deployments:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-deployments
@@ -259,6 +265,7 @@ device_auth:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-device-auth
@@ -306,6 +313,7 @@ generate_delta_worker:
     repository: mendersoftware/generate-delta-worker
     tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
 
 gui:
@@ -324,6 +332,7 @@ gui:
     registry: docker.io
     repository: mendersoftware/gui
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-gui
@@ -358,6 +367,7 @@ inventory:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-inventory
@@ -392,6 +402,7 @@ tenantadm:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-tenantadm
@@ -431,6 +442,7 @@ useradm:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-useradm
@@ -474,6 +486,7 @@ workflows:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-workflows-server
@@ -506,6 +519,7 @@ create_artifact_worker:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   podSecurityContext:
     enabled: false
@@ -535,6 +549,7 @@ auditlogs:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-auditlogs
@@ -568,6 +583,7 @@ iot_manager:
     registry: docker.io
     repository: mendersoftware/iot-manager
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-iot-manager
@@ -601,6 +617,7 @@ deviceconnect:
     registry: docker.io
     repository: mendersoftware/deviceconnect
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-deviceconnect
@@ -634,6 +651,7 @@ deviceconfig:
     registry: docker.io
     repository: mendersoftware/deviceconfig
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-deviceconfig
@@ -667,6 +685,7 @@ devicemonitor:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-devicemonitor

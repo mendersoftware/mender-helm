@@ -154,7 +154,6 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
 | `global.image.tag` | Global Docker image registry tag | `mender-3.6.2` |
-| `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
 | `global.redis.username` | Optional Redis Username  | `nil` |
@@ -191,6 +190,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `default.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `default.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
@@ -232,6 +232,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.image.repository` | Docker image repository | `traefik` |
 | `api_gateway.image.tag` | Docker image tag | `v2.5` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `api_gateway.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `api_gateway.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `api_gateway.podAnnotations` | add custom pod annotations | `nil` |
 | `api_gateway.replicas` | Number of replicas | `1` |
@@ -288,6 +289,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` if `global.enterprise` is true, else `mendersoftware/deployments` |
 | `deployments.image.tag` | Docker image tag | `nil` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deployments.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `deployments.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deployments.podAnnotations` | add custom pod annotations | `nil` |
 | `deployments.replicas` | Number of replicas | `1` |
@@ -334,6 +336,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.image.repository` | Docker image repository | `mendersoftware/deviceauth` |
 | `device_auth.image.tag` | Docker image tag | `nil` |
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `device_auth.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `device_auth.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `device_auth.podAnnotations` | add custom pod annotations | `nil` |
 | `device_auth.replicas` | Number of replicas | `1` |
@@ -382,6 +385,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.image.repository` | Docker image repository | `mendersoftware/gui` |
 | `gui.image.tag` | Docker image tag | `nil` |
 | `gui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `gui.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `gui.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `gui.podAnnotations` | add custom pod annotations | `nil` |
 | `gui.replicas` | Number of replicas | `1` |
@@ -418,6 +422,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` if `global.enterprise` is true, else `mendersoftware/inventory` |
 | `inventory.image.tag` | Docker image tag | `nil` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `inventory.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `inventory.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `inventory.podAnnotations` | add custom pod annotations | `nil` |
 | `inventory.replicas` | Number of replicas | `1` |
@@ -486,6 +491,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm` |
 | `tenantadm.image.tag` | Docker image tag | `nil` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `tenantadm.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `tenantadm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `tenantadm.podAnnotations` | add custom pod annotations | `nil` |
 | `tenantadm.replicas` | Number of replicas | `1` |
@@ -541,6 +547,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
 | `useradm.image.tag` | Docker image tag | `nil` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `useradm.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `useradm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `useradm.podAnnotations` | add custom pod annotations | `nil` |
 | `useradm.replicas` | Number of replicas | `1` |
@@ -590,6 +597,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` if `global.enterprise` is true, else `mendersoftware/workflows` |
 | `workflows.image.tag` | Docker image tag | `nil` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `workflows.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `workflows.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `workflows.podAnnotations` | add custom pod annotations | `nil` |
 | `workflows.replicas` | Number of replicas | `1` |
@@ -624,6 +632,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
 | `create_artifact_worker.image.tag` | Docker image tag | `nil` |
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `create_artifact_worker.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `create_artifact_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `create_artifact_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
@@ -651,6 +660,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.image.repository` | Docker image repository | `mendersoftware/auditlogs` |
 | `auditlogs.image.tag` | Docker image tag | `nil` |
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `auditlogs.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `auditlogs.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `auditlogs.podAnnotations` | add custom pod annotations | `nil` |
 | `auditlogs.logRetentionSeconds` | Seconds before an audit event is evicted from the database | `2592000` |
@@ -692,6 +702,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.image.repository` | Docker image repository | `mendersoftware/iot-manager` |
 | `iot_manager.image.tag` | Docker image tag | `nil` |
 | `iot_manager.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `iot_manager.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `iot_manager.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `iot_manager.image.podAnnotations` | add custom pod annotations | `nil` |
 | `iot_manager.replicas` | Number of replicas | `1` |
@@ -732,6 +743,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.image.repository` | Docker image repository | `mendersoftware/deviceconnect` |
 | `deviceconnect.image.tag` | Docker image tag | `nil` |
 | `deviceconnect.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deviceconnect.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `deviceconnect.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deviceconnect.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconnect.replicas` | Number of replicas | `1` |
@@ -772,6 +784,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.image.repository` | Docker image repository | `mendersoftware/deviceconfig` |
 | `deviceconfig.image.tag` | Docker image tag | `nil` |
 | `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deviceconfig.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `deviceconfig.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deviceconfig.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconfig.replicas` | Number of replicas | `1` |
@@ -812,6 +825,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.image.repository` | Docker image repository | `mendersoftware/devicemonitor` |
 | `devicemonitor.image.tag` | Docker image tag | `nil` |
 | `devicemonitor.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `devicemonotor.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `devicemonitor.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `devicemonitor.podAnnotations` | add custom pod annotations | `nil` |
 | `devicemonitor.replicas` | Number of replicas | `1` |
@@ -856,6 +870,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.image.repository` | Docker image repository | `mendersoftware/generate-delta-worker` |
 | `generate_delta_worker.image.tag` | Docker image tag | `nil` |
 | `generate_delta_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `generate_delta_worker.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `generate_delta_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `generate_delta_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `generate_delta_worker.replicas` | Number of replicas | `1` |

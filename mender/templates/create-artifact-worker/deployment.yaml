@@ -86,6 +86,12 @@ spec:
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.create_artifact_worker.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+      imagePullSecrets:
+{{ toYaml $ips | indent 6 }}
+{{- end }}
 {{- end }}
 
 {{- with .Values.create_artifact_worker.nodeSelector }}
