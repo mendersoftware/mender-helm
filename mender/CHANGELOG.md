@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.2.5
+* Added support to extraArgs to the `api_gateway` service
+
 ## Version 5.2.4
 * Added HPA to the most critical services
 * Reorganized `templates` directory with service subfolders

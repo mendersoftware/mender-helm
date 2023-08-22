@@ -87,6 +87,9 @@ spec:
             - --providers.file.filename=/etc/traefik/config/traefik.yaml
             - --ping=true
             - --ping.manualrouting=true
+{{- if .Values.api_gateway.extraArgs }}
+{{- .Values.api_gateway.extraArgs | toYaml | nindent 12 }}
+{{- end }}
         resources:
 {{ toYaml .Values.api_gateway.resources | indent 10 }}
 
