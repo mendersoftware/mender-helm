@@ -94,6 +94,11 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- $pcn := coalesce .Values.create_artifact_worker.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- with .Values.create_artifact_worker.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}

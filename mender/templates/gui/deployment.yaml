@@ -114,6 +114,11 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- $pcn := coalesce .Values.gui.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- with .Values.gui.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}

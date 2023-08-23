@@ -127,4 +127,9 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- $pcn := coalesce .Values.tenantadm.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- end }}

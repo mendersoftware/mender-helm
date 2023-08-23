@@ -159,4 +159,10 @@ spec:
 {{ toYaml $ips | indent 6 }}
 {{- end }}
 {{- end }}
+
+{{- $pcn := coalesce .Values.useradm.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- end }}

@@ -104,6 +104,11 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- $pcn := coalesce .Values.iot_manager.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- with .Values.iot_manager.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}

@@ -108,6 +108,11 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- $pcn := coalesce .Values.workflows.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- with .Values.workflows.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}

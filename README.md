@@ -150,6 +150,7 @@ The following table lists the global, default, and other parameters supported by
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `global.enterprise` | Enable the enterprise features | `true` |
 | `global.hosted` | Enabled Hosted Mender specific features | `false` |
+| `global.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the workwloads | `nil` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
@@ -276,6 +277,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `api_gateway.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `api_gateway.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `api_gateway.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: deployments
 
@@ -323,6 +325,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `deployments.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deployments.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `deployments.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: device-auth
 
@@ -373,6 +376,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `device_auth.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `device_auth.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `device_auth.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: gui
 
@@ -409,6 +413,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `gui.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `gui.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `gui.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: inventory
 
@@ -451,6 +456,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `inventory.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `inventory.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `inventory.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: reporting
 
@@ -524,6 +530,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `tenantadm.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `tenantadm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `tenantadm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 The default value for the rate limits are:
 
@@ -584,6 +591,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `useradm.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `useradm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `useradm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: workflows
 
@@ -619,6 +627,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `workflows.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `workflows.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `workflows.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -647,6 +656,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `create_artifact_worker.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `create_artifact_worker.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `create_artifact_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: auditlogs
 
@@ -689,6 +699,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `auditlogs.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `auditlogs.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `auditlogs.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: iot-manager
 
@@ -730,6 +741,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `iot_manager.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `iot_manager.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `iot_manager.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -771,6 +783,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `deviceconnect.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deviceconnect.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -812,6 +825,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `deviceconfig.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deviceconfig.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `deviceconfig.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -855,6 +869,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `devicemonitor.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `devicemonitor.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `devicemonitor.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is
@@ -879,6 +894,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.resources.limits.memory` | Resources memory limit | `1024M` |
 | `generate_delta_worker.resources.requests.cpu` | Resources CPU request | `100m` |
 | `generate_delta_worker.resources.requests.memory` | Resources memory request | `128M` |
+| `generate_delta_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: redis
 

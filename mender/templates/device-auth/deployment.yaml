@@ -157,4 +157,9 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- $pcn := coalesce .Values.device_auth.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- end }}

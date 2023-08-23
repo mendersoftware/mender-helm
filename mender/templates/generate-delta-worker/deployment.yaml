@@ -88,6 +88,11 @@ spec:
 {{- end }}
 {{- end }}
 
+{{- $pcn := coalesce .Values.generate_delta_worker.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- with .Values.generate_delta_worker.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}

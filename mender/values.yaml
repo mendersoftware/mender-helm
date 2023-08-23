@@ -3,8 +3,6 @@ global:
   hosted: false
   auditlogs: true
   priorityClassName: ""
-
-
   image:
     registry: registry.mender.io
     username: null
@@ -205,6 +203,7 @@ api_gateway:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 deployments:
   enabled: true
@@ -247,6 +246,7 @@ deployments:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 device_auth:
   enabled: true
@@ -291,6 +291,7 @@ device_auth:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -315,6 +316,7 @@ generate_delta_worker:
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
+  priorityClassName: ""
 
 gui:
   enabled: true
@@ -349,6 +351,7 @@ gui:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  priorityClassName: ""
 
 inventory:
   enabled: true
@@ -385,6 +388,7 @@ inventory:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 tenantadm:
   enabled: true
@@ -424,6 +428,7 @@ tenantadm:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 useradm:
   enabled: true
@@ -468,6 +473,7 @@ useradm:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 workflows:
   enabled: true
@@ -501,6 +507,7 @@ workflows:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  priorityClassName: ""
 
 create_artifact_worker:
   enabled: true
@@ -529,6 +536,7 @@ create_artifact_worker:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  priorityClassName: ""
 
 auditlogs:
   enabled: true
@@ -565,6 +573,7 @@ auditlogs:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 iot_manager:
   enabled: true
@@ -599,6 +608,7 @@ iot_manager:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 deviceconnect:
   enabled: true
@@ -633,6 +643,7 @@ deviceconnect:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 deviceconfig:
   enabled: true
@@ -667,6 +678,7 @@ deviceconfig:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 devicemonitor:
   enabled: true
@@ -701,6 +713,7 @@ devicemonitor:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  priorityClassName: ""
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only
