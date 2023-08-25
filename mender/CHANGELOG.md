@@ -2,6 +2,7 @@
 
 ## Version 5.2.3
 * `gui` service: added option for the error server block
+* Upgrade to Mender version `3.6.2`.
 
 ## Version 5.2.2
 * Added the `deployments.directUpload.skipVerify` parameter, defaults to `false`.
