@@ -203,7 +203,7 @@ api_gateway:
 deployments:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -244,7 +244,7 @@ deployments:
 device_auth:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -290,7 +290,7 @@ device_auth:
 generate_delta_worker:
   enabled: false
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -343,7 +343,7 @@ gui:
 inventory:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -416,7 +416,7 @@ tenantadm:
 useradm:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -459,7 +459,7 @@ useradm:
 workflows:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -491,7 +491,7 @@ workflows:
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -518,7 +518,7 @@ create_artifact_worker:
 auditlogs:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   # logRetentionSeconds gives the number of seconds before an audit event is evicted from the database
   logRetentionSeconds: 2592000
   replicas: 1
@@ -553,7 +553,7 @@ auditlogs:
 iot_manager:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -586,7 +586,7 @@ iot_manager:
 deviceconnect:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -619,7 +619,7 @@ deviceconnect:
 deviceconfig:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -652,7 +652,7 @@ deviceconfig:
 devicemonitor:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
