@@ -65,8 +65,8 @@ nats:
 --set="nats.enabled=true"
 ```
 
-You can customize it by following the [provider's](https://docs.nats.io/running-a-nats-service/nats-kubernetes/helm-charts)
-specifications.  
+You can customize it by following the [provider's](https://docs.nats.io/running-a-nats-service/nats-kubernetes)
+specifications.
 It's recommended to use an external deployment in Production.
 
 ## Installing the Chart
