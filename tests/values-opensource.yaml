@@ -1,0 +1,96 @@
+global:
+  enterprise: false
+  mongodb:
+    URL: ""
+  nats:
+    URL: ""
+  redis:
+    URL: ""
+  s3:
+    AWS_URI: http://mender-minio:9000
+    AWS_REGION: eu-central-1
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/issuer: "letsencrypt"
+    alb.ingress.kubernetes.io/healthcheck-path: /ui/
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig":{ "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/load-balancer-attributes: routing.http2.enabled=true,idle_timeout.timeout_seconds=600
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-2-2017-01
+    alb.ingress.kubernetes.io/target-type: ip
+  path: /
+  extraPaths:
+    - path: /
+      backend:
+        serviceName: ssl-redirect
+        servicePort: use-annotation
+  hosts:
+    - mender-helmci-tests.staging.hosted.mender.io
+  tls:
+  # this secret must exists or can be created from a working cert-manager instance
+   - secretName: mender-ingress-tls
+     hosts:
+       - mender-helmci-tests.staging.hosted.mender.io
+
+# Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
+mongodb:
+  enabled: true
+  architecture: replicaset
+  auth:
+    enabled: true
+    rootPassword: "changemetest"
+    replicaSetKey: "changemetest"
+    username: "mender"
+    database: "mender"
+  persistence:
+    enabled: false
+  global:
+    storageClass: ""
+  commonAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-100"
+
+# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+nats:
+  enabled: true
+  cluster:
+    enabled: false
+  nats:
+    image: "nats:2.7.4-scratch"
+    jetstream:
+      enabled: true
+      memStorage:
+        enabled: true
+        size: "1Gi"
+      fileStorage:
+        enabled: false
+  podAnnotations: {}
+  statefulSetAnnotations: {}
+  serviceAnnotations: {}
+ 
+# Redis as a subchart
+# Using a standalone bitnami helm chart by default = test usage only
+# It's recommended to use a suitable Redis Cluster for Production
+redis:
+  enabled: true
+  architecture: replication
+  commonAnnotations:
+    helm.sh/hook: "pre-install"
+    helm.sh/hook-weight: "-50"
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: false
+  replica:
+    persistence:
+      enabled: false
+
+api_gateway:
+  env:
+    SSL: false

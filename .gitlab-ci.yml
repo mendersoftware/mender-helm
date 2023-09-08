@@ -461,6 +461,76 @@ test:kubeconform_tests:
         || echo "INFO - test failed with version ${kubeversion}: this is expected"
       done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
 
+test:helm_chart_install_opensource:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
+  rules:
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  variables:
+    NAMESPACE: "mender-opensource-setup-test"
+    INSTALL_MINIO_DEP_ONLY: "true"
+  before_script:
+    - *set_eks_helmci_vars
+    - |
+      eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+      kubectl create ns "${NAMESPACE}"
+      kubectl config set-context --current --namespace="${NAMESPACE}"
+    - |
+      echo "DEBUG - get kubectl nodes"
+      kubectl config current-context
+      kubectl get nodes
+    - |
+      echo "INFO - installing helm from scratch"
+      tests/ci-deps-k8s.sh
+  script:
+    - tests/ci-make-deps.sh $INSTALL_MINIO_DEP_ONLY
+    - |
+      kubectl apply -f - <<EOS
+      apiVersion: cert-manager.io/v1
+      kind: Issuer
+      metadata:
+        name: letsencrypt
+      spec:
+        acme:
+          server: "https://acme-staging-v02.api.letsencrypt.org/directory"
+          email: ${LETSENCRYPT_EMAIL:-roberto.giovanardi+letsencrypt@northern.tech}
+          privateKeySecretRef:
+            name: letsencrypt
+          solvers:
+          - http01:
+              ingress: {}
+      EOS
+    - |
+      echo "INFO - installing mender"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-opensource.yaml \
+        --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${MINIO_secretKey}" \
+        --namespace "${NAMESPACE}" \
+        ./mender || exit 3;
+    - IS_OPENSOURCE="true" SKIP_TEARDOWN="true" make test
+    - |
+      echo "INFO - testing ingress"
+      bash tests/ingress-internal-test.sh
+    - bash tests/ci-test-teardown.sh || true
+  after_script:
+    - echo "INFO - cleaning up to save resources"
+    - helm delete -n "${NAMESPACE}" mender
+
 test:playground_eks_cluster:
   tags:
     - mender-qa-worker-generic-light
