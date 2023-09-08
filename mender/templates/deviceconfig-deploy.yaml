@@ -61,7 +61,7 @@ spec:
 
 {{- if .Values.deviceconfig.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 

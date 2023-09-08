@@ -61,7 +61,7 @@ spec:
 
 {{- if .Values.workflows.automigrate }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
-{{- else -}}
+{{- else }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]
 {{- end }}
 

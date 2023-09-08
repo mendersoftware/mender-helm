@@ -61,7 +61,7 @@ spec:
 
 {{- if .Values.auditlogs.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 

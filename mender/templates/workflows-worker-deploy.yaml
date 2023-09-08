@@ -65,7 +65,7 @@ spec:
 
 {{- if .Values.deployments.automigrate }}
         args: ["worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["worker", "--excluded-workflows", "generate_artifact"]
 {{- end }}
 

@@ -61,7 +61,7 @@ spec:
 
 {{- if .Values.iot_manager.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 
