@@ -65,7 +65,7 @@ spec:
 
 {{- if .Values.inventory.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 

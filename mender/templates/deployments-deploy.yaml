@@ -67,7 +67,7 @@ spec:
 
 {{- if .Values.deployments.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 
