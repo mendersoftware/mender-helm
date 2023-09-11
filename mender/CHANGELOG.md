@@ -4,7 +4,6 @@
 * Added HPA to the most critical services
 * Reorganized `templates` directory with service subfolders
 * Fixed an issue with automigrate: false
-* Upgrade NATS subchart to `0.19.17` and NATS to `2.9.20`
 
 ## Version 5.2.3
 * `gui` service: added option for the error server block
