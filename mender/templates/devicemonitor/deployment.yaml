@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-devicemonitor
     app.kubernetes.io/component: devicemonitor
 spec:
+  {{- if not (or .Values.devicemonitor.hpa .Values.default.hpa) }}
   replicas: {{ .Values.devicemonitor.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-devicemonitor

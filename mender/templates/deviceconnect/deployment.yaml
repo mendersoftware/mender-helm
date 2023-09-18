@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
     app.kubernetes.io/component: deviceconnect
 spec:
+  {{- if not (or .Values.deviceconnect.hpa .Values.default.hpa) }}
   replicas: {{ .Values.deviceconnect.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect

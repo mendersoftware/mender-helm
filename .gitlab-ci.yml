@@ -448,7 +448,7 @@ test:kubeconform_tests:
       done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
     - | 
       echo "DEBUG - run failed kubeconform tests: this should fail"
-      sed -i 's/apps\/v1/fakeapps\/v42/' mender/templates/gui-deploy.yaml
+      sed -i 's/apps\/v1/fakeapps\/v42/' mender/templates/gui/deployment.yaml
       while IFS= read -r version; do
         full_version=${version}.0
         echo "INFO - testing version ${full_version}"

@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-deployments
     app.kubernetes.io/component: deployments
 spec:
+  {{- if not (or .Values.deployments.hpa .Values.default.hpa) }}
   replicas: {{ .Values.deployments.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-deployments

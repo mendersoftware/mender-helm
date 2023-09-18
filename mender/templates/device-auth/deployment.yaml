@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth
     app.kubernetes.io/component: device-auth
 spec:
+  {{- if not (or .Values.device_auth.hpa .Values.default.hpa) }}
   replicas: {{ .Values.device_auth.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth

@@ -1,19 +1,21 @@
-{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
-{{- $merged := merge (deepCopy .Values.auditlogs) (deepCopy (default (dict) .Values.default)) -}}
+{{- if and .Values.iot_manager.enabled }}
+{{- $merged := merge (deepCopy .Values.iot_manager) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mender.fullname" . }}-auditlogs
+  name: {{ include "mender.fullname" . }}-iot-manager
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "mender.labels" . | nindent 4 }}
-    app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs
-    app.kubernetes.io/component: auditlogs
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-iot-manager
+    app.kubernetes.io/component: iot-manager
 spec:
-  replicas: {{ .Values.auditlogs.replicas }}
+  {{- if not (or .Values.iot_manager.hpa .Values.default.hpa) }}
+  replicas: {{ .Values.iot_manager.replicas }}
+  {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-iot-manager
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -30,14 +32,14 @@ spec:
 
   template:
     metadata:
-      {{- with .Values.auditlogs.podAnnotations }}
+      {{- with .Values.iot_manager.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-iot-manager
         {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: auditlogs
+        app.kubernetes.io/component: iot-manager
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -45,21 +47,21 @@ spec:
       {{- with $merged.tolerations }}
       tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-{{- if .Values.auditlogs.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.auditlogs.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- if .Values.iot_manager.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.iot_manager.podSecurityContext "enabled" | toYaml | nindent 8 }}
 {{- end }}
 
       containers:
-      - name: auditlogs
-        image: {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.auditlogs.image.imagePullPolicy }}
-{{- if .Values.auditlogs.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.auditlogs.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+      - name: iot-manager
+        image: {{ .Values.iot_manager.image.registry }}/{{ .Values.iot_manager.image.repository }}:{{ .Values.iot_manager.image.tag | default .Values.global.image.tag }}
+        imagePullPolicy: {{ .Values.iot_manager.image.imagePullPolicy }}
+{{- if .Values.iot_manager.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.iot_manager.containerSecurityContext "enabled" | toYaml | nindent 10 }}
 {{- end }}
         resources:
-{{ toYaml .Values.auditlogs.resources | indent 10 }}
+{{ toYaml .Values.iot_manager.resources | indent 10 }}
 
-{{- if .Values.auditlogs.automigrate }}
+{{- if .Values.iot_manager.automigrate }}
         args: ["server", "--automigrate"]
 {{- else }}
         args: ["server"]
@@ -68,28 +70,26 @@ spec:
         # Readiness/liveness probes
         readinessProbe:
            httpGet:
-             path: /api/internal/v1/auditlogs/health
+             path: /api/internal/v1/iot-manager/health
              port: 8080
            periodSeconds: 15
         livenessProbe:
           httpGet:
-            path: /api/internal/v1/auditlogs/alive
+            path: /api/internal/v1/iot-manager/alive
             port: 8080
           periodSeconds: 5
         startupProbe:
           httpGet:
-            path: /api/internal/v1/auditlogs/alive
+            path: /api/internal/v1/iot-manager/alive
             port: 8080
           failureThreshold: 36
           periodSeconds: 5
 
         env:
-        - name: AUDITLOGS_AUDITLOG_EXPIRE_SECONDS
-          value: {{ .Values.auditlogs.logRetentionSeconds | int | toString | quote }}
-        # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
+        # Supported configuration settings: https://github.com/mendersoftware/iot-manager/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         envFrom:
-        - prefix: AUDITLOGS_
+        - prefix: IOT_MANAGER_
           secretRef:
             name: mongodb-common
 
@@ -98,7 +98,7 @@ spec:
       - name: docker-registry
 {{- end }}
 
-{{- with .Values.auditlogs.nodeSelector }}
+{{- with .Values.iot_manager.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}
 {{- end }}
