@@ -59,6 +59,7 @@ build:
   rules:
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
+    - when: on_success
   before_script:
     - apt-get update -y
     - apt-get install -y curl make
