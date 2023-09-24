@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-iot-manager
     app.kubernetes.io/component: iot-manager
 spec:
+  {{- if not (or .Values.iot_manager.hpa .Values.default.hpa) }}
   replicas: {{ .Values.iot_manager.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-iot-manager
@@ -61,7 +63,7 @@ spec:
 
 {{- if .Values.iot_manager.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 

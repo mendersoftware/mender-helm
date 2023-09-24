@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-useradm
     app.kubernetes.io/component: useradm
 spec:
+  {{- if not (or .Values.useradm.hpa .Values.default.hpa) }}
   replicas: {{ .Values.useradm.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-useradm
@@ -66,7 +68,7 @@ spec:
 
 {{- if .Values.useradm.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 

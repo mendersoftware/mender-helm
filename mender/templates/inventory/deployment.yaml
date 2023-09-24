@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-inventory
     app.kubernetes.io/component: inventory
 spec:
+  {{- if not (or .Values.inventory.hpa .Values.default.hpa) }}
   replicas: {{ .Values.inventory.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-inventory
@@ -65,7 +67,7 @@ spec:
 
 {{- if .Values.inventory.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 

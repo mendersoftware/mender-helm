@@ -202,6 +202,9 @@ spec:
 {{- if .Values.workflows.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.workflows.containerSecurityContext "enabled" | toYaml | nindent 10 }}
 {{- end }}
+        env:
+        - name: WORKFLOWS_NATS_URI
+          value: {{ template "nats_uri" . }}
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:

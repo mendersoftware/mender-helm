@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-deployments
     app.kubernetes.io/component: deployments
 spec:
+  {{- if not (or .Values.deployments.hpa .Values.default.hpa) }}
   replicas: {{ .Values.deployments.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-deployments
@@ -67,7 +69,7 @@ spec:
 
 {{- if .Values.deployments.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 
@@ -105,6 +107,10 @@ spec:
 {{- if .Values.deployments.directUpload.enabled }}
         - name: DEPLOYMENTS_STORAGE_ENABLE_DIRECT_UPLOAD
           value: "true"
+{{- if .Values.deployments.directUpload.skipVerify }}
+        - name: DEPLOYMENTS_STORAGE_DIRECT_UPLOAD_SKIP_VERIFY
+          value: "true"
+{{- end }}
 {{- end }}
 
         # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml

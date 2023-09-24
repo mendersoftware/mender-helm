@@ -1,19 +1,19 @@
-{{- if and .Values.global.enterprise .Values.generate_delta_worker.enabled }}
-{{- $merged := merge (deepCopy .Values.generate_delta_worker) (deepCopy (default (dict) .Values.default)) -}}
+{{- if .Values.create_artifact_worker.enabled }}
+{{- $merged := merge (deepCopy .Values.create_artifact_worker) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mender.fullname" . }}-generate-delta-worker
+  name: {{ include "mender.fullname" . }}-create-artifact-worker
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "mender.labels" . | nindent 4 }}
-    app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
     app.kubernetes.io/component: workflows
 spec:
-  replicas: {{ .Values.generate_delta_worker.replicas }}
+  replicas: {{ .Values.create_artifact_worker.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
 
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
@@ -30,12 +30,12 @@ spec:
 
   template:
     metadata:
-      {{- with .Values.generate_delta_worker.podAnnotations }}
+      {{- with .Values.create_artifact_worker.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
         {{- include "mender.labels" . | nindent 8 }}
         app.kubernetes.io/component: workflows
     spec:
@@ -45,17 +45,23 @@ spec:
       {{- with $merged.tolerations }}
       tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+{{- if .Values.create_artifact_worker.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.create_artifact_worker.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
 
       containers:
       - name: workflows
-        image: {{ .Values.generate_delta_worker.image.registry }}/{{ .Values.generate_delta_worker.image.repository }}:{{ .Values.generate_delta_worker.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.generate_delta_worker.image.imagePullPolicy }}
+        image: {{ .Values.create_artifact_worker.image.registry }}/{{ .Values.create_artifact_worker.image.repository }}:{{ .Values.create_artifact_worker.image.tag | default .Values.global.image.tag }}
+        imagePullPolicy: {{ .Values.create_artifact_worker.image.imagePullPolicy }}
+{{- if .Values.create_artifact_worker.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.create_artifact_worker.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
         resources:
-{{ toYaml .Values.generate_delta_worker.resources | indent 10 }}
+{{ toYaml .Values.create_artifact_worker.resources | indent 10 }}
 
 {{- if .Values.workflows.automigrate }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
-{{- else -}}
+{{- else }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]
 {{- end }}
 
@@ -66,11 +72,11 @@ spec:
           value: {{ template "nats_uri" . }}
         - name: WORKFLOWS_MENDER_URL
           value: "{{ .Values.global.url }}"
-        - name: GENERATE_DELTA_GATEWAY_URL
+        - name: CREATE_ARTIFACT_GATEWAY_URL
           value: {{ .Values.global.url | default (ternary (printf "https://%s" .Values.api_gateway.service.name ) (printf "http://%s" .Values.api_gateway.service.name) (.Values.api_gateway.env.SSL)) }}
-        - name: GENERATE_DELTA_SKIPVERIFY
+        - name: CREATE_ARTIFACT_SKIPVERIFY
           value: "1"
-        - name: GENERATE_DELTA_DEPLOYMENTS_URL
+        - name: CREATE_ARTIFACT_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
         envFrom:
         - prefix: WORKFLOWS_
@@ -82,7 +88,7 @@ spec:
       - name: docker-registry
 {{- end }}
 
-{{- with .Values.generate_delta_worker.nodeSelector }}
+{{- with .Values.create_artifact_worker.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}
 {{- end }}

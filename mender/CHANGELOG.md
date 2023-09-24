@@ -1,5 +1,31 @@
 # Mender Helm chart
 
+## Version 5.2.4
+* Added HPA to the most critical services
+* Reorganized `templates` directory with service subfolders
+* Fixed an issue with automigrate: false
+
+## Version 5.2.3
+* `gui` service: added option for the error server block
+* Upgrade to Mender version `3.6.2`.
+
+## Version 5.2.2
+* Added the `deployments.directUpload.skipVerify` parameter, defaults to `false`.
+* Fix: use the `deployments.directUpload.jitter` parameter in the deployments-storage-daemon cronjob.
+
+## Version 5.2.1
+* Upgrade to Mender version `3.6.1`.
+
+## Version 5.2.0
+* MongoDB sub-chart
+  * Bump app version to MongoDB 5.0 (tag: `5.0.19-debian-11-r13`)
+  * Set default update strategy
+  * Set default Pod Disruption Budget
+
+> If your running an existing cluster with MongoDB 4.4, we recommend following
+> the upgrade procedure from the
+> [official documentation](https://www.mongodb.com/docs/manual/release-notes/5.0-upgrade-replica-set/).
+
 ## Version 5.1.0
 * Upgrade to Mender version `3.6.0`.
 * Added `auditlogs.logRetentionSeconds` conf parameter for tuning auditlog settings
@@ -11,6 +37,7 @@
 * Added optional `api_gateway.minio.customRule` to custom redirects
 * Added optional `api_gateway.authRateLimit` as a custom ratelimit for Auth module only
 * Added `contentTypeNosniff` to the Traefik configuration
+* Fix: missing WORKFLOWS_NATS_URI in the db-migration-job
 
 ## Version 5.0.3
 * Fix: using the correct variables for useradm auditlogs settings
@@ -25,7 +52,7 @@
 * **BREAKING CHANGES**:
   * Switch Redis service to an optional sub Chart: now Redis is a global
     service: the same Redis Cluster is used by both `useradm` and `device-auth`
-    services. You cannot use two different Redis Clusters.  
+    services. You cannot use two different Redis Clusters.
     It's recommended to use an external Redis Cluster in Production, instead
     of the integrated sub-chart, which is enabled by default.
 * Added Chart Name prefix to the Resource names

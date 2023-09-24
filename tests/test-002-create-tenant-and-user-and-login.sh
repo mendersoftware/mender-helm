@@ -15,6 +15,12 @@
 
 set -e
 
+if [[ "${IS_OPENSOURCE}" == "true" ]];
+then
+  echo "INFO - Opensource setup - skipping this test"
+  exit 0
+fi
+
 # create tenant and user
 UUID=$(uuidgen)
 TENANT_NAME="demo-$UUID"

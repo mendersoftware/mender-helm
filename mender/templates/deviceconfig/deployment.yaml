@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconfig
     app.kubernetes.io/component: deviceconfig
 spec:
+  {{- if not (or .Values.deviceconfig.hpa .Values.default.hpa) }}
   replicas: {{ .Values.deviceconfig.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconfig
@@ -61,7 +63,7 @@ spec:
 
 {{- if .Values.deviceconfig.automigrate }}
         args: ["server", "--automigrate"]
-{{- else -}}
+{{- else }}
         args: ["server"]
 {{- end }}
 

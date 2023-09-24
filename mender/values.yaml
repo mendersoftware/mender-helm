@@ -6,7 +6,7 @@ global:
     registry: registry.mender.io
     username: null
     password: null
-    tag: mender-3.6.0-build9
+    tag: mender-3.6.2
   mongodb:
     URL: mongodb://mongodb
   nats:
@@ -51,6 +51,14 @@ default:
   affinity: {}
   tolerations: {}
 
+  # HorizontalPodAutoscaler default resources
+  hpa: {}
+    #enabled: true
+    #minReplicas: 1
+    #maxReplicas: 3
+    #metrics: {}
+    #behavior: {}
+
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false
@@ -66,7 +74,7 @@ ingress:
   # alb.ingress.kubernetes.io/healthcheck-path: /ui/
   # cert-manager.io/issuer: "letsencrypt"
   path: /
-  extraPaths: [] 
+  extraPaths: []
     # - path: /*
     #   backend:
     #     serviceName: ssl-redirect
@@ -78,7 +86,7 @@ ingress:
    - secretName: mender-ingress-tls
      hosts:
        - mender.example.org
- 
+
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
   enabled: false
@@ -87,8 +95,22 @@ mongodb:
     enabled: false
     service:
       type: LoadBalancer
+  # replicaCount sets the number of secondaries (min: 2)
+  replicaCount: 2
+  # updateStrategy ensure that the nodes are updated one at the time to avoid downtime.
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  # PodDisruptionBudget ensure that the majority of nodes are available.
+  # Make sure to update the PodDisruptionBudget if you increase the number of
+  # replicas.
+  pdb:
+    enabled: true
+    minAvailable: 2
+    maxUnavailable: 1
   image:
-    tag: "4.4.13-debian-10-r63"
+    tag: "5.0.19-debian-11-r13"
   auth:
     enabled: true
     rootPassword: "pleasechangeme"
@@ -110,7 +132,7 @@ nats:
   cluster:
     enabled: true
     replicas: 3
-  fullnameOverride: "" 
+  fullnameOverride: ""
   nats:
     image: "nats:2.7.4-scratch"
     jetstream:
@@ -176,6 +198,7 @@ api_gateway:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 deployments:
   enabled: true
@@ -192,6 +215,8 @@ deployments:
   affinity: {}
   directUpload:
     enabled: true
+    jitter: "3s"
+    skipVerify: false
   daemonSchedule: "15 * * * *"
   image:
     registry: ""
@@ -214,6 +239,7 @@ deployments:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 device_auth:
   enabled: true
@@ -256,6 +282,7 @@ device_auth:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -302,6 +329,7 @@ gui:
     annotations: {}
     type: ClusterIP
     port: 80
+    portError: 8080
   httpPort: 80
   podSecurityContext:
     enabled: false
@@ -345,6 +373,7 @@ inventory:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 tenantadm:
   enabled: true
@@ -382,6 +411,7 @@ tenantadm:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 useradm:
   enabled: true
@@ -424,6 +454,7 @@ useradm:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 workflows:
   enabled: true
@@ -517,6 +548,7 @@ auditlogs:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 iot_manager:
   enabled: true
@@ -549,6 +581,7 @@ iot_manager:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 deviceconnect:
   enabled: true
@@ -581,6 +614,7 @@ deviceconnect:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 deviceconfig:
   enabled: true
@@ -613,6 +647,7 @@ deviceconfig:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 devicemonitor:
   enabled: true
@@ -645,6 +680,7 @@ devicemonitor:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  hpa: {}
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only
@@ -667,7 +703,7 @@ redis:
   replica:
     persistence:
       enabled: false
-  fullnameOverride: "" 
+  fullnameOverride: ""
 
 dbmigration:
   enable: true

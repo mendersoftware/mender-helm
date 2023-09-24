@@ -10,7 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm
     app.kubernetes.io/component: tenantadm
 spec:
+  {{- if not (or .Values.tenantadm.hpa .Values.default.hpa) }}
   replicas: {{ .Values.tenantadm.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm

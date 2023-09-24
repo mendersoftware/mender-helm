@@ -18,7 +18,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-api-gateway
     app.kubernetes.io/component: api-gateway
 spec:
+  {{- if not (or .Values.api_gateway.hpa .Values.default.hpa) }}
   replicas: {{ .Values.api_gateway.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-api-gateway
