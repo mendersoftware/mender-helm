@@ -61,6 +61,11 @@ default:
     #metrics: {}
     #behavior: {}
 
+  # PodDisruptionBudget default resources
+  pdb:
+    enabled: false
+    minAvailable: 1
+
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false
@@ -203,6 +208,7 @@ api_gateway:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 deployments:
@@ -246,6 +252,7 @@ deployments:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 device_auth:
@@ -291,6 +298,7 @@ device_auth:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 # Generate Delta Worker feature
@@ -388,6 +396,7 @@ inventory:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 tenantadm:
@@ -428,6 +437,7 @@ tenantadm:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 useradm:
@@ -473,6 +483,7 @@ useradm:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 workflows:
@@ -573,6 +584,7 @@ auditlogs:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 iot_manager:
@@ -608,6 +620,7 @@ iot_manager:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 deviceconnect:
@@ -643,6 +656,7 @@ deviceconnect:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 deviceconfig:
@@ -678,6 +692,7 @@ deviceconfig:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 devicemonitor:
@@ -713,6 +728,7 @@ devicemonitor:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
   priorityClassName: ""
 
 # Redis as a subchart
