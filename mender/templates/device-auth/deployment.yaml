@@ -144,7 +144,13 @@ spec:
       volumes:
       - name: rsa
         secret:
+          {{- with .Values.device_auth.certs }}
+          {{- if .existingSecret }}
+          secretName: {{ .existingSecret }}
+          {{- else }}
           secretName: rsa-device-auth
+          {{- end }}
+          {{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
