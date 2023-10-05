@@ -6,6 +6,7 @@
 * Traefik updated to `v2.10.4`
 * You can now add pre-existing `priorityClassName` to the resources
 * Added PodDisruptionBudget resources to the most critical services
+* Added option to use existing secrets for certificates (thanks @bdomars)
 
 ## Version 5.2.4
 * Added HPA to the most critical services
