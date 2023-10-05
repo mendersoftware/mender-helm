@@ -114,7 +114,13 @@ spec:
       volumes:
       - name: rsa
         secret:
+          {{- with .Values.tenantadm.certs }}
+          {{- if .existingSecret }}
+          secretName: {{ .existingSecret }}
+          {{- else }}
           secretName: rsa-tenantadm
+          {{- end }}
+          {{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
