@@ -257,7 +257,7 @@ spec:
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
-      - name: docker-registry
+      - name: docker-registry-prerelease
 {{- else }}
 {{- $ips := .Values.default.imagePullSecrets  }}
 {{- if $ips }}
