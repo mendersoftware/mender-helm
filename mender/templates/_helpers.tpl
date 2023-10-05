@@ -164,3 +164,24 @@ spec:
   {{- end }}
 {{- end }}
 {{- end }}
+
+{{- define "mender.pdb" -}}
+{{- $pdb := dict }}
+{{- if .default.pdb }}
+{{- $_ := (mergeOverwrite $pdb .default.pdb) }}
+{{- end }}
+{{- if .override.pdb }}
+{{- $_ := (mergeOverwrite $pdb .override.pdb) }}
+{{- end }}
+{{- if $pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .name }}
+spec:
+  minAvailable: {{ $pdb.minAvailable | default 1 }}
+  selector:
+    matchLabels:
+      run: {{ .name }}
+{{- end }}
+{{- end }}

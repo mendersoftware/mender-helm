@@ -1,0 +1,5 @@
+{{- if .Values.api_gateway.enabled }}
+{{- $servicename := "api-gateway" }}
+{{- $context := (dict "default" .Values.default "override" .Values.api_gateway "name" (printf "%s-%s" (include "mender.fullname" . ) $servicename ) ) -}}
+{{- include "mender.pdb" $context }}
+{{- end }}

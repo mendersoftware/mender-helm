@@ -103,9 +103,21 @@ spec:
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.inventory.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+      imagePullSecrets:
+{{ toYaml $ips | indent 6 }}
 {{- end }}
+{{- end }}
+
+{{- $pcn := coalesce .Values.inventory.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
 
 {{- with .Values.inventory.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}
+
 {{- end }}

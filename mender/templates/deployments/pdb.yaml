@@ -1,0 +1,5 @@
+{{- if .Values.deployments.enabled }}
+{{- $servicename := "deployments" }}
+{{- $context := (dict "default" .Values.default "override" .Values.deployments "name" (printf "%s-%s" (include "mender.fullname" . ) $servicename ) ) -}}
+{{- include "mender.pdb" $context }}
+{{- end }}

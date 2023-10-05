@@ -2,11 +2,13 @@ global:
   enterprise: true
   hosted: false
   auditlogs: true
+  priorityClassName: ""
   image:
     registry: registry.mender.io
     username: null
     password: null
     tag: mender-3.6.2
+
   mongodb:
     URL: mongodb://mongodb
   nats:
@@ -58,6 +60,11 @@ default:
     #maxReplicas: 3
     #metrics: {}
     #behavior: {}
+
+  # PodDisruptionBudget default resources
+  pdb:
+    enabled: false
+    minAvailable: 1
 
 # Enabling this will publically expose your Mender instance.
 ingress:
@@ -153,8 +160,9 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v2.10
+    tag: v2.10.4
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   replicas: 1
   resources:
     limits:
@@ -189,6 +197,7 @@ api_gateway:
     sourceCriterion:
       ipStrategy:
         depth: 1
+  extraArgs: []
   authRateLimit: null
   podSecurityContext:
     enabled: false
@@ -199,6 +208,8 @@ api_gateway:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 deployments:
   enabled: true
@@ -222,6 +233,7 @@ deployments:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-deployments
@@ -240,6 +252,8 @@ deployments:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 device_auth:
   enabled: true
@@ -258,6 +272,7 @@ device_auth:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-device-auth
@@ -283,6 +298,8 @@ device_auth:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -305,7 +322,9 @@ generate_delta_worker:
     repository: mendersoftware/generate-delta-worker
     tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
+  priorityClassName: ""
 
 gui:
   enabled: true
@@ -323,6 +342,7 @@ gui:
     registry: docker.io
     repository: mendersoftware/gui
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-gui
@@ -339,6 +359,7 @@ gui:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  priorityClassName: ""
 
 inventory:
   enabled: true
@@ -357,6 +378,7 @@ inventory:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-inventory
@@ -374,6 +396,8 @@ inventory:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 tenantadm:
   enabled: true
@@ -391,6 +415,7 @@ tenantadm:
     registry: registry.mender.io
     repository: mendersoftware/tenantadm
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-tenantadm
@@ -412,6 +437,8 @@ tenantadm:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 useradm:
   enabled: true
@@ -430,6 +457,7 @@ useradm:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-useradm
@@ -455,6 +483,8 @@ useradm:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 workflows:
   enabled: true
@@ -473,6 +503,7 @@ workflows:
     registry: ""
     repository: ""
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-workflows-server
@@ -487,6 +518,7 @@ workflows:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  priorityClassName: ""
 
 create_artifact_worker:
   enabled: true
@@ -505,6 +537,7 @@ create_artifact_worker:
     registry: docker.io
     repository: mendersoftware/create-artifact-worker
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   podSecurityContext:
     enabled: false
@@ -514,6 +547,7 @@ create_artifact_worker:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  priorityClassName: ""
 
 auditlogs:
   enabled: true
@@ -534,6 +568,7 @@ auditlogs:
     registry: registry.mender.io
     repository: mendersoftware/auditlogs
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-auditlogs
@@ -549,6 +584,8 @@ auditlogs:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 iot_manager:
   enabled: true
@@ -567,6 +604,7 @@ iot_manager:
     registry: docker.io
     repository: mendersoftware/iot-manager
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-iot-manager
@@ -582,6 +620,8 @@ iot_manager:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 deviceconnect:
   enabled: true
@@ -600,6 +640,7 @@ deviceconnect:
     registry: docker.io
     repository: mendersoftware/deviceconnect
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-deviceconnect
@@ -615,6 +656,8 @@ deviceconnect:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 deviceconfig:
   enabled: true
@@ -633,6 +676,7 @@ deviceconfig:
     registry: docker.io
     repository: mendersoftware/deviceconfig
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-deviceconfig
@@ -648,6 +692,8 @@ deviceconfig:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 devicemonitor:
   enabled: true
@@ -666,6 +712,7 @@ devicemonitor:
     registry: registry.mender.io
     repository: mendersoftware/devicemonitor
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
   nodeSelector: {}
   service:
     name: mender-devicemonitor
@@ -681,6 +728,8 @@ devicemonitor:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   hpa: {}
+  pdb: {}
+  priorityClassName: ""
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only
