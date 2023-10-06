@@ -155,9 +155,9 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
 | `global.image.tag` | Global Docker image registry tag | `mender-3.6.2` |
-| `global.mongodb.existingSecret` | MongoDB existing secret | `null` |
+| `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
-| `global.nats.existingSecret` | NATS existing secret | `null` |
+| `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
 | `global.redis.username` | Optional Redis Username  | `nil` |
 | `global.redis.password` | Optional Redis Password  | `nil` |
@@ -173,6 +173,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.s3.AWS_SERVICE_ACCOUNT_NAME` | Use K8s service account instead of `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to access the bucket. | `""` |
 | `global.s3.AWS_FORCE_PATH_STYLE` | Set the AWS S3 URI style to path | `true` |
 | `global.s3.AWS_TAG_ARTIFACT` | Tag the artifact in the AWS S3 storage service with the tenant ID | `true` |
+| `global.s3.existingSecret` | S3 existing secret containing the keys above: `AWS_URI`, `AWS_BUCKET`, `AWS_REGION`, ... | `null` |
 | `global.azure.AUTH_CONNECTION_STRING` | Azure Blob Storage connection string | `""` |
 | `global.azure.AUTH_SHARED_KEY_ACCOUNT_NAME` | Azure Blob Storage shared key account name | `""` |
 | `global.azure.AUTH_SHARED_KEY_ACCOUNT_KEY` | Azure Blob Storage shared key account key | `""` |
