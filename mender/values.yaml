@@ -10,8 +10,10 @@ global:
     tag: mender-3.6.2
 
   mongodb:
+    existingSecret: ""
     URL: mongodb://mongodb
   nats:
+    existingSecret: ""
     URL: nats://nats:4222
   redis:
     username: null
@@ -19,6 +21,7 @@ global:
     URL: ""
   storage: "aws"
   s3:
+    existingSecret: ""
     AWS_URI: ""
     AWS_EXTERNAL_URI: ""
     AWS_BUCKET: mender-artifact-storage
