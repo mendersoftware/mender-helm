@@ -150,12 +150,14 @@ The following table lists the global, default, and other parameters supported by
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `global.enterprise` | Enable the enterprise features | `true` |
 | `global.hosted` | Enabled Hosted Mender specific features | `false` |
+| `global.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the workwloads | `nil` |
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
 | `global.image.tag` | Global Docker image registry tag | `mender-3.6.2` |
-| `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` (does not add image pull secrets to deployed pods)  |
+| `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
+| `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
 | `global.redis.username` | Optional Redis Username  | `nil` |
 | `global.redis.password` | Optional Redis Password  | `nil` |
@@ -171,6 +173,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.s3.AWS_SERVICE_ACCOUNT_NAME` | Use K8s service account instead of `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to access the bucket. | `""` |
 | `global.s3.AWS_FORCE_PATH_STYLE` | Set the AWS S3 URI style to path | `true` |
 | `global.s3.AWS_TAG_ARTIFACT` | Tag the artifact in the AWS S3 storage service with the tenant ID | `true` |
+| `global.s3.existingSecret` | S3 existing secret containing the keys above: `AWS_URI`, `AWS_BUCKET`, `AWS_REGION`, ... | `null` |
 | `global.azure.AUTH_CONNECTION_STRING` | Azure Blob Storage connection string | `""` |
 | `global.azure.AUTH_SHARED_KEY_ACCOUNT_NAME` | Azure Blob Storage shared key account name | `""` |
 | `global.azure.AUTH_SHARED_KEY_ACCOUNT_KEY` | Azure Blob Storage shared key account key | `""` |
@@ -191,6 +194,9 @@ The following table lists the global, default, and other parameters supported by
 | `default.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `default.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `default.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `default.pdb.enabled` | PodDistruptionBudget enabled | `false` |
+| `default.pdb.minAvailable` | PodDistruptionBudget minAvailable | `1` |
+| `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
@@ -232,6 +238,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.image.repository` | Docker image repository | `traefik` |
 | `api_gateway.image.tag` | Docker image tag | `v2.5` |
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `api_gateway.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `api_gateway.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `api_gateway.podAnnotations` | add custom pod annotations | `nil` |
 | `api_gateway.replicas` | Number of replicas | `1` |
@@ -258,6 +265,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
 | `api_gateway.rateLimit.sourceCriterion` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `{"ipStrategy": {"depth": 1}}` |
+| `api_gateway.extraArgs` | Optional list of additional args for the `api_gateway` container. | `null` |
 | `api_gateway.authRateLimit` | Optional rate limiting for the Auth module only. See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `null` |
 | `api_gateway.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `api_gateway.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
@@ -274,6 +282,13 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `api_gateway.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `api_gateway.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `api_gateway.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
+| `api_gateway.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `api_gateway.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `api_gateway.certs` | certificate management | `nil` |
+| `api_gateway.certs.cert` | Public certificate (with full chain optionally) in PEM format | `nil` |
+| `api_gateway.certs.key` | Private key in PEM format | `nil` |
+| `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
 
 ### Parameters: deployments
 
@@ -287,6 +302,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` if `global.enterprise` is true, else `mendersoftware/deployments` |
 | `deployments.image.tag` | Docker image tag | `nil` |
 | `deployments.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deployments.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `deployments.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deployments.podAnnotations` | add custom pod annotations | `nil` |
 | `deployments.replicas` | Number of replicas | `1` |
@@ -320,6 +336,9 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `deployments.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deployments.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `deployments.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
+| `deployments.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `deployments.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: device-auth
 
@@ -333,6 +352,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.image.repository` | Docker image repository | `mendersoftware/deviceauth` |
 | `device_auth.image.tag` | Docker image tag | `nil` |
 | `device_auth.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `device_auth.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `device_auth.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `device_auth.podAnnotations` | add custom pod annotations | `nil` |
 | `device_auth.replicas` | Number of replicas | `1` |
@@ -369,6 +389,12 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `device_auth.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `device_auth.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `device_auth.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
+| `device_auth.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `device_auth.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `device_auth.certs` | certificate management | `nil` |
+| `device_auth.certs.key` | Private key in PEM format | `nil` |
+| `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 
 ### Parameters: gui
 
@@ -381,6 +407,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.image.repository` | Docker image repository | `mendersoftware/gui` |
 | `gui.image.tag` | Docker image tag | `nil` |
 | `gui.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `gui.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `gui.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `gui.podAnnotations` | add custom pod annotations | `nil` |
 | `gui.replicas` | Number of replicas | `1` |
@@ -404,6 +431,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `gui.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `gui.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `gui.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: inventory
 
@@ -417,6 +445,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` if `global.enterprise` is true, else `mendersoftware/inventory` |
 | `inventory.image.tag` | Docker image tag | `nil` |
 | `inventory.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `inventory.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `inventory.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `inventory.podAnnotations` | add custom pod annotations | `nil` |
 | `inventory.replicas` | Number of replicas | `1` |
@@ -445,6 +474,9 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `inventory.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `inventory.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `inventory.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
+| `inventory.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `inventory.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: reporting
 
@@ -485,6 +517,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.image.repository` | Docker image repository | `mendersoftware/tenantadm` |
 | `tenantadm.image.tag` | Docker image tag | `nil` |
 | `tenantadm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `tenantadm.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `tenantadm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `tenantadm.podAnnotations` | add custom pod annotations | `nil` |
 | `tenantadm.replicas` | Number of replicas | `1` |
@@ -517,6 +550,12 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `tenantadm.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `tenantadm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `tenantadm.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
+| `tenantadm.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `tenantadm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `tenantadm.certs` | certificate management | `nil` |
+| `tenantadm.certs.key` | Private key in PEM format | `nil` |
+| `tenantadm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 
 The default value for the rate limits are:
 
@@ -540,6 +579,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
 | `useradm.image.tag` | Docker image tag | `nil` |
 | `useradm.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `useradm.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `useradm.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `useradm.podAnnotations` | add custom pod annotations | `nil` |
 | `useradm.replicas` | Number of replicas | `1` |
@@ -576,6 +616,12 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `useradm.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `useradm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `useradm.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
+| `useradm.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `useradm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `useradm.certs` | certificate management | `nil` |
+| `useradm.certs.key` | Private key in PEM format | `nil` |
+| `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 
 ### Parameters: workflows
 
@@ -589,6 +635,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` if `global.enterprise` is true, else `mendersoftware/workflows` |
 | `workflows.image.tag` | Docker image tag | `nil` |
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `workflows.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `workflows.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `workflows.podAnnotations` | add custom pod annotations | `nil` |
 | `workflows.replicas` | Number of replicas | `1` |
@@ -610,6 +657,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `workflows.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `workflows.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `workflows.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -623,6 +671,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
 | `create_artifact_worker.image.tag` | Docker image tag | `nil` |
 | `create_artifact_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `create_artifact_worker.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `create_artifact_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `create_artifact_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
@@ -637,6 +686,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `create_artifact_worker.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `create_artifact_worker.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
+| `create_artifact_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: auditlogs
 
@@ -650,6 +700,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.image.repository` | Docker image repository | `mendersoftware/auditlogs` |
 | `auditlogs.image.tag` | Docker image tag | `nil` |
 | `auditlogs.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `auditlogs.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `auditlogs.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `auditlogs.podAnnotations` | add custom pod annotations | `nil` |
 | `auditlogs.logRetentionSeconds` | Seconds before an audit event is evicted from the database | `2592000` |
@@ -678,6 +729,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `auditlogs.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `auditlogs.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `auditlogs.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: iot-manager
 
@@ -691,6 +743,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.image.repository` | Docker image repository | `mendersoftware/iot-manager` |
 | `iot_manager.image.tag` | Docker image tag | `nil` |
 | `iot_manager.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `iot_manager.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `iot_manager.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `iot_manager.image.podAnnotations` | add custom pod annotations | `nil` |
 | `iot_manager.replicas` | Number of replicas | `1` |
@@ -718,6 +771,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `iot_manager.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `iot_manager.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `iot_manager.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -731,6 +785,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.image.repository` | Docker image repository | `mendersoftware/deviceconnect` |
 | `deviceconnect.image.tag` | Docker image tag | `nil` |
 | `deviceconnect.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deviceconnect.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `deviceconnect.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deviceconnect.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconnect.replicas` | Number of replicas | `1` |
@@ -758,6 +813,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `deviceconnect.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deviceconnect.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -771,6 +827,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.image.repository` | Docker image repository | `mendersoftware/deviceconfig` |
 | `deviceconfig.image.tag` | Docker image tag | `nil` |
 | `deviceconfig.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `deviceconfig.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `deviceconfig.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `deviceconfig.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconfig.replicas` | Number of replicas | `1` |
@@ -798,6 +855,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `deviceconfig.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deviceconfig.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `deviceconfig.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -811,6 +869,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.image.repository` | Docker image repository | `mendersoftware/devicemonitor` |
 | `devicemonitor.image.tag` | Docker image tag | `nil` |
 | `devicemonitor.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `devicemonotor.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `devicemonitor.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `devicemonitor.podAnnotations` | add custom pod annotations | `nil` |
 | `devicemonitor.replicas` | Number of replicas | `1` |
@@ -840,6 +899,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `devicemonitor.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `devicemonitor.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `devicemonitor.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is
@@ -855,6 +915,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.image.repository` | Docker image repository | `mendersoftware/generate-delta-worker` |
 | `generate_delta_worker.image.tag` | Docker image tag | `nil` |
 | `generate_delta_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `generate_delta_worker.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `generate_delta_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `generate_delta_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `generate_delta_worker.replicas` | Number of replicas | `1` |
@@ -863,6 +924,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.resources.limits.memory` | Resources memory limit | `1024M` |
 | `generate_delta_worker.resources.requests.cpu` | Resources CPU request | `100m` |
 | `generate_delta_worker.resources.requests.memory` | Resources memory request | `128M` |
+| `generate_delta_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: redis
 

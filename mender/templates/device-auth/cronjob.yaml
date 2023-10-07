@@ -40,8 +40,16 @@ spec:
                 name: mongodb-common
 
           restartPolicy: Never
+
 {{- if .Values.global.image.username }}
           imagePullSecrets:
           - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.device_auth.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+          imagePullSecrets:
+{{ toYaml $ips | indent 10 }}
 {{- end }}
+{{- end }}
+
 {{- end }}

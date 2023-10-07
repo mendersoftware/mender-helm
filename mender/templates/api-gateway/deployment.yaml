@@ -87,6 +87,9 @@ spec:
             - --providers.file.filename=/etc/traefik/config/traefik.yaml
             - --ping=true
             - --ping.manualrouting=true
+{{- if .Values.api_gateway.extraArgs }}
+{{- .Values.api_gateway.extraArgs | toYaml | nindent 12 }}
+{{- end }}
         resources:
 {{ toYaml .Values.api_gateway.resources | indent 10 }}
 
@@ -143,11 +146,29 @@ spec:
 {{- if .Values.api_gateway.env.SSL }}
       - name: certs
         secret:
+          {{- with .Values.api_gateway.certs }}
+          {{- if .existingSecret }}
+          secretName: {{ .existingSecret }}
+          {{- else }}
           secretName: api-gateway
+          {{- end }}
+          {{- end }}
 {{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.api_gateway.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+      imagePullSecrets:
+{{ toYaml $ips | indent 6 }}
 {{- end }}
+{{- end }}
+
+{{- $pcn := coalesce .Values.api_gateway.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
+
 {{- end }}

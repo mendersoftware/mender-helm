@@ -96,12 +96,23 @@ spec:
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:
-            name: mongodb-common
+            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.workflows.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+      imagePullSecrets:
+{{ toYaml $ips | indent 6 }}
 {{- end }}
+{{- end }}
+
+{{- $pcn := coalesce .Values.workflows.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
 
 {{- with .Values.workflows.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}

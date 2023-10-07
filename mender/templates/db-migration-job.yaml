@@ -258,6 +258,12 @@ spec:
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry-prerelease
+{{- else }}
+{{- $ips := .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+      imagePullSecrets:
+{{ toYaml $ips | indent 6 }}
+{{- end }}
 {{- end }}
 
 {{- with .Values.dbmigration.nodeSelector }}

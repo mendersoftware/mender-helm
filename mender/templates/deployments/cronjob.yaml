@@ -60,10 +60,18 @@ spec:
             securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 14 }}
             {{- end }}
           restartPolicy: Never
-          {{- if .Values.global.image.username }}
+
+{{- if .Values.global.image.username }}
           imagePullSecrets:
           - name: docker-registry
-          {{- end }}
+{{- else }}
+{{- $ips := coalesce .Values.deployments.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+          imagePullSecrets:
+{{ toYaml $ips | indent 10 }}
+{{- end }}
+{{- end }}
+
           {{- with .Values.deployments.nodeSelector }}
           nodeSelector: {{ toYaml . | nindent 8 }}
           {{- end }}

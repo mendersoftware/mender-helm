@@ -118,15 +118,26 @@ spec:
         envFrom:
         - prefix: DEPLOYMENTS_
           secretRef:
-            name: mongodb-common
+            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
         - prefix: DEPLOYMENTS_
           secretRef:
-            name: artifacts-storage
+            name: {{ .Values.global.s3.existingSecret | default "artifacts-storage" }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.deployments.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+      imagePullSecrets:
+{{ toYaml $ips | indent 6 }}
 {{- end }}
+{{- end }}
+
+{{- $pcn := coalesce .Values.deployments.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
 
 {{- with .Values.deployments.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}

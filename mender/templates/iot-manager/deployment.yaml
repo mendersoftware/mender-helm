@@ -91,12 +91,23 @@ spec:
         envFrom:
         - prefix: IOT_MANAGER_
           secretRef:
-            name: mongodb-common
+            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.iot_manager.imagePullSecrets .Values.default.imagePullSecrets  }}
+{{- if $ips }}
+      imagePullSecrets:
+{{ toYaml $ips | indent 6 }}
 {{- end }}
+{{- end }}
+
+{{- $pcn := coalesce .Values.iot_manager.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end -}}
 
 {{- with .Values.iot_manager.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
