@@ -285,6 +285,10 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `api_gateway.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
 | `api_gateway.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `api_gateway.certs` | certificate management | `nil` |
+| `api_gateway.certs.cert` | Public certificate (with full chain optionally) in PEM format | `nil` |
+| `api_gateway.certs.key` | Private key in PEM format | `nil` |
+| `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
 
 ### Parameters: deployments
 
@@ -388,6 +392,9 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `device_auth.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
 | `device_auth.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `device_auth.certs` | certificate management | `nil` |
+| `device_auth.certs.key` | Private key in PEM format | `nil` |
+| `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 
 ### Parameters: gui
 
@@ -546,6 +553,9 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `tenantadm.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
 | `tenantadm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `tenantadm.certs` | certificate management | `nil` |
+| `tenantadm.certs.key` | Private key in PEM format | `nil` |
+| `tenantadm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 
 The default value for the rate limits are:
 
@@ -609,6 +619,9 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `useradm.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
 | `useradm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `useradm.certs` | certificate management | `nil` |
+| `useradm.certs.key` | Private key in PEM format | `nil` |
+| `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 
 ### Parameters: workflows
 

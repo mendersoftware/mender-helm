@@ -213,6 +213,16 @@ api_gateway:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+  certs: {}
+    # cert: |-
+    #   -----BEGIN CERTIFICATE-----
+    #   ...
+    #   -----END CERTIFICATE-----
+    # key: |-
+    #   -----BEGIN PRIVATE KEY-----
+    #   ...
+    #   -----END PRIVATE KEY-----
+    # existingSecret: my-secret-name
 
 deployments:
   enabled: true
@@ -303,6 +313,12 @@ device_auth:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+  certs: {}
+    # key: |-
+    #   -----BEGIN PRIVATE KEY-----
+    #   ...
+    #   -----END PRIVATE KEY-----
+    # existingSecret: my-secret-name
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -442,6 +458,12 @@ tenantadm:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+  certs: {}
+    # key: |-
+    #   -----BEGIN PRIVATE KEY-----
+    #   ...
+    #   -----END PRIVATE KEY-----
+    # existingSecret: my-secret-name
 
 useradm:
   enabled: true
@@ -488,6 +510,12 @@ useradm:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+  certs: {}
+    # key: |-
+    #   -----BEGIN PRIVATE KEY-----
+    #   ...
+    #   -----END PRIVATE KEY-----
+    # existingSecret: my-secret-name
 
 workflows:
   enabled: true
