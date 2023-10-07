@@ -7,6 +7,7 @@
 * You can now add pre-existing `priorityClassName` to the resources
 * Added PodDisruptionBudget resources to the most critical services
 * Added option to use existing secrets for certificates (thanks @bdomars)
+* Allow to use external secrets for NATS, MongoDB, and S3 (thanks @benjamin-texier)
 
 ## Version 5.2.4
 * Added HPA to the most critical services
