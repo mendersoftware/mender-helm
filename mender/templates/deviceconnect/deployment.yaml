@@ -97,6 +97,10 @@ spec:
           value: "true"
 {{- end }}
 
+        # Graceful shutdown timeout
+        - name: DEVICECONNECT_GRACEFUL_SHUTDOWN_TIMEOUT
+          value: {{ .Values.deviceconnect.gracefulShutdownTimeout }}
+
         # Workflows orchestrator address
         - name: DEVICECONNECT_WORKFLOWS_URL
           value: http://mender-workflows-server:8080/
@@ -118,6 +122,13 @@ spec:
           secretRef:
             name: {{ .Values.global.nats.existingSecret }}
 {{- end -}}
+
+      # Graceful shutdown
+      lifecycle:
+        preStop:
+          httpGet:
+            port: 8080
+            path: shutdown
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

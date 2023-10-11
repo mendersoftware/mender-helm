@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.2.6
+* Add graceful shutdown for deviceconnect, defaults to `60s`.
+
 ## Version 5.2.5
 * Added support to external Image Pull Secrets
 * Added support to extraArgs to the `api_gateway` service

@@ -686,6 +686,7 @@ deviceconnect:
     enabled: false
     allowPrivilegeEscalation: false
     runAsUser: 65534
+  gracefulShutdownTimeout: "60s"
   hpa: {}
   pdb: {}
   priorityClassName: ""
