@@ -814,6 +814,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deviceconnect.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `deviceconnect.gracefulShutdownTimeout` | Timeout for the graceful shutdown | `60s` |
+| `deviceconnect.terminationGracePeriodSeconds` | Termination grace period in seconds | `65` |
 | `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 
 ### Parameters: deviceconfig
