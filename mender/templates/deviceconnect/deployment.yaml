@@ -121,7 +121,7 @@ spec:
         - prefix: DEVICECONNECT_
           secretRef:
             name: {{ .Values.global.nats.existingSecret }}
-{{- end -}}
+{{- end }}
 
         # Graceful shutdown
         lifecycle:
