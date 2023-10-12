@@ -123,12 +123,15 @@ spec:
             name: {{ .Values.global.nats.existingSecret }}
 {{- end -}}
 
-      # Graceful shutdown
-      lifecycle:
-        preStop:
-          httpGet:
-            port: 8080
-            path: shutdown
+        # Graceful shutdown
+        lifecycle:
+          preStop:
+            httpGet:
+              port: 8080
+              path: api/internal/v1/deviceconnect/shutdown
+
+      # Termination grace period should be higher than graceful shutdown timeout
+      terminationGracePeriodSeconds: {{ .Values.deviceconnect.terminationGracePeriodSeconds }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
