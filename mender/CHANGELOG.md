@@ -2,6 +2,7 @@
 
 ## Version 5.2.6
 * Add graceful shutdown for deviceconnect, defaults to `60s`.
+* Fix: indent cronjob annotations correctly (thanks @vphoikka)
 
 ## Version 5.2.5
 * Added support to external Image Pull Secrets
