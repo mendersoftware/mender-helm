@@ -39,26 +39,6 @@ spec:
       restartPolicy: Never
       containers:
 
-
-      - name: deviceconfig-migration
-{{- if .Values.global.enterprise }}
-        image: {{ .Values.deviceconfig.image.registry | default "registry.mender.io" }}/{{ .Values.deviceconfig.image.repository | default "mendersoftware/deviceconfig-enterprise" }}:{{ .Values.deviceconfig.image.tag | default .Values.global.image.tag }}
-{{- else }}
-        image: {{ .Values.deviceconfig.image.registry | default "docker.io" }}/{{ .Values.deviceconfig.image.repository | default "mendersoftware/deviceconfig" }}:{{ .Values.deviceconfig.image.tag | default .Values.global.image.tag }}
-{{- end }}
-        imagePullPolicy: {{ .Values.deviceconfig.image.imagePullPolicy }}
-{{- if .Values.deviceconfig.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.deviceconfig.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        envFrom:
-        - prefix: DEVICECONFIG_
-          secretRef:
-            name: mongodb-common-prerelease
-        resources:
-{{ toYaml .Values.deviceconfig.resources | indent 10 }}
-        args: ["migrate"]
-
-
 {{- if .Values.global.enterprise }}
       - name: devicemonitor-migration
         image: {{ .Values.devicemonitor.image.registry | default "registry.mender.io" }}/{{ .Values.devicemonitor.image.repository | default "mendersoftware/devicemonitor-enterprise" }}:{{ .Values.devicemonitor.image.tag | default .Values.global.image.tag }}

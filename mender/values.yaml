@@ -780,6 +780,22 @@ deviceconfig:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## deviceconfig.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## deviceconfig.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default deviceconfig.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 devicemonitor:
   enabled: true

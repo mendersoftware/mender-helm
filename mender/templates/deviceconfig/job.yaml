@@ -1,0 +1,19 @@
+{{- if and .Values.deviceconfig.enabled .Values.dbmigration.enable }}
+{{- $context := (dict "dot" . "component" "deviceconfig" "migration" "true" "restartPolicy" (default "Never" .Values.deviceconfig.migrationRestartPolicy) "extraResources" .Values.deviceconfig.migrationResources) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "mender.servicename" $context }}-migration
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    {{- include "mender.labels" $context | nindent 4 }}
+spec:
+  backoffLimit: 5
+  template:
+    {{- include "mender.deviceconfigPodTemplate" $context | nindent 4}}
+
+{{- end }}
