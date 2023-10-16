@@ -465,6 +465,27 @@ tenantadm:
     #   -----END PRIVATE KEY-----
     # existingSecret: my-secret-name
 
+  ## Migration Job
+  
+  ## tenantadm.migrationArgs: list of optional arguments to pass to the migration job. 
+  ## default: ["migrate"]
+  # migrationArgs: []
+
+  ## tenantadm.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## tenantadm.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default tenantadm.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
+
+
 useradm:
   enabled: true
   podAnnotations: {}

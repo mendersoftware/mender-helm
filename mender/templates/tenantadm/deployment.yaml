@@ -1,5 +1,5 @@
 {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) }}
-{{- $merged := merge (deepCopy .Values.tenantadm) (deepCopy (default (dict) .Values.default)) -}}
+{{- $context := (dict "dot" . "component" "tenantadm") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,111 +31,6 @@ spec:
       maxUnavailable: 1
 
   template:
-    metadata:
-      {{- with .Values.tenantadm.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm
-        app.kubernetes.io/component: tenantadm
-    spec:
-      {{- with $merged.affinity }}
-      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- with $merged.tolerations }}
-      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-{{- if .Values.tenantadm.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.tenantadm.podSecurityContext "enabled" | toYaml | nindent 8 }}
-{{- end }}
-
-      containers:
-      - name: tenantadm
-        image: {{ .Values.tenantadm.image.registry }}/{{ .Values.tenantadm.image.repository }}:{{ .Values.tenantadm.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.tenantadm.image.imagePullPolicy }}
-{{- if .Values.tenantadm.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        resources:
-{{ toYaml .Values.tenantadm.resources | indent 10 }}
-
-        # Readiness/liveness probes
-        readinessProbe:
-          httpGet:
-            path: /api/internal/v1/tenantadm/health
-            port: 8080
-          periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            path: /api/internal/v1/tenantadm/alive
-            port: 8080
-          periodSeconds: 5
-        startupProbe:
-          httpGet:
-            path: /api/internal/v1/tenantadm/alive
-            port: 8080
-          failureThreshold: 36
-          periodSeconds: 5
-
-        volumeMounts:
-        - name: rsa
-          mountPath: "/etc/tenantadm/rsa/"
-          readOnly: true
-
-        env:
-        - name: TENANTADM_MIDDLEWARE
-          value: {{ .Values.tenantadm.env.TENANTADM_MIDDLEWARE | quote }}
-        - name: TENANTADM_SERVER_PRIV_KEY_PATH
-          value: {{ .Values.tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH | quote }}
-        - name: TENANTADM_ORCHESTRATOR_ADDR
-          value: {{ .Values.tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR | quote }}
-        - name: TENANTADM_RECAPTCHA_URL_VERIFY
-          value: {{ .Values.tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY | quote }}
-        - name: TENANTADM_DEFAULT_API_LIMITS
-          value: {{ .Values.tenantadm.env.TENANTADM_DEFAULT_API_LIMITS | quote }}
-{{- if .Values.global.hosted }}
-        - name: TENANTADM_ENABLE_SELF_SERVICE_SIGN_UP
-          value: {{ .Values.global.hosted | quote }}
-{{- end }}
-
-        # Supported configuration settings: https://github.com/mendersoftware/tenantadm/blob/master/config.yaml
-        # Set in order, last value for the key will be used in case duplications.
-        envFrom:
-        - prefix: TENANTADM_
-          secretRef:
-            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
-
-{{- with .Values.tenantadm.nodeSelector }}
-      nodeSelector: {{ toYaml . | nindent 8 }}
-{{- end }}
-
-      volumes:
-      - name: rsa
-        secret:
-          {{- with .Values.tenantadm.certs }}
-          {{- if .existingSecret }}
-          secretName: {{ .existingSecret }}
-          {{- else }}
-          secretName: rsa-tenantadm
-          {{- end }}
-          {{- end }}
-
-{{- if .Values.global.image.username }}
-      imagePullSecrets:
-      - name: docker-registry
-{{- else }}
-{{- $ips := coalesce .Values.tenantadm.imagePullSecrets .Values.default.imagePullSecrets  }}
-{{- if $ips }}
-      imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
-{{- end }}
-{{- end }}
-
-{{- $pcn := coalesce .Values.tenantadm.priorityClassName .Values.global.priorityClassName -}}
-{{- if $pcn }}
-      priorityClassName: {{ $pcn }}
-{{- end -}}
+    {{- include "mender.tenantadmPodTemplate" $context | nindent 4 }}
 
 {{- end }}

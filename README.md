@@ -556,6 +556,9 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.certs` | certificate management | `nil` |
 | `tenantadm.certs.key` | Private key in PEM format | `nil` |
 | `tenantadm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `tenantadm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `tenantadm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `tenantadm.migrationArgs` | Migration job: optional migration args (list). | `["migrate"]` |
 
 The default value for the rate limits are:
 

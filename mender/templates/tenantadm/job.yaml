@@ -1,0 +1,19 @@
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) (.Values.dbmigration.enable) }}
+{{- $context := (dict "dot" . "component" "tenantadm" "migration" "true"  "args" (default (list "migrate") .Values.tenantadm.migrationArgs ) "restartPolicy" (default "Never" .Values.tenantadm.migrationRestartPolicy) "extraResources" .Values.tenantadm.migrationResources) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "mender.servicename" $context }}-migration
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    {{- include "mender.labels" $context | nindent 4 }}
+spec:
+  backoffLimit: 5
+  template:
+    {{- include "mender.tenantadmPodTemplate" $context | nindent 4}}
+
+{{- end }}

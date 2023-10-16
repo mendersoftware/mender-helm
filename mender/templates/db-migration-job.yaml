@@ -40,22 +40,6 @@ spec:
       containers:
 
 
-{{- if .Values.global.enterprise }}
-      - name: tenantadm-migration
-        image: {{ .Values.tenantadm.image.registry | default "registry.mender.io" }}/{{ .Values.tenantadm.image.repository | default "mendersoftware/tenantadm-enterprise" }}:{{ .Values.tenantadm.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.tenantadm.image.imagePullPolicy }}
-{{- if .Values.tenantadm.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        envFrom:
-        - prefix: TENANTADM_
-          secretRef:
-            name: mongodb-common-prerelease
-        resources:
-{{ toYaml .Values.tenantadm.resources | indent 10 }}
-        args: ["migrate"]
-{{- end }}
-
 
       - name: deployments-migration
 {{- if .Values.global.enterprise }}
