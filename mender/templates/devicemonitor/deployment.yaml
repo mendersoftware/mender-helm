@@ -1,5 +1,5 @@
 {{- if and .Values.devicemonitor.enabled .Values.global.enterprise }}
-{{- $merged := merge (deepCopy .Values.devicemonitor) (deepCopy (default (dict) .Values.default)) -}}
+{{- $context := (dict "dot" . "component" "devicemonitor") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,94 +31,6 @@ spec:
       maxUnavailable: 1
 
   template:
-    metadata:
-      {{- with .Values.devicemonitor.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        app.kubernetes.io/name: {{ include "mender.fullname" . }}-devicemonitor
-        {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: devicemonitor
-    spec:
-      {{- with $merged.affinity }}
-      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- with $merged.tolerations }}
-      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-{{- if .Values.devicemonitor.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.devicemonitor.podSecurityContext "enabled" | toYaml | nindent 8 }}
-{{- end }}
+    {{- include "mender.devicemonitorPodTemplate" $context | nindent 4 }}
 
-      containers:
-      - name: devicemonitor
-        image: {{ .Values.devicemonitor.image.registry }}/{{ .Values.devicemonitor.image.repository }}:{{ .Values.devicemonitor.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.devicemonitor.image.imagePullPolicy }}
-{{- if .Values.devicemonitor.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.devicemonitor.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        resources:
-{{ toYaml .Values.devicemonitor.resources | indent 10 }}
-
-{{- if .Values.devicemonitor.automigrate }}
-        args: ["server", "--automigrate"]
-{{- else }}
-        args: ["server"]
-{{- end }}
-
-        # Readiness/liveness probes
-        readinessProbe:
-           httpGet:
-             path: /api/internal/v1/devicemonitor/health
-             port: 8080
-           periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            path: /api/internal/v1/devicemonitor/alive
-            port: 8080
-          periodSeconds: 5
-        startupProbe:
-          httpGet:
-            path: /api/internal/v1/devicemonitor/alive
-            port: 8080
-          failureThreshold: 36
-          periodSeconds: 5
-
-        env:
-        # Workflows orchestrator address
-        - name: DEVICEMONITOR_USERADM_URL
-          value: {{ .Values.device_auth.env.DEVICEMONITOR_USERADM_URL | quote }}
-
-        # Workflows orchestrator address
-        - name: DEVICEMONITOR_WORKFLOWS_URL
-          value: {{ .Values.device_auth.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
-
-        # Supported configuration settings: https://github.com/mendersoftware/devicemonitor/blob/master/config.yaml
-        # Set in order, last value for the key will be used in case duplications.
-        envFrom:
-        - prefix: DEVICEMONITOR_
-          secretRef:
-            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
-
-{{- if .Values.global.image.username }}
-      imagePullSecrets:
-      - name: docker-registry
-{{- else }}
-{{- $ips := coalesce .Values.devicemonitor.imagePullSecrets .Values.default.imagePullSecrets  }}
-{{- if $ips }}
-      imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
-{{- end }}
-{{- end }}
-
-
-{{- $pcn := coalesce .Values.devicemonitor.priorityClassName .Values.global.priorityClassName -}}
-{{- if $pcn }}
-      priorityClassName: {{ $pcn }}
-{{- end -}}
-
-{{- with .Values.devicemonitor.nodeSelector }}
-      nodeSelector: {{ toYaml . | nindent 8 }}
-{{- end }}
 {{- end }}

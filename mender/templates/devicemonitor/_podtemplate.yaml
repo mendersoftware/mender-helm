@@ -1,0 +1,102 @@
+{{- define "mender.devicemonitorPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.devicemonitor.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.devicemonitor.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.devicemonitor.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .dot.Values.devicemonitor.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.devicemonitor.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+  containers:
+  - name: {{ ternary "devicemonitor" "devicemonitor-migration" (empty .migration) | quote }}
+    image: {{ .dot.Values.devicemonitor.image.registry }}/{{ .dot.Values.devicemonitor.image.repository }}:{{ .dot.Values.devicemonitor.image.tag | default .dot.Values.global.image.tag }}
+    imagePullPolicy: {{ .dot.Values.devicemonitor.image.imagePullPolicy }}
+    {{- if .dot.Values.devicemonitor.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.devicemonitor.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.devicemonitor.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    {{- if .dot.Values.devicemonitor.automigrate }}
+    args: ["server", "--automigrate"]
+    {{- else }}
+    args: ["server"]
+    {{- end }}
+    {{- else }}
+    args: ["migrate"]
+    {{- end }}
+
+
+    {{- if (not .migration) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/internal/v1/devicemonitor/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /api/internal/v1/devicemonitor/alive
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /api/internal/v1/devicemonitor/alive
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    env:
+    # Workflows orchestrator address
+    - name: DEVICEMONITOR_USERADM_URL
+      value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_USERADM_URL | quote }}
+
+    # Workflows orchestrator address
+    - name: DEVICEMONITOR_WORKFLOWS_URL
+      value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
+
+    # Supported configuration settings: https://github.com/mendersoftware/devicemonitor/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: DEVICEMONITOR_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.devicemonitor.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.devicemonitor.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+  {{- with (coalesce .dot.Values.devicemonitor.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

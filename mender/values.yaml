@@ -832,6 +832,22 @@ devicemonitor:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## devicemonitor.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## devicemonitor.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default devicemonitor.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only
