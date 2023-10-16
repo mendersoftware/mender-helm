@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.2.7
+* Traefik updated to `v2.10.5`
+
 ## Version 5.2.6
 * Add graceful shutdown for deviceconnect, defaults to `60s`.
 * Fix: indent cronjob annotations correctly (thanks @vphoikka)
