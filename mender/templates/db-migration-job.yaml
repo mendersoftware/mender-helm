@@ -41,24 +41,6 @@ spec:
 
 
 
-      - name: deployments-migration
-{{- if .Values.global.enterprise }}
-        image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
-{{- else }}
-        image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
-{{- end }}
-        imagePullPolicy: {{ .Values.deployments.image.imagePullPolicy }}
-{{- if .Values.deployments.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        envFrom:
-        - prefix: DEPLOYMENTS_
-          secretRef:
-            name: mongodb-common-prerelease
-        resources:
-{{ toYaml .Values.deployments.resources | indent 10 }}
-        args: ["migrate"]
-
 
 
       - name: device-auth-migration

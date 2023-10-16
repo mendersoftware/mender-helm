@@ -339,6 +339,8 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `deployments.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
 | `deployments.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `deployments.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `deployments.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: device-auth
 
