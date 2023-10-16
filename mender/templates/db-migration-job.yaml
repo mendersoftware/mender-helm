@@ -40,29 +40,6 @@ spec:
       containers:
 
 
-
-
-
-      - name: device-auth-migration
-{{- if .Values.global.enterprise }}
-        image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
-{{- else }}
-        image: {{ .Values.device_auth.image.registry | default "docker.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
-{{- end }}
-        imagePullPolicy: {{ .Values.device_auth.image.imagePullPolicy }}
-{{- if .Values.device_auth.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.device_auth.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        envFrom:
-        - prefix: DEVICEAUTH_
-          secretRef:
-            name: mongodb-common-prerelease
-        resources:
-{{ toYaml .Values.device_auth.resources | indent 10 }}
-        args: ["migrate"]
-
-
-
       - name: deviceconfig-migration
 {{- if .Values.global.enterprise }}
         image: {{ .Values.deviceconfig.image.registry | default "registry.mender.io" }}/{{ .Values.deviceconfig.image.repository | default "mendersoftware/deviceconfig-enterprise" }}:{{ .Values.deviceconfig.image.tag | default .Values.global.image.tag }}

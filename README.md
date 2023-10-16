@@ -397,6 +397,8 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.certs` | certificate management | `nil` |
 | `device_auth.certs.key` | Private key in PEM format | `nil` |
 | `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: gui
 

@@ -1,0 +1,156 @@
+{{- define "mender.deviceauthPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.device_auth.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.device_auth.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.device_auth.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .dot.Values.device_auth.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.device_auth.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+  containers:
+  - name: {{ ternary "device-auth" "device-auth-migration" (empty .migration) | quote }}
+
+    {{- if .dot.Values.global.enterprise }}
+    image: {{ .dot.Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .dot.Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .dot.Values.device_auth.image.tag | default .dot.Values.global.image.tag }}
+    {{- else }}
+    image: {{ .dot.Values.device_auth.image.registry | default "docker.io" }}/{{ .dot.Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .dot.Values.device_auth.image.tag | default .dot.Values.global.image.tag }}
+    {{- end }}
+
+    imagePullPolicy: {{ .dot.Values.device_auth.image.imagePullPolicy }}
+    {{- if .dot.Values.device_auth.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.device_auth.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.device_auth.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    {{- if .dot.Values.device_auth.automigrate }}
+    args: ["server", "--automigrate"]
+    {{- else }}
+    args: ["server"]
+    {{- end }}
+    {{- else }}
+    args: ["migrate"]
+    {{- end }}
+
+
+    {{- if (not .migration) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/internal/v1/devauth/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /api/internal/v1/devauth/alive
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /api/internal/v1/devauth/alive
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    {{- if (not .migration) }}
+    volumeMounts:
+    - name: rsa
+      {{- if .dot.Values.global.enterprise }}
+      mountPath: "/etc/deviceauth-enterprise/rsa/"
+      {{- else }}
+      mountPath: "/etc/deviceauth/rsa/"
+      {{- end }}
+      readOnly: true
+    {{- end }}
+
+    env:
+    - name: DEVICEAUTH_INVENTORY_ADDR
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_INVENTORY_ADDR | quote }}
+    - name: DEVICEAUTH_ORCHESTRATOR_ADDR
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR | quote }}
+    - name: DEVICEAUTH_JWT_ISSUER
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_JWT_ISSUER | quote }}
+    - name: DEVICEAUTH_JWT_EXP_TIMEOUT
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT | quote }}
+    - name: DEVICEAUTH_MIDDLEWARE
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_MIDDLEWARE | quote }}
+    {{- if and (.dot.Values.global.enterprise) (.dot.Values.tenantadm.enabled) }}
+    - name: DEVICEAUTH_HAVE_ADDONS
+      value: "true"
+    - name: DEVICEAUTH_TENANTADM_ADDR
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
+    {{- end }}
+    {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
+    - name: DEVICEAUTH_REDIS_ADDR
+      value: {{ include "redis_address" . }}
+    - name: DEVICEAUTH_REDIS_USERNAME
+      value: {{ .dot.Values.global.redis.username | default "" | quote }}
+    - name: DEVICEAUTH_REDIS_PASSWORD
+      value: {{ .dot.Values.global.redis.password | default "" | quote }}
+    - name: DEVICEAUTH_REDIS_DB
+      value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_DB | default "1" | quote }}
+    - name: DEVICEAUTH_REDIS_TIMEOUT_SEC
+      value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_TIMEOUT_SEC | default "1" | quote }}
+    - name: DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC
+      value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
+    {{- end }}
+
+    # Supported configuration settings: https://github.com/mendersoftware/deviceauth/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: DEVICEAUTH_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+
+
+  {{- with (coalesce .dot.Values.device_auth.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- if (not .migration) }}
+  volumes:
+  - name: rsa
+    secret:
+      {{- with .dot.Values.device_auth.certs }}
+      {{- if .existingSecret }}
+      secretName: {{ .existingSecret }}
+      {{- else }}
+      secretName: rsa-device-auth
+      {{- end }}
+      {{- end }}
+  {{- end }}
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.device_auth.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.device_auth.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+{{- end }}

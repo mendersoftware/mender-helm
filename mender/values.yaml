@@ -335,6 +335,22 @@ device_auth:
     #   ...
     #   -----END PRIVATE KEY-----
     # existingSecret: my-secret-name
+ 
+  ## Migration Job
+  
+  ## device_auth.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## device_auth.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default device_auth.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
