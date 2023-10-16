@@ -30,15 +30,23 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "mender.labels" -}}
-helm.sh/chart: {{ include "mender.chart" . }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+helm.sh/chart: {{ include "mender.chart" $dot }}
+app.kubernetes.io/managed-by: {{ $dot.Release.Service }}
 app.kubernetes.io/part-of: mender
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/instance: {{ $dot.Release.Name }}
+app.kubernetes.io/version: {{ $dot.Chart.AppVersion | quote }}
+{{ include "mender.selectorLabels" . -}}
 {{- end }}
-{{- with .Values.labels }}
-{{ toYaml . }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "mender.selectorLabels" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if .component -}}
+app.kubernetes.io/name: {{ printf "%s-%s" (include "mender.fullname" $dot) .component }}
+app.kubernetes.io/component: {{ .component }}
 {{- end }}
 {{- end }}
 
@@ -183,5 +191,19 @@ spec:
   selector:
     matchLabels:
       run: {{ .name }}
+{{- end }}
+{{- end }}
+
+{{- define "mender.servicename" -}}
+{{- printf "%s-%s" ( include "mender.fullname" .dot ) .component }}
+{{- end }}
+
+{{- define "mender.resources" -}}
+{{- $resources := dict }}
+{{- range . }}{{- if . }}
+{{- $resources := mergeOverwrite $resources (deepCopy .) }}
+{{- end }}{{- end }}
+{{- if $resources }}
+{{- toYaml $resources }}
 {{- end }}
 {{- end }}
