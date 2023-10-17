@@ -91,10 +91,11 @@ MongoDB URI
 nats_uri
 */}}
 {{- define "nats_uri" }}
-  {{- if and .Values.nats.enabled ( not .Values.global.nats.URL ) }}
-    {{- printf "nats://%s" ( include "nats.fullname" .Subcharts.nats ) -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+  {{- if and $dot.Values.nats.enabled ( not $dot.Values.global.nats.URL ) }}
+    {{- printf "nats://%s" ( include "nats.fullname" $dot.Subcharts.nats ) -}}
   {{- else }}
-    {{- printf .Values.global.nats.URL | quote }}
+    {{- printf $dot.Values.global.nats.URL | quote }}
   {{- end }}
 {{- end }}
 
