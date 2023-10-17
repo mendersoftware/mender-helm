@@ -449,6 +449,22 @@ inventory:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## inventory.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## inventory.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default inventory.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 tenantadm:
   enabled: true
