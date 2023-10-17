@@ -39,25 +39,6 @@ spec:
       restartPolicy: Never
       containers:
 
-      - name: deviceconnect-migration
-{{- if .Values.global.enterprise }}
-        image: {{ .Values.deviceconnect.image.registry | default "registry.mender.io" }}/{{ .Values.deviceconnect.image.repository | default "mendersoftware/deviceconnect-enterprise" }}:{{ .Values.deviceconnect.image.tag | default .Values.global.image.tag }}
-{{- else }}
-        image: {{ .Values.deviceconnect.image.registry | default "docker.io" }}/{{ .Values.deviceconnect.image.repository | default "mendersoftware/deviceconnect" }}:{{ .Values.deviceconnect.image.tag | default .Values.global.image.tag }}
-{{- end }}
-        imagePullPolicy: {{ .Values.deviceconnect.image.imagePullPolicy }}
-{{- if .Values.deviceconnect.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.deviceconnect.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        envFrom:
-        - prefix: DEVICECONNECT_
-          secretRef:
-            name: mongodb-common-prerelease
-        resources:
-{{ toYaml .Values.deviceconnect.resources | indent 10 }}
-        args: ["migrate"]
-
-
       - name: inventory-migration
 {{- if .Values.global.enterprise }}
         image: {{ .Values.inventory.image.registry | default "registry.mender.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory-enterprise" }}:{{ .Values.inventory.image.tag | default .Values.global.image.tag }}

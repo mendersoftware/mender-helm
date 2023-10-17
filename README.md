@@ -823,6 +823,8 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.gracefulShutdownTimeout` | Timeout for the graceful shutdown | `60s` |
 | `deviceconnect.terminationGracePeriodSeconds` | Termination grace period in seconds | `65` |
 | `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `deviceconnect.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `deviceconnect.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: deviceconfig
 

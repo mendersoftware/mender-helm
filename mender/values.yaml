@@ -744,6 +744,22 @@ deviceconnect:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## deviceconnect.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## deviceconnect.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default deviceconnect.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 deviceconfig:
   enabled: true

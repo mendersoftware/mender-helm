@@ -1,0 +1,137 @@
+{{- define "mender.deviceconnectPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.deviceconnect.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.deviceconnect.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.deviceconnect.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .dot.Values.deviceconnect.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.deviceconnect.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+  containers:
+  - name: {{ ternary "deviceconnect" "deviceconnect-migration" (empty .migration) | quote }}
+    image: {{ .dot.Values.deviceconnect.image.registry }}/{{ .dot.Values.deviceconnect.image.repository }}:{{ .dot.Values.deviceconnect.image.tag | default .dot.Values.global.image.tag }}
+    imagePullPolicy: {{ .dot.Values.deviceconnect.image.imagePullPolicy }}
+    {{- if .dot.Values.deviceconnect.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.deviceconnect.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.deviceconnect.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    {{- if .dot.Values.deviceconnect.automigrate }}
+    args: ["server", "--automigrate"]
+    {{- else }}
+    args: ["server"]
+    {{- end }}
+    {{- else }}
+    args: ["migrate"]
+    {{- end }}
+
+
+    {{- if (not .migration) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/internal/v1/deviceconnect/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /api/internal/v1/deviceconnect/alive
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /api/internal/v1/deviceconnect/alive
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    env:
+    # NATS uri
+    {{- if not .dot.Values.global.nats.existingSecret }}
+    - name: DEVICECONNECT_NATS_URI
+      value: {{ template "nats_uri" . }}
+    {{- end }}
+    # Enable audit logging
+    {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
+    - name: DEVICECONNECT_ENABLE_AUDIT
+      value: "true"
+    {{- end }}
+
+    # Graceful shutdown timeout
+    - name: DEVICECONNECT_GRACEFUL_SHUTDOWN_TIMEOUT
+      value: {{ .dot.Values.deviceconnect.gracefulShutdownTimeout }}
+
+    # Workflows orchestrator address
+    - name: DEVICECONNECT_WORKFLOWS_URL
+      value: http://mender-workflows-server:8080/
+
+    - name: DEVICECONNECT_WS_ALLOWED_ORIGINS
+      value: >-
+        {{ with (urlParse .dot.Values.global.url) -}}
+        {{.hostname}} https://{{.hostname}} wss://{{.hostname}}
+        {{- end }}
+
+    # Supported configuration settings: https://github.com/mendersoftware/deviceconnect/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: DEVICECONNECT_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+    {{- if .dot.Values.global.nats.existingSecret }}
+    - prefix: DEVICECONNECT_
+      secretRef:
+        name: {{ .dot.Values.global.nats.existingSecret }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    # Graceful shutdown
+    lifecycle:
+      preStop:
+        httpGet:
+          port: 8080
+          path: api/internal/v1/deviceconnect/shutdown
+    {{- end }}
+
+  {{- if (not .migration) }}
+  # Termination grace period should be higher than graceful shutdown timeout
+  terminationGracePeriodSeconds: {{ .dot.Values.deviceconnect.terminationGracePeriodSeconds }}
+  {{- end }}
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.deviceconnect.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.deviceconnect.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+  {{- with (coalesce .dot.Values.deviceconnect.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
