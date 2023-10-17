@@ -1,0 +1,128 @@
+{{- define "mender.workflowsPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.workflows.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.workflows.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.workflows.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .dot.Values.workflows.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.workflows.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+  containers:
+  - name: {{ ternary "workflows" "workflows-migration" (empty .migration) | quote }}
+    {{- if .dot.Values.global.enterprise }}
+    image: {{ .dot.Values.workflows.image.registry | default "registry.mender.io" }}/{{ .dot.Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}{{ ternary "" "-worker" (empty .worker) }}:{{ .dot.Values.workflows.image.tag | default .dot.Values.global.image.tag }}
+    {{- else }}
+    image: {{ .dot.Values.workflows.image.registry | default "docker.io" }}/{{ .dot.Values.workflows.image.repository | default "mendersoftware/workflows" }}{{ ternary "" "-worker" (empty .worker) }}:{{ .dot.Values.workflows.image.tag | default .dot.Values.global.image.tag }}
+    {{- end }}
+    imagePullPolicy: {{ .dot.Values.workflows.image.imagePullPolicy }}
+    {{- if .dot.Values.workflows.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.workflows.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.workflows.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    {{- if and .dot.Values.workflows.automigrate (not .worker) }}
+    args: ["server", "--automigrate"]
+    {{- else if and (not .dot.Values.workflows.automigrate) (not .worker) }}
+    args: ["server"]
+    {{- else if and .dot.Values.workflows.automigrate .worker }}
+    args: ["worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
+    {{- else if and (not .dot.Values.workflows.automigrate) .worker }}
+    args: ["worker", "--excluded-workflows", "generate_artifact"]
+    {{- else }}
+    {{- fail "Missing args. This condition is not expected" }}
+    {{- end }}
+    {{- else }}
+    args: ["migrate", "--skip-nats"]
+    {{- end }}
+
+
+    {{- if and (not .migration) (not .worker) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/v1/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /status
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /status
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    env:
+    - name: WORKFLOWS_NATS_URI
+      value: {{ template "nats_uri" . }}
+
+    {{- if .worker }}
+    - name: WORKFLOWS_MENDER_URL
+      value: "{{ .dot.Values.global.url }}"
+    {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
+    - name: HAVE_AUDITLOGS
+      value: "true"
+    {{- end }}
+    {{- if .dot.Values.deviceconnect.enabled }}
+    - name: HAVE_DEVICECONNECT
+      value: "true"
+    {{- end }}
+    {{- if .dot.Values.deviceconfig.enabled }}
+    - name: HAVE_DEVICECONFIG
+      value: "true"
+    {{- end }}
+    {{- end }}
+
+    # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: WORKFLOWS_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+    {{- if .worker }}
+    - prefix: WORKFLOWS_
+      secretRef:
+        name: smtp
+    {{- end }}
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.workflows.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.workflows.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+  {{- with (coalesce .dot.Values.workflows.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

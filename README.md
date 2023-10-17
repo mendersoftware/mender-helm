@@ -669,6 +669,8 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `workflows.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `workflows.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `workflows.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `workflows.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: create_artifact_worker
 

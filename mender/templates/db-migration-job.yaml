@@ -39,27 +39,6 @@ spec:
       restartPolicy: Never
       containers:
 
-      - name: workflows-server-migration
-{{- if .Values.global.enterprise }}
-        image: {{ .Values.workflows.image.registry | default "registry.mender.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}:{{ .Values.workflows.image.tag | default .Values.global.image.tag }}
-{{- else }}
-        image: {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}:{{ .Values.workflows.image.tag | default .Values.global.image.tag }}
-{{- end }}
-        imagePullPolicy: {{ .Values.workflows.image.imagePullPolicy }}
-{{- if .Values.workflows.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.workflows.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        env:
-        - name: WORKFLOWS_NATS_URI
-          value: {{ template "nats_uri" . }}
-        envFrom:
-        - prefix: WORKFLOWS_
-          secretRef:
-            name: mongodb-common-prerelease
-        resources:
-{{ toYaml .Values.workflows.resources | indent 10 }}
-        args: ["migrate", "--skip-nats"]
-
 
 {{- if .Values.global.enterprise }}
       - name: auditlogs-migration

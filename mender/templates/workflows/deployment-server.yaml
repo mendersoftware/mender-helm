@@ -1,5 +1,5 @@
 {{- if .Values.workflows.enabled }}
-{{- $merged := merge (deepCopy .Values.workflows) (deepCopy (default (dict) .Values.default)) -}}
+{{- $context := (dict "dot" . "component" "workflows-server") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,92 +29,6 @@ spec:
       maxUnavailable: 1
 
   template:
-    metadata:
-      {{- with .Values.workflows.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        app.kubernetes.io/name: {{ include "mender.fullname" . }}-workflows-server
-        {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: workflows
-    spec:
-      {{- with $merged.affinity }}
-      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- with $merged.tolerations }}
-      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-{{- if .Values.workflows.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.workflows.podSecurityContext "enabled" | toYaml | nindent 8 }}
-{{- end }}
+    {{- include "mender.workflowsPodTemplate" $context | nindent 4 }}
 
-      containers:
-      - name: workflows
-{{- if .Values.global.enterprise }}
-        image: {{ .Values.workflows.image.registry | default "registry.mender.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}:{{ .Values.workflows.image.tag | default .Values.global.image.tag }}
-{{- else }}
-        image: {{ .Values.workflows.image.registry | default "docker.io" }}/{{ .Values.workflows.image.repository | default "mendersoftware/workflows" }}:{{ .Values.workflows.image.tag | default .Values.global.image.tag }}
-{{- end }}
-        imagePullPolicy: {{ .Values.workflows.image.imagePullPolicy }}
-{{- if .Values.workflows.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.workflows.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        resources:
-{{ toYaml .Values.workflows.resources | indent 10 }}
-
-{{- if .Values.workflows.automigrate }}
-        args: ["server", "--automigrate"]
-{{- else }}
-        args: ["server"]
-{{- end }}
-
-        # Readiness/liveness probes
-        readinessProbe:
-          httpGet:
-            path: /api/v1/health
-            port: 8080
-          periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            path: /status
-            port: 8080
-          periodSeconds: 5
-        startupProbe:
-          httpGet:
-            path: /status
-            port: 8080
-          failureThreshold: 36
-          periodSeconds: 5
-
-        env:
-        - name: WORKFLOWS_NATS_URI
-          value: {{ template "nats_uri" . }}
-
-        # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
-        # Set in order, last value for the key will be used in case duplications.
-        envFrom:
-        - prefix: WORKFLOWS_
-          secretRef:
-            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
-
-{{- if .Values.global.image.username }}
-      imagePullSecrets:
-      - name: docker-registry
-{{- else }}
-{{- $ips := coalesce .Values.workflows.imagePullSecrets .Values.default.imagePullSecrets  }}
-{{- if $ips }}
-      imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
-{{- end }}
-{{- end }}
-
-{{- $pcn := coalesce .Values.workflows.priorityClassName .Values.global.priorityClassName -}}
-{{- if $pcn }}
-      priorityClassName: {{ $pcn }}
-{{- end -}}
-
-{{- with .Values.workflows.nodeSelector }}
-      nodeSelector: {{ toYaml . | nindent 8 }}
-{{- end }}
 {{- end }}

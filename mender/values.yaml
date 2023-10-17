@@ -636,6 +636,22 @@ workflows:
     runAsUser: 65534
   priorityClassName: ""
 
+  ## Migration Job
+  
+  ## workflows.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## workflows.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default workflows.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
+
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
