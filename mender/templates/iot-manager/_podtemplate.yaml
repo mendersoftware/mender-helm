@@ -1,0 +1,94 @@
+{{- define "mender.iotmanagerPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.iot_manager.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.iot_manager.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.iot_manager.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .dot.Values.iot_manager.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.iot_manager.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+  containers:
+  - name: {{ ternary "iot-manager" "iot-manager-migration" (empty .migration) | quote }}
+    image: {{ .dot.Values.iot_manager.image.registry }}/{{ .dot.Values.iot_manager.image.repository }}:{{ .dot.Values.iot_manager.image.tag | default .dot.Values.global.image.tag }}
+    imagePullPolicy: {{ .dot.Values.iot_manager.image.imagePullPolicy }}
+    {{- if .dot.Values.iot_manager.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.iot_manager.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.iot_manager.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    {{- if .dot.Values.iot_manager.automigrate }}
+    args: ["server", "--automigrate"]
+    {{- else }}
+    args: ["server"]
+    {{- end }}
+    {{- else }}
+    args: ["migrate"]
+    {{- end }}
+
+
+    {{- if (not .migration) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/internal/v1/iot-manager/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /api/internal/v1/iot-manager/alive
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /api/internal/v1/iot-manager/alive
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    env:
+    # Supported configuration settings: https://github.com/mendersoftware/iot-manager/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: IOT_MANAGER_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.iot_manager.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.iot_manager.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+  {{- with (coalesce .dot.Values.iot_manager.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

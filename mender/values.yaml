@@ -770,6 +770,22 @@ iot_manager:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## iot_manager.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## iot_manager.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default iot_manager.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 deviceconnect:
   enabled: true

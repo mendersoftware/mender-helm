@@ -787,6 +787,8 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `iot_manager.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `iot_manager.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `iot_manager.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `iot_manager.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: deviceconnect
 
