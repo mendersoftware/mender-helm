@@ -1,5 +1,5 @@
 {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
-{{- $merged := merge (deepCopy .Values.auditlogs) (deepCopy (default (dict) .Values.default)) -}}
+{{- $context := (dict "dot" . "component" "auditlogs") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,87 +31,6 @@ spec:
       maxUnavailable: 1
 
   template:
-    metadata:
-      {{- with .Values.auditlogs.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs
-        {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: auditlogs
-    spec:
-      {{- with $merged.affinity }}
-      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- with $merged.tolerations }}
-      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-{{- if .Values.auditlogs.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.auditlogs.podSecurityContext "enabled" | toYaml | nindent 8 }}
-{{- end }}
+    {{- include "mender.auditlogsPodTemplate" $context | nindent 4 }}
 
-      containers:
-      - name: auditlogs
-        image: {{ .Values.auditlogs.image.registry }}/{{ .Values.auditlogs.image.repository }}:{{ .Values.auditlogs.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.auditlogs.image.imagePullPolicy }}
-{{- if .Values.auditlogs.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.auditlogs.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        resources:
-{{ toYaml .Values.auditlogs.resources | indent 10 }}
-
-{{- if .Values.auditlogs.automigrate }}
-        args: ["server", "--automigrate"]
-{{- else }}
-        args: ["server"]
-{{- end }}
-
-        # Readiness/liveness probes
-        readinessProbe:
-           httpGet:
-             path: /api/internal/v1/auditlogs/health
-             port: 8080
-           periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            path: /api/internal/v1/auditlogs/alive
-            port: 8080
-          periodSeconds: 5
-        startupProbe:
-          httpGet:
-            path: /api/internal/v1/auditlogs/alive
-            port: 8080
-          failureThreshold: 36
-          periodSeconds: 5
-
-        env:
-        - name: AUDITLOGS_AUDITLOG_EXPIRE_SECONDS
-          value: {{ .Values.auditlogs.logRetentionSeconds | int | toString | quote }}
-        # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
-        # Set in order, last value for the key will be used in case duplications.
-        envFrom:
-        - prefix: AUDITLOGS_
-          secretRef:
-            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
-
-{{- if .Values.global.image.username }}
-      imagePullSecrets:
-      - name: docker-registry
-{{- else }}
-{{- $ips := coalesce .Values.auditlogs.imagePullSecrets .Values.default.imagePullSecrets  }}
-{{- if $ips }}
-      imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
-{{- end }}
-{{- end }}
-
-{{- $pcn := coalesce .Values.auditlogs.priorityClassName .Values.global.priorityClassName -}}
-{{- if $pcn }}
-      priorityClassName: {{ $pcn }}
-{{- end -}}
-
-{{- with .Values.auditlogs.nodeSelector }}
-      nodeSelector: {{ toYaml . | nindent 8 }}
-{{- end }}
 {{- end }}

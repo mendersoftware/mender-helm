@@ -718,6 +718,22 @@ auditlogs:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## auditlogs.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## auditlogs.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default auditlogs.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 iot_manager:
   enabled: true

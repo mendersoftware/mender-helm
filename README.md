@@ -743,6 +743,8 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `auditlogs.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `auditlogs.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `auditlogs.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `auditlogs.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: iot-manager
 
