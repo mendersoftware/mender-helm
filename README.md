@@ -631,6 +631,8 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.certs` | certificate management | `nil` |
 | `useradm.certs.key` | Private key in PEM format | `nil` |
 | `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: workflows
 

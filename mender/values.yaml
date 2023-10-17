@@ -585,6 +585,22 @@ useradm:
     #   ...
     #   -----END PRIVATE KEY-----
     # existingSecret: my-secret-name
+ 
+  ## Migration Job
+  
+  ## useradm.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## useradm.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default useradm.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 workflows:
   enabled: true
