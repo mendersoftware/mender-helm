@@ -199,14 +199,6 @@ The following table lists the global, default, and other parameters supported by
 | `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
-| `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
-| `dbmigration.backoffLimit` | BackoffLimit for the DB Migration utility  | `5` |
-| `dbmigration.affinity` | Affinity rules for the DB Migration utility  | `nil` |
-| `dbmigration.nodeSelector` | Node Selector rules for the DB Migration utility  | `nil` |
-| `dbmigration.pod` | Node Selector rules for the DB Migration utility  | `nil` |
-| `dbmigration.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
-| `dbmigration.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
-| `dbmigration.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
 
 
