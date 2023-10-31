@@ -41,6 +41,7 @@ spec:
         {{- include "mender.labels" . | nindent 8 }}
         app.kubernetes.io/component: deviceconfig
     spec:
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}

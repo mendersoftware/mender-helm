@@ -185,3 +185,15 @@ spec:
       run: {{ .name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the service account
+*/}}
+{{- define "mender.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "mender.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
