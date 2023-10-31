@@ -1,0 +1,103 @@
+{{- define "mender.deviceconfigPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.deviceconfig.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.deviceconfig.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.deviceconfig.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .dot.Values.deviceconfig.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.deviceconfig.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+
+  containers:
+  - name: {{ ternary "deviceconfig" "deviceconfig-migration" (empty .migration) | quote }}
+    image: {{ .dot.Values.deviceconfig.image.registry }}/{{ .dot.Values.deviceconfig.image.repository }}:{{ .dot.Values.deviceconfig.image.tag | default .dot.Values.global.image.tag }}
+    imagePullPolicy: {{ .dot.Values.deviceconfig.image.imagePullPolicy }}
+    {{- if .dot.Values.deviceconfig.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.deviceconfig.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.deviceconfig.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    {{- if .dot.Values.deviceconfig.automigrate }}
+    args: ["server", "--automigrate"]
+    {{- else }}
+    args: ["server"]
+    {{- end }}
+    {{- else }}
+    args: ["migrate"]
+    {{- end }}
+
+
+    {{- if (not .migration) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/internal/v1/deviceconfig/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /api/internal/v1/deviceconfig/alive
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /api/internal/v1/deviceconfig/alive
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    env:
+    # Enable audit logging
+    {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
+    - name: DEVICECONFIG_ENABLE_AUDIT
+      value: "true"
+    {{- end }}
+    # Workflows orchestrator address
+    - name: DEVICECONFIG_WORKFLOWS_URL
+      value: http://mender-workflows-server:8080/
+
+    # Supported configuration settings: https://github.com/mendersoftware/deviceconfig/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: DEVICECONFIG_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.deviceconfig.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.deviceconfig.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+  {{- with (coalesce .dot.Values.deviceconfig.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

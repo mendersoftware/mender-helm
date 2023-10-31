@@ -1,5 +1,5 @@
 {{- if .Values.inventory.enabled }}
-{{- $merged := merge (deepCopy .Values.inventory) (deepCopy (default (dict) .Values.default)) -}}
+{{- $context := (dict "dot" . "component" "inventory") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,93 +31,6 @@ spec:
       maxUnavailable: 1
 
   template:
-    metadata:
-      {{- with .Values.inventory.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        app.kubernetes.io/name: {{ include "mender.fullname" . }}-inventory
-        {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: inventory
-    spec:
-      {{- with $merged.affinity }}
-      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- with $merged.tolerations }}
-      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-{{- if .Values.inventory.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.inventory.podSecurityContext "enabled" | toYaml | nindent 8 }}
-{{- end }}
-
-      containers:
-      - name: inventory
-{{- if .Values.global.enterprise }}
-        image: {{ .Values.inventory.image.registry | default "registry.mender.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory-enterprise" }}:{{ .Values.inventory.image.tag | default .Values.global.image.tag }}
-{{- else }}
-        image: {{ .Values.inventory.image.registry | default "docker.io" }}/{{ .Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .Values.inventory.image.tag | default .Values.global.image.tag }}
-{{- end }}
-        imagePullPolicy: {{ .Values.inventory.image.imagePullPolicy }}
-{{- if .Values.inventory.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.inventory.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        resources:
-{{ toYaml .Values.inventory.resources | indent 10 }}
-
-{{- if .Values.inventory.automigrate }}
-        args: ["server", "--automigrate"]
-{{- else }}
-        args: ["server"]
-{{- end }}
-
-        # Readiness/liveness probes
-        readinessProbe:
-          httpGet:
-            path: /api/internal/v1/inventory/health
-            port: 8080
-          periodSeconds: 15
-        livenessProbe:
-          httpGet:
-            path: /api/internal/v1/inventory/alive
-            port: 8080
-          periodSeconds: 5
-        startupProbe:
-          httpGet:
-            path: /api/internal/v1/inventory/alive
-            port: 8080
-          failureThreshold: 36
-          periodSeconds: 5
-
-        env:
-        - name: INVENTORY_MIDDLEWARE
-          value: {{ .Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
-
-        # Supported configuration settings: https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
-        # Set in order, last value for the key will be used in case duplications.
-        envFrom:
-        - prefix: INVENTORY_
-          secretRef:
-            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
-
-{{- if .Values.global.image.username }}
-      imagePullSecrets:
-      - name: docker-registry
-{{- else }}
-{{- $ips := coalesce .Values.inventory.imagePullSecrets .Values.default.imagePullSecrets  }}
-{{- if $ips }}
-      imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
-{{- end }}
-{{- end }}
-
-{{- $pcn := coalesce .Values.inventory.priorityClassName .Values.global.priorityClassName -}}
-{{- if $pcn }}
-      priorityClassName: {{ $pcn }}
-{{- end -}}
-
-{{- with .Values.inventory.nodeSelector }}
-      nodeSelector: {{ toYaml . | nindent 8 }}
-{{- end }}
+    {{- include "mender.inventoryPodTemplate" $context | nindent 4 }}
 
 {{- end }}

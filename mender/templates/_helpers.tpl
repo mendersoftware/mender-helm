@@ -30,15 +30,23 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "mender.labels" -}}
-helm.sh/chart: {{ include "mender.chart" . }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+helm.sh/chart: {{ include "mender.chart" $dot }}
+app.kubernetes.io/managed-by: {{ $dot.Release.Service }}
 app.kubernetes.io/part-of: mender
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/instance: {{ $dot.Release.Name }}
+app.kubernetes.io/version: {{ $dot.Chart.AppVersion | quote }}
+{{ include "mender.selectorLabels" . -}}
 {{- end }}
-{{- with .Values.labels }}
-{{ toYaml . }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "mender.selectorLabels" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if .component -}}
+app.kubernetes.io/name: {{ printf "%s-%s" (include "mender.fullname" $dot) .component }}
+app.kubernetes.io/component: {{ .component }}
 {{- end }}
 {{- end }}
 
@@ -46,10 +54,11 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 Redis address
 */}}
 {{- define "redis_address" }}
-  {{- if and .Values.redis.enabled ( not .Values.global.redis.URL ) }}
-    {{- printf "%s-master:6379" ( include "common.names.fullname" .Subcharts.redis ) -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+  {{- if and $dot.Values.redis.enabled ( not $dot.Values.global.redis.URL ) }}
+    {{- printf "%s-master:6379" ( include "common.names.fullname" $dot.Subcharts.redis ) -}}
   {{- else }}
-    {{- printf .Values.global.redis.URL | quote }}
+    {{- printf $dot.Values.global.redis.URL | quote }}
   {{- end }}
 {{- end }}
 
@@ -82,10 +91,11 @@ MongoDB URI
 nats_uri
 */}}
 {{- define "nats_uri" }}
-  {{- if and .Values.nats.enabled ( not .Values.global.nats.URL ) }}
-    {{- printf "nats://%s" ( include "nats.fullname" .Subcharts.nats ) -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+  {{- if and $dot.Values.nats.enabled ( not $dot.Values.global.nats.URL ) }}
+    {{- printf "nats://%s" ( include "nats.fullname" $dot.Subcharts.nats ) -}}
   {{- else }}
-    {{- printf .Values.global.nats.URL | quote }}
+    {{- printf $dot.Values.global.nats.URL | quote }}
   {{- end }}
 {{- end }}
 
@@ -183,5 +193,19 @@ spec:
   selector:
     matchLabels:
       run: {{ .name }}
+{{- end }}
+{{- end }}
+
+{{- define "mender.servicename" -}}
+{{- printf "%s-%s" ( include "mender.fullname" .dot ) .component }}
+{{- end }}
+
+{{- define "mender.resources" -}}
+{{- $resources := dict }}
+{{- range . }}{{- if . }}
+{{- $resources := mergeOverwrite $resources (deepCopy .) }}
+{{- end }}{{- end }}
+{{- if $resources }}
+{{- toYaml $resources }}
 {{- end }}
 {{- end }}

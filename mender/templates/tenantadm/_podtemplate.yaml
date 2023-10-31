@@ -1,0 +1,126 @@
+{{- define "mender.tenantadmPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.tenantadm.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.tenantadm.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.tenantadm.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .dot.Values.tenantadm.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.tenantadm.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+  containers:
+  - name: {{ ternary "tenantadm" "tenantadm-migration" (empty .migration) | quote }}
+    image: {{ .dot.Values.tenantadm.image.registry }}/{{ .dot.Values.tenantadm.image.repository }}:{{ .dot.Values.tenantadm.image.tag | default .dot.Values.global.image.tag }}
+    imagePullPolicy: {{ .dot.Values.tenantadm.image.imagePullPolicy }}
+    {{- if .dot.Values.tenantadm.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.tenantadm.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if .args }}
+    args: {{- toYaml .args | nindent 6 }}
+    {{- else if .dot.Values.tenantadm.args }}
+    args: {{- toYaml .dot.Values.tenantadm.args | nindent 6 }}
+    {{- end }}
+
+
+    {{- if (not .migration) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/internal/v1/tenantadm/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /api/internal/v1/tenantadm/alive
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /api/internal/v1/tenantadm/alive
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    {{- if (not .migration) }}
+    volumeMounts:
+    - name: rsa
+      mountPath: "/etc/tenantadm/rsa/"
+      readOnly: true
+    {{- end }}
+
+    env:
+    - name: TENANTADM_MIDDLEWARE
+      value: {{ .dot.Values.tenantadm.env.TENANTADM_MIDDLEWARE | quote }}
+    - name: TENANTADM_SERVER_PRIV_KEY_PATH
+      value: {{ .dot.Values.tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH | quote }}
+    - name: TENANTADM_ORCHESTRATOR_ADDR
+      value: {{ .dot.Values.tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR | quote }}
+    - name: TENANTADM_RECAPTCHA_URL_VERIFY
+      value: {{ .dot.Values.tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY | quote }}
+    - name: TENANTADM_DEFAULT_API_LIMITS
+      value: {{ .dot.Values.tenantadm.env.TENANTADM_DEFAULT_API_LIMITS | quote }}
+    {{- if .dot.Values.global.hosted }}
+    - name: TENANTADM_ENABLE_SELF_SERVICE_SIGN_UP
+      value: {{ .dot.Values.global.hosted | quote }}
+    {{- end }}
+
+    # Supported configuration settings: https://github.com/mendersoftware/tenantadm/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: TENANTADM_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+
+
+  {{- with (coalesce .dot.Values.tenantadm.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- if (not .migration) }}
+  volumes:
+  - name: rsa
+    secret:
+      {{- with .dot.Values.tenantadm.certs }}
+      {{- if .existingSecret }}
+      secretName: {{ .existingSecret }}
+      {{- else }}
+      secretName: rsa-tenantadm
+      {{- end }}
+      {{- end }}
+  {{- end }}
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.tenantadm.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.tenantadm.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+{{- end }}

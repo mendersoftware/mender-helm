@@ -199,14 +199,6 @@ The following table lists the global, default, and other parameters supported by
 | `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
-| `dbmigration.annotations` | Annotations for the DB Migration utility  | `nil` |
-| `dbmigration.backoffLimit` | BackoffLimit for the DB Migration utility  | `5` |
-| `dbmigration.affinity` | Affinity rules for the DB Migration utility  | `nil` |
-| `dbmigration.nodeSelector` | Node Selector rules for the DB Migration utility  | `nil` |
-| `dbmigration.pod` | Node Selector rules for the DB Migration utility  | `nil` |
-| `dbmigration.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
-| `dbmigration.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
-| `dbmigration.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
 
 
@@ -339,6 +331,8 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `deployments.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
 | `deployments.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `deployments.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `deployments.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: device-auth
 
@@ -395,6 +389,8 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.certs` | certificate management | `nil` |
 | `device_auth.certs.key` | Private key in PEM format | `nil` |
 | `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: gui
 
@@ -477,6 +473,8 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `inventory.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
 | `inventory.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `inventory.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `inventory.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: reporting
 
@@ -556,6 +554,9 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.certs` | certificate management | `nil` |
 | `tenantadm.certs.key` | Private key in PEM format | `nil` |
 | `tenantadm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `tenantadm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `tenantadm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `tenantadm.migrationArgs` | Migration job: optional migration args (list). | `["migrate"]` |
 
 The default value for the rate limits are:
 
@@ -622,6 +623,8 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.certs` | certificate management | `nil` |
 | `useradm.certs.key` | Private key in PEM format | `nil` |
 | `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: workflows
 
@@ -658,6 +661,8 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `workflows.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `workflows.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `workflows.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `workflows.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -730,6 +735,8 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `auditlogs.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `auditlogs.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `auditlogs.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `auditlogs.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: iot-manager
 
@@ -772,6 +779,8 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `iot_manager.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `iot_manager.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `iot_manager.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `iot_manager.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -816,6 +825,8 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.gracefulShutdownTimeout` | Timeout for the graceful shutdown | `60s` |
 | `deviceconnect.terminationGracePeriodSeconds` | Termination grace period in seconds | `65` |
 | `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `deviceconnect.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `deviceconnect.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -858,6 +869,8 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `deviceconfig.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `deviceconfig.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `deviceconfig.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `deviceconfig.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -902,6 +915,8 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `devicemonitor.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `devicemonitor.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `devicemonitor.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
+| `devicemonitor.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is

@@ -1,0 +1,127 @@
+{{- define "mender.deploymentsPodTemplate" -}}
+metadata:
+  {{- with .dot.Values.deployments.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  {{- with (coalesce .dot.Values.deployments.affinity .dot.Values.default.affinity) }}
+  affinity: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (coalesce .dot.Values.deployments.tolerations .dot.Values.default.tolerations) }}
+  tolerations: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if and (eq .dot.Values.global.storage "aws") (.dot.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
+  serviceAccountName: {{ .dot.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+  {{- end }}
+  {{- if .dot.Values.deployments.podSecurityContext.enabled }}
+  securityContext: {{- omit .dot.Values.deployments.podSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- with .restartPolicy }}
+  restartPolicy: {{ quote . }}
+  {{- end }}
+  containers:
+  - name: {{ ternary "deployments" "deployments-migration" (empty .migration) | quote }}
+    {{- if .dot.Values.global.enterprise }}
+    image: {{ .dot.Values.deployments.image.registry | default "registry.mender.io" }}/{{ .dot.Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .dot.Values.deployments.image.tag | default .dot.Values.global.image.tag }}
+    {{- else }}
+    image: {{ .dot.Values.deployments.image.registry | default "docker.io" }}/{{ .dot.Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .dot.Values.deployments.image.tag | default .dot.Values.global.image.tag }}
+    {{- end }}
+    imagePullPolicy: {{ .dot.Values.deployments.image.imagePullPolicy }}
+    {{- if .dot.Values.deployments.containerSecurityContext.enabled }}
+    securityContext: {{- omit .dot.Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 6 }}
+    {{- end }}
+
+    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.deployments.resources .extraResources )}}
+    resources: {{- nindent 6 . }}
+    {{- end }}
+
+    {{- if (not .migration) }}
+    {{- if .dot.Values.deployments.automigrate }}
+    args: ["server", "--automigrate"]
+    {{- else }}
+    args: ["server"]
+    {{- end }}
+    {{- else }}
+    args: ["migrate"]
+    {{- end }}
+
+
+    {{- if (not .migration) }}
+    # Readiness/liveness probes
+    readinessProbe:
+      httpGet:
+        path: /api/internal/v1/deployments/health
+        port: 8080
+      periodSeconds: 15
+    livenessProbe:
+      httpGet:
+        path: /api/internal/v1/deployments/alive
+        port: 8080
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /api/internal/v1/deployments/alive
+        port: 8080
+      failureThreshold: 36
+      periodSeconds: 5
+    {{- end }}
+
+    env:
+    - name: DEPLOYMENTS_STORAGE_DEFAULT
+      value: {{ .dot.Values.global.storage | quote }}
+    - name: DEPLOYMENTS_MIDDLEWARE
+      value: {{ .dot.Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
+    - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
+      value: {{ .dot.Values.deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT | quote }}
+    - name: DEPLOYMENTS_PRESIGN_SECRET
+      value: {{ .dot.Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET | quote }}
+    {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
+    - name: DEPLOYMENTS_ENABLE_AUDIT
+      value: "true"
+    {{- end }}
+    {{- if .dot.Values.deployments.directUpload.enabled }}
+    - name: DEPLOYMENTS_STORAGE_ENABLE_DIRECT_UPLOAD
+      value: "true"
+    {{- if .dot.Values.deployments.directUpload.skipVerify }}
+    - name: DEPLOYMENTS_STORAGE_DIRECT_UPLOAD_SKIP_VERIFY
+      value: "true"
+    {{- end }}
+    {{- end }}
+
+    # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
+    # Set in order, last value for the key will be used in case duplications.
+    envFrom:
+    - prefix: DEPLOYMENTS_
+      secretRef:
+        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+    {{- if (not .migration) }}
+    - prefix: DEPLOYMENTS_
+      secretRef:
+        name: {{ .dot.Values.global.s3.existingSecret | default "artifacts-storage" }}
+    {{- end }}
+
+
+  {{- if .dot.Values.global.image.username }}
+  imagePullSecrets:
+  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
+  {{- else }}
+  {{- $ips := coalesce .dot.Values.deployments.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
+  {{- if $ips }}
+  imagePullSecrets:
+  {{ toYaml $ips }}
+  {{- end }}
+  {{- end }}
+
+  {{- $pcn := coalesce .dot.Values.deployments.priorityClassName .dot.Values.global.priorityClassName -}}
+  {{- if $pcn }}
+  priorityClassName: {{ $pcn }}
+  {{- end }}
+
+  {{- with (coalesce .dot.Values.deployments.nodeSelector .dot.Values.default.nodeSelector) }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

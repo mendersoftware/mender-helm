@@ -267,6 +267,22 @@ deployments:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## deployments.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## deployments.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default deployments.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 device_auth:
   enabled: true
@@ -319,6 +335,22 @@ device_auth:
     #   ...
     #   -----END PRIVATE KEY-----
     # existingSecret: my-secret-name
+ 
+  ## Migration Job
+  
+  ## device_auth.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## device_auth.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default device_auth.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -417,6 +449,22 @@ inventory:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## inventory.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## inventory.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default inventory.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 tenantadm:
   enabled: true
@@ -464,6 +512,27 @@ tenantadm:
     #   ...
     #   -----END PRIVATE KEY-----
     # existingSecret: my-secret-name
+
+  ## Migration Job
+  
+  ## tenantadm.migrationArgs: list of optional arguments to pass to the migration job. 
+  ## default: ["migrate"]
+  # migrationArgs: []
+
+  ## tenantadm.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## tenantadm.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default tenantadm.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
+
 
 useradm:
   enabled: true
@@ -516,6 +585,22 @@ useradm:
     #   ...
     #   -----END PRIVATE KEY-----
     # existingSecret: my-secret-name
+ 
+  ## Migration Job
+  
+  ## useradm.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## useradm.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default useradm.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 workflows:
   enabled: true
@@ -550,6 +635,22 @@ workflows:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   priorityClassName: ""
+
+  ## Migration Job
+  
+  ## workflows.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## workflows.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default workflows.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 create_artifact_worker:
   enabled: true
@@ -617,6 +718,22 @@ auditlogs:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## auditlogs.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## auditlogs.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default auditlogs.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 iot_manager:
   enabled: true
@@ -653,6 +770,22 @@ iot_manager:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## iot_manager.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## iot_manager.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default iot_manager.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 deviceconnect:
   enabled: true
@@ -691,6 +824,22 @@ deviceconnect:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## deviceconnect.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## deviceconnect.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default deviceconnect.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 deviceconfig:
   enabled: true
@@ -727,6 +876,22 @@ deviceconfig:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## deviceconfig.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## deviceconfig.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default deviceconfig.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 devicemonitor:
   enabled: true
@@ -763,6 +928,22 @@ devicemonitor:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+ 
+  ## Migration Job
+  
+  ## devicemonitor.migrationRestartPolicy
+  # migrationRestartPolicy: "Never"
+
+  ## devicemonitor.migrationResources
+  ## K8s resources for the migration job
+  ## If not specified, default devicemonitor.resources applies
+  # migrationResources:
+  #   limits:
+  #     cpu: 150m
+  #     memory: 128M
+  #   requests:
+  #     cpu: 150m
+  #     memory: 64M
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only

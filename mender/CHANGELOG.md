@@ -1,6 +1,7 @@
 # Mender Helm chart
 
-## Version 5.2.7
+## Version 5.3.0
+* Split single db-migration job into multiple jobs
 * Traefik updated to `v2.10.5`
 
 ## Version 5.2.6
