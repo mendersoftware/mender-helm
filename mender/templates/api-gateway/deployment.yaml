@@ -58,6 +58,7 @@ spec:
 {{- if .Values.api_gateway.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.api_gateway.podSecurityContext "enabled" | toYaml | nindent 8 }}
 {{- end }}
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
 
       containers:
       - name: api-gateway

@@ -260,5 +260,14 @@ to be able to apply some conditional logic
   {{- end }}
 {{- end }}
 {{- printf "%s" $mndr_version._1 }}
-{{- end }}
 
+{{/*
+Create the name of the service account
+*/}}
+{{- define "mender.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "mender.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
