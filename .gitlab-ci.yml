@@ -1,6 +1,12 @@
 variables:
   PIPELINE_TOOLBOX_IMAGE: "registry.gitlab.com/northern.tech/mender/mender-test-containers:aws-k8s-v1-master"
   EKS_CLUSTER_NAME: "helmci-${CI_PIPELINE_ID}"
+  RUN_HELM_CHART_INSTALL:
+    value: "false"
+    description: "Run Helm Chart tests"
+  ROLE_ARN: 
+    value: "arn:aws:iam::017659451055:role/nt-mender-helm-eksctl-test"
+    description: "AWS IAM role which executes the AWS jobs"
 
 stages:
   - build
@@ -16,18 +22,29 @@ include:
     file: '.gitlab-ci-github-status-updates.yml'
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
-  - export AWS_ACCESS_KEY_ID=$CI_EKSCTL_ACCESS_KEY_ID_TEST
-  - export AWS_SECRET_ACCESS_KEY=$CI_EKSCTL_AWS_SECRET_ACCESS_KEY_TEST
   - export AWS_DEFAULT_REGION=eu-central-1
+  - >
+    export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
+    $(aws sts assume-role-with-web-identity
+    --role-arn ${ROLE_ARN}
+    --role-session-name "GitLabRunner-${CI_PROJECT_ID}-${CI_PIPELINE_ID}"
+    --web-identity-token ${AWS_OIDC_TOKEN}
+    --duration-seconds ${AWS_OIDC_TOKEN_TIMEOUT:-3600}
+    --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]'
+    --output text))
+  - aws sts get-caller-identity
 
 build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .pre
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
-  script:
     - *set_eks_helmci_vars
+  script:
     - |
       echo "INFO - Temporary EKS cluster setup"
       eksctl create cluster \
@@ -88,9 +105,7 @@ build:
 
 .setup_eks_cluster_staging: &setup_eks_cluster_staging
   # Configure AWS CLI for staging cluster
-  - export AWS_ACCESS_KEY_ID=$CI_JOBS_AWS_ACCESS_KEY_ID_STAGING
-  - export AWS_SECRET_ACCESS_KEY=$CI_JOBS_AWS_SECRET_ACCESS_KEY_STAGING
-  - export AWS_DEFAULT_REGION=$CI_JOBS_AWS_REGION_STAGING
+  - *set_eks_helmci_vars
   - aws eks --region $CI_JOBS_AWS_REGION_STAGING update-kubeconfig --name $CI_JOBS_AWS_EKS_CLUSTER_NAME_STAGING
   - kubectl config set-context --current --namespace=mender-helm-tests
 
@@ -115,6 +130,9 @@ test:helm_chart_install:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-setup-test"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
     - |
@@ -165,6 +183,9 @@ test:helm_chart_install_sub_charts:
   variables:
     NAMESPACE: "mender-setup-test-sub-charts"
     INSTALL_MINIO_DEP_ONLY: "true"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
     - |
@@ -235,6 +256,9 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-upgrade-test-previous-tls"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
     - |
@@ -302,6 +326,9 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-upgrade-test-previous-release"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
     - |
@@ -370,6 +397,9 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-upgrade-test-current-lts"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
     - |
@@ -432,6 +462,9 @@ test:kubeconform_tests:
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
   script:
@@ -477,6 +510,9 @@ test:helm_chart_install_opensource:
   variables:
     NAMESPACE: "mender-opensource-setup-test"
     INSTALL_MINIO_DEP_ONLY: "true"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
     - |
@@ -532,6 +568,81 @@ test:helm_chart_install_opensource:
     - echo "INFO - cleaning up to save resources"
     - helm delete -n "${NAMESPACE}" mender
 
+test:helm_chart_install_with_r2:
+  tags:
+    - mender-qa-worker-generic-light
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
+  rules:
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  variables:
+    NAMESPACE: "mender-setup-test-r2"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    - *set_eks_helmci_vars
+    - |
+      eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+      kubectl create ns "${NAMESPACE}"
+      kubectl config set-context --current --namespace="${NAMESPACE}"
+    - |
+      echo "DEBUG - get kubectl nodes"
+      kubectl config current-context
+      kubectl get nodes
+    - |
+      echo "INFO - installing helm from scratch"
+      tests/ci-deps-k8s.sh
+  script:
+    - |
+      kubectl apply -f - <<EOS
+      apiVersion: cert-manager.io/v1
+      kind: Issuer
+      metadata:
+        name: letsencrypt
+      spec:
+        acme:
+          server: "https://acme-staging-v02.api.letsencrypt.org/directory"
+          email: ${LETSENCRYPT_EMAIL:-roberto.giovanardi+letsencrypt@northern.tech}
+          privateKeySecretRef:
+            name: letsencrypt
+          solvers:
+          - http01:
+              ingress: {}
+      EOS
+    - |
+      echo "INFO - installing mender"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f mender/values.yaml \
+        -f tests/keys.yaml \
+        -f tests/values-helmci.yaml \
+        -f tests/values-helmci-internal-backing-services.yaml \
+        --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
+        --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
+        --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
+        --set global.s3.AWS_URI="${R2_TEST_AWS_URI}" \
+        --set global.s3.AWS_BUCKET="${R2_TEST_BUCKET}" \
+        --set global.s3.AWS_FORCE_PATH_STYLE="true" \
+        --set global.s3.AWS_ACCESS_KEY_ID="${R2_TEST_ACCESS_KEY_ID}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${R2_TEST_SECRET_ACCESS_KEY}" \
+        --namespace "${NAMESPACE}" \
+        ./mender || exit 3;
+    - SKIP_TEARDOWN="true" make test
+    - |
+      echo "INFO - testing ingress"
+      bash tests/ingress-internal-test.sh
+    - bash tests/ci-test-teardown.sh || true
+  after_script:
+    - echo "INFO - cleaning up resources"
+    - helm delete -n "${NAMESPACE}" mender
+
 test:playground_eks_cluster:
   tags:
     - mender-qa-worker-generic-light
@@ -542,6 +653,9 @@ test:playground_eks_cluster:
     - build:setup_eks_cluster
   rules:
     - if: '$RUN_PLAYGROUND == "true"'
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
   script:
@@ -579,6 +693,9 @@ publish:helm_chart_publishing:
     - build:setup_eks_cluster
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
   script:
