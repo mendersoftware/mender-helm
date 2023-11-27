@@ -166,7 +166,7 @@ test:helm_chart_install:
     - make test
   after_script:
     - echo "INFO - cleaning up to save resources"
-    - helm delete -n "${NAMESPACE}" mender
+    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
 test:helm_chart_install_sub_charts:
   tags:
@@ -240,7 +240,7 @@ test:helm_chart_install_sub_charts:
     - bash tests/ci-test-teardown.sh || true
   after_script:
     - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender
+    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
  
 test:helm_chart_upgrade_from_previous_lts_to_current_lts:
   tags:
@@ -310,7 +310,7 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
     - make test
   after_script:
     - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender
+    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
 test:helm_chart_upgrade_from_previous_release_to_current_lts:
   tags:
@@ -380,7 +380,7 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
     - make test
   after_script:
     - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender
+    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
 test:helm_chart_upgrade_from_current_lts_to_current_release:
   tags:
@@ -451,7 +451,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
     - make test
   after_script:
     - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender
+    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
 test:kubeconform_tests:
   tags:
@@ -566,7 +566,7 @@ test:helm_chart_install_opensource:
     - bash tests/ci-test-teardown.sh || true
   after_script:
     - echo "INFO - cleaning up to save resources"
-    - helm delete -n "${NAMESPACE}" mender
+    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
 test:helm_chart_install_with_r2:
   tags:
@@ -621,7 +621,6 @@ test:helm_chart_install_with_r2:
       helm upgrade -i mender \
         -f mender/values.yaml \
         -f tests/keys.yaml \
-        -f tests/values-helmci.yaml \
         -f tests/values-helmci-internal-backing-services.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
@@ -631,6 +630,7 @@ test:helm_chart_install_with_r2:
         --set global.s3.AWS_BUCKET="${R2_TEST_BUCKET}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${R2_TEST_ACCESS_KEY_ID}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${R2_TEST_SECRET_ACCESS_KEY}" \
+        --set global.s3.AWS_REGION="us-east-1" \
         --namespace "${NAMESPACE}" \
         ./mender || exit 3;
     - SKIP_TEARDOWN="true" make test
@@ -640,7 +640,7 @@ test:helm_chart_install_with_r2:
     - bash tests/ci-test-teardown.sh || true
   after_script:
     - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender
+    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
 test:playground_eks_cluster:
   tags:
