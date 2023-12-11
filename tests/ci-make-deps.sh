@@ -21,11 +21,8 @@ set -e
 local_minio_only=${1:-"false"}
 
 log "deploying dependencies: minio"
-helm install mender-minio minio/minio \
-    --version 8.0.10 \
-    --set "image.tag=RELEASE.2021-02-14T04-01-33Z" \
-    --set resources.requests.memory=100Mi \
-    --set accessKey=${MINIO_accessKey},secretKey=${MINIO_secretKey},persistence.enabled=false
+kubectl create secret generic mender-minio --from-literal=root-user=${MINIO_accessKey} --from-literal=root-password=${MINIO_secretKey}
+kubectl apply -f tests/minio-standalone/minio.yaml
 
 if [[ "$local_minio_only" == "true" ]]; then
   log "not deploying mongodb"
