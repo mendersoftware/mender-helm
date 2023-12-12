@@ -72,6 +72,14 @@ spec:
     env:
     - name: INVENTORY_MIDDLEWARE
       value: {{ .dot.Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
+    {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
+    - name: INVENTORY_REDIS_CONNECTION_STRING
+      value: {{ include "redis_connection_string" . }}
+    - name: INVENTORY_REDIS_KEY_PREFIX
+      value: {{ .dot.Values.device_auth.env.INVENTORY_REDIS_KEY_PREFIX | default "inventory:v1" | quote }}
+    - name: INVENTORY_REDIS_CACHE_EXPIRE_SEC
+      value: {{ .dot.Values.useradm.env.INVENTORY_REDIS_CACHE_EXPIRE_SEC | default "1800" | quote }}
+    {{- end }}
 
     # Supported configuration settings: https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.

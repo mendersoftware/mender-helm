@@ -2,6 +2,9 @@
 
 ## Version 5.4.0
 * Upgrade to Mender version `3.7.0`.
+* Update the Redis settings to use a connection string, required by Mender 3.7.0
+* **BREAKING CHANGES**:
+  * This version of the Helm chart is not compatible with Mender versions older than `3.7.0`.
 
 ## Version 5.3.0
 * Split single db-migration job into multiple jobs

@@ -51,12 +51,12 @@ app.kubernetes.io/component: {{ .component }}
 {{- end }}
 
 {{/*
-Redis address
+Redis connection string
 */}}
-{{- define "redis_address" }}
+{{- define "redis_connection_string" }}
 {{- $dot := (ternary . .dot (empty .dot)) -}}
   {{- if and $dot.Values.redis.enabled ( not $dot.Values.global.redis.URL ) }}
-    {{- printf "%s-master:6379" ( include "common.names.fullname" $dot.Subcharts.redis ) -}}
+    {{- printf "redis://%s-master:6379/0" ( include "common.names.fullname" $dot.Subcharts.redis ) -}}
   {{- else }}
     {{- printf $dot.Values.global.redis.URL | quote }}
   {{- end }}
