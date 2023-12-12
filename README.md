@@ -160,6 +160,8 @@ The following table lists the global, default, and other parameters supported by
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
 | `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `redis://mender-redis:6379/0` |
+| `global.redis.username` | Optional Redis Username **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
+| `global.redis.password` | Optional Redis Password **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |
 | `global.storage` | Artifacts storage type  (available types: `aws` and `azure`) | `aws` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
@@ -367,6 +369,8 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
 | `device_auth.env.DEVICEAUTH_REDIS_KEY_PREFIX` | Set the DEVICEAUTH_REDIS_KEY_PREFIX variable | `deviceauth:v1` |
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
+| `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable **[Deprecated from 3.7.0]** | `1` |
+| `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
 | `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `device_auth.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `device_auth.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
@@ -601,6 +605,8 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
 | `useradm.env.USERADM_REDIS_KEY_PREFIX` | Set the USERADM_REDIS_KEY_PREFIX variable | `useradm:v1` |
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
+| `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable **[Deprecated from 3.7.0]** | `2` |
+| `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
 | `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 | `useradm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
