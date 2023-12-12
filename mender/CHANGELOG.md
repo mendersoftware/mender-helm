@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.4.0
+* Upgrade to Mender version `3.7.0`.
+
 ## Version 5.3.0
 * Split single db-migration job into multiple jobs
 * Traefik updated to `v2.10.5`
