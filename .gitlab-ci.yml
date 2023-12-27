@@ -7,11 +7,18 @@ variables:
   ROLE_ARN: 
     value: "arn:aws:iam::017659451055:role/nt-mender-helm-eksctl-test"
     description: "AWS IAM role which executes the AWS jobs"
+  GITHUB_HELM_REPO: "github.com/mendersoftware/mender-helm.git"
+  SYNC_ENVIRONMENT: "${SYNC_ENVIRONMENT:-staging}"
+  CHART_DIR: "mender"
+  GITHUB_USER: "mender-test-bot"
+  GITHUB_TOKEN: "${GITHUB_BOT_TOKEN_REPO_FULL}"
+  MAIN_BRANCH: "master"
 
 stages:
   - build
   - test
   - publish
+  - version-bump
 
 include:
   - project: 'Northern.tech/Mender/mendertesting'
@@ -20,6 +27,8 @@ include:
     file: '.gitlab-ci-check-license.yml'
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-github-status-updates.yml'
+  - project: 'Northern.tech/Mender/mendertesting'
+    file: '.gitlab-ci-check-helm-version-bump.yml'
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
   - export AWS_DEFAULT_REGION=eu-central-1
