@@ -129,6 +129,13 @@ build:
   - export AWS_DEFAULT_REGION=$S3_HELM_CHART_REPO_AWS_REGION
   - export AWS_S3_SSE=AES256
 
+# Skip check license source when the pipeline
+# is triggered
+test:check-license-source:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+
 test:helm_chart_install:
   tags:
     - mender-qa-worker-generic-light
