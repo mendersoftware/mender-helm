@@ -102,6 +102,7 @@ spec:
       value: "true"
     {{- end }}
     {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
+    {{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) }}
     - name: USERADM_REDIS_ADDR
       value: {{ include "redis_address" . }}
     - name: USERADM_REDIS_USERNAME
@@ -112,6 +113,13 @@ spec:
       value: {{ .dot.Values.useradm.env.USERADM_REDIS_DB | default "1" | quote }}
     - name: USERADM_REDIS_TIMEOUT_SEC
       value: {{ .dot.Values.useradm.env.USERADM_REDIS_TIMEOUT_SEC | default "1" | quote }}
+    {{- else }}
+    # redis_address deprecated from 3.7
+    - name: USERADM_REDIS_CONNECTION_STRING
+      value: {{ include "redis_connection_string" . }}
+    - name: USERADM_REDIS_KEY_PREFIX
+      value: {{ .dot.Values.device_auth.env.USERADM_REDIS_KEY_PREFIX | default "useradm:v1" | quote }}
+    {{- end }}
     - name: USERADM_REDIS_LIMITS_EXPIRE_SEC
       value: {{ .dot.Values.useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
     {{- end }}

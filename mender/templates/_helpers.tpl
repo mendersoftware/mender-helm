@@ -63,6 +63,18 @@ Redis address
 {{- end }}
 
 {{/*
+Redis connection string
+*/}}
+{{- define "redis_connection_string" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+  {{- if and $dot.Values.redis.enabled ( not $dot.Values.global.redis.URL ) }}
+    {{- printf "redis://%s-master:6379/0" ( include "common.names.fullname" $dot.Subcharts.redis ) -}}
+  {{- else }}
+    {{- printf $dot.Values.global.redis.URL | quote }}
+  {{- end }}
+{{- end }}
+
+{{/*
 MongoDB URI
 */}}
 {{- define "mongodb_uri" }}
@@ -209,3 +221,44 @@ spec:
 {{- toYaml $resources }}
 {{- end }}
 {{- end }}
+
+{{/*
+Define Mender major and minor version
+to be able to apply some conditional logic
+*/}}
+{{- define "menderVersionMajor" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- $mndr_version := split "." $dot.Chart.AppVersion }}
+{{- with $dot.Values.global.image }}
+  {{- if contains "-" .tag }}
+    {{- $mndr_splitted := split "-" .tag -}}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." $mndr_splitted._1 }}
+    {{- end }}
+  {{- else }}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." .tag }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- printf "%s" $mndr_version._0 }}
+{{- end }}
+
+{{- define "menderVersionMinor" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- $mndr_version := split "." $dot.Chart.AppVersion }}
+{{- with $dot.Values.global.image }}
+  {{- if contains "-" .tag }}
+    {{- $mndr_splitted := split "-" .tag -}}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." $mndr_splitted._1 }}
+    {{- end }}
+  {{- else }}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." .tag }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- printf "%s" $mndr_version._1 }}
+{{- end }}
+

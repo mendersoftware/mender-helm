@@ -1,5 +1,24 @@
 # Mender Helm chart
 
+## Version 5.4.0
+* Upgrade to Mender version `3.7.0`.
+* Update the Redis settings to use a connection string, required by Mender 3.7.0
+* **Deprecations**:
+  * `global.redis.username` and `global.redis.password` are deprecated in Mender 3.7.0.
+    Use redis connection string format in the `global.redis.URL`:
+    * Standalone mode:
+    ```
+    (redis|rediss|unix)://[<user>:<password>@](<host>|<socket path>)[:<port>[/<db_number>]][?option=value]
+    ```
+    * Cluster mode:
+    ```
+    (redis|rediss|unix)[+srv]://[<user>:<password>@]<host1>[,<host2>[,...]][:<port>][?option=value]
+    ```
+  * `device_auth.env.DEVICEAUTH_REDIS_DB`: use the new redis connection string format instead.
+  * `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC`: use the new redis connection string format instead.
+  * `device_auth.env.USERADM_REDIS_DB`: use the new redis connection string format instead.
+  * `device_auth.env.USERADM_REDIS_TIMEOUT_SEC`: use the new redis connection string format instead.
+
 ## Version 5.3.0
 * Split single db-migration job into multiple jobs
 * Traefik updated to `v2.10.5`

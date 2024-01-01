@@ -154,14 +154,14 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
-| `global.image.tag` | Global Docker image registry tag | `mender-3.6.3` |
+| `global.image.tag` | Global Docker image registry tag | `mender-3.7.0` |
 | `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
-| `global.redis.username` | Optional Redis Username  | `nil` |
-| `global.redis.password` | Optional Redis Password  | `nil` |
-| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `mender-redis:6379` |
+| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `redis://mender-redis:6379/0` |
+| `global.redis.username` | Optional Redis Username **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
+| `global.redis.password` | Optional Redis Password **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |
 | `global.storage` | Artifacts storage type  (available types: `aws` and `azure`) | `aws` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
@@ -367,9 +367,10 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
-| `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable | `1` |
-| `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable | `1` |
+| `device_auth.env.DEVICEAUTH_REDIS_KEY_PREFIX` | Set the DEVICEAUTH_REDIS_KEY_PREFIX variable | `deviceauth:v1` |
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
+| `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable **[Deprecated from 3.7.0]** | `1` |
+| `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
 | `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `device_auth.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `device_auth.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
@@ -458,6 +459,8 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.service.port` | Port for the service | `8080` |
 | `inventory.service.nodePort` | Node port for the service | `nil` |
 | `inventory.env.INVENTORY_MIDDLEWARE` | Set the INVENTORY_MIDDLEWARE variable | `prod` |
+| `inventory.env.INVENTORY_REDIS_KEY_PREFIX` | Set the INVENTORY_REDIS_KEY_PREFIX variable | `inventory:v1` |
+| `inventory.env.INVENTORY_REDIS_CACHE_EXPIRE_SEC` | Set the INVENTORY_REDIS_CACHE_EXPIRE_SEC variable | `1800` |
 | `inventory.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `inventory.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `inventory.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
@@ -600,9 +603,10 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable | `Mender Users` |
 | `useradm.env.USERADM_JWT_EXP_TIMEOUT` | Set the USERADM_JWT_EXP_TIMEOUT variable | `604800` |
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
-| `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable | `2` |
-| `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable | `1` |
+| `useradm.env.USERADM_REDIS_KEY_PREFIX` | Set the USERADM_REDIS_KEY_PREFIX variable | `useradm:v1` |
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
+| `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable **[Deprecated from 3.7.0]** | `2` |
+| `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
 | `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 | `useradm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
