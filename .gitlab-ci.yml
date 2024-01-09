@@ -46,6 +46,7 @@ include:
 build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .pre
+  resource_group: helm
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
@@ -721,6 +722,7 @@ publish:helm_chart_publishing:
 .eks_cleanup: &eks_cleanup
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .post
+  resource_group: helm
   allow_failure: true # can't find a way to avoid eks cleanup when no eks is setup, so let's allow to fail for now
   dependencies:
     - build:setup_eks_cluster
