@@ -200,6 +200,10 @@ The following table lists the global, default, and other parameters supported by
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
+| `serviceAccount.create` | Create a custom ServiceAccount | `false` |
+| `serviceAccount.name` | Custom ServiceAccount name | `nil` |
+| `serviceAccount.labels` | ServiceAccount labels | `nil` |
+| `serviceAccount.annotations` | ServiceAccount annotations | `nil` |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
