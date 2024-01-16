@@ -154,7 +154,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
-| `global.image.tag` | Global Docker image registry tag | `mender-3.7.0` |
+| `global.image.tag` | Global Docker image registry tag | `mender-3.7.1` |
 | `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |

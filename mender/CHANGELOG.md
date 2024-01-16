@@ -1,6 +1,8 @@
 # Mender Helm chart
 
-## master
+## Version 5.4.1
+* Upgrade to Mender version `3.7.1`.
+* Removed useless variables from the gui container.
 * Added custom service account support (thanks @bdomars)
 
 ## Version 5.4.0
