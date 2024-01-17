@@ -262,3 +262,14 @@ to be able to apply some conditional logic
 {{- printf "%s" $mndr_version._1 }}
 {{- end }}
 
+{{/*
+Create the name of the service account
+*/}}
+{{- define "mender.serviceAccountName" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if $dot.Values.serviceAccount.create }}
+{{- default (include "mender.fullname" $dot) $dot.Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" $dot.Values.serviceAccount.name }}
+{{- end }}
+{{- end }}

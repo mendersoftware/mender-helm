@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## master
+* Added custom service account support (thanks @bdomars)
+
 ## Version 5.4.0
 * Upgrade to Mender version `3.7.0`.
 * Update the Redis settings to use a connection string, required by Mender 3.7.0

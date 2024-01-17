@@ -69,6 +69,12 @@ default:
     enabled: false
     minAvailable: 1
 
+serviceAccount:
+  create: false
+  name:
+  labels: {}
+  annotations: {}
+
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false
