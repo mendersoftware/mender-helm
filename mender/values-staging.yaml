@@ -18,3 +18,8 @@ create_artifact_worker:
     tag: staging_6cda58cf8649b202774ecaf53f89452e51899cd1
     registry: mendersoftware
     repository: create-artifact-worker
+generate_delta_worker:
+  image:
+    tag: staging_7ff438dedd1569c7c9ae79d421d0343181d4e992
+    registry: registry.mender.io
+    repository: mendersoftware/generate-delta-worker
