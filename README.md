@@ -7,7 +7,7 @@
 Using `helm`:
 
 ```bash
-$ helm install mender ./mender
+helm install mender ./mender
 ```
 
 ## Introduction
@@ -47,9 +47,55 @@ It's recommended to use an external deployment in Production.
 You can install MinIO using the official MinIO Helm chart using `helm`:
 
 ```bash
-$ helm repo add minio https://helm.min.io/
-$ helm repo update
-$ helm install minio minio/minio --version 8.0.10 --set "image.tag=RELEASE.2021-02-14T04-01-33Z" --set "accessKey=myaccesskey,secretKey=mysecretkey" --set "resources.requests.memory=128M"
+cat >minio-operator.yml <<EOF
+tenants: {}
+EOF
+
+helm repo add minio https://operator.min.io/
+helm repo update
+helm install minio-operator minio/minio-operator --version 4.1.7 -f minio-operator.yml
+
+export MINIO_ACCESS_KEY=$(pwgen 32 1)
+export MINIO_SECRET_KEY=$(pwgen 32 1)
+
+cat >minio.yml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-creds-secret
+type: Opaque
+data:
+  accesskey: $(echo -n $MINIO_ACCESS_KEY | base64)
+  secretkey: $(echo -n $MINIO_SECRET_KEY | base64)
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio
+  labels:
+    app: minio
+spec:
+  image: minio/minio:RELEASE.2021-06-17T00-10-46Z
+  credsSecret:
+    name: minio-creds-secret
+  pools:
+    - servers: 2
+      volumesPerServer: 2
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+          storageClassName: "standard"
+  mountPath: /export
+  requestAutoCert: false
+EOF
+
+kubectl apply -f minio.yml
 ```
 
 ### Installing NATS
@@ -74,7 +120,7 @@ It's recommended to use an external deployment in Production.
 To install the chart with the release name `my-release` using `helm`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender
+helm install my-release -f values.yaml ./mender
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -121,15 +167,15 @@ useradm:
 You can generate your `cert` and `key` for `api-gareway` using `openssl`:
 
 ```bash
-$ openssl req -x509 -sha256 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) -keyout private.key -out certificate.crt -subj /CN="your.host.name"
+openssl req -x509 -sha256 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) -keyout private.key -out certificate.crt -subj /CN="your.host.name"
 ```
 
 You can generate the RSA private keys for `device-auth`, `tenantadm` and `useradm` using `openssl`:
 
 ```bash
-$ openssl genpkey -algorithm RSA -out device_auth.key -pkeyopt rsa_keygen_bits:3072
-$ openssl rsa -in device_auth.key -out device_auth_converted.key
-$ mv device_auth_converted.key device_auth.key
+openssl genpkey -algorithm RSA -out device_auth.key -pkeyopt rsa_keygen_bits:3072
+openssl rsa -in device_auth.key -out device_auth_converted.key
+mv device_auth_converted.key device_auth.key
 ```
 
 ## Uninstalling the Chart
@@ -137,7 +183,7 @@ $ mv device_auth_converted.key device_auth.key
 To uninstall/delete the `my-release` deployment:
 
 ```bash
-$ helm delete my-release
+helm delete my-release
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -209,7 +255,7 @@ The following table lists the global, default, and other parameters supported by
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install my-release \
+helm install my-release \
   --set mongodbRootPassword=secretpassword,mongodbUsername=my-user,mongodbPassword=my-password,mongodbDatabase=my-database \
   ./mender
 ```
@@ -217,7 +263,7 @@ $ helm install my-release \
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender
+helm install --name my-release -f values.yaml ./mender
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -989,14 +1035,14 @@ The following table lists the parameters for the `redis` component and their def
 You can create a tenant from the command line of the `tenantadm` pod; the value printed is the newly generated tenant ID:
 
 ```bash
-$ tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin" --plan enterprise
+tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin" --plan enterprise
 5dcd71624143b30050e63bed
 ```
 
 You can create additional useres from the command line of the `useradm` pod:
 
 ```bash
-$ useradm-enterprise create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
+useradm-enterprise create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
 187b8101-4431-500f-88da-54709f51f2e6
 ```
 
@@ -1006,7 +1052,7 @@ If you are running the Open Source version of Mender, you won't have the `tenant
 You can create users directly in the `useradm` pod:
 
 ```bash
-$ useradm create-user --username "demo@mender.io" --password "demodemo"
+useradm create-user --username "demo@mender.io" --password "demodemo"
 187b8101-4431-500f-88da-54709f51f2e6
 ```
 
@@ -1015,7 +1061,7 @@ $ useradm create-user --username "demo@mender.io" --password "demodemo"
 You can port-forward the `mender-api-gateway` Kubernetes service to verify the system is up and running:
 
 ```bash
-$ kubectl port-forward service/mender-api-gateway 443:443
+kubectl port-forward service/mender-api-gateway 443:443
 ```
 
 ## Contributing
