@@ -85,9 +85,15 @@ MongoDB URI
       {{- else }}
         {{- printf "mongodb://%s-0" ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
       {{- end }}
-    {{- else if not (eq .Values.global.architecture "replicaset") }}
+    {{- else if not (eq .Values.mongodb.architecture "replicaset") }}
       {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword  }}
         {{- printf "mongodb://root:%s@%s" .Values.mongodb.auth.rootPassword ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- else }}
+        {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- end }}
+    {{- else if and (eq .Values.mongodb.architecture "replicaset") (not .Values.mongodb.externalAccess.enabled) }}
+      {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword  }}
+        {{- printf "mongodb+srv://root:%s@%s.%s.svc.cluster.local/?tls=false" .Values.mongodb.auth.rootPassword ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) .Release.Namespace | b64enc | quote -}}
       {{- else }}
         {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
       {{- end }}

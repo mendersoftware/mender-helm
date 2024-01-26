@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## master
+* Fix mongodb uri creation when using the mongodb subchart and replicast architecture
+
 ## Version 5.4.1
 * Upgrade to Mender version `3.7.1`.
 * Removed useless variables from the gui container.
