@@ -69,6 +69,11 @@ default:
     enabled: false
     minAvailable: 1
 
+  # custom default envs for every service
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: WARN 
+
 serviceAccount:
   create: false
   name:
@@ -290,6 +295,11 @@ deployments:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
+
 device_auth:
   enabled: true
   podAnnotations: {}
@@ -358,6 +368,11 @@ device_auth:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
+
 # Generate Delta Worker feature
 # Experimental feature, still in beta
 # will be released in the next Mender versions
@@ -382,6 +397,11 @@ generate_delta_worker:
   imagePullSecrets: []
   nodeSelector: {}
   priorityClassName: ""
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 gui:
   enabled: true
@@ -417,6 +437,11 @@ gui:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   priorityClassName: ""
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 inventory:
   enabled: true
@@ -471,6 +496,11 @@ inventory:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 tenantadm:
   enabled: true
@@ -539,6 +569,10 @@ tenantadm:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 useradm:
   enabled: true
@@ -608,6 +642,11 @@ useradm:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
+
 workflows:
   enabled: true
   podAnnotations: {}
@@ -658,6 +697,11 @@ workflows:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
+
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
@@ -686,6 +730,11 @@ create_artifact_worker:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   priorityClassName: ""
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 auditlogs:
   enabled: true
@@ -724,7 +773,7 @@ auditlogs:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
   
   ## auditlogs.migrationRestartPolicy
@@ -740,6 +789,11 @@ auditlogs:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 iot_manager:
   enabled: true
@@ -792,6 +846,11 @@ iot_manager:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 deviceconnect:
   enabled: true
@@ -847,6 +906,11 @@ deviceconnect:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
+
 deviceconfig:
   enabled: true
   podAnnotations: {}
@@ -899,6 +963,11 @@ deviceconfig:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
+
 devicemonitor:
   enabled: true
   podAnnotations: {}
@@ -950,6 +1019,11 @@ devicemonitor:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG 
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only

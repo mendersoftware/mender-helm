@@ -73,6 +73,8 @@ spec:
     - name: DEVICEMONITOR_WORKFLOWS_URL
       value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
 
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.devicemonitor) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
+
     # Supported configuration settings: https://github.com/mendersoftware/devicemonitor/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
     envFrom:

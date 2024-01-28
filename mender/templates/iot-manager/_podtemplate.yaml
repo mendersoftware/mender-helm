@@ -66,6 +66,8 @@ spec:
 
     env:
     # Supported configuration settings: https://github.com/mendersoftware/iot-manager/blob/master/config.yaml
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.iot_manager) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
+
     # Set in order, last value for the key will be used in case duplications.
     envFrom:
     - prefix: IOT_MANAGER_

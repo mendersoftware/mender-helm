@@ -279,3 +279,14 @@ Create the name of the service account
 {{- default "default" $dot.Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Synopsis:
+{{- include "mender.customEnvs" (merge (deepCopy .dot.Values.<service>) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
+*/}}
+{{- define "mender.customEnvs" -}}
+{{- with .customEnvs }}
+{{- toYaml . }}
+{{- println "" }}
+{{- end }}
+{{- end -}}

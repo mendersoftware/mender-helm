@@ -83,6 +83,7 @@ spec:
       value: {{ .dot.Values.useradm.env.INVENTORY_REDIS_CACHE_EXPIRE_SEC | default "1800" | quote }}
     {{- end }}
     {{- end }}
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.inventory) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
