@@ -301,8 +301,11 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpNodePort` | Node port for the HTTP service | `nil` |
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
 | `api_gateway.env.SSL` | SSL termination flag | `true` |
-| `api_gateway.minio.enabled` | Enable routing of S3 requests to the minio service | `true` |
-| `api_gateway.minio.url` | URL of the minio service | `http://minio:9000` |
+| `api_gateway.minio.enabled` | Enable routing of S3 requests to the minio service. **[Deprecated from 5.5.0, use `api_gateway.storage_proxy`` instead]** | `true` |
+| `api_gateway.minio.url` | URL of the minio service. **[Deprecated from 5.5.0, use `api_gateway.storage_proxy`` instead]** | `http://minio:9000` |
+| `api_gateway.storage_proxy.enabled` | Enable storage proxy to the S3/minio service | `false` |
+| `api_gateway.storage_proxy.url` | URL of the storage proxy. Should point to the AWS Bucket/Minio URL | `nil` |
+| `api_gateway.storage_proxy.customRule` | Custom rules for the storage proxy. | ``HostRegexp(`{domain:^artifacts.*$}`)`` |
 | `api_gateway.rateLimit.average` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
@@ -317,7 +320,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `api_gateway.compression` | Enable Traefik Compression | `true` |
 | `api_gateway.security_redirect` | Custom redirect to a company security page | `null` |
-| `api_gateway.minio.customRule` | Custom redirect for MinIO. Uses the default one if not specified | `null` |
+| `api_gateway.minio.customRule` | Custom redirect for MinIO. Uses the default one if not specified. **[Deprecated from 5.5.0, use `api_gateway.storage_proxy`` instead]** | `null` |
 | `api_gateway.hpa` | HorizontalPodAutoscaler support | `nil` |
 | `api_gateway.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
 | `api_gateway.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |

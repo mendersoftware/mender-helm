@@ -417,7 +417,9 @@ data:
           rule: "!Path(`/api/management/{ver:v[0-9]+}/useradm/auth/logout`)&&PathPrefix(`/api/management/{ver:v[0-9]+}/useradm/{ep:(auth|oauth2)}`)"
           service: useradm
           tls: {{ $isTls }}
-{{- if .Values.api_gateway.minio.enabled }}
+{{- if and .Values.api_gateway.storage_proxy.enabled .Values.api_gateway.minio.enabled }}
+    {{- fail "You cannot set both api_gateway.storage_proxy and api_gateway.minio. Choose one" }}
+{{- else if and .Values.api_gateway.minio.enabled (not .Values.api_gateway.storage_proxy.enabled) }}
 
         #
         # minio
@@ -429,6 +431,19 @@ data:
           rule: {{ template "minioRule" . }}
           priority: 900
           service: minio
+          tls: {{ $isTls }}
+{{- else if and .Values.api_gateway.storage_proxy.enabled (not .Values.api_gateway.minio.enabled) }}
+
+        #
+        # storage_proxy
+        #
+        storage_proxy:
+          entrypoints: {{ $scheme }}
+          middlewares:
+          - ratelimit
+          rule: {{ include "mender.storageProxyRule" . }}
+          priority: 65535
+          service: storage_proxy
           tls: {{ $isTls }}
 {{- end }}
 
@@ -496,12 +511,20 @@ data:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}"
-{{- if .Values.api_gateway.minio.enabled }}
+{{- if and .Values.api_gateway.storage_proxy.enabled .Values.api_gateway.minio.enabled }}
+    {{- fail "You cannot set both api_gateway.storage_proxy and api_gateway.minio. Choose one" }}
+{{- else if and .Values.api_gateway.minio.enabled (not .Values.api_gateway.storage_proxy.enabled) }}
 
         minio:
           loadBalancer:
             servers:
             - url: "{{ .Values.api_gateway.minio.url }}"
+{{- else if and .Values.api_gateway.storage_proxy.enabled (not .Values.api_gateway.minio.enabled) }}
+
+        storage_proxy:
+          loadBalancer:
+            servers:
+            - url: {{ include "mender.storageProxyUrl" . }}
 {{- end }}
 
       #

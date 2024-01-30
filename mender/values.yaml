@@ -202,6 +202,10 @@ api_gateway:
     podAnnotations: {}
     url: "http://minio:9000"
     customRule: null
+  storage_proxy:
+    enabled: false
+    url: ""
+    customRule: "HostRegexp(`{domain:^artifacts.*$}`)"
   compression: true
   security_redirect: null
   rateLimit:
