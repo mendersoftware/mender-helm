@@ -73,6 +73,7 @@ spec:
           value: "1"
         - name: GENERATE_DELTA_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.generate_delta_worker) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:

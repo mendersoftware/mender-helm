@@ -1,7 +1,20 @@
 # Mender Helm chart
 
-## master
+## 5.5.0
 * Fix mongodb uri creation when using the mongodb subchart and replicast architecture
+* Added customEnv option to set default or per-service custom env variables
+* Added generic `storage_proxy` service, that could
+  work for both minio and Amazon S3, and it's going to replace the `api_gateway.minio` configuration.
+* **Deprecations**:
+  * `api_gateway.minio` is deprecated in favor of `api_gateway.storage_proxy`.
+    This entry could be used, but it is no longer maintained, and could be removed
+    in future releases.  
+    **How to upgrade**: 
+    * set `api_gateway.minio.enabled=false`
+    * set `api_gateway.storage_proxy.enabled=true`
+    * set `api_gateway.storage_proxy.url` to the external storage url that you want to map externally. For example `https://fleetstorage.example.com`.
+      If you leave it empty, it uses the Amazon S3 external URL.
+
 
 ## Version 5.4.1
 * Upgrade to Mender version `3.7.1`.

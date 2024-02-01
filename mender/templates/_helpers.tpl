@@ -279,3 +279,40 @@ Create the name of the service account
 {{- default "default" $dot.Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Synopsis:
+{{- include "mender.customEnvs" (merge (deepCopy .dot.Values.<service>) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
+*/}}
+{{- define "mender.customEnvs" -}}
+{{- with .customEnvs }}
+{{- toYaml . }}
+{{- println "" }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Define mender.storageProxyUrl
+*/}}
+{{- define "mender.storageProxyUrl" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- with $dot.Values.api_gateway.storage_proxy }}
+  {{- if .url }}
+    {{- printf "%s" .url }}
+  {{- else if eq $dot.Values.global.storage "aws" }}
+    {{- printf "https://%s.s3.%s.amazonaws.com" $dot.Values.global.s3.AWS_BUCKET $dot.Values.global.s3.AWS_REGION}}
+  {{- else }}
+    {{- required "A valid storage proxy URL is required" $dot.Values.api_gateway.storage_proxy.url }}
+  {{- end }}
+{{- else }}
+{{- printf "" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Storage Proxy Rule
+*/}}
+{{- define "mender.storageProxyRule" -}}
+  {{- default "HostRegexp(`{domain:^artifacts.*$}`)" .Values.api_gateway.storage_proxy.customRule | quote }}
+{{- end -}}
+

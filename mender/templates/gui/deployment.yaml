@@ -97,6 +97,7 @@ spec:
         - name: HAVE_MONITOR
           value: "true"
         {{- end }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.gui) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

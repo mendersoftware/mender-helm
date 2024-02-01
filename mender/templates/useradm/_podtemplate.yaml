@@ -124,6 +124,7 @@ spec:
     - name: USERADM_REDIS_LIMITS_EXPIRE_SEC
       value: {{ .dot.Values.useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
     {{- end }}
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.useradm) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/useradm/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.

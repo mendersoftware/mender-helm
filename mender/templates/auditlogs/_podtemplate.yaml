@@ -67,6 +67,7 @@ spec:
     env:
     - name: AUDITLOGS_AUDITLOG_EXPIRE_SECONDS
       value: {{ .dot.Values.auditlogs.logRetentionSeconds | int | toString | quote }}
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.auditlogs) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
     # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
     envFrom:
