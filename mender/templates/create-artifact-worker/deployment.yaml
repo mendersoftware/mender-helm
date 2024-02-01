@@ -78,6 +78,7 @@ spec:
           value: "1"
         - name: CREATE_ARTIFACT_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.create_artifact_worker) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:

@@ -23,6 +23,7 @@ spec:
             app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth-license-count
 
         spec:
+          serviceAccountName: {{ include "mender.serviceAccountName" . }}
           {{- with $merged.affinity }}
           affinity: {{ tpl (toYaml .) $ | nindent 12 }}
           {{- end }}

@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- with (coalesce .dot.Values.devicemonitor.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -71,6 +72,8 @@ spec:
     # Workflows orchestrator address
     - name: DEVICEMONITOR_WORKFLOWS_URL
       value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
+
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.devicemonitor) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/devicemonitor/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.

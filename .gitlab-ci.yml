@@ -7,11 +7,24 @@ variables:
   ROLE_ARN: 
     value: "arn:aws:iam::017659451055:role/nt-mender-helm-eksctl-test"
     description: "AWS IAM role which executes the AWS jobs"
+  GITHUB_HELM_REPO: "github.com/mendersoftware/mender-helm.git"
+  SYNC_ENVIRONMENT: "${SYNC_ENVIRONMENT:-staging}"
+  CHART_DIR: "mender"
+  GITHUB_USER: "mender-test-bot"
+  GITHUB_TOKEN: "${GITHUB_BOT_TOKEN_REPO_FULL}"
+  MAIN_BRANCH: "master"
+  RUN_PLAYGROUND:
+    value: "false"
+    description: "Run EKS setup playground"
+  PLAYGROUND_EKS_TIMEOUT:
+    value: 3600
+    description: "Default timeout for the EKS playground setup"
 
 stages:
   - build
   - test
   - publish
+  - version-bump
 
 include:
   - project: 'Northern.tech/Mender/mendertesting'
@@ -20,6 +33,8 @@ include:
     file: '.gitlab-ci-check-license.yml'
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-github-status-updates.yml'
+  - project: 'Northern.tech/Mender/mendertesting'
+    file: '.gitlab-ci-check-helm-version-bump.yml'
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
   - export AWS_DEFAULT_REGION=eu-central-1
@@ -37,7 +52,12 @@ include:
 build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .pre
+  tags:
+    - mender-qa-worker-generic-light
+  resource_group: helm
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
   id_tokens:
     AWS_OIDC_TOKEN:
@@ -73,7 +93,11 @@ build:setup_eks_cluster:
 build:
   stage: build
   image: debian:buster
+  tags:
+    - mender-qa-worker-generic-light
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - when: on_success
@@ -116,6 +140,13 @@ build:
   - export AWS_DEFAULT_REGION=$S3_HELM_CHART_REPO_AWS_REGION
   - export AWS_S3_SSE=AES256
 
+# Skip check license source when the pipeline
+# is triggered
+test:check-license-source:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+
 test:helm_chart_install:
   tags:
     - mender-qa-worker-generic-light
@@ -125,6 +156,8 @@ test:helm_chart_install:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
@@ -177,6 +210,8 @@ test:helm_chart_install_sub_charts:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
@@ -251,6 +286,8 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
@@ -321,6 +358,8 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
@@ -392,6 +431,8 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
@@ -433,14 +474,14 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         mender/mender || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
-      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.6.3}"
+      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.1}"
       helm upgrade -i mender \
         -f mender/values.yaml \
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
-        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.6.3}" \
+        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.1}" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
@@ -504,6 +545,8 @@ test:helm_chart_install_opensource:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
@@ -577,6 +620,8 @@ test:helm_chart_install_with_r2:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
@@ -663,11 +708,12 @@ test:playground_eks_cluster:
     - sleep ${PLAYGROUND_EKS_TIMEOUT:-3600}
 
 publish:helm_chart_publishing:
+  tags:
+    - mender-qa-worker-generic-light
   rules:
     - if: '$CI_COMMIT_TAG'
       changes:
         - mender/Chart.yaml
-      when: manual
   stage: publish
   dependencies:
     - build
@@ -687,10 +733,15 @@ publish:helm_chart_publishing:
 .eks_cleanup: &eks_cleanup
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .post
+  tags:
+    - mender-qa-worker-generic-light
+  resource_group: helm
   allow_failure: true # can't find a way to avoid eks cleanup when no eks is setup, so let's allow to fail for now
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
   id_tokens:
     AWS_OIDC_TOKEN:
