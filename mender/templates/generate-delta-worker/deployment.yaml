@@ -63,8 +63,12 @@ spec:
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         env:
+        # NATS uri
+        {{- if not .Values.global.nats.existingSecret }}
         - name: WORKFLOWS_NATS_URI
           value: {{ template "nats_uri" . }}
+        {{- end }}
+
         - name: WORKFLOWS_MENDER_URL
           value: "{{ .Values.global.url }}"
         - name: GENERATE_DELTA_GATEWAY_URL
@@ -78,6 +82,12 @@ spec:
         - prefix: WORKFLOWS_
           secretRef:
             name: mongodb-common
+
+        {{- if .Values.global.nats.existingSecret }}
+        - prefix: WORKFLOWS_
+          secretRef:
+            name: {{ .Values.global.nats.existingSecret }}
+        {{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

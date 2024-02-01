@@ -75,8 +75,11 @@ spec:
     {{- end }}
 
     env:
+    # NATS uri
+    {{- if not .dot.Values.global.nats.existingSecret }}
     - name: WORKFLOWS_NATS_URI
       value: {{ template "nats_uri" . }}
+    {{- end }}
 
     {{- if .worker }}
     - name: WORKFLOWS_MENDER_URL
@@ -106,6 +109,12 @@ spec:
     - prefix: WORKFLOWS_
       secretRef:
         name: smtp
+    {{- end }}
+
+    {{- if .dot.Values.global.nats.existingSecret }}
+    - prefix: WORKFLOWS_
+      secretRef:
+        name: {{ .dot.Values.global.nats.existingSecret }}
     {{- end }}
 
   {{- if .dot.Values.global.image.username }}
