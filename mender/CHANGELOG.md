@@ -5,6 +5,7 @@
 * Added customEnv option to set default or per-service custom env variables
 * Added generic `storage_proxy` service, that could
   work for both minio and Amazon S3, and it's going to replace the `api_gateway.minio` configuration.
+* Add OpenID Connect authentication API to user authentication routes in the gateway. 
 * **Deprecations**:
   * `api_gateway.minio` is deprecated in favor of `api_gateway.storage_proxy`.
     This entry could be used, but it is no longer maintained, and could be removed
