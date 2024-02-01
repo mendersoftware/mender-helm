@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- with (coalesce .dot.Values.device_auth.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -98,6 +99,8 @@ spec:
       value: {{ .dot.Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
     {{- end }}
     {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
+    {{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) }}
+    # redis_address deprecated from 3.7
     - name: DEVICEAUTH_REDIS_ADDR
       value: {{ include "redis_address" . }}
     - name: DEVICEAUTH_REDIS_USERNAME
@@ -108,9 +111,16 @@ spec:
       value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_DB | default "1" | quote }}
     - name: DEVICEAUTH_REDIS_TIMEOUT_SEC
       value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_TIMEOUT_SEC | default "1" | quote }}
+    {{- else }}
+    - name: DEVICEAUTH_REDIS_CONNECTION_STRING
+      value: {{ include "redis_connection_string" . }}
+    - name: DEVICEAUTH_REDIS_KEY_PREFIX
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_REDIS_KEY_PREFIX | default "deviceauth:v1" | quote }}
+    {{- end }}
     - name: DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC
       value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
     {{- end }}
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.device_auth) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/deviceauth/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.

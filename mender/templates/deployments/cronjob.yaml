@@ -30,6 +30,8 @@ spec:
           {{- end }}
           {{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
           serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+          {{- else }}
+          serviceAccountName: {{ include "mender.serviceAccountName" . }}
           {{- end }}
           {{- if .Values.deployments.podSecurityContext.enabled }}
           securityContext: {{- omit .Values.deployments.podSecurityContext "enabled" | toYaml | nindent 12 }}

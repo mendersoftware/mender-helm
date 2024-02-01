@@ -39,6 +39,7 @@ spec:
         {{- include "mender.labels" . | nindent 8 }}
         app.kubernetes.io/component: gui
     spec:
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -70,12 +71,6 @@ spec:
           periodSeconds: 15
 
         env:
-        - name: INTEGRATION_VERSION
-          value: "3.6.1"
-        - name: MENDER_VERSION
-          value: "3.6.1"
-        - name: MENDER_ARTIFACT_VERSION
-          value: "3.9.0"
         {{- if .Values.global.hosted }}
         - name: MENDER_HOSTED
           value: {{ .Values.global.hosted | quote }}
@@ -102,6 +97,7 @@ spec:
         - name: HAVE_MONITOR
           value: "true"
         {{- end }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.gui) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:

@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- with (coalesce .dot.Values.workflows.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -93,6 +94,7 @@ spec:
       value: "true"
     {{- end }}
     {{- end }}
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.workflows) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.

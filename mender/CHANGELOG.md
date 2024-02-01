@@ -1,5 +1,46 @@
 # Mender Helm chart
 
+## 5.5.0
+* Fix mongodb uri creation when using the mongodb subchart and replicast architecture
+* Added customEnv option to set default or per-service custom env variables
+* Added generic `storage_proxy` service, that could
+  work for both minio and Amazon S3, and it's going to replace the `api_gateway.minio` configuration.
+* Add OpenID Connect authentication API to user authentication routes in the gateway. 
+* **Deprecations**:
+  * `api_gateway.minio` is deprecated in favor of `api_gateway.storage_proxy`.
+    This entry could be used, but it is no longer maintained, and could be removed
+    in future releases.  
+    **How to upgrade**: 
+    * set `api_gateway.minio.enabled=false`
+    * set `api_gateway.storage_proxy.enabled=true`
+    * set `api_gateway.storage_proxy.url` to the external storage url that you want to map externally. For example `https://fleetstorage.example.com`.
+      If you leave it empty, it uses the Amazon S3 external URL.
+
+
+## Version 5.4.1
+* Upgrade to Mender version `3.7.1`.
+* Removed useless variables from the gui container.
+* Added custom service account support (thanks @bdomars)
+
+## Version 5.4.0
+* Upgrade to Mender version `3.7.0`.
+* Update the Redis settings to use a connection string, required by Mender 3.7.0
+* **Deprecations**:
+  * `global.redis.username` and `global.redis.password` are deprecated in Mender 3.7.0.
+    Use redis connection string format in the `global.redis.URL`:
+    * Standalone mode:
+    ```
+    (redis|rediss|unix)://[<user>:<password>@](<host>|<socket path>)[:<port>[/<db_number>]][?option=value]
+    ```
+    * Cluster mode:
+    ```
+    (redis|rediss|unix)[+srv]://[<user>:<password>@]<host1>[,<host2>[,...]][:<port>][?option=value]
+    ```
+  * `device_auth.env.DEVICEAUTH_REDIS_DB`: use the new redis connection string format instead.
+  * `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC`: use the new redis connection string format instead.
+  * `device_auth.env.USERADM_REDIS_DB`: use the new redis connection string format instead.
+  * `device_auth.env.USERADM_REDIS_TIMEOUT_SEC`: use the new redis connection string format instead.
+
 ## Version 5.3.0
 * Split single db-migration job into multiple jobs
 * Traefik updated to `v2.10.5`
