@@ -19,6 +19,9 @@ variables:
   PLAYGROUND_EKS_TIMEOUT:
     value: 3600
     description: "Default timeout for the EKS playground setup"
+  USE_SPOT_INSTANCES:
+    value: "true"
+    description: "Use spot instances for cost savings"
 
 stages:
   - build
@@ -64,6 +67,12 @@ build:setup_eks_cluster:
       aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
+    - |
+      if [[ "${USE_SPOT_INSTANCES}" == "true" ]]; then
+        export SPOT_STRING="--spot"
+      else
+        export SPOT_STRING=""
+      fi
   script:
     - |
       echo "INFO - Temporary EKS cluster setup"
@@ -71,8 +80,8 @@ build:setup_eks_cluster:
         --name ${EKS_CLUSTER_NAME} \
         --tags "env=helm-ci-test" \
         --asg-access \
-        --spot \
-        --instance-types m6a.xlarge,t3.xlarge,m5d.xlarge,m6i.xlarge \
+        ${SPOT_STRING} \
+        --instance-types c6i.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge,m5d.xlarge \
         --nodes ${CI_EKS_NUMBER_OF_NODES:-6} 
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
@@ -83,7 +92,7 @@ build:setup_eks_cluster:
     - eksctl create iamserviceaccount --name=aws-load-balancer-controller --namespace=kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::017659451055:policy/AWSLoadBalancerControllerIAMPolicy  --approve
     - helm repo add eks https://aws.github.io/eks-charts
     - helm repo update eks
-    - helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=${EKS_CLUSTER_NAME} --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+    - helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=${EKS_CLUSTER_NAME} --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller --wait
     - eksctl create addon --name aws-ebs-csi-driver --cluster ${EKS_CLUSTER_NAME} --service-account-role-arn arn:aws:iam::017659451055:role/AmazonEKS_EBS_CSI_DriverRole --force
     - echo "DEBUG - kubectl cluster version:"
     - kubectl version
