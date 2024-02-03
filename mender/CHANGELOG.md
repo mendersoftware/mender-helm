@@ -2,6 +2,7 @@
 
 ## master
 * Fix NATS address when `global.nats.existingSecret` is defined
+* Fix indent issue when using multiple custom imagePullSecrets
 
 ## 5.5.0
 * Fix mongodb uri creation when using the mongodb subchart and replicast architecture
