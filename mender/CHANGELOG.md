@@ -1,6 +1,6 @@
 # Mender Helm chart
 
-## master
+## 5.5.1
 * Fix NATS address when `global.nats.existingSecret` is defined
 * Fix indent issue when using multiple custom imagePullSecrets
 * Fix artifact storage secret for the Deployments storage daemon
