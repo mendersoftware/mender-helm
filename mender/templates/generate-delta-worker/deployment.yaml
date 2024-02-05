@@ -96,7 +96,7 @@ spec:
 {{- $ips := coalesce .Values.generate_delta_worker.imagePullSecrets .Values.default.imagePullSecrets  }}
 {{- if $ips }}
       imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
+{{- toYaml $ips | nindent 6 }}
 {{- end }}
 {{- end }}
 

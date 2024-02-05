@@ -74,6 +74,11 @@ default:
   # - name: LOG_LEVEL
   #   value: WARN
 
+  # Custom default imagePullSecrets
+  imagePullSecrets: []
+  # - name: secret1
+  # - name: secret2
+
 serviceAccount:
   create: false
   name:
