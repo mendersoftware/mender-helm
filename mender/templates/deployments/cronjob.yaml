@@ -57,7 +57,7 @@ spec:
                 name: mongodb-common
             - prefix: DEPLOYMENTS_
               secretRef:
-                name: artifacts-storage
+                name: {{ .Values.global.s3.existingSecret | default "artifacts-storage" }}
             {{- if .Values.deployments.containerSecurityContext.enabled }}
             securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 14 }}
             {{- end }}
