@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## master
+* Fix NATS address when `global.nats.existingSecret` is defined
+
 ## 5.5.0
 * Fix mongodb uri creation when using the mongodb subchart and replicast architecture
 * Added customEnv option to set default or per-service custom env variables
