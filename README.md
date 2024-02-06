@@ -306,6 +306,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.storage_proxy.enabled` | Enable storage proxy to the S3/minio service | `false` |
 | `api_gateway.storage_proxy.url` | URL of the storage proxy. Should point to the AWS Bucket/Minio URL | `nil` |
 | `api_gateway.storage_proxy.customRule` | Custom rules for the storage proxy. | ``HostRegexp(`{domain:^artifacts.*$}`)`` |
+| `api_gateway.storage_proxy.passHostHeader` | The passHostHeader allows to forward client Host header to server. | `false` |
 | `api_gateway.rateLimit.average` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |

@@ -523,6 +523,7 @@ data:
 
         storage_proxy:
           loadBalancer:
+            passHostHeader: {{ .Values.api_gateway.passHostHeader | default false }}
             servers:
             - url: {{ include "mender.storageProxyUrl" . }}
 {{- end }}

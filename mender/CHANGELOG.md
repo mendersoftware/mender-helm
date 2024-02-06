@@ -5,6 +5,7 @@
 * Fix indent issue when using multiple custom imagePullSecrets
 * Fix artifact storage secret for the Deployments storage daemon
   when using an existing external secret
+* Forcing Traefik `passHostHeader` option to `false` when using the `api_gateway.storage_proxy`
 
 ## 5.5.0
 * Fix mongodb uri creation when using the mongodb subchart and replicast architecture
