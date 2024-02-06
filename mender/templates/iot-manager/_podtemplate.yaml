@@ -82,7 +82,7 @@ spec:
   {{- $ips := coalesce .dot.Values.iot_manager.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 

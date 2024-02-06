@@ -1,5 +1,11 @@
 # Mender Helm chart
 
+## 5.5.1
+* Fix NATS address when `global.nats.existingSecret` is defined
+* Fix indent issue when using multiple custom imagePullSecrets
+* Fix artifact storage secret for the Deployments storage daemon
+  when using an existing external secret
+
 ## 5.5.0
 * Fix mongodb uri creation when using the mongodb subchart and replicast architecture
 * Added customEnv option to set default or per-service custom env variables

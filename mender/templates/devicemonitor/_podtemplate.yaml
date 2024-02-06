@@ -90,7 +90,7 @@ spec:
   {{- $ips := coalesce .dot.Values.devicemonitor.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 

@@ -75,8 +75,11 @@ spec:
     {{- end }}
 
     env:
+    # NATS uri
+    {{- if not .dot.Values.global.nats.existingSecret }}
     - name: WORKFLOWS_NATS_URI
       value: {{ template "nats_uri" . }}
+    {{- end }}
 
     {{- if .worker }}
     - name: WORKFLOWS_MENDER_URL
@@ -108,6 +111,12 @@ spec:
         name: smtp
     {{- end }}
 
+    {{- if .dot.Values.global.nats.existingSecret }}
+    - prefix: WORKFLOWS_
+      secretRef:
+        name: {{ .dot.Values.global.nats.existingSecret }}
+    {{- end }}
+
   {{- if .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
@@ -115,7 +124,7 @@ spec:
   {{- $ips := coalesce .dot.Values.workflows.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 

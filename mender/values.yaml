@@ -58,11 +58,11 @@ default:
 
   # HorizontalPodAutoscaler default resources
   hpa: {}
-    #enabled: true
-    #minReplicas: 1
-    #maxReplicas: 3
-    #metrics: {}
-    #behavior: {}
+  # enabled: true
+  # minReplicas: 1
+  # maxReplicas: 3
+  # metrics: {}
+  # behavior: {}
 
   # PodDisruptionBudget default resources
   pdb:
@@ -72,7 +72,12 @@ default:
   # custom default envs for every service
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: WARN 
+  #   value: WARN
+
+  # Custom default imagePullSecrets
+  imagePullSecrets: []
+  # - name: secret1
+  # - name: secret2
 
 serviceAccount:
   create: false
@@ -83,7 +88,8 @@ serviceAccount:
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false
-  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the
+  # field ingressClassName
   # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
   # ingressClassName: nginx
 
@@ -96,17 +102,18 @@ ingress:
   # cert-manager.io/issuer: "letsencrypt"
   path: /
   extraPaths: []
-    # - path: /*
-    #   backend:
-    #     serviceName: ssl-redirect
-    #     servicePort: use-annotation
+  # - path: /*
+  #   backend:
+  #     serviceName: ssl-redirect
+  #     servicePort: use-annotation
   hosts:
     - mender.example.org
   tls:
-  # this secret must exists or can be created from a working cert-manager instance
-   - secretName: mender-ingress-tls
-     hosts:
-       - mender.example.org
+    # this secret must exists or can be created from a working cert-manager
+    # instance
+    - secretName: mender-ingress-tls
+      hosts:
+        - mender.example.org
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
@@ -118,7 +125,8 @@ mongodb:
       type: LoadBalancer
   # replicaCount sets the number of secondaries (min: 2)
   replicaCount: 2
-  # updateStrategy ensure that the nodes are updated one at the time to avoid downtime.
+  # updateStrategy ensure that the nodes are updated one
+  # at the time to avoid downtime.
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -137,7 +145,8 @@ mongodb:
     rootPassword: "pleasechangeme"
     replicaSetKey: "pleasechangeme"
     username: "mender"
-    # reference to Bitnami chart only: the database name is managed by Mender only
+    # reference to Bitnami chart only:
+    # the database name is managed by Mender only
     database: "mender"
   global:
     storageClass: ""
@@ -147,7 +156,8 @@ mongodb:
   service:
     nameOverride: ""
 
-# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+# Using default values from
+# https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
   enabled: false
   cluster:
@@ -229,15 +239,15 @@ api_gateway:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # cert: |-
-    #   -----BEGIN CERTIFICATE-----
-    #   ...
-    #   -----END CERTIFICATE-----
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
+  # cert: |-
+  #   -----BEGIN CERTIFICATE-----
+  #   ...
+  #   -----END CERTIFICATE-----
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
 
 deployments:
   enabled: true
@@ -282,9 +292,9 @@ deployments:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## deployments.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -302,7 +312,7 @@ deployments:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 device_auth:
   enabled: true
@@ -350,14 +360,14 @@ device_auth:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
- 
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
+
   ## Migration Job
-  
+
   ## device_auth.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -375,7 +385,7 @@ device_auth:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -405,7 +415,7 @@ generate_delta_worker:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 gui:
   enabled: true
@@ -445,7 +455,7 @@ gui:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 inventory:
   enabled: true
@@ -484,9 +494,9 @@ inventory:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## inventory.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -504,7 +514,7 @@ inventory:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 tenantadm:
   enabled: true
@@ -547,15 +557,16 @@ tenantadm:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
 
   ## Migration Job
-  
-  ## tenantadm.migrationArgs: list of optional arguments to pass to the migration job. 
+
+  ## tenantadm.migrationArgs: list of optional arguments
+  ## to pass to the migration job.
   ## default: ["migrate"]
   # migrationArgs: []
 
@@ -576,7 +587,7 @@ tenantadm:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 useradm:
   enabled: true
@@ -624,14 +635,14 @@ useradm:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
- 
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
+
   ## Migration Job
-  
+
   ## useradm.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -649,7 +660,7 @@ useradm:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 workflows:
   enabled: true
@@ -686,7 +697,7 @@ workflows:
   priorityClassName: ""
 
   ## Migration Job
-  
+
   ## workflows.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -704,7 +715,7 @@ workflows:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 create_artifact_worker:
   enabled: true
@@ -738,13 +749,14 @@ create_artifact_worker:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 auditlogs:
   enabled: true
   podAnnotations: {}
   automigrate: true
-  # logRetentionSeconds gives the number of seconds before an audit event is evicted from the database
+  # logRetentionSeconds gives the number of seconds before
+  # an audit event is evicted from the database
   logRetentionSeconds: 2592000
   replicas: 1
   resources:
@@ -779,7 +791,7 @@ auditlogs:
   priorityClassName: ""
 
   ## Migration Job
-  
+
   ## auditlogs.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -797,7 +809,7 @@ auditlogs:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 iot_manager:
   enabled: true
@@ -834,9 +846,9 @@ iot_manager:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## iot_manager.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -854,7 +866,7 @@ iot_manager:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 deviceconnect:
   enabled: true
@@ -893,9 +905,9 @@ deviceconnect:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## deviceconnect.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -913,7 +925,7 @@ deviceconnect:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 deviceconfig:
   enabled: true
@@ -950,9 +962,9 @@ deviceconfig:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## deviceconfig.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -970,7 +982,7 @@ deviceconfig:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 devicemonitor:
   enabled: true
@@ -1007,9 +1019,9 @@ devicemonitor:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## devicemonitor.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -1027,7 +1039,7 @@ devicemonitor:
   # custom envs
   customEnvs: []
   # - name: LOG_LEVEL
-  #   value: DEBUG 
+  #   value: DEBUG
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only
