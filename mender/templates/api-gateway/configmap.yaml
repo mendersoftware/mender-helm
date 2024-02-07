@@ -578,7 +578,7 @@ data:
         userauth:
           forwardAuth:
             address: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}/api/internal/v1/useradm/auth/verify"
-            authResponseHeaders: "X-MEN-RequestID,X-MEN-RBAC-Inventory-Groups,X-MEN-RBAC-Deployments-Groups"
+            authResponseHeaders: "X-MEN-RequestID,X-MEN-RBAC-Inventory-Groups,X-MEN-RBAC-Deployments-Groups,X-MEN-RBAC-Releases-Tags"
 
         json-error-responder1:
           errors:
