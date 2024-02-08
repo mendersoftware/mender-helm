@@ -302,6 +302,7 @@ deployments:
   env:
     DEPLOYMENTS_MIDDLEWARE: prod
     DEPLOYMENTS_PRESIGN_SECRET: ""
+  presignSecretExistingSecret: ""
   podSecurityContext:
     enabled: false
     runAsNonRoot: true

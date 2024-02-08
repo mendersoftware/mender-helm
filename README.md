@@ -372,6 +372,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.service.nodePort` | Node port for the service | `nil` |
 | `deployments.env.DEPLOYMENTS_MIDDLEWARE` | Set the DEPLOYMENTS_MIDDLEWARE variable | `prod` |
 | `deployments.env.DEPLOYMENTS_PRESIGN_SECRET` | Set the secret for generating signed url, must be a base64 encoded secret. | random value at start-up time |
+| `deployments.presignSecretExistingSecret` | Set the secret for generating signed url from an existing secret with the key `PRESIGN_SECRET`. | `nil` |
 | `deployments.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `deployments.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `deployments.podSecurityContext.runAsUser` | User ID for the pod | `65534` |

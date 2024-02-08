@@ -79,8 +79,10 @@ spec:
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
     - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT | quote }}
+    {{- if and .dot.Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET ( not .dot.Values.deployments.presignSecretExistingSecret ) }}
     - name: DEPLOYMENTS_PRESIGN_SECRET
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET | quote }}
+    {{- end }}
     {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
     - name: DEPLOYMENTS_ENABLE_AUDIT
       value: "true"
@@ -105,6 +107,11 @@ spec:
     - prefix: DEPLOYMENTS_
       secretRef:
         name: {{ .dot.Values.global.s3.existingSecret | default "artifacts-storage" }}
+    {{- end }}
+    {{- if and ( not .dot.Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET ) .dot.Values.deployments.presignSecretExistingSecret }}
+    - prefix: DEPLOYMENTS_
+      secretRef:
+        name: {{ .dot.Values.deployments.presignSecretExistingSecret | quote }}
     {{- end }}
 
 
