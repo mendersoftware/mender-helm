@@ -103,7 +103,7 @@ spec:
     - name: DEVICEAUTH_ENABLE_AUDIT
       value: "true"
     {{- end }}
-    {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
+    {{- if and .dot.Values.global.enterprise }}
     {{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) }}
     # redis_address deprecated from 3.7
     - name: DEVICEAUTH_REDIS_ADDR

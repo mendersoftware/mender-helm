@@ -73,7 +73,7 @@ spec:
     env:
     - name: INVENTORY_MIDDLEWARE
       value: {{ .dot.Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
-    {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
+    {{- if and .dot.Values.global.enterprise }}
     {{- if not (and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 )) }}
     - name: INVENTORY_REDIS_CONNECTION_STRING
       value: {{ include "redis_connection_string" . }}

@@ -102,7 +102,7 @@ spec:
     - name: USERADM_ENABLE_AUDIT
       value: "true"
     {{- end }}
-    {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
+    {{- if and .dot.Values.global.enterprise }}
     {{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) }}
     - name: USERADM_REDIS_ADDR
       value: {{ include "redis_address" . }}
