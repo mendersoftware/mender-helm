@@ -123,7 +123,7 @@ spec:
       value: {{ .dot.Values.device_auth.env.DEVICEAUTH_REDIS_KEY_PREFIX | default "deviceauth:v1" | quote }}
     {{- end }}
     - name: DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC
-      value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
+      value: {{ .dot.Values.device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
     {{- end }}
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.device_auth) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
