@@ -22,13 +22,11 @@ spec:
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
 
-  # Rollout upgrade one by one
-  # In this case we warranty there are always instances online.
-  # In case any issues, they will be detected early and deployment be stopped.
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+  # Rollout upgrade
+  {{- $updateStrategy := coalesce .Values.deviceconfig.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
 
   template:
     {{- include "mender.deviceconfigPodTemplate" $context | nindent 4 }}
