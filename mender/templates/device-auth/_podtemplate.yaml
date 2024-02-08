@@ -98,6 +98,11 @@ spec:
     - name: DEVICEAUTH_TENANTADM_ADDR
       value: {{ .dot.Values.device_auth.env.DEVICEAUTH_TENANTADM_ADDR | quote }}
     {{- end }}
+    # Enable audit logging
+    {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
+    - name: DEVICEAUTH_ENABLE_AUDIT
+      value: "true"
+    {{- end }}
     {{- if and .dot.Values.global.enterprise .dot.Values.redis.enabled }}
     {{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) }}
     # redis_address deprecated from 3.7
