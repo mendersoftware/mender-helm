@@ -205,7 +205,8 @@ The following table lists the global, default, and other parameters supported by
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
-| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `redis://mender-redis:6379/0` |
+| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `nil` |
+| `global.redis.existingSecret` | Optional Redis URL from a secret, used with an external service when `redis.enabled=false`. The key has to be `REDIS_CONNECTION_STRING` | `nil` |
 | `global.redis.username` | Optional Redis Username **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.redis.password` | Optional Redis Password **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |

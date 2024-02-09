@@ -1,4 +1,5 @@
 {{- define "mender.useradmPodTemplate" -}}
+{{- include "redis_conf_validation" . }}
 metadata:
   {{- with .dot.Values.useradm.podAnnotations }}
   annotations:
@@ -115,9 +116,11 @@ spec:
     - name: USERADM_REDIS_TIMEOUT_SEC
       value: {{ .dot.Values.useradm.env.USERADM_REDIS_TIMEOUT_SEC | default "1" | quote }}
     {{- else }}
+    {{- if not .dot.Values.global.redis.existingSecret }}
     # redis_address deprecated from 3.7
     - name: USERADM_REDIS_CONNECTION_STRING
       value: {{ include "redis_connection_string" . }}
+    {{- end }}
     - name: USERADM_REDIS_KEY_PREFIX
       value: {{ .dot.Values.device_auth.env.USERADM_REDIS_KEY_PREFIX | default "useradm:v1" | quote }}
     {{- end }}
@@ -132,6 +135,16 @@ spec:
     - prefix: USERADM_
       secretRef:
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+
+    {{- if not (and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) ) }}
+    {{- if and .dot.Values.global.redis.existingSecret .dot.Values.global.enterprise ( not .dot.Values.global.redis.URL ) ( not .dot.Values.redis.enabled ) }}
+    # Redis existingSecret
+    - prefix: USERADM_
+      secretRef:
+        name: {{ .dot.Values.global.redis.existingSecret | quote }}
+    {{- end }}
+    {{- end }}
+
 
   {{- if (not .migration) }}
   volumes:

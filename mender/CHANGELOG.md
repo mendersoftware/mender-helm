@@ -12,6 +12,7 @@
 * feat: support for custom updateStrategy
 * fix missing auditlog variable in the device auth service
 * fix Redis environment variables when using an external Redis
+* Added `global.redis.existingSecret` option
 
 ## 5.5.0
 * Fix mongodb uri creation when using the mongodb subchart and replicast architecture
