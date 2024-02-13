@@ -63,6 +63,19 @@ Redis address
 {{- end }}
 
 {{/*
+Validate Redis configuration
+*/}}
+{{- define "redis_conf_validation" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if and $dot.Values.redis.enabled ( or $dot.Values.global.redis.URL $dot.Values.global.redis.existingSecret ) }}
+{{- fail "When internal redis is enabled, both global.redis.URL and global.redis.existingSecret have to be unset" }}
+{{- end }}
+{{- if and $dot.Values.global.redis.URL $dot.Values.global.redis.existingSecret }}
+{{- fail "Please set either global.redis.URL or global.redis.existingSecret, not both" }}
+{{- end }}
+{{- end }}
+
+{{/*
 Redis connection string
 */}}
 {{- define "redis_connection_string" }}

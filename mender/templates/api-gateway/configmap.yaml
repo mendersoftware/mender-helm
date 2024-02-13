@@ -523,6 +523,7 @@ data:
 
         storage_proxy:
           loadBalancer:
+            passHostHeader: {{ .Values.api_gateway.passHostHeader | default false }}
             servers:
             - url: {{ include "mender.storageProxyUrl" . }}
 {{- end }}
@@ -544,6 +545,7 @@ data:
 
         sec-headers:
           headers:
+            referrerPolicy: "no-referrer"
             stsSeconds: 31536000
             forceSTSHeader: true
             stsPreload: true
