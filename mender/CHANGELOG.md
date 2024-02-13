@@ -5,6 +5,14 @@
 * Fix indent issue when using multiple custom imagePullSecrets
 * Fix artifact storage secret for the Deployments storage daemon
   when using an existing external secret
+* Forcing Traefik `passHostHeader` option to `false` when using the `api_gateway.storage_proxy`
+* Added `referrerPolicy: "no-referrer"` by default in Traefik
+* Bump to traefik `2.10.7`
+* feat: support for X-MEN-RBAC-Releases-Tags
+* feat: support for custom updateStrategy
+* fix missing auditlog variable in the device auth service
+* fix Redis environment variables when using an external Redis
+* Added `global.redis.existingSecret` option
 
 ## 5.5.0
 * Fix mongodb uri creation when using the mongodb subchart and replicast architecture

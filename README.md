@@ -205,7 +205,8 @@ The following table lists the global, default, and other parameters supported by
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
-| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `redis://mender-redis:6379/0` |
+| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `nil` |
+| `global.redis.existingSecret` | Optional Redis URL from a secret, used with an external service when `redis.enabled=false`. The key has to be `REDIS_CONNECTION_STRING` | `nil` |
 | `global.redis.username` | Optional Redis Username **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.redis.password` | Optional Redis Password **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |
@@ -243,6 +244,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.pdb.enabled` | PodDistruptionBudget enabled | `false` |
 | `default.pdb.minAvailable` | PodDistruptionBudget minAvailable | `1` |
 | `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
+| `default.updateStrategy` | The strategy to use to update existing pods | `rollingUpdate = { maxSurge = 1, maxUnavailable = 1 }` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
@@ -306,6 +308,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.storage_proxy.enabled` | Enable storage proxy to the S3/minio service | `false` |
 | `api_gateway.storage_proxy.url` | URL of the storage proxy. Should point to the AWS Bucket/Minio URL | `nil` |
 | `api_gateway.storage_proxy.customRule` | Custom rules for the storage proxy. | ``HostRegexp(`{domain:^artifacts.*$}`)`` |
+| `api_gateway.storage_proxy.passHostHeader` | The passHostHeader allows to forward client Host header to server. | `false` |
 | `api_gateway.rateLimit.average` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
@@ -334,6 +337,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.certs.cert` | Public certificate (with full chain optionally) in PEM format | `nil` |
 | `api_gateway.certs.key` | Private key in PEM format | `nil` |
 | `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
+| `api_gateway.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: deployments
 
@@ -369,6 +373,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.service.nodePort` | Node port for the service | `nil` |
 | `deployments.env.DEPLOYMENTS_MIDDLEWARE` | Set the DEPLOYMENTS_MIDDLEWARE variable | `prod` |
 | `deployments.env.DEPLOYMENTS_PRESIGN_SECRET` | Set the secret for generating signed url, must be a base64 encoded secret. | random value at start-up time |
+| `deployments.presignSecretExistingSecret` | Set the secret for generating signed url from an existing secret with the key `PRESIGN_SECRET`. | `nil` |
 | `deployments.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `deployments.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `deployments.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
@@ -386,6 +391,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deployments.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deployments.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `deployments.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: device-auth
 
@@ -445,6 +451,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 | `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `device_auth.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: gui
 
@@ -482,6 +489,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `gui.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `gui.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `gui.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: inventory
 
@@ -531,6 +539,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `inventory.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `inventory.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `inventory.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: reporting
 
@@ -613,6 +622,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `tenantadm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `tenantadm.migrationArgs` | Migration job: optional migration args (list). | `["migrate"]` |
+| `tenantadm.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 The default value for the rate limits are:
 
@@ -682,6 +692,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 | `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `useradm.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: workflows
 
@@ -720,6 +731,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `workflows.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `workflows.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `workflows.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -749,6 +761,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `create_artifact_worker.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `create_artifact_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `create_artifact_worker.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: auditlogs
 
@@ -794,6 +807,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `auditlogs.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `auditlogs.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `auditlogs.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: iot-manager
 
@@ -838,6 +852,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `iot_manager.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `iot_manager.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `iot_manager.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -884,6 +899,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deviceconnect.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deviceconnect.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `deviceconnect.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -928,6 +944,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deviceconfig.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deviceconfig.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `deviceconfig.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -974,6 +991,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `devicemonitor.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `devicemonitor.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `devicemonitor.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is
@@ -999,6 +1017,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.resources.requests.cpu` | Resources CPU request | `100m` |
 | `generate_delta_worker.resources.requests.memory` | Resources memory request | `128M` |
 | `generate_delta_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `generate_delta_worker.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: redis
 

@@ -19,6 +19,7 @@ global:
     username: null
     password: null
     URL: ""
+    existingSecret: ""
   storage: "aws"
   s3:
     existingSecret: ""
@@ -78,6 +79,19 @@ default:
   imagePullSecrets: []
   # - name: secret1
   # - name: secret2
+
+  # default.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+  #
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
 
 serviceAccount:
   create: false
@@ -184,7 +198,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v2.10.5
+    tag: v2.10.7
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -216,6 +230,7 @@ api_gateway:
     enabled: false
     url: ""
     customRule: "HostRegexp(`{domain:^artifacts.*$}`)"
+    passHostHeader: false
   compression: true
   security_redirect: null
   rateLimit:
@@ -249,6 +264,13 @@ api_gateway:
   #   -----END PRIVATE KEY-----
   # existingSecret: my-secret-name
 
+  # api_gateway.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 deployments:
   enabled: true
   podAnnotations: {}
@@ -281,6 +303,7 @@ deployments:
   env:
     DEPLOYMENTS_MIDDLEWARE: prod
     DEPLOYMENTS_PRESIGN_SECRET: ""
+  presignSecretExistingSecret: ""
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
@@ -313,6 +336,13 @@ deployments:
   customEnvs: []
   # - name: LOG_LEVEL
   #   value: DEBUG
+
+  # iot_manager.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 device_auth:
   enabled: true
@@ -387,6 +417,13 @@ device_auth:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # device_auth.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 # Generate Delta Worker feature
 # Experimental feature, still in beta
 # will be released in the next Mender versions
@@ -416,6 +453,13 @@ generate_delta_worker:
   customEnvs: []
   # - name: LOG_LEVEL
   #   value: DEBUG
+
+  # generate_delta_worker.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 gui:
   enabled: true
@@ -456,6 +500,13 @@ gui:
   customEnvs: []
   # - name: LOG_LEVEL
   #   value: DEBUG
+
+  # gui.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 inventory:
   enabled: true
@@ -510,6 +561,13 @@ inventory:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # inventory.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
   # custom envs
   customEnvs: []
@@ -589,6 +647,13 @@ tenantadm:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # tenantadm.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 useradm:
   enabled: true
   podAnnotations: {}
@@ -662,6 +727,13 @@ useradm:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # useradm.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 workflows:
   enabled: true
   podAnnotations: {}
@@ -717,6 +789,13 @@ workflows:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # workflows.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
@@ -750,6 +829,13 @@ create_artifact_worker:
   customEnvs: []
   # - name: LOG_LEVEL
   #   value: DEBUG
+
+  # create_artifact_worker.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 auditlogs:
   enabled: true
@@ -811,6 +897,13 @@ auditlogs:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # auditlogs.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 iot_manager:
   enabled: true
   podAnnotations: {}
@@ -867,6 +960,13 @@ iot_manager:
   customEnvs: []
   # - name: LOG_LEVEL
   #   value: DEBUG
+
+  # iot_manager.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 deviceconnect:
   enabled: true
@@ -927,6 +1027,13 @@ deviceconnect:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # deviceconnect.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 deviceconfig:
   enabled: true
   podAnnotations: {}
@@ -984,6 +1091,13 @@ deviceconfig:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # deviceconfig.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 devicemonitor:
   enabled: true
   podAnnotations: {}
@@ -1040,6 +1154,13 @@ devicemonitor:
   customEnvs: []
   # - name: LOG_LEVEL
   #   value: DEBUG
+
+  # deviceconnect.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only
