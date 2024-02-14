@@ -200,7 +200,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
-| `global.image.tag` | Global Docker image registry tag | `mender-3.7.1` |
+| `global.image.tag` | Global Docker image registry tag | `mender-3.7.2` |
 | `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
@@ -548,7 +548,7 @@ The following table lists the parameters for the `reporting` component and their
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `reporting.enabled` | Enable the component | `true` |
-| `reporting.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `reporting.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `reporting.image.registry` | Docker image registry | `docker.io` |
 | `reporting.image.repository` | Docker image repository | `mendersoftware/reporting` |
 | `reporting.image.tag` | Docker image tag | `nil` |
@@ -740,7 +740,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `create_artifact_worker.enabled` | Enable the component | `true` |
-| `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `create_artifact_worker.image.registry` | Docker image registry | `docker.io` |
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
 | `create_artifact_worker.image.tag` | Docker image tag | `nil` |
@@ -1002,7 +1002,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `generate_delta_worker.enabled` | Enable the component | `false` |
-| `generate_delta_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `generate_delta_worker.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `generate_delta_worker.image.registry` | Docker image registry | `registry.mender.io` |
 | `generate_delta_worker.image.repository` | Docker image repository | `mendersoftware/generate-delta-worker` |
 | `generate_delta_worker.image.tag` | Docker image tag | `nil` |
