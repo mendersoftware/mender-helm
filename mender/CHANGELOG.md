@@ -3,6 +3,7 @@
 ## master
 * create artifact worker: change container name from workflows
 * generate delta worker: change container name from workflows
+* fix devicemonitor env variables
 
 ## 5.5.2
 * Upgrade to Mender version `3.7.2`.
