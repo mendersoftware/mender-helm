@@ -968,6 +968,11 @@ iot_manager:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # AES encryption key
+  # Specify an existing secret
+  aesEncryptionKey:
+    existingSecret: ""
+
 deviceconnect:
   enabled: true
   podAnnotations: {}

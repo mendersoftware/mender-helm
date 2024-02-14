@@ -74,6 +74,12 @@ spec:
       secretRef:
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
 
+    {{- if .dot.Values.iot_manager.aesEncryptionKey.existingSecret }}
+    - prefix: IOT_MANAGER_
+      secretRef:
+        name: {{ .dot.Values.iot_manager.aesEncryptionKey.existingSecret }}
+    {{- end }}
+
 
   {{- if .dot.Values.global.image.username }}
   imagePullSecrets:

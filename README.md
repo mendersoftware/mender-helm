@@ -853,6 +853,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `iot_manager.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `iot_manager.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `iot_manager.aesEncryptionKey.existingSecret` | Optional secret containing the AES encryption key. The secret key must be `AES_ENCRYPTION_KEY` | `nil` |
 
 ### Parameters: deviceconnect
 

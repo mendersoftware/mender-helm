@@ -4,6 +4,7 @@
 * create artifact worker: change container name from workflows
 * generate delta worker: change container name from workflows
 * fix devicemonitor env variables
+* Added support for an external secret containing an AES encryption key for the IoT Manager service.
 
 ## 5.5.2
 * Upgrade to Mender version `3.7.2`.
