@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## 5.5.2
+* Upgrade to Mender version `3.7.2`.
+
 ## 5.5.1
 * Fix NATS address when `global.nats.existingSecret` is defined
 * Fix indent issue when using multiple custom imagePullSecrets
