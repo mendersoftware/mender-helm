@@ -344,6 +344,7 @@ deployments:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+
 device_auth:
   enabled: true
   podAnnotations: {}
@@ -795,6 +796,21 @@ workflows:
   #   rollingUpdate:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
+
+  # Custom volumeMounts for mouting
+  # credential files
+  mountSecrets: {}
+  # volumeMounts:
+  #   - mountPath: /my/mount/path
+  #     name: volume-name
+  #     readOnly: true
+  #     subPath: credentials.txt
+  # volumes:
+  #   - name: volume-name
+  #     secret:
+  #       defaultMode: 420
+  #       secretName: my-credential-file
+
 
 create_artifact_worker:
   enabled: true

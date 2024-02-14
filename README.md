@@ -732,6 +732,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `workflows.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `workflows.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `workflows.mountSecrets` | Optional `volumeMounts` and `volumes` to inject a credential files in the workflows service  | `nil` |
 
 ### Parameters: create_artifact_worker
 
