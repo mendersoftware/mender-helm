@@ -45,3 +45,29 @@ kubeconform: ## Run kubeconform over helm chart rendered template
 	for kubeversion in $(KUBE_SUPPORTED_VERSIONS); do \
 		helm template $(NAME)/ -f values-enterprise.yaml --kube-version $$kubeversion | kubeconform --kubernetes-version $$kubeversion; \
 	done
+
+.PHONY: template_helm_chart_previous_lts
+template_helm_chart_previous_lts: ## Run the template of the previous LTS
+	helm template mender/mender \
+		--debug \
+		-f mender/values.yaml \
+		-f tests/keys.yaml \
+		-f tests/values-helmci.yaml \
+		--set global.image.tag="mender-3.4.0" \
+    --set global.image.username=nt_fakeuser \
+    --set global.image.password=nt_fakepassword \
+    --set global.s3.AWS_ACCESS_KEY_ID="fakeaccesskey" \
+    --set global.s3.AWS_SECRET_ACCESS_KEY="fakesecretkey" \
+		--version 5.0.1
+
+.PHONY: template_helm_chart_current_lts
+template_helm_chart_current_lts: ## Run the template of the current LTS
+	helm template ${NAME}/ \
+		-f mender/values.yaml \
+		-f tests/keys.yaml \
+		-f tests/values-helmci.yaml \
+		--set global.image.tag="mender-3.6.3" \
+    --set global.image.username=nt_fakeuser \
+    --set global.image.password=nt_fakepassword \
+    --set global.s3.AWS_ACCESS_KEY_ID="fakeaccesskey" \
+    --set global.s3.AWS_SECRET_ACCESS_KEY="fakesecretkey"
