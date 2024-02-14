@@ -430,7 +430,7 @@ device_auth:
 generate_delta_worker:
   enabled: false
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -799,7 +799,7 @@ workflows:
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:

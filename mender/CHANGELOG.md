@@ -2,6 +2,8 @@
 
 ## 5.5.2
 * Upgrade to Mender version `3.7.2`.
+* By default, `automigrate` is set to `false` for the generate delta worker and the create artifac worker services:
+  the migrations are performed by migration jobs.
 
 ## 5.5.1
 * Fix NATS address when `global.nats.existingSecret` is defined
