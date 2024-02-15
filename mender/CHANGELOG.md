@@ -1,6 +1,6 @@
 # Mender Helm chart
 
-## master
+## 5.5.3
 * create artifact worker: change container name from workflows
 * generate delta worker: change container name from workflows
 * fix devicemonitor env variables
