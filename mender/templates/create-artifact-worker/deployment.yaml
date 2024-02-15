@@ -8,7 +8,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
-    app.kubernetes.io/component: workflows
+    app.kubernetes.io/component: create-artifact-worker
 spec:
   replicas: {{ .Values.create_artifact_worker.replicas }}
   selector:
@@ -35,7 +35,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
         {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: workflows
+        app.kubernetes.io/component: create-artifact-worker
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -48,7 +48,7 @@ spec:
 {{- end }}
 
       containers:
-      - name: workflows
+      - name: create-artifact-worker
         image: {{ .Values.create_artifact_worker.image.registry }}/{{ .Values.create_artifact_worker.image.repository }}:{{ .Values.create_artifact_worker.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.create_artifact_worker.image.imagePullPolicy }}
 {{- if .Values.create_artifact_worker.containerSecurityContext.enabled }}
@@ -57,7 +57,7 @@ spec:
         resources:
 {{ toYaml .Values.create_artifact_worker.resources | indent 10 }}
 
-{{- if .Values.workflows.automigrate }}
+{{- if .Values.create_artifact_worker.automigrate }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
 {{- else }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]

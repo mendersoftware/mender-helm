@@ -67,11 +67,11 @@ spec:
     env:
     # Workflows orchestrator address
     - name: DEVICEMONITOR_USERADM_URL
-      value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_USERADM_URL | quote }}
+      value: {{ .dot.Values.devicemonitor.env.DEVICEMONITOR_USERADM_URL | quote }}
 
     # Workflows orchestrator address
     - name: DEVICEMONITOR_WORKFLOWS_URL
-      value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
+      value: {{ .dot.Values.devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
 
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.devicemonitor) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
