@@ -732,6 +732,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `workflows.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `workflows.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `workflows.mountSecrets` | Optional `volumeMounts` and `volumes` to inject a credential files in the workflows service  | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -853,6 +854,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `iot_manager.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `iot_manager.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `iot_manager.aesEncryptionKey.existingSecret` | Optional secret containing the AES encryption key. The secret key must be `AES_ENCRYPTION_KEY` | `nil` |
 
 ### Parameters: deviceconnect
 

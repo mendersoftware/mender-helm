@@ -8,7 +8,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
-    app.kubernetes.io/component: workflows
+    app.kubernetes.io/component: generate-delta-worker
 spec:
   replicas: {{ .Values.generate_delta_worker.replicas }}
   selector:
@@ -35,7 +35,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
         {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: workflows
+        app.kubernetes.io/component: generate-delta-worker
     spec:
       serviceAccountName: {{ include "mender.serviceAccountName" . }}
       {{- with $merged.affinity }}
@@ -46,13 +46,13 @@ spec:
       {{- end }}
 
       containers:
-      - name: workflows
+      - name: generate-delta-worker
         image: {{ .Values.generate_delta_worker.image.registry }}/{{ .Values.generate_delta_worker.image.repository }}:{{ .Values.generate_delta_worker.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.generate_delta_worker.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.generate_delta_worker.resources | indent 10 }}
 
-{{- if .Values.workflows.automigrate }}
+{{- if .Values.generate_delta_worker.automigrate }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
 {{- else }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]

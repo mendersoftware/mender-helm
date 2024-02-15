@@ -116,6 +116,9 @@ spec:
       secretRef:
         name: {{ .dot.Values.global.nats.existingSecret }}
     {{- end }}
+    {{- with .dot.Values.workflows.mountSecrets }}
+    volumeMounts: {{ toYaml .volumeMounts | nindent 6 }}
+    {{- end }}
 
   {{- if .dot.Values.global.image.username }}
   imagePullSecrets:
@@ -135,5 +138,8 @@ spec:
 
   {{- with (coalesce .dot.Values.workflows.nodeSelector .dot.Values.default.nodeSelector) }}
   nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .dot.Values.workflows.mountSecrets }}
+  volumes: {{ toYaml .volumes | nindent 4 }}
   {{- end }}
 {{- end }}

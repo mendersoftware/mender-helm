@@ -796,6 +796,21 @@ workflows:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # Custom volumeMounts for mouting
+  # credential files
+  mountSecrets: {}
+  # volumeMounts:
+  #   - mountPath: /my/mount/path
+  #     name: volume-name
+  #     readOnly: true
+  #     subPath: credentials.txt
+  # volumes:
+  #   - name: volume-name
+  #     secret:
+  #       defaultMode: 420
+  #       secretName: my-credential-file
+
+
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
@@ -968,6 +983,11 @@ iot_manager:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # AES encryption key
+  # Specify an existing secret
+  aesEncryptionKey:
+    existingSecret: ""
+
 deviceconnect:
   enabled: true
   podAnnotations: {}
@@ -1122,6 +1142,9 @@ devicemonitor:
     annotations: {}
     type: ClusterIP
     port: 8080
+  env:
+    DEVICEMONITOR_USERADM_URL: http://mender-useradm:8080/
+    DEVICEMONITOR_WORKFLOWS_URL: http://mender-workflows-server:8080/
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
