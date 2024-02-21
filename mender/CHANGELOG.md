@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## 5.5.4
+* fix malformed Authorization header when authRateLimit is set
+
 ## 5.5.3
 * create artifact worker: change container name from workflows
 * generate delta worker: change container name from workflows
