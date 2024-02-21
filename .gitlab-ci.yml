@@ -56,7 +56,7 @@ build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .pre
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   resource_group: helm
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
@@ -103,7 +103,7 @@ build:
   stage: build
   image: debian:buster
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
@@ -158,7 +158,7 @@ test:check-license-source:
 
 test:helm_chart_install:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -212,7 +212,7 @@ test:helm_chart_install:
 
 test:helm_chart_install_sub_charts:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -288,7 +288,7 @@ test:helm_chart_install_sub_charts:
  
 test:helm_chart_upgrade_from_previous_lts_to_current_lts:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -360,7 +360,7 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
 
 test:helm_chart_upgrade_from_previous_release_to_current_lts:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -432,7 +432,7 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
 
 test:helm_chart_upgrade_from_current_lts_to_current_release:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -505,7 +505,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
 
 test:kubeconform_tests:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   rules:
@@ -547,7 +547,7 @@ test:kubeconform_tests:
 
 test:helm_chart_install_opensource:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -622,7 +622,7 @@ test:helm_chart_install_opensource:
 
 test:helm_chart_install_with_r2:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -698,7 +698,7 @@ test:helm_chart_install_with_r2:
 
 test:playground_eks_cluster:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -718,7 +718,7 @@ test:playground_eks_cluster:
 
 publish:helm_chart_publishing:
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   rules:
     - if: '$CI_COMMIT_TAG'
       changes:
@@ -743,7 +743,7 @@ publish:helm_chart_publishing:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .post
   tags:
-    - mender-qa-worker-generic-light
+    - hetzner-amd-beefy
   resource_group: helm
   allow_failure: true # can't find a way to avoid eks cleanup when no eks is setup, so let's allow to fail for now
   dependencies:
