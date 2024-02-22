@@ -405,7 +405,7 @@ data:
           entrypoints: {{ $scheme }}
           middlewares:
 {{- if .Values.api_gateway.authRateLimit }}
-          - authRatelimit
+          - authRateLimit
 {{- else }}
           - ratelimit
 {{- end }}
