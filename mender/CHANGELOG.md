@@ -2,6 +2,7 @@
 
 ## 5.5.4
 * fix malformed Authorization header when authRateLimit is set
+* Bump traefik image to v2.11.0
 
 ## 5.5.3
 * create artifact worker: change container name from workflows
