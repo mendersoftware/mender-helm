@@ -1,5 +1,14 @@
 # Mender Helm chart
 
+## Version 5.6.0
+* MongoDB sub-chart
+  * Bump chart version to 13.18.5
+  * Bump app version to MongoDB 6.0 (tag: `6.0.13`)
+
+> If your running an existing cluster with MongoDB 5.0, we recommend following
+> the upgrade procedure from the
+> [official documentation](https://www.mongodb.com/docs/manual/release-notes/6.0-upgrade-replica-set/).
+
 ## 5.5.4
 * fix malformed Authorization header when authRateLimit is set
 * Bump traefik image to v2.11.0
@@ -35,12 +44,12 @@
 * Added customEnv option to set default or per-service custom env variables
 * Added generic `storage_proxy` service, that could
   work for both minio and Amazon S3, and it's going to replace the `api_gateway.minio` configuration.
-* Add OpenID Connect authentication API to user authentication routes in the gateway. 
+* Add OpenID Connect authentication API to user authentication routes in the gateway.
 * **Deprecations**:
   * `api_gateway.minio` is deprecated in favor of `api_gateway.storage_proxy`.
     This entry could be used, but it is no longer maintained, and could be removed
-    in future releases.  
-    **How to upgrade**: 
+    in future releases.
+    **How to upgrade**:
     * set `api_gateway.minio.enabled=false`
     * set `api_gateway.storage_proxy.enabled=true`
     * set `api_gateway.storage_proxy.url` to the external storage url that you want to map externally. For example `https://fleetstorage.example.com`.
