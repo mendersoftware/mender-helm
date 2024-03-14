@@ -7,6 +7,9 @@ variables:
   ROLE_ARN: 
     value: "arn:aws:iam::017659451055:role/nt-mender-helm-eksctl-test"
     description: "AWS IAM role which executes the AWS jobs"
+  PUBLISH_ROLE_ARN:
+    value: "arn:aws:iam::175683096866:role/nt-helm-chart-s3-publishing"
+    description: "AWS IAM role to publish the helm chart to S3"
   GITHUB_HELM_REPO: "github.com/mendersoftware/mender-helm.git"
   SYNC_ENVIRONMENT: "${SYNC_ENVIRONMENT:-staging}"
   CHART_DIR: "mender"
@@ -141,13 +144,6 @@ build:
   - *set_eks_helmci_vars
   - aws eks --region $CI_JOBS_AWS_REGION_STAGING update-kubeconfig --name $CI_JOBS_AWS_EKS_CLUSTER_NAME_STAGING
   - kubectl config set-context --current --namespace=mender-helm-tests
-
-.setup_s3_helm_chart_repo: &setup_s3_helm_chart_repo
-  # Configure AWS CLI for the S3 repository
-  - export AWS_ACCESS_KEY_ID=$S3_HELM_CHART_REPO_AWS_ACCESS_KEY_ID
-  - export AWS_SECRET_ACCESS_KEY=$S3_HELM_CHART_REPO_AWS_SECRET_ACCESS_KEY
-  - export AWS_DEFAULT_REGION=$S3_HELM_CHART_REPO_AWS_REGION
-  - export AWS_S3_SSE=AES256
 
 # Skip check license source when the pipeline
 # is triggered
@@ -724,6 +720,9 @@ publish:helm_chart_publishing:
       changes:
         - mender/Chart.yaml
   stage: publish
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
   dependencies:
     - build
   image: debian:buster
@@ -733,7 +732,17 @@ publish:helm_chart_publishing:
     - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
     - *get_kubectl_and_tools
     - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0
-    - *setup_s3_helm_chart_repo
+    - export AWS_DEFAULT_REGION=us-east-1
+    - >
+      export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
+      $(aws sts assume-role-with-web-identity
+      --role-arn ${PUBLISH_ROLE_ARN}
+      --role-session-name "GitLabRunner-${CI_PROJECT_ID}-${CI_PIPELINE_ID}"
+      --web-identity-token ${AWS_OIDC_TOKEN}
+      --duration-seconds ${AWS_OIDC_TOKEN_TIMEOUT:-3600}
+      --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]'
+      --output text))
+    - aws sts get-caller-identity
   script:
     - helm repo add mender s3://${S3_HELM_CHART_REPO}
     - helm s3 push --acl="public-read" --relative --timeout=60s ./mender-*.tgz mender
