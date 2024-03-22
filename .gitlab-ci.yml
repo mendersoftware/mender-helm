@@ -4,6 +4,9 @@ variables:
   RUN_HELM_CHART_INSTALL:
     value: "false"
     description: "Run Helm Chart tests"
+    options:
+      - "true"
+      - "false"
   ROLE_ARN: 
     value: "arn:aws:iam::017659451055:role/nt-mender-helm-eksctl-test"
     description: "AWS IAM role which executes the AWS jobs"
@@ -19,12 +22,18 @@ variables:
   RUN_PLAYGROUND:
     value: "false"
     description: "Run EKS setup playground"
+    options:
+      - "true"
+      - "false"
   PLAYGROUND_EKS_TIMEOUT:
     value: 3600
     description: "Default timeout for the EKS playground setup"
   USE_SPOT_INSTANCES:
     value: "true"
     description: "Use spot instances for cost savings"
+    options:
+      - "true"
+      - "false"
 
 stages:
   - build
@@ -479,14 +488,14 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         mender/mender || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
-      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.2}"
+      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.3}"
       helm upgrade -i mender \
         -f mender/values.yaml \
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
-        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.2}" \
+        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.3}" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
