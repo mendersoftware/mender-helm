@@ -4,6 +4,9 @@ variables:
   RUN_HELM_CHART_INSTALL:
     value: "false"
     description: "Run Helm Chart tests"
+    options:
+      - "true"
+      - "false"
   ROLE_ARN: 
     value: "arn:aws:iam::017659451055:role/nt-mender-helm-eksctl-test"
     description: "AWS IAM role which executes the AWS jobs"
@@ -19,12 +22,18 @@ variables:
   RUN_PLAYGROUND:
     value: "false"
     description: "Run EKS setup playground"
+    options:
+      - "true"
+      - "false"
   PLAYGROUND_EKS_TIMEOUT:
     value: 3600
     description: "Default timeout for the EKS playground setup"
   USE_SPOT_INSTANCES:
     value: "true"
     description: "Use spot instances for cost savings"
+    options:
+      - "true"
+      - "false"
 
 stages:
   - build
