@@ -7,7 +7,7 @@ variables:
     options:
       - "true"
       - "false"
-  ROLE_ARN: 
+  ROLE_ARN:
     value: "arn:aws:iam::017659451055:role/nt-mender-helm-eksctl-test"
     description: "AWS IAM role which executes the AWS jobs"
   PUBLISH_ROLE_ARN:
@@ -94,7 +94,7 @@ build:setup_eks_cluster:
         --asg-access \
         ${SPOT_STRING} \
         --instance-types c6i.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge,m5d.xlarge \
-        --nodes ${CI_EKS_NUMBER_OF_NODES:-6} 
+        --nodes ${CI_EKS_NUMBER_OF_NODES:-6}
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
@@ -290,7 +290,7 @@ test:helm_chart_install_sub_charts:
   after_script:
     - echo "INFO - cleaning up resources"
     - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
- 
+
 test:helm_chart_upgrade_from_previous_lts_to_current_lts:
   tags:
     - hetzner-amd-beefy
@@ -535,7 +535,7 @@ test:kubeconform_tests:
           --kube-version ${full_version} \
         | kubeconform --kubernetes-version ${full_version}
       done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
-    - | 
+    - |
       echo "DEBUG - run failed kubeconform tests: this should fail"
       sed -i 's/apps\/v1/fakeapps\/v42/' mender/templates/gui/deployment.yaml
       while IFS= read -r version; do
