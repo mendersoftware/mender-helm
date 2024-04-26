@@ -2,19 +2,19 @@ apiVersion: v2
 appVersion: "3.6.3"
 description: Mender is a robust and secure way to update all your software and deploy your IoT devices at scale with support for customization
 name: mender
-version: 5.3.0
+version: 5.3.0-1269832126
 keywords:
-- mender
-- iot
-- ota
+  - mender
+  - iot
+  - ota
 home: https://mender.io
 icon: https://github.com/mendersoftware/mender/raw/master/mender_logo.png
 sources:
-- https://github.com/mendersoftware/mender-helm
+  - https://github.com/mendersoftware/mender-helm
 maintainers:
-- name: Northern.tech AS
-  email: contact@northern.tech
-  url: https://northern.tech
+  - name: Northern.tech AS
+    email: contact@northern.tech
+    url: https://northern.tech
 dependencies:
   - name: redis
     version: ~17.11.2
@@ -28,4 +28,3 @@ dependencies:
     version: ~0.15.1
     repository: "https://nats-io.github.io/k8s/helm/charts/"
     condition: nats.enabled
-
