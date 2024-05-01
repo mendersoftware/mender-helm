@@ -39,7 +39,7 @@ mongodb:
 ```
 
 You can customize it by following the [provider's](https://artifacthub.io/packages/helm/bitnami/mongodb)
-specifications.  
+specifications.
 It's recommended to use an external deployment in Production.
 
 ### Installing MinIO
@@ -112,7 +112,7 @@ nats:
 ```
 
 You can customize it by following the [provider's](https://docs.nats.io/running-a-nats-service/nats-kubernetes/helm-charts)
-specifications.  
+specifications.
 It's recommended to use an external deployment in Production.
 
 ## Installing the Chart
@@ -200,7 +200,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
-| `global.image.tag` | Global Docker image registry tag | `mender-3.7.3` |
+| `global.image.tag` | Global Docker image registry tag | `mender-3.7.4` |
 | `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |

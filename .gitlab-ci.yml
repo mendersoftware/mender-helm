@@ -488,14 +488,14 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         mender/mender || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
-      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.3}"
+      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.4}"
       helm upgrade -i mender \
         -f mender/values.yaml \
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
-        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.3}" \
+        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.4}" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \

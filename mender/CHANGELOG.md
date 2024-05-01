@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.6.2
+* Upgrade to Mender version `3.7.4`.
+
 ## Version 5.6.1
 * Upgrade NATS to version `2.9.20` with the subchart `0.19.17`.
 
