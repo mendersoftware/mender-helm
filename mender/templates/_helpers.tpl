@@ -63,6 +63,31 @@ Redis address
 {{- end }}
 
 {{/*
+Validate Redis configuration
+*/}}
+{{- define "redis_conf_validation" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if and $dot.Values.redis.enabled ( or $dot.Values.global.redis.URL $dot.Values.global.redis.existingSecret ) }}
+{{- fail "When internal redis is enabled, both global.redis.URL and global.redis.existingSecret have to be unset" }}
+{{- end }}
+{{- if and $dot.Values.global.redis.URL $dot.Values.global.redis.existingSecret }}
+{{- fail "Please set either global.redis.URL or global.redis.existingSecret, not both" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Redis connection string
+*/}}
+{{- define "redis_connection_string" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+  {{- if and $dot.Values.redis.enabled ( not $dot.Values.global.redis.URL ) }}
+    {{- printf "redis://%s-master:6379/0" ( include "common.names.fullname" $dot.Subcharts.redis ) -}}
+  {{- else }}
+    {{- printf $dot.Values.global.redis.URL | quote }}
+  {{- end }}
+{{- end }}
+
+{{/*
 MongoDB URI
 */}}
 {{- define "mongodb_uri" }}
@@ -73,9 +98,15 @@ MongoDB URI
       {{- else }}
         {{- printf "mongodb://%s-0" ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
       {{- end }}
-    {{- else if not (eq .Values.global.architecture "replicaset") }}
+    {{- else if not (eq .Values.mongodb.architecture "replicaset") }}
       {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword  }}
         {{- printf "mongodb://root:%s@%s" .Values.mongodb.auth.rootPassword ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- else }}
+        {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
+      {{- end }}
+    {{- else if and (eq .Values.mongodb.architecture "replicaset") (not .Values.mongodb.externalAccess.enabled) }}
+      {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword  }}
+        {{- printf "mongodb+srv://root:%s@%s.%s.svc.cluster.local/?tls=false" .Values.mongodb.auth.rootPassword ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) .Release.Namespace | b64enc | quote -}}
       {{- else }}
         {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
       {{- end }}
@@ -209,3 +240,92 @@ spec:
 {{- toYaml $resources }}
 {{- end }}
 {{- end }}
+
+{{/*
+Define Mender major and minor version
+to be able to apply some conditional logic
+*/}}
+{{- define "menderVersionMajor" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- $mndr_version := split "." $dot.Chart.AppVersion }}
+{{- with $dot.Values.global.image }}
+  {{- if contains "-" .tag }}
+    {{- $mndr_splitted := split "-" .tag -}}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." $mndr_splitted._1 }}
+    {{- end }}
+  {{- else }}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." .tag }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- printf "%s" $mndr_version._0 }}
+{{- end }}
+
+{{- define "menderVersionMinor" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- $mndr_version := split "." $dot.Chart.AppVersion }}
+{{- with $dot.Values.global.image }}
+  {{- if contains "-" .tag }}
+    {{- $mndr_splitted := split "-" .tag -}}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." $mndr_splitted._1 }}
+    {{- end }}
+  {{- else }}
+    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
+      {{- $mndr_version = split "." .tag }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- printf "%s" $mndr_version._1 }}
+{{- end }}
+
+{{/*
+Create the name of the service account
+*/}}
+{{- define "mender.serviceAccountName" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if $dot.Values.serviceAccount.create }}
+{{- default (include "mender.fullname" $dot) $dot.Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" $dot.Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+Synopsis:
+{{- include "mender.customEnvs" (merge (deepCopy .dot.Values.<service>) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
+*/}}
+{{- define "mender.customEnvs" -}}
+{{- with .customEnvs }}
+{{- toYaml . }}
+{{- println "" }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Define mender.storageProxyUrl
+*/}}
+{{- define "mender.storageProxyUrl" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- with $dot.Values.api_gateway.storage_proxy }}
+  {{- if .url }}
+    {{- printf "%s" .url }}
+  {{- else if eq $dot.Values.global.storage "aws" }}
+    {{- printf "https://%s.s3.%s.amazonaws.com" $dot.Values.global.s3.AWS_BUCKET $dot.Values.global.s3.AWS_REGION}}
+  {{- else }}
+    {{- required "A valid storage proxy URL is required" $dot.Values.api_gateway.storage_proxy.url }}
+  {{- end }}
+{{- else }}
+{{- printf "" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Storage Proxy Rule
+*/}}
+{{- define "mender.storageProxyRule" -}}
+  {{- default "HostRegexp(`{domain:^artifacts.*$}`)" .Values.api_gateway.storage_proxy.customRule | quote }}
+{{- end -}}
+

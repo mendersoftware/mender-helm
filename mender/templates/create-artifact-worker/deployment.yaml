@@ -8,7 +8,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
-    app.kubernetes.io/component: workflows
+    app.kubernetes.io/component: create-artifact-worker
 spec:
   replicas: {{ .Values.create_artifact_worker.replicas }}
   selector:
@@ -20,13 +20,11 @@ spec:
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
 
-  # Rollout upgrade one by one
-  # In this case we warranty there are always instances online.
-  # In case any issues, they will be detected early and deployment be stopped.
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+  # Rollout upgrade
+  {{- $updateStrategy := coalesce .Values.create_artifact_worker.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
 
   template:
     metadata:
@@ -37,7 +35,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
         {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: workflows
+        app.kubernetes.io/component: create-artifact-worker
     spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
@@ -50,7 +48,7 @@ spec:
 {{- end }}
 
       containers:
-      - name: workflows
+      - name: create-artifact-worker
         image: {{ .Values.create_artifact_worker.image.registry }}/{{ .Values.create_artifact_worker.image.repository }}:{{ .Values.create_artifact_worker.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.create_artifact_worker.image.imagePullPolicy }}
 {{- if .Values.create_artifact_worker.containerSecurityContext.enabled }}
@@ -59,7 +57,7 @@ spec:
         resources:
 {{ toYaml .Values.create_artifact_worker.resources | indent 10 }}
 
-{{- if .Values.workflows.automigrate }}
+{{- if .Values.create_artifact_worker.automigrate }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
 {{- else }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]
@@ -68,8 +66,12 @@ spec:
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         env:
+        # NATS uri
+        {{- if not .Values.global.nats.existingSecret }}
         - name: WORKFLOWS_NATS_URI
           value: {{ template "nats_uri" . }}
+        {{- end }}
+
         - name: WORKFLOWS_MENDER_URL
           value: "{{ .Values.global.url }}"
         - name: CREATE_ARTIFACT_GATEWAY_URL
@@ -78,10 +80,17 @@ spec:
           value: "1"
         - name: CREATE_ARTIFACT_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.create_artifact_worker) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:
             name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
+
+        {{- if .Values.global.nats.existingSecret }}
+        - prefix: WORKFLOWS_
+          secretRef:
+            name: {{ .Values.global.nats.existingSecret }}
+        {{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
@@ -90,7 +99,7 @@ spec:
 {{- $ips := coalesce .Values.create_artifact_worker.imagePullSecrets .Values.default.imagePullSecrets  }}
 {{- if $ips }}
       imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
+{{- toYaml $ips | nindent 6 }}
 {{- end }}
 {{- end }}
 

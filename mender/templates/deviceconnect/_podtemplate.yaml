@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- with (coalesce .dot.Values.deviceconnect.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -89,6 +90,8 @@ spec:
         {{.hostname}} https://{{.hostname}} wss://{{.hostname}}
         {{- end }}
 
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.deviceconnect) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
+
     # Supported configuration settings: https://github.com/mendersoftware/deviceconnect/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
     envFrom:
@@ -122,7 +125,7 @@ spec:
   {{- $ips := coalesce .dot.Values.deviceconnect.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 

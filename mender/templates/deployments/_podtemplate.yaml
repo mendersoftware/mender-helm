@@ -15,6 +15,8 @@ spec:
   {{- end }}
   {{- if and (eq .dot.Values.global.storage "aws") (.dot.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
   serviceAccountName: {{ .dot.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+  {{- else }}
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- end }}
   {{- if .dot.Values.deployments.podSecurityContext.enabled }}
   securityContext: {{- omit .dot.Values.deployments.podSecurityContext "enabled" | toYaml | nindent 4 }}
@@ -77,8 +79,10 @@ spec:
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
     - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_AWS_TAG_ARTIFACT | quote }}
+    {{- if and .dot.Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET ( not .dot.Values.deployments.presignSecretExistingSecret ) }}
     - name: DEPLOYMENTS_PRESIGN_SECRET
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET | quote }}
+    {{- end }}
     {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
     - name: DEPLOYMENTS_ENABLE_AUDIT
       value: "true"
@@ -91,6 +95,7 @@ spec:
       value: "true"
     {{- end }}
     {{- end }}
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.deployments) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
@@ -103,6 +108,11 @@ spec:
       secretRef:
         name: {{ .dot.Values.global.s3.existingSecret | default "artifacts-storage" }}
     {{- end }}
+    {{- if and ( not .dot.Values.deployments.env.DEPLOYMENTS_PRESIGN_SECRET ) .dot.Values.deployments.presignSecretExistingSecret }}
+    - prefix: DEPLOYMENTS_
+      secretRef:
+        name: {{ .dot.Values.deployments.presignSecretExistingSecret | quote }}
+    {{- end }}
 
 
   {{- if .dot.Values.global.image.username }}
@@ -112,7 +122,7 @@ spec:
   {{- $ips := coalesce .dot.Values.deployments.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 

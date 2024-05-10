@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- with (coalesce .dot.Values.iot_manager.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -65,11 +66,19 @@ spec:
 
     env:
     # Supported configuration settings: https://github.com/mendersoftware/iot-manager/blob/master/config.yaml
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.iot_manager) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
+
     # Set in order, last value for the key will be used in case duplications.
     envFrom:
     - prefix: IOT_MANAGER_
       secretRef:
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+
+    {{- if .dot.Values.iot_manager.aesEncryptionKey.existingSecret }}
+    - prefix: IOT_MANAGER_
+      secretRef:
+        name: {{ .dot.Values.iot_manager.aesEncryptionKey.existingSecret }}
+    {{- end }}
 
 
   {{- if .dot.Values.global.image.username }}
@@ -79,7 +88,7 @@ spec:
   {{- $ips := coalesce .dot.Values.iot_manager.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 

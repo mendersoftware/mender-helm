@@ -7,7 +7,7 @@ global:
     registry: registry.mender.io
     username: null
     password: null
-    tag: mender-3.6.3
+    tag: mender-3.7.4
 
   mongodb:
     existingSecret: ""
@@ -19,6 +19,7 @@ global:
     username: null
     password: null
     URL: ""
+    existingSecret: ""
   storage: "aws"
   s3:
     existingSecret: ""
@@ -58,21 +59,51 @@ default:
 
   # HorizontalPodAutoscaler default resources
   hpa: {}
-    #enabled: true
-    #minReplicas: 1
-    #maxReplicas: 3
-    #metrics: {}
-    #behavior: {}
+  # enabled: true
+  # minReplicas: 1
+  # maxReplicas: 3
+  # metrics: {}
+  # behavior: {}
 
   # PodDisruptionBudget default resources
   pdb:
     enabled: false
     minAvailable: 1
 
+  # custom default envs for every service
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: WARN
+
+  # Custom default imagePullSecrets
+  imagePullSecrets: []
+  # - name: secret1
+  # - name: secret2
+
+  # default.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+  #
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+
+serviceAccount:
+  create: false
+  name:
+  labels: {}
+  annotations: {}
+
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false
-  # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+  # For Kubernetes >= 1.18 you should specify the ingress-controller via the
+  # field ingressClassName
   # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
   # ingressClassName: nginx
 
@@ -85,17 +116,18 @@ ingress:
   # cert-manager.io/issuer: "letsencrypt"
   path: /
   extraPaths: []
-    # - path: /*
-    #   backend:
-    #     serviceName: ssl-redirect
-    #     servicePort: use-annotation
+  # - path: /*
+  #   backend:
+  #     serviceName: ssl-redirect
+  #     servicePort: use-annotation
   hosts:
     - mender.example.org
   tls:
-  # this secret must exists or can be created from a working cert-manager instance
-   - secretName: mender-ingress-tls
-     hosts:
-       - mender.example.org
+    # this secret must exists or can be created from a working cert-manager
+    # instance
+    - secretName: mender-ingress-tls
+      hosts:
+        - mender.example.org
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
@@ -107,7 +139,8 @@ mongodb:
       type: LoadBalancer
   # replicaCount sets the number of secondaries (min: 2)
   replicaCount: 2
-  # updateStrategy ensure that the nodes are updated one at the time to avoid downtime.
+  # updateStrategy ensure that the nodes are updated one
+  # at the time to avoid downtime.
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -120,13 +153,14 @@ mongodb:
     minAvailable: 2
     maxUnavailable: 1
   image:
-    tag: "5.0.19-debian-11-r13"
+    tag: "6.0.13"
   auth:
     enabled: true
     rootPassword: "pleasechangeme"
     replicaSetKey: "pleasechangeme"
     username: "mender"
-    # reference to Bitnami chart only: the database name is managed by Mender only
+    # reference to Bitnami chart only:
+    # the database name is managed by Mender only
     database: "mender"
   global:
     storageClass: ""
@@ -136,7 +170,8 @@ mongodb:
   service:
     nameOverride: ""
 
-# Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+# Using default values from
+# https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
   enabled: false
   cluster:
@@ -163,7 +198,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v2.10.5
+    tag: v2.11.0
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -191,6 +226,11 @@ api_gateway:
     podAnnotations: {}
     url: "http://minio:9000"
     customRule: null
+  storage_proxy:
+    enabled: false
+    url: ""
+    customRule: "HostRegexp(`{domain:^artifacts.*$}`)"
+    passHostHeader: false
   compression: true
   security_redirect: null
   rateLimit:
@@ -214,15 +254,22 @@ api_gateway:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # cert: |-
-    #   -----BEGIN CERTIFICATE-----
-    #   ...
-    #   -----END CERTIFICATE-----
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
+  # cert: |-
+  #   -----BEGIN CERTIFICATE-----
+  #   ...
+  #   -----END CERTIFICATE-----
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
+
+  # api_gateway.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 deployments:
   enabled: true
@@ -256,6 +303,7 @@ deployments:
   env:
     DEPLOYMENTS_MIDDLEWARE: prod
     DEPLOYMENTS_PRESIGN_SECRET: ""
+  presignSecretExistingSecret: ""
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
@@ -267,9 +315,9 @@ deployments:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## deployments.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -283,6 +331,18 @@ deployments:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # iot_manager.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 device_auth:
   enabled: true
@@ -330,14 +390,14 @@ device_auth:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
- 
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
+
   ## Migration Job
-  
+
   ## device_auth.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -352,13 +412,25 @@ device_auth:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # device_auth.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 # Generate Delta Worker feature
 # Experimental feature, still in beta
 # will be released in the next Mender versions
 generate_delta_worker:
   enabled: false
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -376,6 +448,18 @@ generate_delta_worker:
   imagePullSecrets: []
   nodeSelector: {}
   priorityClassName: ""
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # generate_delta_worker.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 gui:
   enabled: true
@@ -411,6 +495,18 @@ gui:
     allowPrivilegeEscalation: false
     runAsUser: 65534
   priorityClassName: ""
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # gui.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 inventory:
   enabled: true
@@ -449,9 +545,9 @@ inventory:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## inventory.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -465,6 +561,18 @@ inventory:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # inventory.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
 
 tenantadm:
   enabled: true
@@ -507,15 +615,16 @@ tenantadm:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
 
   ## Migration Job
-  
-  ## tenantadm.migrationArgs: list of optional arguments to pass to the migration job. 
+
+  ## tenantadm.migrationArgs: list of optional arguments
+  ## to pass to the migration job.
   ## default: ["migrate"]
   # migrationArgs: []
 
@@ -533,6 +642,17 @@ tenantadm:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # tenantadm.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 useradm:
   enabled: true
@@ -580,14 +700,14 @@ useradm:
   pdb: {}
   priorityClassName: ""
   certs: {}
-    # key: |-
-    #   -----BEGIN PRIVATE KEY-----
-    #   ...
-    #   -----END PRIVATE KEY-----
-    # existingSecret: my-secret-name
- 
+  # key: |-
+  #   -----BEGIN PRIVATE KEY-----
+  #   ...
+  #   -----END PRIVATE KEY-----
+  # existingSecret: my-secret-name
+
   ## Migration Job
-  
+
   ## useradm.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -601,6 +721,18 @@ useradm:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # useradm.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 workflows:
   enabled: true
@@ -637,7 +769,7 @@ workflows:
   priorityClassName: ""
 
   ## Migration Job
-  
+
   ## workflows.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -652,10 +784,37 @@ workflows:
   #     cpu: 150m
   #     memory: 64M
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # workflows.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
+  # Custom volumeMounts for mouting
+  # credential files
+  mountSecrets: {}
+  # volumeMounts:
+  #   - mountPath: /my/mount/path
+  #     name: volume-name
+  #     readOnly: true
+  #     subPath: credentials.txt
+  # volumes:
+  #   - name: volume-name
+  #     secret:
+  #       defaultMode: 420
+  #       secretName: my-credential-file
+
+
 create_artifact_worker:
   enabled: true
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   resources:
     limits:
@@ -681,11 +840,24 @@ create_artifact_worker:
     runAsUser: 65534
   priorityClassName: ""
 
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # create_artifact_worker.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
 auditlogs:
   enabled: true
   podAnnotations: {}
   automigrate: true
-  # logRetentionSeconds gives the number of seconds before an audit event is evicted from the database
+  # logRetentionSeconds gives the number of seconds before
+  # an audit event is evicted from the database
   logRetentionSeconds: 2592000
   replicas: 1
   resources:
@@ -718,9 +890,9 @@ auditlogs:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## auditlogs.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -734,6 +906,18 @@ auditlogs:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # auditlogs.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 iot_manager:
   enabled: true
@@ -770,9 +954,9 @@ iot_manager:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## iot_manager.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -786,6 +970,23 @@ iot_manager:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # iot_manager.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
+  # AES encryption key
+  # Specify an existing secret
+  aesEncryptionKey:
+    existingSecret: ""
 
 deviceconnect:
   enabled: true
@@ -824,9 +1025,9 @@ deviceconnect:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## deviceconnect.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -840,6 +1041,18 @@ deviceconnect:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # deviceconnect.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 deviceconfig:
   enabled: true
@@ -876,9 +1089,9 @@ deviceconfig:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## deviceconfig.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -892,6 +1105,18 @@ deviceconfig:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # deviceconfig.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 devicemonitor:
   enabled: true
@@ -917,6 +1142,9 @@ devicemonitor:
     annotations: {}
     type: ClusterIP
     port: 8080
+  env:
+    DEVICEMONITOR_USERADM_URL: http://mender-useradm:8080/
+    DEVICEMONITOR_WORKFLOWS_URL: http://mender-workflows-server:8080/
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
@@ -928,9 +1156,9 @@ devicemonitor:
   hpa: {}
   pdb: {}
   priorityClassName: ""
- 
+
   ## Migration Job
-  
+
   ## devicemonitor.migrationRestartPolicy
   # migrationRestartPolicy: "Never"
 
@@ -944,6 +1172,18 @@ devicemonitor:
   #   requests:
   #     cpu: 150m
   #     memory: 64M
+
+  # custom envs
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # deviceconnect.updateStrategy: Strategy to use to update existing pods
+  # Example:
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only

@@ -8,7 +8,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
-    app.kubernetes.io/component: workflows
+    app.kubernetes.io/component: generate-delta-worker
 spec:
   replicas: {{ .Values.generate_delta_worker.replicas }}
   selector:
@@ -20,13 +20,11 @@ spec:
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
 
-  # Rollout upgrade one by one
-  # In this case we warranty there are always instances online.
-  # In case any issues, they will be detected early and deployment be stopped.
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+  # Rollout upgrade
+  {{- $updateStrategy := coalesce .Values.generate_delta_worker.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
 
   template:
     metadata:
@@ -37,8 +35,9 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
         {{- include "mender.labels" . | nindent 8 }}
-        app.kubernetes.io/component: workflows
+        app.kubernetes.io/component: generate-delta-worker
     spec:
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -47,13 +46,13 @@ spec:
       {{- end }}
 
       containers:
-      - name: workflows
+      - name: generate-delta-worker
         image: {{ .Values.generate_delta_worker.image.registry }}/{{ .Values.generate_delta_worker.image.repository }}:{{ .Values.generate_delta_worker.image.tag | default .Values.global.image.tag }}
         imagePullPolicy: {{ .Values.generate_delta_worker.image.imagePullPolicy }}
         resources:
 {{ toYaml .Values.generate_delta_worker.resources | indent 10 }}
 
-{{- if .Values.workflows.automigrate }}
+{{- if .Values.generate_delta_worker.automigrate }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
 {{- else }}
         command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]
@@ -62,8 +61,12 @@ spec:
         # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
         # Set in order, last value for the key will be used in case duplications.
         env:
+        # NATS uri
+        {{- if not .Values.global.nats.existingSecret }}
         - name: WORKFLOWS_NATS_URI
           value: {{ template "nats_uri" . }}
+        {{- end }}
+
         - name: WORKFLOWS_MENDER_URL
           value: "{{ .Values.global.url }}"
         - name: GENERATE_DELTA_GATEWAY_URL
@@ -72,10 +75,17 @@ spec:
           value: "1"
         - name: GENERATE_DELTA_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.generate_delta_worker) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:
             name: mongodb-common
+
+        {{- if .Values.global.nats.existingSecret }}
+        - prefix: WORKFLOWS_
+          secretRef:
+            name: {{ .Values.global.nats.existingSecret }}
+        {{- end }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
@@ -84,7 +94,7 @@ spec:
 {{- $ips := coalesce .Values.generate_delta_worker.imagePullSecrets .Values.default.imagePullSecrets  }}
 {{- if $ips }}
       imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
+{{- toYaml $ips | nindent 6 }}
 {{- end }}
 {{- end }}
 

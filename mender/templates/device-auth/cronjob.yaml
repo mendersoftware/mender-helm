@@ -23,6 +23,7 @@ spec:
             app.kubernetes.io/name: {{ include "mender.fullname" . }}-device-auth-license-count
 
         spec:
+          serviceAccountName: {{ include "mender.serviceAccountName" . }}
           {{- with $merged.affinity }}
           affinity: {{ tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
@@ -48,7 +49,7 @@ spec:
 {{- $ips := coalesce .Values.device_auth.imagePullSecrets .Values.default.imagePullSecrets  }}
 {{- if $ips }}
           imagePullSecrets:
-{{ toYaml $ips | indent 10 }}
+{{- toYaml $ips | nindent 10 }}
 {{- end }}
 {{- end }}
 

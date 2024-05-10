@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- with (coalesce .dot.Values.workflows.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -74,8 +75,11 @@ spec:
     {{- end }}
 
     env:
+    # NATS uri
+    {{- if not .dot.Values.global.nats.existingSecret }}
     - name: WORKFLOWS_NATS_URI
       value: {{ template "nats_uri" . }}
+    {{- end }}
 
     {{- if .worker }}
     - name: WORKFLOWS_MENDER_URL
@@ -93,6 +97,7 @@ spec:
       value: "true"
     {{- end }}
     {{- end }}
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.workflows) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
@@ -106,6 +111,15 @@ spec:
         name: smtp
     {{- end }}
 
+    {{- if .dot.Values.global.nats.existingSecret }}
+    - prefix: WORKFLOWS_
+      secretRef:
+        name: {{ .dot.Values.global.nats.existingSecret }}
+    {{- end }}
+    {{- with .dot.Values.workflows.mountSecrets }}
+    volumeMounts: {{ toYaml .volumeMounts | nindent 6 }}
+    {{- end }}
+
   {{- if .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
@@ -113,7 +127,7 @@ spec:
   {{- $ips := coalesce .dot.Values.workflows.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 
@@ -124,5 +138,8 @@ spec:
 
   {{- with (coalesce .dot.Values.workflows.nodeSelector .dot.Values.default.nodeSelector) }}
   nodeSelector: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .dot.Values.workflows.mountSecrets }}
+  volumes: {{ toYaml .volumes | nindent 4 }}
   {{- end }}
 {{- end }}
