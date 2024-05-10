@@ -7,7 +7,7 @@
 Using `helm`:
 
 ```bash
-$ helm install mender ./mender
+helm install mender ./mender
 ```
 
 ## Introduction
@@ -39,7 +39,7 @@ mongodb:
 ```
 
 You can customize it by following the [provider's](https://artifacthub.io/packages/helm/bitnami/mongodb)
-specifications.  
+specifications.
 It's recommended to use an external deployment in Production.
 
 ### Installing MinIO
@@ -47,9 +47,55 @@ It's recommended to use an external deployment in Production.
 You can install MinIO using the official MinIO Helm chart using `helm`:
 
 ```bash
-$ helm repo add minio https://helm.min.io/
-$ helm repo update
-$ helm install minio minio/minio --version 8.0.10 --set "image.tag=RELEASE.2021-02-14T04-01-33Z" --set "accessKey=myaccesskey,secretKey=mysecretkey" --set "resources.requests.memory=128M"
+cat >minio-operator.yml <<EOF
+tenants: {}
+EOF
+
+helm repo add minio https://operator.min.io/
+helm repo update
+helm install minio-operator minio/minio-operator --version 4.1.7 -f minio-operator.yml
+
+export MINIO_ACCESS_KEY=$(pwgen 32 1)
+export MINIO_SECRET_KEY=$(pwgen 32 1)
+
+cat >minio.yml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-creds-secret
+type: Opaque
+data:
+  accesskey: $(echo -n $MINIO_ACCESS_KEY | base64)
+  secretkey: $(echo -n $MINIO_SECRET_KEY | base64)
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio
+  labels:
+    app: minio
+spec:
+  image: minio/minio:RELEASE.2021-06-17T00-10-46Z
+  credsSecret:
+    name: minio-creds-secret
+  pools:
+    - servers: 2
+      volumesPerServer: 2
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+          storageClassName: "standard"
+  mountPath: /export
+  requestAutoCert: false
+EOF
+
+kubectl apply -f minio.yml
 ```
 
 ### Installing NATS
@@ -66,7 +112,7 @@ nats:
 ```
 
 You can customize it by following the [provider's](https://docs.nats.io/running-a-nats-service/nats-kubernetes/helm-charts)
-specifications.  
+specifications.
 It's recommended to use an external deployment in Production.
 
 ## Installing the Chart
@@ -74,7 +120,7 @@ It's recommended to use an external deployment in Production.
 To install the chart with the release name `my-release` using `helm`:
 
 ```bash
-$ helm install my-release -f values.yaml ./mender
+helm install my-release -f values.yaml ./mender
 ```
 
 The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -121,15 +167,15 @@ useradm:
 You can generate your `cert` and `key` for `api-gareway` using `openssl`:
 
 ```bash
-$ openssl req -x509 -sha256 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) -keyout private.key -out certificate.crt -subj /CN="your.host.name"
+openssl req -x509 -sha256 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) -keyout private.key -out certificate.crt -subj /CN="your.host.name"
 ```
 
 You can generate the RSA private keys for `device-auth`, `tenantadm` and `useradm` using `openssl`:
 
 ```bash
-$ openssl genpkey -algorithm RSA -out device_auth.key -pkeyopt rsa_keygen_bits:3072
-$ openssl rsa -in device_auth.key -out device_auth_converted.key
-$ mv device_auth_converted.key device_auth.key
+openssl genpkey -algorithm RSA -out device_auth.key -pkeyopt rsa_keygen_bits:3072
+openssl rsa -in device_auth.key -out device_auth_converted.key
+mv device_auth_converted.key device_auth.key
 ```
 
 ## Uninstalling the Chart
@@ -137,7 +183,7 @@ $ mv device_auth_converted.key device_auth.key
 To uninstall/delete the `my-release` deployment:
 
 ```bash
-$ helm delete my-release
+helm delete my-release
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -154,14 +200,15 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.registry` | Global Docker image registry | `registry.mender.io` |
 | `global.image.username` | Global Docker image registry username | `nil` |
 | `global.image.password` | Global Docker image registry username | `password` |
-| `global.image.tag` | Global Docker image registry tag | `mender-3.6.3` |
+| `global.image.tag` | Global Docker image registry tag | `mender-3.7.4` |
 | `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
 | `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
-| `global.redis.username` | Optional Redis Username  | `nil` |
-| `global.redis.password` | Optional Redis Password  | `nil` |
-| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `mender-redis:6379` |
+| `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `nil` |
+| `global.redis.existingSecret` | Optional Redis URL from a secret, used with an external service when `redis.enabled=false`. The key has to be `REDIS_CONNECTION_STRING` | `nil` |
+| `global.redis.username` | Optional Redis Username **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
+| `global.redis.password` | Optional Redis Password **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |
 | `global.storage` | Artifacts storage type  (available types: `aws` and `azure`) | `aws` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
@@ -197,15 +244,20 @@ The following table lists the global, default, and other parameters supported by
 | `default.pdb.enabled` | PodDistruptionBudget enabled | `false` |
 | `default.pdb.minAvailable` | PodDistruptionBudget minAvailable | `1` |
 | `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
+| `default.updateStrategy` | The strategy to use to update existing pods | `rollingUpdate = { maxSurge = 1, maxUnavailable = 1 }` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
+| `serviceAccount.create` | Create a custom ServiceAccount | `false` |
+| `serviceAccount.name` | Custom ServiceAccount name | `nil` |
+| `serviceAccount.labels` | ServiceAccount labels | `nil` |
+| `serviceAccount.annotations` | ServiceAccount annotations | `nil` |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install my-release \
+helm install my-release \
   --set mongodbRootPassword=secretpassword,mongodbUsername=my-user,mongodbPassword=my-password,mongodbDatabase=my-database \
   ./mender
 ```
@@ -213,7 +265,7 @@ $ helm install my-release \
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./mender
+helm install --name my-release -f values.yaml ./mender
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -251,8 +303,12 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.service.httpNodePort` | Node port for the HTTP service | `nil` |
 | `api_gateway.service.httpsNodePort` | Node port for the HTTPS service | `nil` |
 | `api_gateway.env.SSL` | SSL termination flag | `true` |
-| `api_gateway.minio.enabled` | Enable routing of S3 requests to the minio service | `true` |
-| `api_gateway.minio.url` | URL of the minio service | `http://minio:9000` |
+| `api_gateway.minio.enabled` | Enable routing of S3 requests to the minio service. **[Deprecated from 5.5.0, use `api_gateway.storage_proxy`` instead]** | `true` |
+| `api_gateway.minio.url` | URL of the minio service. **[Deprecated from 5.5.0, use `api_gateway.storage_proxy`` instead]** | `http://minio:9000` |
+| `api_gateway.storage_proxy.enabled` | Enable storage proxy to the S3/minio service | `false` |
+| `api_gateway.storage_proxy.url` | URL of the storage proxy. Should point to the AWS Bucket/Minio URL | `nil` |
+| `api_gateway.storage_proxy.customRule` | Custom rules for the storage proxy. | ``HostRegexp(`{domain:^artifacts.*$}`)`` |
+| `api_gateway.storage_proxy.passHostHeader` | The passHostHeader allows to forward client Host header to server. | `false` |
 | `api_gateway.rateLimit.average` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.burst` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `100` |
 | `api_gateway.rateLimit.period` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `1s` |
@@ -267,7 +323,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `api_gateway.compression` | Enable Traefik Compression | `true` |
 | `api_gateway.security_redirect` | Custom redirect to a company security page | `null` |
-| `api_gateway.minio.customRule` | Custom redirect for MinIO. Uses the default one if not specified | `null` |
+| `api_gateway.minio.customRule` | Custom redirect for MinIO. Uses the default one if not specified. **[Deprecated from 5.5.0, use `api_gateway.storage_proxy`` instead]** | `null` |
 | `api_gateway.hpa` | HorizontalPodAutoscaler support | `nil` |
 | `api_gateway.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
 | `api_gateway.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
@@ -281,6 +337,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.certs.cert` | Public certificate (with full chain optionally) in PEM format | `nil` |
 | `api_gateway.certs.key` | Private key in PEM format | `nil` |
 | `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
+| `api_gateway.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: deployments
 
@@ -316,6 +373,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.service.nodePort` | Node port for the service | `nil` |
 | `deployments.env.DEPLOYMENTS_MIDDLEWARE` | Set the DEPLOYMENTS_MIDDLEWARE variable | `prod` |
 | `deployments.env.DEPLOYMENTS_PRESIGN_SECRET` | Set the secret for generating signed url, must be a base64 encoded secret. | random value at start-up time |
+| `deployments.presignSecretExistingSecret` | Set the secret for generating signed url from an existing secret with the key `PRESIGN_SECRET`. | `nil` |
 | `deployments.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `deployments.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `deployments.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
@@ -333,6 +391,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deployments.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deployments.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `deployments.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: device-auth
 
@@ -367,9 +426,10 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
-| `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable | `1` |
-| `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable | `1` |
+| `device_auth.env.DEVICEAUTH_REDIS_KEY_PREFIX` | Set the DEVICEAUTH_REDIS_KEY_PREFIX variable | `deviceauth:v1` |
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
+| `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable **[Deprecated from 3.7.0]** | `1` |
+| `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
 | `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `device_auth.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `device_auth.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
@@ -391,6 +451,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 | `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `device_auth.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: gui
 
@@ -428,6 +489,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `gui.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `gui.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `gui.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: inventory
 
@@ -458,6 +520,8 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.service.port` | Port for the service | `8080` |
 | `inventory.service.nodePort` | Node port for the service | `nil` |
 | `inventory.env.INVENTORY_MIDDLEWARE` | Set the INVENTORY_MIDDLEWARE variable | `prod` |
+| `inventory.env.INVENTORY_REDIS_KEY_PREFIX` | Set the INVENTORY_REDIS_KEY_PREFIX variable | `inventory:v1` |
+| `inventory.env.INVENTORY_REDIS_CACHE_EXPIRE_SEC` | Set the INVENTORY_REDIS_CACHE_EXPIRE_SEC variable | `1800` |
 | `inventory.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `inventory.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `inventory.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
@@ -475,6 +539,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `inventory.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `inventory.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `inventory.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: reporting
 
@@ -483,7 +548,7 @@ The following table lists the parameters for the `reporting` component and their
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `reporting.enabled` | Enable the component | `true` |
-| `reporting.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `reporting.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `reporting.image.registry` | Docker image registry | `docker.io` |
 | `reporting.image.repository` | Docker image repository | `mendersoftware/reporting` |
 | `reporting.image.tag` | Docker image tag | `nil` |
@@ -557,6 +622,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `tenantadm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `tenantadm.migrationArgs` | Migration job: optional migration args (list). | `["migrate"]` |
+| `tenantadm.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 The default value for the rate limits are:
 
@@ -600,9 +666,10 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable | `Mender Users` |
 | `useradm.env.USERADM_JWT_EXP_TIMEOUT` | Set the USERADM_JWT_EXP_TIMEOUT variable | `604800` |
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
-| `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable | `2` |
-| `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable | `1` |
+| `useradm.env.USERADM_REDIS_KEY_PREFIX` | Set the USERADM_REDIS_KEY_PREFIX variable | `useradm:v1` |
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
+| `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable **[Deprecated from 3.7.0]** | `2` |
+| `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
 | `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 | `useradm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
@@ -625,6 +692,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 | `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `useradm.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: workflows
 
@@ -663,6 +731,8 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `workflows.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `workflows.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `workflows.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `workflows.mountSecrets` | Optional `volumeMounts` and `volumes` to inject a credential files in the workflows service  | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -671,7 +741,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `create_artifact_worker.enabled` | Enable the component | `true` |
-| `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `create_artifact_worker.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `create_artifact_worker.image.registry` | Docker image registry | `docker.io` |
 | `create_artifact_worker.image.repository` | Docker image repository | `mendersoftware/create-artifact-worker` |
 | `create_artifact_worker.image.tag` | Docker image tag | `nil` |
@@ -692,6 +762,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `create_artifact_worker.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `create_artifact_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `create_artifact_worker.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: auditlogs
 
@@ -737,6 +808,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `auditlogs.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `auditlogs.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `auditlogs.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: iot-manager
 
@@ -781,6 +853,8 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `iot_manager.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `iot_manager.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `iot_manager.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `iot_manager.aesEncryptionKey.existingSecret` | Optional secret containing the AES encryption key. The secret key must be `AES_ENCRYPTION_KEY` | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -827,6 +901,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deviceconnect.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deviceconnect.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `deviceconnect.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -871,6 +946,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deviceconfig.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deviceconfig.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `deviceconfig.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -917,6 +993,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `devicemonitor.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `devicemonitor.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
+| `devicemonitor.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is
@@ -927,7 +1004,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `generate_delta_worker.enabled` | Enable the component | `false` |
-| `generate_delta_worker.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `generate_delta_worker.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `generate_delta_worker.image.registry` | Docker image registry | `registry.mender.io` |
 | `generate_delta_worker.image.repository` | Docker image repository | `mendersoftware/generate-delta-worker` |
 | `generate_delta_worker.image.tag` | Docker image tag | `nil` |
@@ -942,6 +1019,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.resources.requests.cpu` | Resources CPU request | `100m` |
 | `generate_delta_worker.resources.requests.memory` | Resources memory request | `128M` |
 | `generate_delta_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
+| `generate_delta_worker.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
 ### Parameters: redis
 
@@ -981,14 +1059,14 @@ The following table lists the parameters for the `redis` component and their def
 You can create a tenant from the command line of the `tenantadm` pod; the value printed is the newly generated tenant ID:
 
 ```bash
-$ tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin" --plan enterprise
+tenantadm create-org --name demo --username "admin@mender.io" --password "adminadmin" --plan enterprise
 5dcd71624143b30050e63bed
 ```
 
 You can create additional useres from the command line of the `useradm` pod:
 
 ```bash
-$ useradm-enterprise create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
+useradm-enterprise create-user --username "demo@mender.io" --password "demodemo" --tenant-id "5dcd71624143b30050e63bed"
 187b8101-4431-500f-88da-54709f51f2e6
 ```
 
@@ -998,7 +1076,7 @@ If you are running the Open Source version of Mender, you won't have the `tenant
 You can create users directly in the `useradm` pod:
 
 ```bash
-$ useradm create-user --username "demo@mender.io" --password "demodemo"
+useradm create-user --username "demo@mender.io" --password "demodemo"
 187b8101-4431-500f-88da-54709f51f2e6
 ```
 
@@ -1007,7 +1085,7 @@ $ useradm create-user --username "demo@mender.io" --password "demodemo"
 You can port-forward the `mender-api-gateway` Kubernetes service to verify the system is up and running:
 
 ```bash
-$ kubectl port-forward service/mender-api-gateway 443:443
+kubectl port-forward service/mender-api-gateway 443:443
 ```
 
 ## Contributing

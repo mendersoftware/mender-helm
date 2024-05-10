@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
+  serviceAccountName: {{ include "mender.serviceAccountName" . }}
   {{- with (coalesce .dot.Values.devicemonitor.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -66,11 +67,13 @@ spec:
     env:
     # Workflows orchestrator address
     - name: DEVICEMONITOR_USERADM_URL
-      value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_USERADM_URL | quote }}
+      value: {{ .dot.Values.devicemonitor.env.DEVICEMONITOR_USERADM_URL | quote }}
 
     # Workflows orchestrator address
     - name: DEVICEMONITOR_WORKFLOWS_URL
-      value: {{ .dot.Values.device_auth.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
+      value: {{ .dot.Values.devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL | quote }}
+
+    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.devicemonitor) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/devicemonitor/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
@@ -87,7 +90,7 @@ spec:
   {{- $ips := coalesce .dot.Values.devicemonitor.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
   {{- if $ips }}
   imagePullSecrets:
-  {{ toYaml $ips }}
+  {{- toYaml $ips | nindent 4}}
   {{- end }}
   {{- end }}
 

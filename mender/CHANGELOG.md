@@ -1,5 +1,92 @@
 # Mender Helm chart
 
+## Version 5.6.2
+* Upgrade to Mender version `3.7.4`.
+
+## Version 5.6.1
+* Upgrade NATS to version `2.9.20` with the subchart `0.19.17`.
+
+## Version 5.6.0
+* MongoDB sub-chart
+  * Bump chart version to 13.18.5
+  * Bump app version to MongoDB 6.0 (tag: `6.0.13`)
+* Upgrade to Mender version `3.7.3`.
+
+> If your running an existing cluster with MongoDB 5.0, we recommend following
+> the upgrade procedure from the
+> [official documentation](https://www.mongodb.com/docs/manual/release-notes/6.0-upgrade-replica-set/).
+
+## 5.5.4
+* fix malformed Authorization header when authRateLimit is set
+* Bump traefik image to v2.11.0
+
+## 5.5.3
+* create artifact worker: change container name from workflows
+* generate delta worker: change container name from workflows
+* fix devicemonitor env variables
+* IoT Manager: added support for an external secret containing an AES encryption key
+* Workflows: added support for custom secret file mounted as a volume
+
+## 5.5.2
+* Upgrade to Mender version `3.7.2`.
+* By default, `automigrate` is set to `false` for the generate delta worker and the create artifac worker services:
+  the migrations are performed by migration jobs.
+
+## 5.5.1
+* Fix NATS address when `global.nats.existingSecret` is defined
+* Fix indent issue when using multiple custom imagePullSecrets
+* Fix artifact storage secret for the Deployments storage daemon
+  when using an existing external secret
+* Forcing Traefik `passHostHeader` option to `false` when using the `api_gateway.storage_proxy`
+* Added `referrerPolicy: "no-referrer"` by default in Traefik
+* Bump to traefik `2.10.7`
+* feat: support for X-MEN-RBAC-Releases-Tags
+* feat: support for custom updateStrategy
+* fix missing auditlog variable in the device auth service
+* fix Redis environment variables when using an external Redis
+* Added `global.redis.existingSecret` option
+
+## 5.5.0
+* Fix mongodb uri creation when using the mongodb subchart and replicast architecture
+* Added customEnv option to set default or per-service custom env variables
+* Added generic `storage_proxy` service, that could
+  work for both minio and Amazon S3, and it's going to replace the `api_gateway.minio` configuration.
+* Add OpenID Connect authentication API to user authentication routes in the gateway.
+* **Deprecations**:
+  * `api_gateway.minio` is deprecated in favor of `api_gateway.storage_proxy`.
+    This entry could be used, but it is no longer maintained, and could be removed
+    in future releases.
+    **How to upgrade**:
+    * set `api_gateway.minio.enabled=false`
+    * set `api_gateway.storage_proxy.enabled=true`
+    * set `api_gateway.storage_proxy.url` to the external storage url that you want to map externally. For example `https://fleetstorage.example.com`.
+      If you leave it empty, it uses the Amazon S3 external URL.
+
+
+## Version 5.4.1
+* Upgrade to Mender version `3.7.1`.
+* Removed useless variables from the gui container.
+* Added custom service account support (thanks @bdomars)
+
+## Version 5.4.0
+* Upgrade to Mender version `3.7.0`.
+* Update the Redis settings to use a connection string, required by Mender 3.7.0
+* **Deprecations**:
+  * `global.redis.username` and `global.redis.password` are deprecated in Mender 3.7.0.
+    Use redis connection string format in the `global.redis.URL`:
+    * Standalone mode:
+    ```
+    (redis|rediss|unix)://[<user>:<password>@](<host>|<socket path>)[:<port>[/<db_number>]][?option=value]
+    ```
+    * Cluster mode:
+    ```
+    (redis|rediss|unix)[+srv]://[<user>:<password>@]<host1>[,<host2>[,...]][:<port>][?option=value]
+    ```
+  * `device_auth.env.DEVICEAUTH_REDIS_DB`: use the new redis connection string format instead.
+  * `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC`: use the new redis connection string format instead.
+  * `device_auth.env.USERADM_REDIS_DB`: use the new redis connection string format instead.
+  * `device_auth.env.USERADM_REDIS_TIMEOUT_SEC`: use the new redis connection string format instead.
+
 ## Version 5.3.0
 * Split single db-migration job into multiple jobs
 * Traefik updated to `v2.10.5`

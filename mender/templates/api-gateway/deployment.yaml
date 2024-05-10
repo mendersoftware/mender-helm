@@ -30,13 +30,11 @@ spec:
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
 
-  # Rollout upgrade one by one
-  # In this case we warranty there are always instances online.
-  # In case any issues, they will be detected early and deployment be stopped.
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+  # Rollout upgrade
+  {{- $updateStrategy := coalesce .Values.api_gateway.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
 
   template:
     metadata:
@@ -58,6 +56,7 @@ spec:
 {{- if .Values.api_gateway.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.api_gateway.podSecurityContext "enabled" | toYaml | nindent 8 }}
 {{- end }}
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
 
       containers:
       - name: api-gateway
@@ -162,7 +161,7 @@ spec:
 {{- $ips := coalesce .Values.api_gateway.imagePullSecrets .Values.default.imagePullSecrets  }}
 {{- if $ips }}
       imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
+{{- toYaml $ips | nindent 6 }}
 {{- end }}
 {{- end }}
 

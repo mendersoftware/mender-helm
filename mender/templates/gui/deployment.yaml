@@ -24,13 +24,11 @@ spec:
   # Give container minimum time to finish before it's considered ready.
   minReadySeconds: 120
 
-  # Rollout upgrade one by one
-  # In this case we warranty there are always instances online.
-  # In case any issues, they will be detected early and deployment be stopped.
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+  # Rollout upgrade
+  {{- $updateStrategy := coalesce .Values.gui.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
 
   template:
     metadata:
@@ -39,6 +37,7 @@ spec:
         {{- include "mender.labels" . | nindent 8 }}
         app.kubernetes.io/component: gui
     spec:
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
@@ -70,12 +69,6 @@ spec:
           periodSeconds: 15
 
         env:
-        - name: INTEGRATION_VERSION
-          value: "3.6.1"
-        - name: MENDER_VERSION
-          value: "3.6.1"
-        - name: MENDER_ARTIFACT_VERSION
-          value: "3.9.0"
         {{- if .Values.global.hosted }}
         - name: MENDER_HOSTED
           value: {{ .Values.global.hosted | quote }}
@@ -102,6 +95,7 @@ spec:
         - name: HAVE_MONITOR
           value: "true"
         {{- end }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.gui) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
 
 {{- if .Values.global.image.username }}
       imagePullSecrets:
@@ -110,7 +104,7 @@ spec:
 {{- $ips := coalesce .Values.gui.imagePullSecrets .Values.default.imagePullSecrets  }}
 {{- if $ips }}
       imagePullSecrets:
-{{ toYaml $ips | indent 6 }}
+{{- toYaml $ips | nindent 6 }}
 {{- end }}
 {{- end }}
 
