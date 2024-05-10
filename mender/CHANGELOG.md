@@ -1,9 +1,16 @@
 # Mender Helm chart
 
+## Version 5.6.2
+* Upgrade to Mender version `3.7.4`.
+
+## Version 5.6.1
+* Upgrade NATS to version `2.9.20` with the subchart `0.19.17`.
+
 ## Version 5.6.0
 * MongoDB sub-chart
   * Bump chart version to 13.18.5
   * Bump app version to MongoDB 6.0 (tag: `6.0.13`)
+* Upgrade to Mender version `3.7.3`.
 
 > If your running an existing cluster with MongoDB 5.0, we recommend following
 > the upgrade procedure from the
