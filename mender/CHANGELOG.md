@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.6.3
+* `generate_delta_worker`: don't enforce tags for the image.
+
 ## Version 5.6.2
 * Upgrade to Mender version `3.7.4`.
 

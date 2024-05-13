@@ -443,7 +443,6 @@ generate_delta_worker:
   image:
     registry: registry.mender.io
     repository: mendersoftware/generate-delta-worker
-    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
