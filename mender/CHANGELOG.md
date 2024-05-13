@@ -3,6 +3,7 @@
 ## Version 5.6.3
 * `generate_delta_worker`: don't enforce tags for the image.
 * Added `api_gateway.accesslogs` parameter to enable/disable access logs.
+* Bump traefik image to v2.11.2
 
 ## Version 5.6.2
 * Upgrade to Mender version `3.7.4`.
