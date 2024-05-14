@@ -28,3 +28,8 @@ create_artifact_worker:
     tag: saas-v2024.04.29
     registry: mendersoftware
     repository: create-artifact-worker
+deployments:
+  image:
+    tag: saas-v2024.04.29
+    registry: registry.mender.io
+    repository: mendersoftware/deployments-enterprise
