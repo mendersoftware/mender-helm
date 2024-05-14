@@ -1,10 +1,11 @@
 # Mender Helm chart
 
-## Version 5.6.3
+## Version 5.7.0
 * `generate_delta_worker`: don't enforce tags for the image.
 * Added `api_gateway.accesslogs` parameter to enable/disable access logs.
 * Bump traefik image to v2.11.2
 * Move from megabytes to mebibytes for consistency.
+* Added `inventory.mongodbExistingSecret` to override the default MongoDB secret.
 
 ## Version 5.6.2
 * Upgrade to Mender version `3.7.4`.

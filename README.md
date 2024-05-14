@@ -541,6 +541,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `inventory.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `inventory.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `inventory.mongodbExistingSecret` | Use a different MongoDB secret for this service | `nil` |
 
 ### Parameters: reporting
 
