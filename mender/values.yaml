@@ -198,17 +198,17 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v2.11.0
+    tag: v2.11.2
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
   resources:
     limits:
       cpu: 600m
-      memory: 1G
+      memory: 1Gi
     requests:
       cpu: 600m
-      memory: 512M
+      memory: 512Mi
   affinity: {}
   nodeSelector: {}
   httpPort: 9080
@@ -253,6 +253,7 @@ api_gateway:
   hpa: {}
   pdb: {}
   priorityClassName: ""
+  accesslogs: true
   certs: {}
   # cert: |-
   #   -----BEGIN CERTIFICATE-----
@@ -279,10 +280,10 @@ deployments:
   resources:
     limits:
       cpu: 300m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 300m
-      memory: 64M
+      memory: 64Mi
   affinity: {}
   directUpload:
     enabled: true
@@ -327,10 +328,10 @@ deployments:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -352,10 +353,10 @@ device_auth:
   resources:
     limits:
       cpu: 350m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 350m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: ""
@@ -407,10 +408,10 @@ device_auth:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -435,15 +436,14 @@ generate_delta_worker:
   resources:
     limits:
       cpu: 100m
-      memory: 1024M
+      memory: 1024Mi
     requests:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: registry.mender.io
     repository: mendersoftware/generate-delta-worker
-    tag: mender-3.5.0
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
@@ -468,10 +468,10 @@ gui:
   resources:
     limits:
       cpu: 20m
-      memory: 64M
+      memory: 64Mi
     requests:
       cpu: 5m
-      memory: 16M
+      memory: 16Mi
   affinity: {}
   image:
     registry: docker.io
@@ -512,14 +512,15 @@ inventory:
   enabled: true
   podAnnotations: {}
   automigrate: true
+  mongodbExistingSecret: ""
   replicas: 1
   resources:
     limits:
       cpu: 300m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 300m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: ""
@@ -557,10 +558,10 @@ inventory:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # inventory.updateStrategy: Strategy to use to update existing pods
   # Example:
@@ -581,10 +582,10 @@ tenantadm:
   resources:
     limits:
       cpu: 150m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 150m
-      memory: 64M
+      memory: 64Mi
   affinity: {}
   image:
     registry: registry.mender.io
@@ -637,10 +638,10 @@ tenantadm:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -662,10 +663,10 @@ useradm:
   resources:
     limits:
       cpu: 150m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 150m
-      memory: 64M
+      memory: 64Mi
   affinity: {}
   image:
     registry: ""
@@ -717,10 +718,10 @@ useradm:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -742,10 +743,10 @@ workflows:
   resources:
     limits:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 10m
-      memory: 64M
+      memory: 64Mi
   affinity: {}
   image:
     registry: ""
@@ -779,10 +780,10 @@ workflows:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128MI
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -819,10 +820,10 @@ create_artifact_worker:
   resources:
     limits:
       cpu: 100m
-      memory: 1024M
+      memory: 1024Mi
     requests:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: docker.io
@@ -863,10 +864,10 @@ auditlogs:
   resources:
     limits:
       cpu: 50m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 50m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: registry.mender.io
@@ -902,10 +903,10 @@ auditlogs:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -927,10 +928,10 @@ iot_manager:
   resources:
     limits:
       cpu: 50m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 50m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: docker.io
@@ -966,10 +967,10 @@ iot_manager:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -996,10 +997,10 @@ deviceconnect:
   resources:
     limits:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: docker.io
@@ -1037,10 +1038,10 @@ deviceconnect:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -1062,10 +1063,10 @@ deviceconfig:
   resources:
     limits:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: docker.io
@@ -1101,10 +1102,10 @@ deviceconfig:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []
@@ -1126,10 +1127,10 @@ devicemonitor:
   resources:
     limits:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
     requests:
       cpu: 100m
-      memory: 128M
+      memory: 128Mi
   affinity: {}
   image:
     registry: registry.mender.io
@@ -1168,10 +1169,10 @@ devicemonitor:
   # migrationResources:
   #   limits:
   #     cpu: 150m
-  #     memory: 128M
+  #     memory: 128Mi
   #   requests:
   #     cpu: 150m
-  #     memory: 64M
+  #     memory: 64Mi
 
   # custom envs
   customEnvs: []

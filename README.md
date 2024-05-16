@@ -290,9 +290,9 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.httpPort` | Port for the HTTP listener in the container | `9080` |
 | `api_gateway.httpsPort` | Port for the HTTPS listener in the container | `9443` |
 | `api_gateway.resources.limits.cpu` | Resources CPU limit | `600m` |
-| `api_gateway.resources.limits.memory` | Resources memory limit | `1G` |
+| `api_gateway.resources.limits.memory` | Resources memory limit | `1Gi` |
 | `api_gateway.resources.requests.cpu` | Resources CPU request | `600m` |
-| `api_gateway.resources.requests.memory` | Resources memory request | `512M` |
+| `api_gateway.resources.requests.memory` | Resources memory request | `512Mi` |
 | `api_gateway.service.name` | Name of the service | `mender-api-gateway` |
 | `api_gateway.service.annotations` | Annotations map for the service | `{}` |
 | `api_gateway.service.type` | Service type | `ClusterIP` |
@@ -338,6 +338,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.certs.key` | Private key in PEM format | `nil` |
 | `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
 | `api_gateway.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `api_gateway.accesslogs` | Traefik Access Logs, enabled by default | `true` |
 
 ### Parameters: deployments
 
@@ -361,9 +362,9 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.directUpload.skipVerify`  | Skip verification of artifact uploaded through direct upload. Only advised if you verified the direct upload through other means. | `false` |
 | `deployments.daemonSchedule` | Cron schedule for running the storage daemon | `"15 * * * *"` |
 | `deployments.resources.limits.cpu` | Resources CPU limit | `300m` |
-| `deployments.resources.limits.memory` | Resources memory limit | `128M` |
+| `deployments.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `deployments.resources.requests.cpu` | Resources CPU request | `300m` |
-| `deployments.resources.requests.memory` | Resources memory request | `64M` |
+| `deployments.resources.requests.memory` | Resources memory request | `64Mi` |
 | `deployments.service.name` | Name of the service | `mender-deployments` |
 | `deployments.service.annotations` | Annotations map for the service | `{}` |
 | `deployments.service.type` | Service type | `ClusterIP` |
@@ -411,9 +412,9 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.replicas` | Number of replicas | `1` |
 | `device_auth.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `device_auth.resources.limits.cpu` | Resources CPU limit | `350m` |
-| `device_auth.resources.limits.memory` | Resources memory limit | `128M` |
+| `device_auth.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `device_auth.resources.requests.cpu` | Resources CPU request | `350m` |
-| `device_auth.resources.requests.memory` | Resources memory request | `128M` |
+| `device_auth.resources.requests.memory` | Resources memory request | `128Mi` |
 | `device_auth.service.name` | Name of the service | `mender-device-auth` |
 | `device_auth.service.annotations` | Annotations map for the service | `{}` |
 | `device_auth.service.type` | Service type | `ClusterIP` |
@@ -470,9 +471,9 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.replicas` | Number of replicas | `1` |
 | `gui.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `gui.resources.limits.cpu` | Resources CPU limit | `20m` |
-| `gui.resources.limits.memory` | Resources memory limit | `64M` |
+| `gui.resources.limits.memory` | Resources memory limit | `64Mi` |
 | `gui.resources.requests.cpu` | Resources CPU request | `5m` |
-| `gui.resources.requests.memory` | Resources memory request | `16M` |
+| `gui.resources.requests.memory` | Resources memory request | `16Mi` |
 | `gui.service.name` | Name of the service | `mender-gui` |
 | `gui.service.annotations` | Annotations map for the service | `{}` |
 | `gui.service.type` | Service type | `ClusterIP` |
@@ -509,9 +510,9 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.replicas` | Number of replicas | `1` |
 | `inventory.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `inventory.resources.limits.cpu` | Resources CPU limit | `300m` |
-| `inventory.resources.limits.memory` | Resources memory limit | `128M` |
+| `inventory.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `inventory.resources.requests.cpu` | Resources CPU request | `300m` |
-| `inventory.resources.requests.memory` | Resources memory request | `128M` |
+| `inventory.resources.requests.memory` | Resources memory request | `128Mi` |
 | `inventory.service.name` | Name of the service | `mender-inventory` |
 | `inventory.service.annotations` | Annotations map for the service | `{}` |
 | `inventory.service.type` | Service type | `ClusterIP` |
@@ -540,6 +541,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `inventory.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `inventory.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `inventory.mongodbExistingSecret` | Use a different MongoDB secret for this service | `nil` |
 
 ### Parameters: reporting
 
@@ -558,9 +560,9 @@ The following table lists the parameters for the `reporting` component and their
 | `reporting.replicas` | Number of replicas | `1` |
 | `reporting.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `reporting.resources.limits.cpu` | Resources CPU limit | `50m` |
-| `reporting.resources.limits.memory` | Resources memory limit | `128M` |
+| `reporting.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `reporting.resources.requests.cpu` | Resources CPU request | `50m` |
-| `reporting.resources.requests.memory` | Resources memory request | `128M` |
+| `reporting.resources.requests.memory` | Resources memory request | `128Mi` |
 | `reporting.service.name` | Name of the service | `mender-reporting` |
 | `reporting.service.annotations` | Annotations map for the service | `{}` |
 | `reporting.service.type` | Service type | `ClusterIP` |
@@ -586,9 +588,9 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.replicas` | Number of replicas | `1` |
 | `tenantadm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `tenantadm.resources.limits.cpu` | Resources CPU limit | `150m` |
-| `tenantadm.resources.limits.memory` | Resources memory limit | `128M` |
+| `tenantadm.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `tenantadm.resources.requests.cpu` | Resources CPU request | `150m` |
-| `tenantadm.resources.requests.memory` | Resources memory request | `64M` |
+| `tenantadm.resources.requests.memory` | Resources memory request | `64Mi` |
 | `tenantadm.service.name` | Name of the service | `mender-tenantadm` |
 | `tenantadm.service.annotations` | Annotations map for the service | `{}` |
 | `tenantadm.service.type` | Service type | `ClusterIP` |
@@ -652,9 +654,9 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.replicas` | Number of replicas | `1` |
 | `useradm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `useradm.resources.limits.cpu` | Resources CPU limit | `150m` |
-| `useradm.resources.limits.memory` | Resources memory limit | `128M` |
+| `useradm.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `useradm.resources.requests.cpu` | Resources CPU request | `150m` |
-| `useradm.resources.requests.memory` | Resources memory request | `64M` |
+| `useradm.resources.requests.memory` | Resources memory request | `64Mi` |
 | `useradm.service.name` | Name of the service | `mender-useradm` |
 | `useradm.service.annotations` | Annotations map for the service | `{}` |
 | `useradm.service.type` | Service type | `ClusterIP` |
@@ -712,9 +714,9 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `workflows.resources.limits.cpu` | Resources CPU limit | `100m` |
-| `workflows.resources.limits.memory` | Resources memory limit | `128M` |
+| `workflows.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `workflows.resources.requests.cpu` | Resources CPU request | `10m` |
-| `workflows.resources.requests.memory` | Resources memory request | `64M` |
+| `workflows.resources.requests.memory` | Resources memory request | `64Mi` |
 | `workflows.service.name` | Name of the service | `mender-workflows-server` |
 | `workflows.service.annotations` | Annotations map for the service | `{}` |
 | `workflows.service.type` | Service type | `ClusterIP` |
@@ -752,9 +754,9 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
 | `create_artifact_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `create_artifact_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
-| `create_artifact_worker.resources.limits.memory` | Resources memory limit | `1024M` |
+| `create_artifact_worker.resources.limits.memory` | Resources memory limit | `1024Mi` |
 | `create_artifact_worker.resources.requests.cpu` | Resources CPU request | `100m` |
-| `create_artifact_worker.resources.requests.memory` | Resources memory request | `128M` |
+| `create_artifact_worker.resources.requests.memory` | Resources memory request | `128Mi` |
 | `create_artifact_worker.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `create_artifact_worker.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `create_artifact_worker.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
@@ -783,9 +785,9 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `auditlogs.resources.limits.cpu` | Resources CPU limit | `50m` |
-| `auditlogs.resources.limits.memory` | Resources memory limit | `128M` |
+| `auditlogs.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `auditlogs.resources.requests.cpu` | Resources CPU request | `50m` |
-| `auditlogs.resources.requests.memory` | Resources memory request | `128M` |
+| `auditlogs.resources.requests.memory` | Resources memory request | `128Mi` |
 | `auditlogs.service.name` | Name of the service | `mender-auditlogs` |
 | `auditlogs.service.annotations` | Annotations map for the service | `{}` |
 | `auditlogs.service.type` | Service type | `ClusterIP` |
@@ -828,9 +830,9 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.replicas` | Number of replicas | `1` |
 | `iot_manager.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `iot_manager.resources.limits.cpu` | Resources CPU limit | `50m` |
-| `iot_manager.resources.limits.memory` | Resources memory limit | `128M` |
+| `iot_manager.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `iot_manager.resources.requests.cpu` | Resources CPU request | `50m` |
-| `iot_manager.resources.requests.memory` | Resources memory request | `128M` |
+| `iot_manager.resources.requests.memory` | Resources memory request | `128Mi` |
 | `iot_manager.service.name` | Name of the service | `mender-iot_manager` |
 | `iot_manager.service.annotations` | Annotations map for the service | `{}` |
 | `iot_manager.service.type` | Service type | `ClusterIP` |
@@ -874,9 +876,9 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.replicas` | Number of replicas | `1` |
 | `deviceconnect.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `deviceconnect.resources.limits.cpu` | Resources CPU limit | `100m` |
-| `deviceconnect.resources.limits.memory` | Resources memory limit | `128M` |
+| `deviceconnect.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `deviceconnect.resources.requests.cpu` | Resources CPU request | `100m` |
-| `deviceconnect.resources.requests.memory` | Resources memory request | `128M` |
+| `deviceconnect.resources.requests.memory` | Resources memory request | `128Mi` |
 | `deviceconnect.service.name` | Name of the service | `mender-deviceconnect` |
 | `deviceconnect.service.annotations` | Annotations map for the service | `{}` |
 | `deviceconnect.service.type` | Service type | `ClusterIP` |
@@ -921,9 +923,9 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.replicas` | Number of replicas | `1` |
 | `deviceconfig.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `deviceconfig.resources.limits.cpu` | Resources CPU limit | `100m` |
-| `deviceconfig.resources.limits.memory` | Resources memory limit | `128M` |
+| `deviceconfig.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `deviceconfig.resources.requests.cpu` | Resources CPU request | `100m` |
-| `deviceconfig.resources.requests.memory` | Resources memory request | `128M` |
+| `deviceconfig.resources.requests.memory` | Resources memory request | `128Mi` |
 | `deviceconfig.service.name` | Name of the service | `mender-deviceconfig` |
 | `deviceconfig.service.annotations` | Annotations map for the service | `{}` |
 | `deviceconfig.service.type` | Service type | `ClusterIP` |
@@ -966,9 +968,9 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.replicas` | Number of replicas | `1` |
 | `devicemonitor.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `devicemonitor.resources.limits.cpu` | Resources CPU limit | `100m` |
-| `devicemonitor.resources.limits.memory` | Resources memory limit | `128M` |
+| `devicemonitor.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `devicemonitor.resources.requests.cpu` | Resources CPU request | `100m` |
-| `devicemonitor.resources.requests.memory` | Resources memory request | `128M` |
+| `devicemonitor.resources.requests.memory` | Resources memory request | `128Mi` |
 | `devicemonitor.service.name` | Name of the service | `mender-devicemonitor` |
 | `devicemonitor.service.annotations` | Annotations map for the service | `{}` |
 | `devicemonitor.service.type` | Service type | `ClusterIP` |
@@ -1015,9 +1017,9 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.replicas` | Number of replicas | `1` |
 | `generate_delta_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `generate_delta_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
-| `generate_delta_worker.resources.limits.memory` | Resources memory limit | `1024M` |
+| `generate_delta_worker.resources.limits.memory` | Resources memory limit | `1024Mi` |
 | `generate_delta_worker.resources.requests.cpu` | Resources CPU request | `100m` |
-| `generate_delta_worker.resources.requests.memory` | Resources memory request | `128M` |
+| `generate_delta_worker.resources.requests.memory` | Resources memory request | `128Mi` |
 | `generate_delta_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `generate_delta_worker.updateStrategy` | The strategy to use to update existing pods | `nil` |
 
@@ -1035,9 +1037,9 @@ The following table lists the parameters for the `redis` component and their def
 | `redis.replicas` | Number of replicas | `1` |
 | `redis.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `redis.resources.limits.cpu` | Resources CPU limit | `50m` |
-| `redis.resources.limits.memory` | Resources memory limit | `64M` |
+| `redis.resources.limits.memory` | Resources memory limit | `64Mi` |
 | `redis.resources.requests.cpu` | Resources CPU request | `100m` |
-| `redis.resources.requests.memory` | Resources memory request | `128M` |
+| `redis.resources.requests.memory` | Resources memory request | `128Mi` |
 | `redis.service.name` | Name of the service | `mender-redis` |
 | `redis.service.annotations` | Annotations map for the service | `{}` |
 | `redis.service.type` | Service type | `ClusterIP` |
