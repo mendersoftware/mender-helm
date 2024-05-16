@@ -94,7 +94,7 @@ spec:
     - prefix: INVENTORY_
       secretRef:
       {{- if .dot.Values.inventory.mongodbExistingSecret }}
-        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary .dot.Values.inventory.mongodbExistingSecret "mongodb-common-prerelease" (empty .migration)) }}
+        name: {{ .dot.Values.inventory.mongodbExistingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
       {{- else }}
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
       {{- end }}
