@@ -66,8 +66,10 @@ spec:
         securityContext: {{- omit .Values.api_gateway.containerSecurityContext "enabled" | toYaml | nindent 10 }}
 {{- end }}
         args:
+{{- if .Values.api_gateway.accesslogs }}
             - --accesslog=true
             - --accesslog.format=json
+{{- end }}
 {{- if .Values.api_gateway.dashboard }}
             - --api=true
             - --api.dashboard=true
