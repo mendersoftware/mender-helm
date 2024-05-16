@@ -111,7 +111,7 @@ MongoDB URI
         {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
       {{- end }}
     {{- else }}
-      {{- fail "Failed: not implemented here." }}      
+      {{- fail "Failed: not implemented here." }}
     {{- end }}
   {{- else }}
     {{- printf .Values.global.mongodb.URL | b64enc | quote }}
@@ -328,4 +328,3 @@ Storage Proxy Rule
 {{- define "mender.storageProxyRule" -}}
   {{- default "HostRegexp(`{domain:^artifacts.*$}`)" .Values.api_gateway.storage_proxy.customRule | quote }}
 {{- end -}}
-

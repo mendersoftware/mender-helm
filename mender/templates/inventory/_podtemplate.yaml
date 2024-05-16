@@ -93,7 +93,11 @@ spec:
     envFrom:
     - prefix: INVENTORY_
       secretRef:
+      {{- if .dot.Values.inventory.mongodbExistingSecret }}
+        name: {{ .dot.Values.inventory.mongodbExistingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+      {{- else }}
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+      {{- end }}
 
     {{- if not (and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) ) }}
     {{- if and .dot.Values.global.redis.existingSecret .dot.Values.global.enterprise ( not .dot.Values.global.redis.URL ) ( not .dot.Values.redis.enabled ) }}
