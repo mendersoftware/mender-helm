@@ -72,8 +72,11 @@ spec:
         {{- if .Values.global.hosted }}
         - name: MENDER_HOSTED
           value: {{ .Values.global.hosted | quote }}
-        {{- end }}
-        {{- if .Values.global.enterprise }}
+        - name: HAVE_ENTERPRISE
+          value: "false"
+        - name: HAVE_MULTITENANT
+          value: {{ .Values.global.hosted | quote }}
+        {{- else if and .Values.global.enterprise ( not .Values.global.hosted ) }}
         - name: HAVE_ENTERPRISE
           value: {{ .Values.global.enterprise | quote }}
         - name: HAVE_MULTITENANT
