@@ -340,6 +340,8 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
 | `api_gateway.updateStrategy` | The strategy to use to update existing pods | `nil` |
 | `api_gateway.accesslogs` | Traefik Access Logs, enabled by default | `true` |
+| `api_gateway.podMonitor.enabled` | If enabled, creates a PodMonitor resource for scraping Traefik metrics | `false` |
+| `api_gateway.podMonitor.customLabels` | PodMonitor custom labels | `nil` |
 
 ### Parameters: deployments
 

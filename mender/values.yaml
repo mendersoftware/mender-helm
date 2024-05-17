@@ -274,6 +274,12 @@ api_gateway:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # prometheus pod monitor
+  podMonitor:
+    enabled: false
+    customLabels: {}
+      # prometheus-operated: "true"
+
 deployments:
   enabled: true
   podAnnotations: {}

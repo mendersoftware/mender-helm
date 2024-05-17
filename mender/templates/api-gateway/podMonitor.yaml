@@ -1,0 +1,15 @@
+{{- if .Values.api_gateway.podMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "mender.fullname" . }}-api-gateway
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    {{- toYaml .Values.api_gateway.podMonitor.customLabels | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-api-gateway
+  podMetricsEndpoints:
+  - port: prom-metrics
+{{- end }}
