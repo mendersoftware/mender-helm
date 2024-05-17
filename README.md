@@ -252,6 +252,7 @@ The following table lists the global, default, and other parameters supported by
 | `serviceAccount.name` | Custom ServiceAccount name | `nil` |
 | `serviceAccount.labels` | ServiceAccount labels | `nil` |
 | `serviceAccount.annotations` | ServiceAccount annotations | `nil` |
+| `fullnameOverride` | Use a custom prefix for the resources, instead of using the helm chart name (default) | `nil` |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
