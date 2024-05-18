@@ -111,20 +111,24 @@ spec:
         # Readiness/liveness/startup probes
         livenessProbe:
           tcpSocket:
-          failureThreshold: 3
           httpGet:
             path: /healthz
             port: {{ .Values.api_gateway.httpPort }}
           initialDelaySeconds: 5
           periodSeconds: 5
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.api_gateway.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
         readinessProbe:
           tcpSocket:
-          failureThreshold: 1
           httpGet:
             path: /healthz
             port: {{ .Values.api_gateway.httpPort }}
           periodSeconds: 15
           initialDelaySeconds: 5
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.api_gateway.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
         startupProbe:
           failureThreshold: 30
           httpGet:

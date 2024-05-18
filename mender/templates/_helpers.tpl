@@ -324,3 +324,14 @@ Storage Proxy Rule
 {{- define "mender.storageProxyRule" -}}
   {{- default "HostRegexp(`{domain:^artifacts.*$}`)" .Values.api_gateway.storage_proxy.customRule | quote }}
 {{- end -}}
+
+{{/*
+Use custom probes overrides
+*/}}
+{{- define "mender.probesOverrides" -}}
+{{- $_ := dict }}
+{{- $_ := (mergeOverwrite $_ .default .override) }}
+{{- if $_ }}
+{{- toYaml $_ }}
+{{- end }}
+{{- end }}

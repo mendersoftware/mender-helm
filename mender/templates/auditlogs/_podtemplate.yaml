@@ -51,11 +51,17 @@ spec:
         path: /api/internal/v1/auditlogs/health
         port: 8080
       periodSeconds: 15
+      {{- with include "mender.probesOverrides" (dict "default" .dot.Values.default.probesOverrides "override" .dot.Values.auditlogs.probesOverrides ) }}
+      {{- nindent 6 . }}
+      {{- end }}
     livenessProbe:
       httpGet:
         path: /api/internal/v1/auditlogs/alive
         port: 8080
       periodSeconds: 5
+      {{- with include "mender.probesOverrides" (dict "default" .dot.Values.default.probesOverrides "override" .dot.Values.auditlogs.probesOverrides ) }}
+      {{- nindent 6 . }}
+      {{- end }}
     startupProbe:
       httpGet:
         path: /api/internal/v1/auditlogs/alive
