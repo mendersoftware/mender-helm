@@ -11,6 +11,7 @@
 * Allow overriding fullname (thanks @ignatiusreza)
 * Removed unused `mender.name` function.
 * Added `probesOverrides` to override the default timeout for readiness and liveness probes.
+* Fix naming problem in templates using api_gateway and NodePort (thanks @j-rivero)
 
 ## Version 5.6.2
 * Upgrade to Mender version `3.7.4`.
