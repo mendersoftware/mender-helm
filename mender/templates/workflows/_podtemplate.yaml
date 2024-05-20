@@ -61,11 +61,17 @@ spec:
         path: /api/v1/health
         port: 8080
       periodSeconds: 15
+      {{- with include "mender.probesOverrides" (dict "default" .dot.Values.default.probesOverrides "override" .dot.Values.workflows.probesOverrides ) }}
+      {{- nindent 6 . }}
+      {{- end }}
     livenessProbe:
       httpGet:
         path: /status
         port: 8080
       periodSeconds: 5
+      {{- with include "mender.probesOverrides" (dict "default" .dot.Values.default.probesOverrides "override" .dot.Values.workflows.probesOverrides ) }}
+      {{- nindent 6 . }}
+      {{- end }}
     startupProbe:
       httpGet:
         path: /status

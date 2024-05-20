@@ -7,6 +7,11 @@
 * Move from megabytes to mebibytes for consistency.
 * Added `inventory.mongodbExistingSecret` to override the default MongoDB secret.
 * Not using `HAVE_ENTERPRISE` when in hosted mode.
+* Added `podMonitor` resource for monitoring the `api-gateway` service (Traefik metrics).
+* Allow overriding fullname (thanks @ignatiusreza)
+* Removed unused `mender.name` function.
+* Added `probesOverrides` to override the default timeout for readiness and liveness probes.
+* Fix naming problem in templates using api_gateway and NodePort (thanks @j-rivero)
 
 ## Version 5.6.2
 * Upgrade to Mender version `3.7.4`.
