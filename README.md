@@ -245,6 +245,9 @@ The following table lists the global, default, and other parameters supported by
 | `default.pdb.minAvailable` | PodDistruptionBudget minAvailable | `1` |
 | `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `default.updateStrategy` | The strategy to use to update existing pods | `rollingUpdate = { maxSurge = 1, maxUnavailable = 1 }` |
+| `default.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `default.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `default.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
@@ -340,6 +343,11 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
 | `api_gateway.updateStrategy` | The strategy to use to update existing pods | `nil` |
 | `api_gateway.accesslogs` | Traefik Access Logs, enabled by default | `true` |
+| `api_gateway.podMonitor.enabled` | If enabled, creates a PodMonitor resource for scraping Traefik metrics | `false` |
+| `api_gateway.podMonitor.customLabels` | PodMonitor custom labels | `nil` |
+| `api_gateway.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `api_gateway.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `api_gateway.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `3` |
 
 ### Parameters: deployments
 
@@ -394,6 +402,9 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deployments.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `deployments.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `deployments.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `deployments.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `deployments.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: device-auth
 
@@ -454,6 +465,9 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `device_auth.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `device_auth.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `device_auth.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `device_auth.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: gui
 
@@ -492,6 +506,9 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `gui.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `gui.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `gui.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `gui.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `gui.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: inventory
 
@@ -543,6 +560,9 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `inventory.updateStrategy` | The strategy to use to update existing pods | `nil` |
 | `inventory.mongodbExistingSecret` | Use a different MongoDB secret for this service | `nil` |
+| `inventory.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `inventory.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `inventory.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: reporting
 
@@ -626,6 +646,9 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `tenantadm.migrationArgs` | Migration job: optional migration args (list). | `["migrate"]` |
 | `tenantadm.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `tenantadm.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `tenantadm.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `tenantadm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 The default value for the rate limits are:
 
@@ -696,6 +719,9 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `useradm.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `useradm.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `useradm.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `useradm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: workflows
 
@@ -736,6 +762,9 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `workflows.updateStrategy` | The strategy to use to update existing pods | `nil` |
 | `workflows.mountSecrets` | Optional `volumeMounts` and `volumes` to inject a credential files in the workflows service  | `nil` |
+| `workflows.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `workflows.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `workflows.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -812,6 +841,9 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `auditlogs.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `auditlogs.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `auditlogs.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `auditlogs.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `auditlogs.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: iot-manager
 
@@ -858,6 +890,9 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `iot_manager.updateStrategy` | The strategy to use to update existing pods | `nil` |
 | `iot_manager.aesEncryptionKey.existingSecret` | Optional secret containing the AES encryption key. The secret key must be `AES_ENCRYPTION_KEY` | `nil` |
+| `iot_manager.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `iot_manager.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `iot_manager.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -905,6 +940,9 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deviceconnect.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `deviceconnect.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `deviceconnect.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `deviceconnect.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `deviceconnect.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -950,6 +988,9 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deviceconfig.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `deviceconfig.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `deviceconfig.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `deviceconfig.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `deviceconfig.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -997,6 +1038,9 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `devicemonitor.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `devicemonitor.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `devicemonitor.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
+| `devicemonitor.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
+| `devicemonitor.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is

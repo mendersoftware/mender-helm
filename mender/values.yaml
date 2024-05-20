@@ -94,6 +94,12 @@ default:
       maxSurge: 1
       maxUnavailable: 1
 
+  # Override the properties of the Readiness and Liveness probes
+  probesOverrides: {}
+    # timeoutSeconds: 1
+    # successThreshold: 1
+    # failureThreshold: 3
+
 
 serviceAccount:
   create: false
@@ -274,6 +280,18 @@ api_gateway:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # prometheus pod monitor
+  podMonitor:
+    enabled: false
+    customLabels: {}
+      # prometheus-operated: "true"
+
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides:
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    failureThreshold: 3
+
 deployments:
   enabled: true
   podAnnotations: {}
@@ -346,6 +364,12 @@ deployments:
   #   rollingUpdate:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
+
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
 
 device_auth:
   enabled: true
@@ -426,6 +450,12 @@ device_auth:
   #   rollingUpdate:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
+
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
 
 # Generate Delta Worker feature
 # Experimental feature, still in beta
@@ -510,6 +540,12 @@ gui:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
 inventory:
   enabled: true
   podAnnotations: {}
@@ -576,6 +612,12 @@ inventory:
   customEnvs: []
   # - name: LOG_LEVEL
   #   value: DEBUG
+
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
 
 tenantadm:
   enabled: true
@@ -657,6 +699,12 @@ tenantadm:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
 useradm:
   enabled: true
   podAnnotations: {}
@@ -737,6 +785,12 @@ useradm:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
 workflows:
   enabled: true
   podAnnotations: {}
@@ -812,6 +866,12 @@ workflows:
   #     secret:
   #       defaultMode: 420
   #       secretName: my-credential-file
+
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
 
 
 create_artifact_worker:
@@ -922,6 +982,12 @@ auditlogs:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
 iot_manager:
   enabled: true
   podAnnotations: {}
@@ -991,6 +1057,12 @@ iot_manager:
   aesEncryptionKey:
     existingSecret: ""
 
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
 deviceconnect:
   enabled: true
   podAnnotations: {}
@@ -1057,6 +1129,12 @@ deviceconnect:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
 deviceconfig:
   enabled: true
   podAnnotations: {}
@@ -1120,6 +1198,12 @@ deviceconfig:
   #   rollingUpdate:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
+
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
 
 devicemonitor:
   enabled: true
@@ -1187,6 +1271,12 @@ devicemonitor:
   #   rollingUpdate:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
+
+  # Override the properties of the Readiness, Liveness and Startup probes
+  probesOverrides: {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
 
 # Redis as a subchart
 # Using a bitnami sub-chart by default = test usage only
