@@ -63,10 +63,16 @@ spec:
           tcpSocket:
             port: {{ .Values.gui.httpPort }}
           periodSeconds: 5
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.gui.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
         readinessProbe:
           tcpSocket:
             port: {{ .Values.gui.httpPort }}
           periodSeconds: 15
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.gui.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
 
         env:
         {{- if .Values.global.hosted }}

@@ -88,6 +88,9 @@ spec:
             - --providers.file.filename=/etc/traefik/config/traefik.yaml
             - --ping=true
             - --ping.manualrouting=true
+            {{- if .Values.api_gateway.podMonitor.enabled }}
+            - --entryPoints.metrics.address=:9090
+            {{- end }}
 {{- if .Values.api_gateway.extraArgs }}
 {{- .Values.api_gateway.extraArgs | toYaml | nindent 12 }}
 {{- end }}
@@ -99,24 +102,33 @@ spec:
         - containerPort: {{ .Values.api_gateway.httpsPort }}
 {{- end }}
         - containerPort: {{ .Values.api_gateway.httpPort }}
+{{- if .Values.api_gateway.podMonitor.enabled }}
+        - containerPort: 9090
+          name: prom-metrics
+          protocol: TCP
+{{- end }}
 
         # Readiness/liveness/startup probes
         livenessProbe:
           tcpSocket:
-          failureThreshold: 3
           httpGet:
             path: /healthz
             port: {{ .Values.api_gateway.httpPort }}
           initialDelaySeconds: 5
           periodSeconds: 5
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.api_gateway.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
         readinessProbe:
           tcpSocket:
-          failureThreshold: 1
           httpGet:
             path: /healthz
             port: {{ .Values.api_gateway.httpPort }}
           periodSeconds: 15
           initialDelaySeconds: 5
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.api_gateway.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
         startupProbe:
           failureThreshold: 30
           httpGet:

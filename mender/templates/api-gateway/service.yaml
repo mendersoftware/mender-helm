@@ -30,7 +30,7 @@ spec:
   - port: {{ .Values.api_gateway.service.httpsPort }}
     protocol: TCP
     targetPort: {{ .Values.api_gateway.httpsPort }}
-    {{- if .Values.api_gateway.httpsNodePort }}
+    {{- if .Values.api_gateway.service.httpsNodePort }}
     nodePort: {{ .Values.api_gateway.service.httpsNodePort }}
     {{- end }}
     name: https
