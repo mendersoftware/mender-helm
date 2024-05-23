@@ -244,6 +244,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `default.pdb.enabled` | PodDistruptionBudget enabled | `false` |
 | `default.pdb.minAvailable` | PodDistruptionBudget minAvailable | `1` |
+| `default.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `default.updateStrategy` | The strategy to use to update existing pods | `rollingUpdate = { maxSurge = 25%, maxUnavailable = 0 }` |
 | `default.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
@@ -338,6 +339,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `api_gateway.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `api_gateway.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `api_gateway.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `api_gateway.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `api_gateway.certs` | certificate management | `nil` |
 | `api_gateway.certs.cert` | Public certificate (with full chain optionally) in PEM format | `nil` |
@@ -400,6 +402,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `deployments.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `deployments.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `deployments.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `deployments.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deployments.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deployments.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
@@ -460,6 +463,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `device_auth.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `device_auth.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `device_auth.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `device_auth.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `device_auth.certs` | certificate management | `nil` |
 | `device_auth.certs.key` | Private key in PEM format | `nil` |
@@ -557,6 +561,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `inventory.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `inventory.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `inventory.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `inventory.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `inventory.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `inventory.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
@@ -640,6 +645,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `tenantadm.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `tenantadm.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `tenantadm.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `tenantadm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `tenantadm.certs` | certificate management | `nil` |
 | `tenantadm.certs.key` | Private key in PEM format | `nil` |
@@ -714,6 +720,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `useradm.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
 | `useradm.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `useradm.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `useradm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `useradm.certs` | certificate management | `nil` |
 | `useradm.certs.key` | Private key in PEM format | `nil` |
