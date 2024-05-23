@@ -945,6 +945,9 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 | `deviceconnect.gracefulShutdownTimeout` | Timeout for the graceful shutdown | `60s` |
 | `deviceconnect.terminationGracePeriodSeconds` | Termination grace period in seconds | `65` |
+| `deviceconnect.pdb.enabled` | PodDistruptionBudget enabled | `nil` |
+| `deviceconnect.pdb.minAvailable` | PodDistruptionBudget minAvailable | `nil` |
+| `deviceconnect.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `deviceconnect.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `deviceconnect.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `deviceconnect.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
