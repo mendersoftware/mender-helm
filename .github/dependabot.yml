@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - commit-message:
+      prefix: "chore"
+    directory: /mender
+    package-ecosystem: docker
+    schedule:
+      interval: weekly
+    reviewers:
+      - "mendersoftware/sre-dependabot-reviewers"
