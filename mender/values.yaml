@@ -705,6 +705,30 @@ tenantadm:
     # successThreshold: 2
     # failureThreshold: 6
 
+  cronjobs:
+    # suspend tenants cronjobs: these cronjobs are used to suspend expired trial tenants
+    suspendTenants:
+      enabled: false
+      schedule: "0 7 * * *"
+      # resources:
+      #   limits:
+      #     cpu: 300m
+      #     memory: 200Mi
+      #   requests:
+      #     cpu: 50m
+      #     memory: 50Mi
+    # sync tenants cronjob to sync with an external integration
+    syncTenants:
+      enabled: false
+      schedule: "0 8 * * *"
+      # resources:
+      #   limits:
+      #     cpu: 300m
+      #     memory: 200Mi
+      #   requests:
+      #     cpu: 50m
+      #     memory: 50Mi
+
 useradm:
   enabled: true
   podAnnotations: {}

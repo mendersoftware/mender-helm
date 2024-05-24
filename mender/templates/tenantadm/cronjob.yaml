@@ -1,0 +1,79 @@
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) (.Values.global.hosted) (.Values.tenantadm.cronjobs.suspendTenants.enabled) }}
+---
+# Suspend tenants: maintenance suspend-expired-tenants
+
+{{- $context := (dict "dot" . "component" "tenantadm" "cronjob" "suspend" "args" (list "maintenance" "suspend-expired-tenants") "extraResources" .Values.tenantadm.cronjobs.suspendTenants.resources "restartPolicy" "Never") }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "mender.fullname" . }}-tenantadm-suspend-trial
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm-suspend-trial
+    app.kubernetes.io/component: tenantadm
+spec:
+  schedule: {{ .Values.tenantadm.cronjobs.suspendTenants.schedule }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        {{- include "mender.tenantadmPodTemplate" $context | nindent 8 }}
+
+
+---
+# Suspend trial tenants: suspend-tenants-expired-trial
+
+{{- $context := (dict "dot" . "component" "tenantadm" "cronjob" "suspend" "args" (list "suspend-tenants-expired-trial") "extraResources" .Values.tenantadm.cronjobs.suspendTenants.resources "restartPolicy" "Never") }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "mender.fullname" . }}-tenantadm-suspend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm-suspend
+    app.kubernetes.io/component: tenantadm
+spec:
+  schedule: {{ .Values.tenantadm.cronjobs.suspendTenants.schedule }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        {{- include "mender.tenantadmPodTemplate" $context | nindent 8 }}
+
+
+{{- end }}
+
+{{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) (.Values.global.hosted) (.Values.tenantadm.cronjobs.syncTenants.enabled) }}
+---
+# Sync tenants with an external integration
+
+{{- $context := (dict "dot" . "component" "tenantadm" "cronjob" "sync-tenants" "args" (list "sync-tenants") "extraResources" .Values.tenantadm.cronjobs.syncTenants.resources "restartPolicy" "Never") }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "mender.fullname" . }}-tenantadm-sync-tenants
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-tenantadm-sync-tenants
+    app.kubernetes.io/component: tenantadm
+spec:
+  schedule: {{ .Values.tenantadm.cronjobs.suspendTenants.schedule }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        {{- include "mender.tenantadmPodTemplate" $context | nindent 8 }}
+
+{{- end }}
