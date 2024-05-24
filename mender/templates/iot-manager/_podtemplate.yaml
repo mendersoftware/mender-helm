@@ -22,7 +22,13 @@ spec:
   restartPolicy: {{ quote . }}
   {{- end }}
   containers:
-  - name: {{ ternary "iot-manager" "iot-manager-migration" (empty .migration) | quote }}
+  {{- if .migration }}
+  - name: "iot-manager-migration"
+  {{- else if .cronjob }}
+  - name: "iot-manager-{{- .cronjob }}"
+  {{- else }}
+  - name: "iot-manager"
+  {{- end }}
     image: {{ .dot.Values.iot_manager.image.registry }}/{{ .dot.Values.iot_manager.image.repository }}:{{ .dot.Values.iot_manager.image.tag | default .dot.Values.global.image.tag }}
     imagePullPolicy: {{ .dot.Values.iot_manager.image.imagePullPolicy }}
     {{- if .dot.Values.iot_manager.containerSecurityContext.enabled }}
@@ -33,7 +39,9 @@ spec:
     resources: {{- nindent 6 . }}
     {{- end }}
 
-    {{- if (not .migration) }}
+    {{- if .args }}
+    args: {{- toYaml .args | nindent 6 }}
+    {{- else if (not .migration) }}
     {{- if .dot.Values.iot_manager.automigrate }}
     args: ["server", "--automigrate"]
     {{- else }}
@@ -44,7 +52,7 @@ spec:
     {{- end }}
 
 
-    {{- if (not .migration) }}
+    {{- if and (not .migration) (not .cronjob) }}
     # Readiness/liveness probes
     readinessProbe:
       httpGet:

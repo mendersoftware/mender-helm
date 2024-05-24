@@ -649,6 +649,13 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `tenantadm.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `tenantadm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `tenantadm.cronjobs.suspendTenants.enabled` | Creates the Suspend Tenants cronjob (Hosted only) | `false` |
+| `tenantadm.cronjobs.suspendTenants.schedule` | Set a schedule for the Suspend Tenants cronjob (Hosted only) | `0 7 * * *` |
+| `tenantadm.cronjobs.suspendTenants.resouces` | Set the resources for the Suspend Tenants cronjob (Hosted only) | `nil` |
+| `tenantadm.cronjobs.syncTenants.enabled` | Creates the Suspend Tenants cronjob (Hosted only) | `false` |
+| `tenantadm.cronjobs.syncTenants.schedule` | Set a schedule for the Suspend Tenants cronjob (Hosted only) | `0 7 * * *` |
+| `tenantadm.cronjobs.syncTenants.resouces` | Set the resources for the Suspend Tenants cronjob (Hosted only) | `nil` |
+
 
 The default value for the rate limits are:
 
@@ -893,6 +900,9 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `iot_manager.cronjobs.syncDevices.enabled` | Creates the Sync Devices cronjob (Hosted only) | `false` |
+| `iot_manager.cronjobs.syncDevices.schedule` | Set a schedule for the Sync Devices cronjob (Hosted only) | `0 7 * * *` |
+| `iot_manager.cronjobs.syncDevices.resouces` | Set the resources for the Sync Devices cronjob (Hosted only) | `nil` |
 
 ### Parameters: deviceconnect
 

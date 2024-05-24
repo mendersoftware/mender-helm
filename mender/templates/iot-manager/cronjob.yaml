@@ -1,0 +1,27 @@
+{{- if and (.Values.iot_manager.enabled) (.Values.global.hosted) (.Values.iot_manager.cronjobs.syncDevices.enabled) }}
+---
+# Suspend tenants: maintenance suspend-expired-tenants
+
+{{- $context := (dict "dot" . "component" "iot-manager" "cronjob" "sync-devices" "args" (list "sync-devices" "--batch-size" "100") "extraResources" .Values.iot_manager.cronjobs.syncDevices.resources "restartPolicy" "Never") }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "mender.fullname" . }}-iot-manager-sync-devices
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-iot-manager-sync-devices
+    app.kubernetes.io/component: iot-manager
+spec:
+  schedule: {{ .Values.iot_manager.cronjobs.syncDevices.schedule }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        {{- include "mender.iotmanagerPodTemplate" $context | nindent 8 }}
+
+{{- end }}
+

@@ -22,7 +22,13 @@ spec:
   restartPolicy: {{ quote . }}
   {{- end }}
   containers:
-  - name: {{ ternary "tenantadm" "tenantadm-migration" (empty .migration) | quote }}
+  {{- if .migration }}
+  - name: "tenantadm-migration"
+  {{- else if .cronjob }}
+  - name: "tenantadm-{{- .cronjob }}"
+  {{- else }}
+  - name: "tenantadm"
+  {{- end }}
     image: {{ .dot.Values.tenantadm.image.registry }}/{{ .dot.Values.tenantadm.image.repository }}:{{ .dot.Values.tenantadm.image.tag | default .dot.Values.global.image.tag }}
     imagePullPolicy: {{ .dot.Values.tenantadm.image.imagePullPolicy }}
     {{- if .dot.Values.tenantadm.containerSecurityContext.enabled }}
@@ -40,7 +46,7 @@ spec:
     {{- end }}
 
 
-    {{- if (not .migration) }}
+    {{- if and (not .migration) (not .cronjob) }}
     # Readiness/liveness probes
     readinessProbe:
       httpGet:
@@ -66,7 +72,7 @@ spec:
       periodSeconds: 5
     {{- end }}
 
-    {{- if (not .migration) }}
+    {{- if and (not .migration) (not .cronjob) }}
     volumeMounts:
     - name: rsa
       mountPath: "/etc/tenantadm/rsa/"
@@ -102,7 +108,7 @@ spec:
   nodeSelector: {{ toYaml . | nindent 4 }}
   {{- end }}
 
-  {{- if (not .migration) }}
+  {{- if and (not .migration) (not .cronjob) }}
   volumes:
   - name: rsa
     secret:
