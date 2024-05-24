@@ -1087,6 +1087,18 @@ iot_manager:
     # successThreshold: 2
     # failureThreshold: 6
 
+  cronjobs:
+    # sync devices cronjob
+    syncDevices:
+      enabled: false
+      schedule: "42 0 * * *"
+      # resources:
+      #   limits:
+      #     cpu: 150m
+      #   requests:
+      #     cpu: 150m
+      #     memory: 64M
+
 deviceconnect:
   enabled: true
   podAnnotations: {}

@@ -2,6 +2,7 @@
 
 ## Version 5.7.1
 * Added tenantadm CronJobs (Hosted only feature)
+* Added iot-manager CronJobs (Hosted only feature)
 
 ## Version 5.7.0
 * `generate_delta_worker`: don't enforce tags for the image.

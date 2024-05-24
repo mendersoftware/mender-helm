@@ -900,6 +900,9 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `iot_manager.cronjobs.syncDevices.enabled` | Creates the Sync Devices cronjob (Hosted only) | `false` |
+| `iot_manager.cronjobs.syncDevices.schedule` | Set a schedule for the Sync Devices cronjob (Hosted only) | `0 7 * * *` |
+| `iot_manager.cronjobs.syncDevices.resouces` | Set the resources for the Sync Devices cronjob (Hosted only) | `nil` |
 
 ### Parameters: deviceconnect
 
