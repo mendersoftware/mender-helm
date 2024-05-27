@@ -41,6 +41,7 @@ global:
     AUTH_SHARED_KEY_URI: ""
     CONTAINER_NAME: mender-artifact-storage
   smtp:
+    existingSecret: ""
     EMAIL_SENDER: root@localhost
     SMTP_HOST: "localhost:25"
     SMTP_AUTH_MECHANISM: "PLAIN"
