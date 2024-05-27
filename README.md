@@ -226,6 +226,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.azure.AUTH_SHARED_KEY_ACCOUNT_KEY` | Azure Blob Storage shared key account key | `""` |
 | `global.azure.AUTH_SHARED_KEY_URI` | Azure Blob Storage shared key URI | `""` |
 | `global.azure.CONTAINER_NAME` | Azure Blob Storage container name | `mender-artifact-storage` |
+| `global.smtp.existingSecret` | Use an existing secret to get the env vars | `nil` |
 | `global.smtp.EMAIL_SENDER` | SMTP email sender | `root@localhost` |
 | `global.smtp.SMTP_HOST` | SMTP server address | `localhost:25` |
 | `global.smtp.SMTP_AUTH_MECHANISM` | SMTP auth mechanism (Valid values: PLAIN, CRAM-MD5) | `PLAIN` |

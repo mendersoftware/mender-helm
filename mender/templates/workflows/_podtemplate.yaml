@@ -114,7 +114,7 @@ spec:
     {{- if .worker }}
     - prefix: WORKFLOWS_
       secretRef:
-        name: smtp
+        name: {{ .dot.Values.global.smtp.existingSecret | default "smtp" }}
     {{- end }}
 
     {{- if .dot.Values.global.nats.existingSecret }}
