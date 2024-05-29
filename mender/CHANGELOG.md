@@ -2,6 +2,7 @@
 
 ## Version 5.7.1
 * Fix: SMTP variables when using an external secret, added to `global.smtp.existingSecret`
+* Fix: the NATS image were not aligned with the subchart version
 
 ## Version 5.7.0
 * `generate_delta_worker`: don't enforce tags for the image.
