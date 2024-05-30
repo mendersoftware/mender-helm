@@ -30,11 +30,11 @@ spec:
           echo "Testing deployment service";
           wget -qO- '{{ include "mender.fullname" . }}-deployments:{{ .Values.deployments.service.port }}/api/internal/v1/deployments/health';
           {{- end }}
-          {{- if .Values.deviceauth.enabled }}
+          {{- if .Values.device_auth.enabled }}
           echo "Testing deviceauth service";
           wget -qO- '{{ include "mender.fullname" . }}-device-auth:{{ .Values.device_auth.service.port }}/api/internal/v1/devauth/health';
           {{- end }}
-          {{- if .Valued.deviceconfig.enabled }}
+          {{- if .Values.deviceconfig.enabled }}
           echo "Testing deviceconfig service";
           wget -qO- '{{ include "mender.fullname" . }}-deviceconfig:{{ .Values.deviceconfig.service.port }}/api/internal/v1/deviceconfig/health';
           {{- end }}
