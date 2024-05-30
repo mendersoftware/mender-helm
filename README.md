@@ -245,7 +245,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.pdb.enabled` | PodDistruptionBudget enabled | `false` |
 | `default.pdb.minAvailable` | PodDistruptionBudget minAvailable | `1` |
 | `default.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
-| `default.updateStrategy` | The strategy to use to update existing pods | `rollingUpdate = { maxSurge = 1, maxUnavailable = 1 }` |
+| `default.updateStrategy` | The strategy to use to update existing pods | `rollingUpdate = { maxSurge = 25%, maxUnavailable = 0 }` |
 | `default.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `default.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `default.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
@@ -257,6 +257,7 @@ The following table lists the global, default, and other parameters supported by
 | `serviceAccount.labels` | ServiceAccount labels | `nil` |
 | `serviceAccount.annotations` | ServiceAccount annotations | `nil` |
 | `fullnameOverride` | Use a custom prefix for the resources, instead of using the helm chart name (default) | `nil` |
+| `tests.enabled` | Whether or not to run the helm tests after the chart install | `false` |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
