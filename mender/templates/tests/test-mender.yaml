@@ -13,37 +13,50 @@ spec:
       image: busybox
       command: ['/bin/sh', '-c']
       args:
-        {{- if and (.Values.deployments.enabled) (.Values.tenantadm.enabled) (.Values.auditlogs.enabled) (.Values.useradm.enabled) (.Values.deviceconnect.enabled) (.Values.device_auth.enabled) (.Values.deviceconfig.enabled) (.Values.inventory.enabled) (.Values.iot_manager.enabled) (.Values.workflows.enabled) }}
-        - echo "Starting smoketests";
-          echo "Testing deployment service";
-          wget -qO- '{{ include "mender.fullname" . }}-deployments:{{ .Values.deployments.service.port }}/api/internal/v1/deployments/health';
+        - |-
+          echo "Starting smoketests";
+          {{- if .Values.global.enterprise }}
+          {{- if .Values.auditlogs.enabled }}
+          echo "Testing auditlogs service";
+          wget -qO- '{{ include "mender.fullname" . }}-auditlogs:{{ .Values.auditlogs.service.port }}/api/internal/v1/auditlogs/health';
+          {{- end }}
+          {{- if .Values.tenantadm.enabled }}
           echo "Testing tenantadm service";
           wget -qO- '{{ include "mender.fullname" . }}-tenantadm:{{ .Values.tenantadm.service.port }}/api/internal/v1/tenantadm/tenants';
           wget -qO- '{{ include "mender.fullname" . }}-tenantadm:{{ .Values.tenantadm.service.port }}/api/internal/v1/tenantadm/health';
-          echo "Testing auditlogs service";
-          wget -qO- '{{ include "mender.fullname" . }}-auditlogs:{{ .Values.auditlogs.service.port }}/api/internal/v1/auditlogs/health';
-          echo "Testing deviceauth service";
-          wget -qO- '{{ include "mender.fullname" . }}-device-auth:{{ .Values.device_auth.service.port }}/api/internal/v1/devauth/health';
-          echo "Testing deviceconfig service";
-          wget -qO- '{{ include "mender.fullname" . }}-deviceconfig:{{ .Values.deviceconfig.service.port }}/api/internal/v1/deviceconfig/health';
-          echo "Testing deviceconnect service";
-          wget -qO- '{{ include "mender.fullname" . }}-deviceconnect:{{ .Values.deviceconnect.service.port }}/api/internal/v1/deviceconnect/health';
-          echo "Testing inventory service";
-          wget -qO- '{{ include "mender.fullname" . }}-inventory:{{ .Values.inventory.service.port }}/api/internal/v1/inventory/health';
-          echo "Testing iot_manager service";
-          wget -qO- '{{ include "mender.fullname" . }}-iot-manager:{{ .Values.iot_manager.service.port }}/api/internal/v1/iot-manager/health';
-          echo "Testing useradm service";
-          wget -qO- '{{ include "mender.fullname" . }}-useradm:{{ .Values.useradm.service.port }}/api/internal/v1/useradm/health';
-          echo "Testing workflows service";
-          wget -qO- '{{ include "mender.fullname" . }}-workflows-server:{{ .Values.workflows.service.port }}/status';
-        {{- else if and (.Values.deployments.enabled) (.Values.useradm.enabled) }}
-        - echo "Starting smoketests";
+          {{- end }}
+          {{- end }}
+          {{- if .Values.deployments.enabled }}
           echo "Testing deployment service";
           wget -qO- '{{ include "mender.fullname" . }}-deployments:{{ .Values.deployments.service.port }}/api/internal/v1/deployments/health';
+          {{- end }}
+          {{- if .Values.deviceauth.enabled }}
+          echo "Testing deviceauth service";
+          wget -qO- '{{ include "mender.fullname" . }}-device-auth:{{ .Values.device_auth.service.port }}/api/internal/v1/devauth/health';
+          {{- end }}
+          {{- if .Valued.deviceconfig.enabled }}
+          echo "Testing deviceconfig service";
+          wget -qO- '{{ include "mender.fullname" . }}-deviceconfig:{{ .Values.deviceconfig.service.port }}/api/internal/v1/deviceconfig/health';
+          {{- end }}
+          {{- if .Values.deviceconnect.enabled }}
+          echo "Testing deviceconnect service";
+          wget -qO- '{{ include "mender.fullname" . }}-deviceconnect:{{ .Values.deviceconnect.service.port }}/api/internal/v1/deviceconnect/health';
+          {{- end }}
+          {{- if .Values.inventory.enabled }}
+          echo "Testing inventory service";
+          wget -qO- '{{ include "mender.fullname" . }}-inventory:{{ .Values.inventory.service.port }}/api/internal/v1/inventory/health';
+          {{- end }}
+          {{- if .Values.iot_manager.enabled }}
+          echo "Testing iot_manager service";
+          wget -qO- '{{ include "mender.fullname" . }}-iot-manager:{{ .Values.iot_manager.service.port }}/api/internal/v1/iot-manager/health';
+          {{- end }}
+          {{- if .Values.useradm.enabled }}
           echo "Testing useradm service";
-          wget -qO- '{{ include "mender.fullname" . }}-useradm:{{ .Values.useradm.service.port }}/api/internal/v1/useradm/users';
-        {{- else }}
-        - echo "No services are enabled. Exiting";
-        {{- end }}
+          wget -qO- '{{ include "mender.fullname" . }}-useradm:{{ .Values.useradm.service.port }}/api/internal/v1/useradm/health';
+          {{- end }}
+          {{- if .Values.workflows.enabled }}
+          echo "Testing workflows service";
+          wget -qO- '{{ include "mender.fullname" . }}-workflows-server:{{ .Values.workflows.service.port }}/status';
+          {{- end }}
   restartPolicy: Never
 {{- end }}
