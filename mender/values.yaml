@@ -92,15 +92,14 @@ default:
   #
   updateStrategy:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+      maxSurge: 25%
+      maxUnavailable: 0
 
   # Override the properties of the Readiness and Liveness probes
   probesOverrides: {}
     # timeoutSeconds: 1
     # successThreshold: 1
     # failureThreshold: 3
-
 
 serviceAccount:
   create: false
@@ -137,6 +136,11 @@ ingress:
     - secretName: mender-ingress-tls
       hosts:
         - mender.example.org
+
+
+# Helm chart smoke tests
+tests:
+  enabled: false
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
