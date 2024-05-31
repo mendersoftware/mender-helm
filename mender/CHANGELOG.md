@@ -1,7 +1,15 @@
 # Mender Helm chart
 
+## Version 5.8.0
+* Added helm chart tests.
+* Default `updateStrategy.rollingUpdate.maxUnavailable` to 0 to complete the helm upgrade with
+  all the services running.
+* Removed `helm.sh/chart` annotation to avoid a full restart every release.
+* Added Redis to the Deployments service
+
 ## Version 5.7.1
-* Fix: SMTP variables when using an external secret, added to `global.smtp.existingSecret`
+* Fix: skipping smtp secret creation when using `global.smtp.existingSecret`.
+* Fix: the NATS image were not aligned with the subchart version
 
 ## Version 5.7.0
 * `generate_delta_worker`: don't enforce tags for the image.
