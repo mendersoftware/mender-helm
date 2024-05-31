@@ -81,6 +81,7 @@ spec:
     env:
     - name: DEPLOYMENTS_STORAGE_DEFAULT
       value: {{ .dot.Values.global.storage | quote }}
+
     - name: DEPLOYMENTS_MIDDLEWARE
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
     - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
@@ -101,6 +102,16 @@ spec:
       value: "true"
     {{- end }}
     {{- end }}
+
+    {{- if .dot.Values.global.enterprise }}
+    {{- if not .dot.Values.global.redis.existingSecret }}
+    - name: DEPLOYMENTS_REDIS_CONNECTION_STRING
+      value: {{ include "redis_connection_string" . }}
+    {{- end }}
+    - name: DEPLOYMENTS_REDIS_KEY_PREFIX
+      value: {{ .dot.Values.device_auth.env.DEPLOYMENTS_REDIS_KEY_PREFIX | default "deployments:v1" | quote }}
+    {{- end }}
+
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.deployments) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/deployments/blob/master/config.yaml
@@ -118,6 +129,12 @@ spec:
     - prefix: DEPLOYMENTS_
       secretRef:
         name: {{ .dot.Values.deployments.presignSecretExistingSecret | quote }}
+    {{- end }}
+    {{- if and .dot.Values.global.redis.existingSecret .dot.Values.global.enterprise ( not .dot.Values.global.redis.URL ) ( not .dot.Values.redis.enabled ) }}
+    # Redis existingSecret
+    - prefix: DEPLOYMENTS_
+      secretRef:
+        name: {{ .dot.Values.global.redis.existingSecret | quote }}
     {{- end }}
 
 
