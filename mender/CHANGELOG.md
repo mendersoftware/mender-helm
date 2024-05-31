@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.8.1
+* Fix: managing redis connection string in the `deployments` service, when using an external Redis.
+
 ## Version 5.8.0
 * Added helm chart tests.
 * Default `updateStrategy.rollingUpdate.maxUnavailable` to 0 to complete the helm upgrade with
