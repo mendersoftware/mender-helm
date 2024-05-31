@@ -104,8 +104,10 @@ spec:
     {{- end }}
 
     {{- if .dot.Values.global.enterprise }}
+    {{- if not .dot.Values.global.redis.existingSecret }}
     - name: DEPLOYMENTS_REDIS_CONNECTION_STRING
       value: {{ include "redis_connection_string" . }}
+    {{- end }}
     - name: DEPLOYMENTS_REDIS_KEY_PREFIX
       value: {{ .dot.Values.device_auth.env.DEPLOYMENTS_REDIS_KEY_PREFIX | default "deployments:v1" | quote }}
     {{- end }}
@@ -127,6 +129,12 @@ spec:
     - prefix: DEPLOYMENTS_
       secretRef:
         name: {{ .dot.Values.deployments.presignSecretExistingSecret | quote }}
+    {{- end }}
+    {{- if and .dot.Values.global.redis.existingSecret .dot.Values.global.enterprise ( not .dot.Values.global.redis.URL ) ( not .dot.Values.redis.enabled ) }}
+    # Redis existingSecret
+    - prefix: DEPLOYMENTS_
+      secretRef:
+        name: {{ .dot.Values.global.redis.existingSecret | quote }}
     {{- end }}
 
 
