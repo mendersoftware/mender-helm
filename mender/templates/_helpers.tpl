@@ -27,7 +27,6 @@ Common labels
 */}}
 {{- define "mender.labels" -}}
 {{- $dot := (ternary . .dot (empty .dot)) -}}
-helm.sh/chart: {{ include "mender.chart" $dot }}
 app.kubernetes.io/managed-by: {{ $dot.Release.Service }}
 app.kubernetes.io/part-of: mender
 app.kubernetes.io/instance: {{ $dot.Release.Name }}
