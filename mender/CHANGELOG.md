@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.8.2
+* Fix: correctly setup the Mender Version in the iot-manager service.
+
 ## Version 5.8.1
 * Fix: managing redis connection string in the `deployments` service, when using an external Redis.
 
