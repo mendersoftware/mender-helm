@@ -1,5 +1,5 @@
 
-Mender v{{ .Chart.AppVersion }} has been deployed!
+Mender v{{ trimPrefix "mender-" .Values.global.image.tag }} has been deployed!
 
 Thank you for using Mender.
 Release name: {{ .Release.Name }}
