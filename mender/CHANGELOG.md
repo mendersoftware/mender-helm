@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.8.3
+* Fix: correctly setup the Integration Version.
+
 ## Version 5.8.2
 * Fix: correctly setup the Mender Version in the iot-manager service.
 
