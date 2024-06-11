@@ -1,5 +1,9 @@
 # Mender Helm chart
 
+## Version 5.9.0
+* Added `pdb.maxUnavailable` option.
+* Added `deviceconnect` PodDisruptionBudget
+
 ## Version 5.8.3
 * Fix: correctly setup the Integration Version.
 

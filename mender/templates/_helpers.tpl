@@ -210,12 +210,19 @@ spec:
 {{- $_ := (mergeOverwrite $pdb .override.pdb) }}
 {{- end }}
 {{- if $pdb.enabled }}
+{{- if and $pdb.minAvailable $pdb.maxUnavailable }}
+{{- fail "Only one of minAvailable or maxUnavailable can be set" }}
+{{- end }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ .name }}
 spec:
+  {{- if $pdb.minAvailable }}
   minAvailable: {{ $pdb.minAvailable | default 1 }}
+  {{- else if $pdb.maxUnavailable }}
+  maxUnavailable: {{ $pdb.maxUnavailable | default 1 }}
+  {{- end }}
   selector:
     matchLabels:
       run: {{ .name }}
