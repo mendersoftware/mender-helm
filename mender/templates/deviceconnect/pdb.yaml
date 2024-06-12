@@ -1,0 +1,5 @@
+{{- if .Values.deviceconnect.enabled }}
+{{- $servicename := "deviceconnect" }}
+{{- $context := (dict "default" .Values.default "override" .Values.deviceconnect "name" (printf "%s-%s" (include "mender.fullname" . ) $servicename ) ) -}}
+{{- include "mender.pdb" $context }}
+{{- end }}
