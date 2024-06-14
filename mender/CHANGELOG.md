@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.9.1
+* Upgrade to Mender version `3.7.5`
+
 ## Version 5.9.0
 * Added `pdb.maxUnavailable` option.
 * Added `deviceconnect` PodDisruptionBudget
