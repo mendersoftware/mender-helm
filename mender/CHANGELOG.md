@@ -1,5 +1,9 @@
 # Mender Helm chart
 
+## Version 5.9.2
+* Fix: generate delta worker mongodb secret when using an external secret and
+  the mongodb subchart is enabled.
+
 ## Version 5.9.1
 * Upgrade to Mender version `3.7.5`
 
