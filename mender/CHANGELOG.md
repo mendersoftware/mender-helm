@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.9.3
+* Update default value `auditlogs.logRetentionSeconds` to `7776000` (90 days)
+
 ## Version 5.9.2
 * Fix: generate delta worker mongodb secret when using an external secret and
   the mongodb subchart is enabled.

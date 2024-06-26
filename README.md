@@ -820,7 +820,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `auditlogs.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `auditlogs.podAnnotations` | add custom pod annotations | `nil` |
-| `auditlogs.logRetentionSeconds` | Seconds before an audit event is evicted from the database | `2592000` |
+| `auditlogs.logRetentionSeconds` | Seconds before an audit event is evicted from the database | `7776000` |
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `auditlogs.resources.limits.cpu` | Resources CPU limit | `50m` |
