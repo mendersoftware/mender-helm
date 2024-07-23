@@ -2,6 +2,7 @@
 
 ## Version 5.9.4
 * Update default traefik tag to v2.11.6
+* Helm fails if the `global.image.tag` is not starting with `mender-`
 
 ## Version 5.9.3
 * Update default value `auditlogs.logRetentionSeconds` to `7776000` (90 days)

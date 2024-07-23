@@ -251,15 +251,13 @@ to be able to apply some conditional logic
 {{- $dot := (ternary . .dot (empty .dot)) -}}
 {{- $mndr_version := split "." $dot.Chart.AppVersion }}
 {{- with $dot.Values.global.image }}
-  {{- if contains "-" .tag }}
+  {{- if contains "mender-" .tag }}
     {{- $mndr_splitted := split "-" .tag -}}
     {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
       {{- $mndr_version = split "." $mndr_splitted._1 }}
     {{- end }}
   {{- else }}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." .tag }}
-    {{- end }}
+    {{- fail "Invalid global.image.tag specified: must start with mender- " }}
   {{- end }}
 {{- end }}
 {{- printf "%s" $mndr_version._0 }}
@@ -269,15 +267,13 @@ to be able to apply some conditional logic
 {{- $dot := (ternary . .dot (empty .dot)) -}}
 {{- $mndr_version := split "." $dot.Chart.AppVersion }}
 {{- with $dot.Values.global.image }}
-  {{- if contains "-" .tag }}
+  {{- if contains "mender-" .tag }}
     {{- $mndr_splitted := split "-" .tag -}}
     {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
       {{- $mndr_version = split "." $mndr_splitted._1 }}
     {{- end }}
   {{- else }}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." .tag }}
-    {{- end }}
+    {{- fail "Invalid global.image.tag specified: must start with mender- " }}
   {{- end }}
 {{- end }}
 {{- printf "%s" $mndr_version._1 }}
