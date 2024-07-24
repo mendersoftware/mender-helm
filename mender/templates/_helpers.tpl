@@ -166,7 +166,7 @@ MinIO Rule
   {{- if .Values.api_gateway.minio.customRule }}
     {{- printf .Values.api_gateway.minio.customRule | quote }}
   {{- else }}
-    {{- printf "HeadersRegexp(`X-Amz-Date`, `.+`) || PathPrefix(`/%s`)" .Values.global.s3.AWS_BUCKET | quote }}
+    {{- printf "HeaderRegexp(`X-Amz-Date`, `.+`) || PathPrefix(`/%s`)" .Values.global.s3.AWS_BUCKET | quote }}
   {{- end }}
 {{- end -}}
 
