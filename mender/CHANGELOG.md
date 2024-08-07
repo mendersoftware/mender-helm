@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.10.0
+* Upgrade Traefik to v3.1.0
+
 ## Version 5.9.4
 * Update default traefik tag to v2.11.6
 
