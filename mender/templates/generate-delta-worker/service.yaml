@@ -1,0 +1,20 @@
+{{- if and .Values.global.enterprise .Values.generate_delta_worker.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mender.fullname" . }}-generate-delta-worker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
+    app.kubernetes.io/component: generate-delta-worker
+{{- with .Values.deployments.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: ClusterIP
+  clusterIP: "None"
+  ports: []
+  selector:
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
+{{- end }}
