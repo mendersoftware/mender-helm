@@ -1,5 +1,10 @@
 # Mender Helm chart
 
+## Version 5.10.0
+* Change `generate_delta_worker` to StatefulSet and add `persistence` values
+  * The new `persistence` values specifies the parameters of the PVC template of
+    the statefulset.
+
 ## Version 5.9.4
 * Update default traefik tag to v2.11.6
 
