@@ -55,7 +55,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/auditlogs`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/auditlogs`)"
           service: auditlogs
           tls: {{ $isTls }}
 
@@ -73,7 +73,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/iot-manager`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/iot-manager`)"
           service: iot-manager
           tls: {{ $isTls }}
 
@@ -93,7 +93,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deployments`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9]+/deployments`)"
           service: deployments
           tls: {{ $isTls }}
 
@@ -106,7 +106,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deployments/download`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9]+/deployments/download`)"
           service: deployments
           tls: {{ $isTls }}
 
@@ -121,7 +121,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deployments`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/deployments`)"
           service: deployments
           tls: {{ $isTls }}
 
@@ -136,7 +136,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/authentication`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9]+/authentication`)"
           service: deviceauth
           tls: {{ $isTls }}
 
@@ -151,7 +151,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devauth`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/devauth`)"
           service: deviceauth
           tls: {{ $isTls }}
 
@@ -171,7 +171,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deviceconfig`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9]+/deviceconfig`)"
           service: deviceconfig
           tls: {{ $isTls }}
 
@@ -186,7 +186,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconfig`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/deviceconfig`)"
           service: deviceconfig
           tls: {{ $isTls }}
 
@@ -206,7 +206,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/deviceconnect`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9]+/deviceconnect`)"
           service: deviceconnect
           tls: {{ $isTls }}
 
@@ -223,7 +223,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/deviceconnect`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/deviceconnect`)"
           service: deviceconnect
           tls: {{ $isTls }}
 
@@ -243,7 +243,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/devices/{ver:v[0-9]+}/devicemonitor`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9]+/devicemonitor`)"
           service: devicemonitor
           tls: {{ $isTls }}
 
@@ -258,7 +258,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/devicemonitor`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/devicemonitor`)"
           service: devicemonitor
           tls: {{ $isTls }}
 
@@ -281,6 +281,7 @@ data:
           - json-error-responder3
           - json-error-responder4
           rule: "PathPrefix(`/`)"
+          priority: 1
           service: gui
           tls: {{ $isTls }}
 
@@ -301,7 +302,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/devices/v1/inventory`)"
+          rule: "PathRegexp(`^/api/devices/v1/inventory`)"
           service: inventory
           tls: {{ $isTls }}
 
@@ -318,7 +319,7 @@ data:
           - json-error-responder2
           - json-error-responder3
           - json-error-responder4
-          rule: "PathPrefix(`/api/devices/v2/inventory`)"
+          rule: "PathRegexp(`^/api/devices/v2/inventory`)"
           service: inventory
           tls: {{ $isTls }}
 
@@ -334,7 +335,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/v1/inventory`)"
+          rule: "PathRegexp(`^/api/management/v1/inventory`)"
           service: inventory
           tls: {{ $isTls }}
 
@@ -349,7 +350,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/v2/inventory`)"
+          rule: "PathRegexp(`^/api/management/v2/inventory`)"
           service: inventory
           tls: {{ $isTls }}
 
@@ -365,7 +366,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/tenantadm`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/tenantadm`)"
           service: tenantadm
           tls: {{ $isTls }}
 
@@ -378,8 +379,10 @@ data:
           - compression
 {{- end }}
           rule: >-
-            Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants`) ||
-            Method(`OPTIONS`,`POST`) && Path(`/api/management/{version:v[0-9]+}/tenantadm/tenants/trial`)
+            (Method(`OPTIONS`) || Method(`POST`)) &&
+            PathRegexp(`/api/management/v[0-9]+/tenantadm/tenants`) ||
+            (Method(`OPTIONS`) || Method(`POST`)) &&
+            PathRegexp(`/api/management/v[0-9]+/tenantadm/tenants/trial`)
           service: tenantadm
           tls: {{ $isTls }}
 
@@ -397,7 +400,7 @@ data:
 {{- end }}
           - json-error-responder1
           - json-error-responder4
-          rule: "PathPrefix(`/api/management/{ver:v[0-9]+}/useradm`)"
+          rule: "PathRegexp(`^/api/management/v[0-9]+/useradm`)"
           service: useradm
           tls: {{ $isTls }}
 
@@ -414,7 +417,9 @@ data:
           - compression
 {{- end }}
           - json-error-responder4
-          rule: "!Path(`/api/management/{ver:v[0-9]+}/useradm/auth/logout`)&&PathPrefix(`/api/management/{ver:v[0-9]+}/useradm/{ep:(auth|oauth2|oidc)}`)"
+          rule: >-
+            !Path(`/api/management/v1/useradm/auth/logout`) &&
+            PathRegexp(`^/api/management/v[0-9]+/useradm/(auth|oauth2|oidc)`)
           service: useradm
           tls: {{ $isTls }}
 {{- if and .Values.api_gateway.storage_proxy.enabled .Values.api_gateway.minio.enabled }}
