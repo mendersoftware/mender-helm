@@ -1072,6 +1072,12 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
 | `generate_delta_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `generate_delta_worker.replicas` | Number of replicas | `1` |
+| `generate_delta_worker.persistence.enabled` | Enable persistence of the work directory (PVC template) | `true` |
+| `generate_delta_worker.persistence.accessModes` | Access modes for the volumes created by the StatefulSet | `["ReadWriteOnce"]` |
+| `generate_delta_worker.persistence.size` | Size of the volumes (per replica) | `40Gi` |
+| `generate_delta_worker.persistence.storageClass` | Storage class for the volumes created by the StatefulSet | `""` (default) |
+| `generate_delta_worker.persistence.retention.whenDeleted` | Volume retention policy when StatefulSet is deleted | `"Retain"` |
+| `generate_delta_worker.persistence.retention.whenScaled` | Volume retention policy when StatefulSet is scaled (down) | `"Delete"` |
 | `generate_delta_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
 | `generate_delta_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `generate_delta_worker.resources.limits.memory` | Resources memory limit | `1024Mi` |
