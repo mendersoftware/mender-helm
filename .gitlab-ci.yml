@@ -343,14 +343,14 @@ test:helm_chart_upgrade_from_previous_lts_to_current_lts:
         mender/mender --version ${MENDER_LTS_HELM_VERSION:-5.9.0} || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
-      echo "INFO - installing mender tag ${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.5}"
+      echo "INFO - installing mender tag ${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.7}"
       helm upgrade -i mender \
         -f mender/values.yaml \
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
-        --set global.image.tag="${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.5}" \
+        --set global.image.tag="${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.7}" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
@@ -415,14 +415,14 @@ test:helm_chart_upgrade_from_previous_release_to_current_lts:
         mender/mender --version ${MENDER_LTS_HELM_VERSION:-5.0.1} || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
-      echo "INFO - installing mender tag ${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.5}"
+      echo "INFO - installing mender tag ${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.7}"
       helm upgrade -i mender \
         -f mender/values.yaml \
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
-        --set global.image.tag="${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.5}" \
+        --set global.image.tag="${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.7}" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
@@ -471,7 +471,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
   script:
     - tests/ci-make-deps.sh
     - |
-      echo "INFO - installing mender tag ${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.5}"
+      echo "INFO - installing mender tag ${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.7}"
       source ./tests/variables.sh
       helm upgrade -i mender \
         -f mender/values.yaml \
@@ -479,7 +479,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         -f tests/values-helmci.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
-        --set global.image.tag="${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.5}" \
+        --set global.image.tag="${MENDER_CURRENT_LTS_RELEASE_TAG:-mender-3.7.7}" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \
@@ -488,14 +488,14 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         mender/mender || exit 3;
     - bash tests/test-001-wait-for-pods-to-be-ready.sh
     - |
-      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.5}"
+      echo "INFO - installing mender tag ${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.7}"
       helm upgrade -i mender \
         -f mender/values.yaml \
         -f tests/keys.yaml \
         -f tests/values-helmci.yaml \
         --wait \
         --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
-        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.5}" \
+        --set global.image.tag="${MENDER_CURRENT_RELEASE_TAG:-mender-3.7.7}" \
         --set global.image.username=${REGISTRY_MENDER_IO_USERNAME} \
         --set global.image.password="${REGISTRY_MENDER_IO_PASSWORD}" \
         --set global.s3.AWS_ACCESS_KEY_ID="${MINIO_accessKey}" \

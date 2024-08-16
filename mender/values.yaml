@@ -9,7 +9,7 @@ global:
     registry: registry.mender.io
     username: null
     password: null
-    tag: mender-3.7.5
+    tag: mender-3.7.7
 
   mongodb:
     existingSecret: ""
@@ -212,7 +212,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v2.11.6
+    tag: v3.1.2
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -471,6 +471,20 @@ generate_delta_worker:
   podAnnotations: {}
   automigrate: false
   replicas: 1
+  # persistence specifies parameters for the pvc templates created for the
+  # stateful set.
+  persistence:
+    # enabled adds pvc templates to the StatefulSet definition.
+    # If disabled, the service will use ephermeral storage.
+    enabled: true
+    accessModes: ["ReadWriteOnce"]
+    size: "40Gi"
+    storageClass: ""
+    # retetion specifies the retention policy for the pvc created by the
+    # StatefulSet.
+    retention:
+      whenDeleted: "Retain"
+      whenScaled: "Delete"
   resources:
     limits:
       cpu: 100m
