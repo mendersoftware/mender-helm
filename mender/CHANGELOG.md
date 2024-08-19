@@ -5,6 +5,7 @@
   * The new `persistence` values specifies the parameters of the PVC template of
     the statefulset.
 * Upgrade Traefik to v3.1.2
+* Upgrade to Mender version `3.7.7`
 
 ## Version 5.9.4
 * Update default traefik tag to v2.11.6
