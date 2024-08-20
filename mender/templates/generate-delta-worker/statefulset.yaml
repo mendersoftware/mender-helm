@@ -1,7 +1,7 @@
 {{- if and .Values.global.enterprise .Values.generate_delta_worker.enabled }}
 {{- $merged := merge (deepCopy .Values.generate_delta_worker) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "mender.fullname" . }}-generate-delta-worker
   namespace: {{ .Release.Namespace }}
@@ -10,7 +10,15 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
     app.kubernetes.io/component: generate-delta-worker
 spec:
+  serviceName: {{ include "mender.fullname" . }}-generate-delta-worker
   replicas: {{ .Values.generate_delta_worker.replicas }}
+
+  # Rollout upgrade
+  {{- $updateStrategy := coalesce .Values.generate_delta_worker.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  updateStrategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
+
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
@@ -20,10 +28,28 @@ spec:
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
 
-  # Rollout upgrade
-  {{- $updateStrategy := coalesce .Values.generate_delta_worker.updateStrategy .Values.default.updateStrategy }}
-  {{- if $updateStrategy }}
-  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- with .Values.generate_delta_worker.persistence }}
+  {{- if .enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: workspace
+      spec:
+        {{- if .accessModes }}
+        accessModes:
+          {{- .accessModes | toYaml | nindent 14 }}
+        {{- else }}
+        accessModes: [ "ReadWriteOnce" ]
+        {{- end }}
+        {{- with .storageClass }}
+        storageClassName: {{ quote . }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ default .size "40Gi" }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ default .retention.whenDeleted "Retain" | quote }}
+    whenScaled: {{ default .retention.whenScaled "Delete" | quote }}
+  {{- end }}
   {{- end }}
 
   template:
@@ -76,6 +102,13 @@ spec:
         - name: GENERATE_DELTA_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
         {{- include "mender.customEnvs" (merge (deepCopy .Values.generate_delta_worker) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
+        {{- with .Values.generate_delta_worker.persistence }}
+        {{- if .enabled }}
+        {{- /* If persistence is enabled, the work path must be predictable */}}
+        - name: GENERATE_DELTA_WORKDIR
+          value: /work
+        {{- end }}
+        {{- end }}
         envFrom:
         - prefix: WORKFLOWS_
           secretRef:
@@ -85,6 +118,13 @@ spec:
         - prefix: WORKFLOWS_
           secretRef:
             name: {{ .Values.global.nats.existingSecret }}
+        {{- end }}
+        {{- with .Values.generate_delta_worker.persistence }}
+        {{- if .enabled }}
+        volumeMounts:
+          - name: workspace
+            mountPath: /work
+        {{- end }}
         {{- end }}
 
 {{- if .Values.global.image.username }}
