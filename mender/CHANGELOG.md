@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+## Version 5.10.1
+* Fix invalid regexp in default storage proxy rule.
+
 ## Version 5.10.0
 * Change `generate_delta_worker` to StatefulSet and add `persistence` values
   * The new `persistence` values specifies the parameters of the PVC template of
