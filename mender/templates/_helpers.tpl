@@ -328,7 +328,7 @@ Define mender.storageProxyUrl
 Storage Proxy Rule
 */}}
 {{- define "mender.storageProxyRule" -}}
-  {{- default "HostRegexp(`{domain:^artifacts.*$}`)" .Values.api_gateway.storage_proxy.customRule | quote }}
+  {{- default "HostRegexp(`^artifacts.*$`)" .Values.api_gateway.storage_proxy.customRule | quote }}
 {{- end -}}
 
 {{/*
