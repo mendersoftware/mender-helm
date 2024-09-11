@@ -113,7 +113,7 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: debian:buster
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:buster
   tags:
     - hetzner-amd-beefy
   rules:
@@ -733,7 +733,7 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: debian:buster
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:buster
   before_script:
     - apt-get update -y
     - apt-get install -y curl make git
