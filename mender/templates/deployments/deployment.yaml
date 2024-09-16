@@ -1,5 +1,8 @@
 {{- if .Values.deployments.enabled }}
-{{- $context := (dict "dot" . "component" "deployments") -}}
+{{- $context := (dict
+      "dot" .
+      "override" .Values.deployments
+      "component" "deployments") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

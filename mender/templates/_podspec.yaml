@@ -1,0 +1,46 @@
+{{- define "mender.podSecurityContext" -}}
+{{- if .override.containerSecurityContext }}
+{{- /* NOTE: respect falsy override.containerSecurityContext.enabled */ -}}
+{{- if .override.containerSecurityContext.enabled }}
+{{- omit .override.containerSecurityContext "enabled" | toYaml }}
+{{- else }}
+{{- printf "{}" }}
+{{- end }}
+{{- else if and .dot.Values.default.containerSecurityContext
+                .dot.Values.default.containerSecurityContext.enabled }}
+{{- omit .dot.Values.default.containerSecurityContext "enabled" | toYaml }}
+{{- else }}
+{{- printf "{}" }}
+{{- end }}
+{{- end -}}
+
+{{- /* Synopsis:
+  {{ include "mender.podSpec" (dict
+    "dot" .
+    "component" "<serviceName>"
+    "override" .Values.<serviceName>
+  }}
+  Generates shared boilerplate PodSpec
+*/ -}}
+{{- define "mender.podSpec" -}}
+serviceAccountName: {{ include "mender.serviceAccountName" . }}
+{{- with (coalesce .override.affinity .dot.Values.default.affinity) }}
+affinity: {{ toYaml . | nindent 4 }}
+{{- end }}
+{{- with (coalesce .override.tolerations .dot.Values.default.tolerations) }}
+tolerations: {{ toYaml . | nindent 4 }}
+{{- end }}
+securityContext: {{ include "mender.podSecurityContext" . | nindent 2}}
+{{- with .restartPolicy }}
+restartPolicy: {{ quote . }}
+{{- end }}
+{{- with coalesce .override.imagePullSecrets .dot.Values.default.imagePullSecrets }}
+imagePullSecrets: {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with (coalesce .override.priorityClassName .dot.Values.default.PriorityClassName) }}
+priorityClassName: {{ quote . }}
+{{- end }}
+{{- with (coalesce .override.nodeSelector .dot.Values.default.nodeSelector) }}
+nodeSelector: {{ toYaml . | nindent 4 }}
+{{- end }}
+{{- end -}}

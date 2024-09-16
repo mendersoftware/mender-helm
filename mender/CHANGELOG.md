@@ -1,5 +1,50 @@
 # Mender Helm chart
 
+## Version 6.0.0
+BREAKING CHANGES:
+* New image defaults:
+  * All overrides in default values have been removed
+  * Registry default changed:
+    - `registry.mender.io` if `mender.enterprise`
+    - `docker.io` otherwise
+  * Repository default changed:
+    - `mender-server-enterprise` if `mender.enterprise`
+    - `mendersoftware` otherwise.
+  * Default tag updated to follow AppVersion in Chart.yaml
+  * `username`/`password` is removed to discourage bad security practices
+    * Use `imagePullSecrets` instead
+* Rename options:
+  * `global.image` -> `default.image`
+    * `global.image.imagePullPolicy` -> `default.image.pullPolicy`
+  * `global.mongodb` -> `default.mongodb`
+  * `global.nats` -> `default.nats`
+  * `global.redis` -> `default.redis`
+  * `global.storage` -> `storage.type`
+  * `global.s3` -> `storage.s3`
+  * `global.azure` -> `storage.azure`
+  * `global.url` -> `menderUrl`
+  * `global.smtp` -> `smtp`
+* Removed options:
+  - `global.image.username`
+  - `global.image.password`
+  - `global.auditlogs`: Replaced by `auditlogs.enabled`
+  - `global.hosted`
+  - `global.s3.AWS_TAG_ARTIFACT`
+  - `global.s3.AWS_SERVICE_ACCOUNT_NAME`: superseded by `mender.serviceAccount.name`
+  - `global.redis.username`: Replaced by URL (connection string)
+  - `global.redis.password`: Replaced by URL (connection string)
+  - `test.enabled`
+* MongoDB URL configuration
+  * Simplified values interface
+  * Added `mender.mongodb.existingSecretKey` to select an alternative key inside the secret for the connection string value.
+  * When using mongodb as a dependency, the connection string must be specified.
+* NATS URL configuration
+  * Same logic as for MongoDB
+* Redis URL configuration
+  * Same logic as for MongoDB
+  * Using the value from secret will use `REDIS_CONNECTION_STRING` key by default.
+* `automigrate` options are disabled by default
+
 ## Version 5.10.1
 * Fix invalid regexp in default storage proxy rule.
 

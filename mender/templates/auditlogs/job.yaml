@@ -1,5 +1,11 @@
-{{- if and .Values.auditlogs.enabled .Values.global.enterprise .Values.dbmigration.enable }}
-{{- $context := (dict "dot" . "component" "auditlogs" "migration" "true" "restartPolicy" (default "Never" .Values.auditlogs.migrationRestartPolicy) "extraResources" .Values.auditlogs.migrationResources) }}
+{{- if and .Values.auditlogs.enabled .Values.enterprise .Values.dbmigration.enable }}
+{{- $context := (dict
+"dot" .
+"component" "auditlogs"
+"override" .Values.auditlogs
+"migration" "true"
+"restartPolicy" (default "Never" .Values.auditlogs.migrationRestartPolicy)
+"extraResources" .Values.auditlogs.migrationResources) }}
 apiVersion: batch/v1
 kind: Job
 metadata:

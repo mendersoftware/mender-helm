@@ -1,0 +1,77 @@
+{{- define "mender.container.resources" -}}
+{{- if .override.resources }}
+{{- .override.resources | toYaml }}
+{{- else if .dot.Values.default.resources }}
+{{- .dot.Values.default.resources | toYaml }}
+{{- end }}
+{{- end -}}
+
+{{- define "mender.container.securityContext" -}}
+{{- if .override.containerSecurityContext }}
+{{- /* NOTE: respect falsy override.containerSecurityContext.enabled */ -}}
+{{- if .override.containerSecurityContext.enabled }}
+{{- omit .override.containerSecurityContext "enabled" | toYaml }}
+{{- else }}
+{{- printf "{}" }}
+{{- end }}
+{{- else if and .dot.Values.default.containerSecurityContext
+                .dot.Values.default.containerSecurityContext.enabled }}
+{{- omit .dot.Values.default.containerSecurityContext "enabled" | toYaml }}
+{{- else }}
+{{- printf "{}" }}
+{{- end }}
+{{- end -}}
+
+{{- /* Synopsis
+    {{ include "mender.container" (dict
+        "dot" .
+        "component" "<serviceName>"
+        "override" .Values.<serviceName>
+        "readinessPath": "optional|/api/internal/v1/.component/health"
+        "livenessPath": "optional|/api/internal/v1/.component/alive")
+    }}
+    Bolierplate Mender service ContainerSpec
+*/ -}}
+{{- define "mender.container" -}}
+image: {{ include "mender.image" . }}
+imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
+{{- if .args }}
+args: {{ splitList " " .args | toYaml | nindent 2 }}
+{{- else if and .override.automigrate }}
+args: ["server", "--automigrate"]
+{{- else }}
+args: ["server"]
+{{- end }}
+{{- if (not .migration) }}
+# Readiness/liveness probes
+readinessProbe:
+  httpGet:
+    path: {{ coalesce .readinessPath (printf "/api/internal/v1/%s/health" .component) }}
+    port: 8080
+  {{- coalesce .override.readinessProbe .dot.Values.default.readinessProbe |
+      toYaml |
+      nindent 2 }}
+livenessProbe:
+  httpGet:
+    path: {{ coalesce .livenessPath (printf "/api/internal/v1/%s/alive" .component) }}
+    port: 8080
+  {{- coalesce .override.livenessProbe .dot.Values.default.livenessProbe |
+      toYaml |
+      nindent 2 }}
+startupProbe:
+  httpGet:
+    path: {{ coalesce .livenessPath (printf "/api/internal/v1/%s/alive" .component) }}
+    port: 8080
+  {{- coalesce .override.startupProbe .dot.Values.default.startupProbe |
+      toYaml |
+      nindent 2 }}
+{{- end }}
+{{- if .resources }}
+resources: {{- nindent 2 .resources }}
+{{- else }}
+{{- with include "mender.container.resources" . }}
+resources: {{- nindent 2 . }}
+{{- end }}
+{{- end }}
+securityContext: {{ include "mender.container.securityContext" . }}
+{{- end -}}

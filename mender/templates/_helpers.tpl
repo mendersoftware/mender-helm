@@ -86,7 +86,7 @@ Redis connection string
 MongoDB URI
 */}}
 {{- define "mongodb_uri" }}
-  {{- if and .Values.mongodb.enabled ( not .Values.global.mongodb.URL ) }}
+  {{- if and .Values.mongodb.enabled }}
     {{- if and (eq .Values.mongodb.architecture "replicaset") .Values.mongodb.externalAccess.enabled (eq .Values.mongodb.externalAccess.service.type "ClusterIP") }}
       {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword }}
         {{- printf "mongodb://root:%s@%s-0" .Values.mongodb.auth.rootPassword ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
@@ -112,6 +112,99 @@ MongoDB URI
     {{- printf .Values.global.mongodb.URL | b64enc | quote }}
   {{- end }}
 {{- end }}
+
+{{- define "mender.mongoUrl" -}}
+{{- if and .override.mongodb .override.mongodb.existingSecret -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .override.mongodb.existingSecret }}
+      key: "MONGO_URL"
+{{- else if and .override.mongodb .override.mongodb.URL -}}
+value: {{ quote .override.mongodb.URL }}
+{{- else if and .dot.Values.global
+                .dot.Values.global.mongodb
+                .dot.Values.global.mongodb.existingSecret -}}
+{{- /* NOTE: For backward compatibility */ -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .dot.Values.global.mongodb.existingSecret }}
+      key: "MONGO_URL"
+{{- else if and .dot.Values.global
+                .dot.Values.global.mongodb
+                .dot.Values.global.mongodb.URL -}}
+{{- /* NOTE: For backward compatibility */ -}}
+value: {{ quote .dot.Values.global.mongodb.URL }}
+{{- else if .dot.Values.default.mongodb.existingSecret -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .dot.Values.default.mongodb.existingSecret }}
+      key: "MONGO_URL"
+{{- else -}}
+value: {{ quote .dot.Values.default.mongodb.URL }}
+{{- end -}}
+{{- end -}}
+
+{{- define "mender.natsUrl" -}}
+{{- if and .override.nats .override.nats.existingSecret -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .override.nats.existingSecret }}
+      key: "REDIS_CONNECTION_STRING"
+{{- else if and .override.nats .override.nats.URL -}}
+value: {{ quote .override.nats.URL }}
+{{- else if and .dot.Values.global
+                .dot.Values.global.nats
+                .dot.Values.global.nats.existingSecret -}}
+{{- /* NOTE: For backward compatibility */ -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .dot.Values.global.nats.existingSecret }}
+      key: "REDIS_CONNECTION_STRING"
+{{- else if and .dot.Values.global
+                .dot.Values.global.nats
+                .dot.Values.global.nats.URL -}}
+{{- /* NOTE: For backward compatibility */ -}}
+value: {{ quote .dot.Values.global.nats.URL }}
+{{- else if .dot.Values.default.nats.existingSecret -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .dot.Values.default.nats.existingSecret }}
+      key: "REDIS_CONNECTION_STRING"
+{{- else -}}
+value: {{ quote .dot.Values.default.nats.URL }}
+{{- end -}}
+{{- end -}}
+
+{{- define "mender.redisUrl" -}}
+{{- if and .override.redis .override.redis.existingSecret -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .override.redis.existingSecret }}
+      key: "REDIS_CONNECTION_STRING"
+{{- else if and .override.redis .override.redis.URL -}}
+value: {{ quote .override.redis.URL }}
+{{- else if and .dot.Values.global
+                .dot.Values.global.redis
+                .dot.Values.global.redis.existingSecret -}}
+{{- /* NOTE: For backward compatibility */ -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .dot.Values.global.redis.existingSecret }}
+      key: "REDIS_CONNECTION_STRING"
+{{- else if and .dot.Values.global
+                .dot.Values.global.redis
+                .dot.Values.global.redis.URL -}}
+{{- /* NOTE: For backward compatibility */ -}}
+value: {{ quote .dot.Values.global.redis.URL }}
+{{- else if .dot.Values.default.redis.existingSecret -}}
+valueFrom:
+    secretKeyRef:
+      name: {{ .dot.Values.default.redis.existingSecret }}
+      key: "REDIS_CONNECTION_STRING"
+{{- else -}}
+value: {{ quote .dot.Values.default.redis.URL }}
+{{- end -}}
+{{- end -}}
 
 {{/*
 nats_uri
@@ -231,6 +324,85 @@ spec:
 
 {{- define "mender.servicename" -}}
 {{- printf "%s-%s" ( include "mender.fullname" .dot ) .component }}
+{{- end }}
+
+{{/* Helper for "mender.image" */}}
+{{- define "mender.image.registry" }}
+{{- if and .override.image .override.image.registry }}
+{{- print .override.image.registry -}}
+{{- else if and .dot.Values.global .dot.Values.global.image .dot.Values.global.image.registry}}
+{{- print .dot.Values.global.image.registry -}}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.registry}}
+{{- print .dot.Values.default.image.registry -}}
+{{- else if .dot.Values.enterprise }}
+{{- print "registry.mender.io" -}}
+{{- else }}
+{{- print "docker.io" -}}
+{{- end }}
+{{- end }}
+
+{{/* Helper for "mender.image" */}}
+{{- define "mender.image.repository" }}
+{{- if and .override.image .override.image.repository }}
+{{- print .override.image.repository -}}
+{{- else if and .dot.Values.global
+    .dot.Values.global.image
+    .dot.Values.global.image.repository }}
+{{- print .dot.Values.global.image.repository }}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.repository}}
+{{- print .dot.Values.default.image.repository -}}
+{{- else if .dot.Values.enterprise }}
+{{- print "mender-server-enterprise" -}}
+{{- else }}
+{{- print "mendersoftware" -}}
+{{- end }}
+{{- end }}
+
+{{/* Helper for "mender.image" */}}
+{{- define "mender.image.tag" }}
+{{- if and .override.image .override.image.tag }}
+{{- print .override.image.tag -}}
+{{- else if and .dot.Values.global
+                .dot.Values.global.image
+                .dot.Values.global.image.tag }}
+{{- print .dot.Values.global.image.tag -}}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.tag}}
+{{- print .dot.Values.default.image.tag -}}
+{{- else }}
+{{- print .dot.Chart.AppVersion -}}
+{{- end }}
+{{- end }}
+
+{{/*
+Synopsis:
+image: {{ include "mender.image" (dict
+  "dot" .
+  "component" "<service>"
+  "override" .Values.<service> }}
+*/}}
+{{- define "mender.image" }}
+{{- printf "%s/%s/%s:%s"
+  (include "mender.image.registry" .)
+  (include "mender.image.repository" .)
+  .component
+  (include "mender.image.tag" .) }}
+{{- end }}
+
+{{/*
+Synopsis:
+imagePullPolicy: {{ include "mender.imagePullPolicy" (dict
+  "dot" .
+  "component" "<service>"
+  "override" .Values.<service> }}
+*/}}
+{{- define "mender.imagePullPolicy" }}
+{{- if and .override.image .override.image.pullPolicy }}
+{{ .override.image.pullPolicy }}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.pullPolicy }}
+{{- .dot.Values.default.image.pullPolicy }}
+{{- else }}
+{{- "IfNotPresent" }}
+{{- end }}
 {{- end }}
 
 {{- define "mender.resources" -}}

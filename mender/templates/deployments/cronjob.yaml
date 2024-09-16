@@ -1,5 +1,12 @@
 {{- if .Values.deployments.directUpload.enabled }}
-{{- $merged := merge (deepCopy .Values.deployments) (deepCopy (default (dict) .Values.default)) -}}
+{{- $context := (dict
+      "dot" .
+      "component" "deployments"
+      "containerName" "deployments-storage-daemon"
+      "override" .Values.deployments
+      "args" (printf "storage-daemon --time-jitter=%q"
+            .Values.deployments.directUpload.jitter )
+) -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -13,68 +20,5 @@ spec:
   jobTemplate:
     spec:
       template:
-        metadata:
-          {{- with .Values.deployments.podAnnotations }}
-          annotations:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          labels:
-            app.kubernetes.io/name: {{ include "mender.fullname" . }}-deployments-storage-daemon
-
-        spec:
-          {{- with $merged.affinity }}
-          affinity: {{ tpl (toYaml .) $ | nindent 12 }}
-          {{- end }}
-          {{- with $merged.tolerations }}
-          tolerations: {{ tpl (toYaml .) $ | nindent 12 }}
-          {{- end }}
-          {{- if and (eq .Values.global.storage "aws") (.Values.global.s3.AWS_SERVICE_ACCOUNT_NAME) }}
-          serviceAccountName: {{ .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
-          {{- else }}
-          serviceAccountName: {{ include "mender.serviceAccountName" . }}
-          {{- end }}
-          {{- if .Values.deployments.podSecurityContext.enabled }}
-          securityContext: {{- omit .Values.deployments.podSecurityContext "enabled" | toYaml | nindent 12 }}
-          {{- end }}
-          containers:
-          - name: deployments-storage-daemon
-            {{- if .Values.global.enterprise }}
-            image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
-            {{- else }}
-            image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
-            {{- end }}
-            args: ["storage-daemon", "--time-jitter={{ .Values.deployments.directUpload.jitter}}"]
-            env:
-            - name: DEPLOYMENTS_STORAGE_DEFAULT
-              value: {{ .Values.global.storage | quote }}
-            {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
-            - name: DEPLOYMENTS_ENABLE_AUDIT
-              value: "true"
-            {{- end }}
-            envFrom:
-            - prefix: DEPLOYMENTS_
-              secretRef:
-                name: mongodb-common
-            - prefix: DEPLOYMENTS_
-              secretRef:
-                name: {{ .Values.global.s3.existingSecret | default "artifacts-storage" }}
-            {{- if .Values.deployments.containerSecurityContext.enabled }}
-            securityContext: {{- omit .Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 14 }}
-            {{- end }}
-          restartPolicy: Never
-
-{{- if .Values.global.image.username }}
-          imagePullSecrets:
-          - name: docker-registry
-{{- else }}
-{{- $ips := coalesce .Values.deployments.imagePullSecrets .Values.default.imagePullSecrets  }}
-{{- if $ips }}
-          imagePullSecrets:
-{{- toYaml $ips | nindent 10 }}
-{{- end }}
-{{- end }}
-
-          {{- with .Values.deployments.nodeSelector }}
-          nodeSelector: {{ toYaml . | nindent 8 }}
-          {{- end }}
-{{- end }}
+        {{- include "mender.deploymentsPodTemplate" $context | nindent 8 }}
+{{- end -}}

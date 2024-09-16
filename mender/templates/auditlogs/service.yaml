@@ -1,4 +1,4 @@
-{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
+{{- if and .Values.auditlogs.enabled .Values.enterprise }}
 apiVersion: v1
 kind: Service
 metadata:

@@ -1,5 +1,13 @@
-{{- if .Values.create_artifact_worker.enabled }}
-{{- $merged := merge (deepCopy .Values.create_artifact_worker) (deepCopy (default (dict) .Values.default)) -}}
+{{- if .Values.create_artifact_worker.enabled -}}
+{{- $context := (dict
+"dot" .
+"component" "create-artifact-worker"
+"override" .Values.create_artifact_worker
+"args" (ternary
+        "worker --automigrate"
+        "worker"
+        .Values.create_artifact_worker.automigrate )
+) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,13 +22,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-create-artifact-worker
-
-  # if deployment is not completed within 10 min, consider it failed,
-  # as result deployment Reason=ProgressDeadlineExceeded
-  # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
-
-  # Rollout upgrade
   {{- $updateStrategy := coalesce .Values.create_artifact_worker.updateStrategy .Values.default.updateStrategy }}
   {{- if $updateStrategy }}
   strategy: {{- toYaml $updateStrategy | nindent 4 }}
@@ -37,78 +39,22 @@ spec:
         {{- include "mender.labels" . | nindent 8 }}
         app.kubernetes.io/component: create-artifact-worker
     spec:
-      {{- with $merged.affinity }}
-      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-      {{- with $merged.tolerations }}
-      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
-      {{- end }}
-{{- if .Values.create_artifact_worker.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.create_artifact_worker.podSecurityContext "enabled" | toYaml | nindent 8 }}
-{{- end }}
-
       containers:
       - name: create-artifact-worker
-        image: {{ .Values.create_artifact_worker.image.registry }}/{{ .Values.create_artifact_worker.image.repository }}:{{ .Values.create_artifact_worker.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.create_artifact_worker.image.imagePullPolicy }}
-{{- if .Values.create_artifact_worker.containerSecurityContext.enabled }}
-        securityContext: {{- omit .Values.create_artifact_worker.containerSecurityContext "enabled" | toYaml | nindent 10 }}
-{{- end }}
-        resources:
-{{ toYaml .Values.create_artifact_worker.resources | indent 10 }}
-
-{{- if .Values.create_artifact_worker.automigrate }}
-        command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker", "--automigrate"]
-{{- else }}
-        command: ["workflows", "--config", "/etc/workflows/config.yaml", "worker"]
-{{- end }}
-
-        # Supported configuration settings: https://github.com/mendersoftware/workflows/blob/master/config.yaml
-        # Set in order, last value for the key will be used in case duplications.
+        {{- include "mender.container" $context | nindent 8 }}
         env:
-        # NATS uri
-        {{- if not .Values.global.nats.existingSecret }}
         - name: WORKFLOWS_NATS_URI
-          value: {{ template "nats_uri" . }}
-        {{- end }}
-
+          {{- include "mender.natsUrl" $context | nindent 10 }}
+        - name: WORKFLOWS_MONGO_URL
+          {{- include "mender.mongoUrl" $context | nindent 10 }}
         - name: WORKFLOWS_MENDER_URL
-          value: "{{ .Values.global.url }}"
+          value: "{{ .Values.menderUrl }}"
         - name: CREATE_ARTIFACT_GATEWAY_URL
-          value: {{ .Values.global.url | default (ternary (printf "https://%s" .Values.api_gateway.service.name ) (printf "http://%s" .Values.api_gateway.service.name) (.Values.api_gateway.env.SSL)) }}
+          value: {{ .Values.menderUrl | default (ternary (printf "https://%s" .Values.api_gateway.service.name ) (printf "http://%s" .Values.api_gateway.service.name) (.Values.api_gateway.env.SSL)) }}
         - name: CREATE_ARTIFACT_SKIPVERIFY
           value: "1"
         - name: CREATE_ARTIFACT_DEPLOYMENTS_URL
           value: http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}
         {{- include "mender.customEnvs" (merge (deepCopy .Values.create_artifact_worker) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
-        envFrom:
-        - prefix: WORKFLOWS_
-          secretRef:
-            name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
-
-        {{- if .Values.global.nats.existingSecret }}
-        - prefix: WORKFLOWS_
-          secretRef:
-            name: {{ .Values.global.nats.existingSecret }}
-        {{- end }}
-
-{{- if .Values.global.image.username }}
-      imagePullSecrets:
-      - name: docker-registry
-{{- else }}
-{{- $ips := coalesce .Values.create_artifact_worker.imagePullSecrets .Values.default.imagePullSecrets  }}
-{{- if $ips }}
-      imagePullSecrets:
-{{- toYaml $ips | nindent 6 }}
-{{- end }}
-{{- end }}
-
-{{- $pcn := coalesce .Values.create_artifact_worker.priorityClassName .Values.global.priorityClassName -}}
-{{- if $pcn }}
-      priorityClassName: {{ $pcn }}
+      {{- include "mender.podSpec" $context | nindent 6 }}
 {{- end -}}
-
-{{- with .Values.create_artifact_worker.nodeSelector }}
-      nodeSelector: {{ toYaml . | nindent 8 }}
-{{- end }}
-{{- end }}

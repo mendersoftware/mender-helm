@@ -7,98 +7,27 @@ metadata:
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 spec:
-  serviceAccountName: {{ include "mender.serviceAccountName" . }}
-  {{- with (coalesce .dot.Values.auditlogs.affinity .dot.Values.default.affinity) }}
-  affinity: {{ toYaml . | nindent 4 }}
-  {{- end }}
-  {{- with (coalesce .dot.Values.auditlogs.tolerations .dot.Values.default.tolerations) }}
-  tolerations: {{ toYaml . | nindent 4 }}
-  {{- end }}
-  {{- if .dot.Values.auditlogs.podSecurityContext.enabled }}
-  securityContext: {{- omit .dot.Values.auditlogs.podSecurityContext "enabled" | toYaml | nindent 4 }}
-  {{- end }}
-
-  {{- with .restartPolicy }}
-  restartPolicy: {{ quote . }}
-  {{- end }}
   containers:
-  - name: {{ ternary "auditlogs" "auditlogs-migration" (empty .migration) | quote }}
-    image: {{ .dot.Values.auditlogs.image.registry }}/{{ .dot.Values.auditlogs.image.repository }}:{{ .dot.Values.auditlogs.image.tag | default .dot.Values.global.image.tag }}
-    imagePullPolicy: {{ .dot.Values.auditlogs.image.imagePullPolicy }}
-    {{- if .dot.Values.auditlogs.containerSecurityContext.enabled }}
-    securityContext: {{- omit .dot.Values.auditlogs.containerSecurityContext "enabled" | toYaml | nindent 6 }}
-    {{- end }}
-
-    {{- with include "mender.resources" (list .dot.Values.default.resources .dot.Values.auditlogs.resources .extraResources )}}
-    resources: {{- nindent 6 . }}
-    {{- end }}
-
-    {{- if (not .migration) }}
-    {{- if .dot.Values.auditlogs.automigrate }}
-    args: ["server", "--automigrate"]
-    {{- else }}
-    args: ["server"]
-    {{- end }}
-    {{- else }}
-    args: ["migrate"]
-    {{- end }}
-
-
-    {{- if (not .migration) }}
-    # Readiness/liveness probes
-    readinessProbe:
-      httpGet:
-        path: /api/internal/v1/auditlogs/health
-        port: 8080
-      periodSeconds: 15
-      {{- with include "mender.probesOverrides" (dict "default" .dot.Values.default.probesOverrides "override" .dot.Values.auditlogs.probesOverrides ) }}
-      {{- nindent 6 . }}
-      {{- end }}
-    livenessProbe:
-      httpGet:
-        path: /api/internal/v1/auditlogs/alive
-        port: 8080
-      periodSeconds: 5
-      {{- with include "mender.probesOverrides" (dict "default" .dot.Values.default.probesOverrides "override" .dot.Values.auditlogs.probesOverrides ) }}
-      {{- nindent 6 . }}
-      {{- end }}
-    startupProbe:
-      httpGet:
-        path: /api/internal/v1/auditlogs/alive
-        port: 8080
-      failureThreshold: 36
-      periodSeconds: 5
-    {{- end }}
-
+  - name: {{ if .migration }}
+    {{- printf "%s-migration" .component -}}
+    {{ else }}
+    {{- print .component -}}
+    {{ end }}
+    {{- include "mender.container" . | nindent 4 }}
     env:
     - name: AUDITLOGS_AUDITLOG_EXPIRE_SECONDS
       value: {{ .dot.Values.auditlogs.logRetentionSeconds | int | toString | quote }}
-    {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.auditlogs) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
-    # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
-    # Set in order, last value for the key will be used in case duplications.
-    envFrom:
-    - prefix: AUDITLOGS_
-      secretRef:
-        name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
-
-
-  {{- if .dot.Values.global.image.username }}
-  imagePullSecrets:
-  - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
-  {{- else }}
-  {{- $ips := coalesce .dot.Values.auditlogs.imagePullSecrets .dot.Values.default.imagePullSecrets  }}
-  {{- if $ips }}
-  imagePullSecrets:
-  {{- toYaml $ips | nindent 4}}
-  {{- end }}
-  {{- end }}
-
-  {{- $pcn := coalesce .dot.Values.auditlogs.priorityClassName .dot.Values.global.priorityClassName -}}
-  {{- if $pcn }}
-  priorityClassName: {{ $pcn }}
-  {{- end }}
-
-  {{- with (coalesce .dot.Values.auditlogs.nodeSelector .dot.Values.default.nodeSelector) }}
-  nodeSelector: {{ toYaml . | nindent 4 }}
-  {{- end }}
+    - name: AUDITLOGS_MONGO_URL
+      {{- include "mender.mongoUrl" . | nindent 6 }}
+    {{- range $k, $v := .override.env }}
+    - name: {{ quote $k }}
+      value: {{ quote $v }}
+    {{- end }}
+    {{- with coalesce .override.customEnvs .dot.Values.default.customEnvs }}
+    {{- toYaml . | indent 4 }}
+    {{- end }}
+    {{- if and .mender .mender.extraEnv }}
+    {{- toYaml .mender.extraEnv | nindent 4 }}
+    {{- end }}
+  {{- include "mender.podSpec" . | nindent 2 }}
 {{- end }}

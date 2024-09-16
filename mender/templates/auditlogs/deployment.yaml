@@ -1,5 +1,8 @@
-{{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
-{{- $context := (dict "dot" . "component" "auditlogs") -}}
+{{- if and .Values.auditlogs.enabled .Values.enterprise }}
+{{- $context := (dict
+"dot" .
+"component" "auditlogs"
+"override" .Values.auditlogs) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,15 +20,14 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-auditlogs
 
+  {{- /*
   # if deployment is not completed within 10 min, consider it failed,
   # as result deployment Reason=ProgressDeadlineExceeded
   # needs to be big enough to rollout to complete
+  */}}
   progressDeadlineSeconds: 600
-
-  # Rollout upgrade
-  {{- $updateStrategy := coalesce .Values.auditlogs.updateStrategy .Values.default.updateStrategy }}
-  {{- if $updateStrategy }}
-  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- with coalesce .Values.auditlogs.updateStrategy .Values.default.updateStrategy }}
+  strategy: {{- toYaml . | nindent 4 }}
   {{- end }}
 
   template:
