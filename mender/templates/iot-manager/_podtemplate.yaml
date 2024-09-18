@@ -23,8 +23,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "iot-manager" "iot-manager-migration" (empty .migration) | quote }}
-    image: {{ .dot.Values.iot_manager.image.registry }}/{{ .dot.Values.iot_manager.image.repository }}:{{ .dot.Values.iot_manager.image.tag | default .dot.Values.global.image.tag }}
-    imagePullPolicy: {{ .dot.Values.iot_manager.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.iot_manager.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.iot_manager.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -87,7 +87,7 @@ spec:
     {{- end }}
 
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

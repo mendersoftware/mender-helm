@@ -24,12 +24,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "useradm" "useradm-migration" (empty .migration) | quote }}
-    {{- if .dot.Values.global.enterprise }}
-    image: {{ .dot.Values.useradm.image.registry | default "registry.mender.io" }}/{{ .dot.Values.useradm.image.repository | default "mendersoftware/useradm-enterprise" }}:{{ .dot.Values.useradm.image.tag | default .dot.Values.global.image.tag }}
-    {{- else }}
-    image: {{ .dot.Values.useradm.image.registry | default "docker.io" }}/{{ .dot.Values.useradm.image.repository | default "mendersoftware/useradm" }}:{{ .dot.Values.useradm.image.tag | default .dot.Values.global.image.tag }}
-    {{- end }}
-    imagePullPolicy: {{ .dot.Values.useradm.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.useradm.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.useradm.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -78,11 +74,7 @@ spec:
     {{- if (not .migration) }}
     volumeMounts:
     - name: rsa
-      {{- if .dot.Values.global.enterprise }}
-      mountPath: "/etc/useradm-enterprise/rsa/"
-      {{- else }}
       mountPath: "/etc/useradm/rsa/"
-      {{- end }}
       readOnly: true
     {{- end }}
 
@@ -156,16 +148,14 @@ spec:
   volumes:
   - name: rsa
     secret:
-      {{- with .dot.Values.useradm.certs }}
-      {{- if .existingSecret }}
-      secretName: {{ .existingSecret }}
+      {{- if and .dot.Values.useradm.certs .dot.Values.useradm.certs.existingSecret }}
+      secretName: {{ .dot.Values.useradm.certs.existingSecret }}
       {{- else }}
       secretName: rsa-useradm
       {{- end }}
-      {{- end }}
   {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

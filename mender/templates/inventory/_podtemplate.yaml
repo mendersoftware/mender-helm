@@ -24,14 +24,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "inventory" "inventory-migration" (empty .migration) | quote }}
-
-    {{- if .dot.Values.global.enterprise }}
-    image: {{ .dot.Values.inventory.image.registry | default "registry.mender.io" }}/{{ .dot.Values.inventory.image.repository | default "mendersoftware/inventory-enterprise" }}:{{ .dot.Values.inventory.image.tag | default .dot.Values.global.image.tag }}
-    {{- else }}
-    image: {{ .dot.Values.inventory.image.registry | default "docker.io" }}/{{ .dot.Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .dot.Values.inventory.image.tag | default .dot.Values.global.image.tag }}
-    {{- end }}
-
-    imagePullPolicy: {{ .dot.Values.inventory.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.inventory.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.inventory.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -114,7 +108,7 @@ spec:
     {{- end }}
     {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

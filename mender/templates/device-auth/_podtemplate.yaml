@@ -25,13 +25,8 @@ spec:
   containers:
   - name: {{ ternary "device-auth" "device-auth-migration" (empty .migration) | quote }}
 
-    {{- if .dot.Values.global.enterprise }}
-    image: {{ .dot.Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .dot.Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .dot.Values.device_auth.image.tag | default .dot.Values.global.image.tag }}
-    {{- else }}
-    image: {{ .dot.Values.device_auth.image.registry | default "docker.io" }}/{{ .dot.Values.device_auth.image.repository | default "mendersoftware/deviceauth" }}:{{ .dot.Values.device_auth.image.tag | default .dot.Values.global.image.tag }}
-    {{- end }}
-
-    imagePullPolicy: {{ .dot.Values.device_auth.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.device_auth.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.device_auth.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -162,16 +157,14 @@ spec:
   volumes:
   - name: rsa
     secret:
-      {{- with .dot.Values.device_auth.certs }}
-      {{- if .existingSecret }}
+      {{- if and .dot.Values.device_auth.certs .dot.Values.device_auth.certs.existingSecret }}
       secretName: {{ .existingSecret }}
       {{- else }}
       secretName: rsa-device-auth
       {{- end }}
-      {{- end }}
   {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

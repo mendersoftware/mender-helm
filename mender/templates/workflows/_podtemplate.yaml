@@ -23,12 +23,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "workflows" "workflows-migration" (empty .migration) | quote }}
-    {{- if .dot.Values.global.enterprise }}
-    image: {{ .dot.Values.workflows.image.registry | default "registry.mender.io" }}/{{ .dot.Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}{{ ternary "" "-worker" (empty .worker) }}:{{ .dot.Values.workflows.image.tag | default .dot.Values.global.image.tag }}
-    {{- else }}
-    image: {{ .dot.Values.workflows.image.registry | default "docker.io" }}/{{ .dot.Values.workflows.image.repository | default "mendersoftware/workflows" }}{{ ternary "" "-worker" (empty .worker) }}:{{ .dot.Values.workflows.image.tag | default .dot.Values.global.image.tag }}
-    {{- end }}
-    imagePullPolicy: {{ .dot.Values.workflows.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.workflows.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.workflows.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -126,7 +122,7 @@ spec:
     volumeMounts: {{ toYaml .volumeMounts | nindent 6 }}
     {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

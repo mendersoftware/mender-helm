@@ -23,8 +23,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "tenantadm" "tenantadm-migration" (empty .migration) | quote }}
-    image: {{ .dot.Values.tenantadm.image.registry }}/{{ .dot.Values.tenantadm.image.repository }}:{{ .dot.Values.tenantadm.image.tag | default .dot.Values.global.image.tag }}
-    imagePullPolicy: {{ .dot.Values.tenantadm.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.tenantadm.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.tenantadm.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -115,7 +115,7 @@ spec:
       {{- end }}
   {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}
