@@ -193,7 +193,8 @@ nats:
     replicas: 3
   fullnameOverride: ""
   nats:
-    image: "nats:2.9.20-scratch"
+    image:
+      tag: "2.9.20-scratch"
     jetstream:
       enabled: true
       memStorage:
