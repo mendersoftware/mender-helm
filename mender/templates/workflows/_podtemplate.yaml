@@ -33,22 +33,22 @@ spec:
     resources: {{- nindent 6 . }}
     {{- end }}
 
-    {{- if (not .migration) }}
-    {{- if and .dot.Values.workflows.automigrate (not .worker) }}
-    args: ["server", "--automigrate"]
-    {{- else if and (not .dot.Values.workflows.automigrate) (not .worker) }}
-    args: ["server"]
-    {{- else if and .dot.Values.workflows.automigrate .worker }}
-    args: ["worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
-    {{- else if and (not .dot.Values.workflows.automigrate) .worker }}
-    args: ["worker", "--excluded-workflows", "generate_artifact"]
-    {{- else }}
-    {{- fail "Missing args. This condition is not expected" }}
-    {{- end }}
-    {{- else }}
-    args: ["migrate", "--skip-nats"]
-    {{- end }}
-
+    args:
+      {{- if .migration}}
+      - migrate
+      - --skip-nats
+      {{- else }}
+      {{- if  .worker }}
+      - worker
+      - --excluded-workflows
+      - generate_artifact
+      {{- else }}
+      - server
+      {{- end }}
+      {{- if .dot.Values.workflows.automigrate }}
+      - --automigrate
+      {{- end }}
+      {{- end }}
 
     {{- if and (not .migration) (not .worker) }}
     # Readiness/liveness probes
