@@ -19,6 +19,8 @@
     - registry.mender.io/mendersoftware/workflows-enterprise-worker -> registry.mender.io/mender-server-enterprise/workflows
 * **DEPRECATION** `global.image` value is now deprecated and scheduled for removal
   * The new `default.image` is used as default image for all Mender components
+  * `global.image.username` and `global.image.password` is deprecated and scheduled for removal
+    * Superseded by `default.imagePullSecrets`
 * All default values for service level `image` values have been unset
   * The image is resolved from `default.image`
 * `tenantadm.certs.key` is no longer required.
