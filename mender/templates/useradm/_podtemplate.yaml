@@ -89,6 +89,8 @@ spec:
       value: {{ .dot.Values.useradm.env.USERADM_JWT_EXP_TIMEOUT | quote }}
     - name: USERADM_BASE_URL
       value: {{ .dot.Values.global.url | quote }}
+    - name: USERADM_SERVER_PRIV_KEY_PATH
+      value: /etc/useradm/rsa/private.pem
     {{- if and (.dot.Values.global.enterprise) (.dot.Values.tenantadm.enabled) }}
     - name: USERADM_HAVE_ADDONS
       value: "true"
@@ -102,6 +104,8 @@ spec:
       value: "true"
     {{- end }}
     {{- if and .dot.Values.global.enterprise }}
+    - name: USERADM_PLAN_DEFINITIONS_PATH
+      value: /etc/useradm/plans.yaml
     {{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) }}
     - name: USERADM_REDIS_ADDR
       value: {{ include "redis_address" . }}

@@ -75,17 +75,15 @@ spec:
     {{- if (not .migration) }}
     volumeMounts:
     - name: rsa
-      {{- if .dot.Values.global.enterprise }}
-      mountPath: "/etc/deviceauth-enterprise/rsa/"
-      {{- else }}
       mountPath: "/etc/deviceauth/rsa/"
-      {{- end }}
       readOnly: true
     {{- end }}
 
     env:
     - name: DEVICEAUTH_INVENTORY_ADDR
       value: {{ .dot.Values.device_auth.env.DEVICEAUTH_INVENTORY_ADDR | quote }}
+    - name: DEVICEAUTH_SERVER_PRIV_KEY_PATH
+      value: /etc/deviceauth/rsa/private.pem
     - name: DEVICEAUTH_ORCHESTRATOR_ADDR
       value: {{ .dot.Values.device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR | quote }}
     - name: DEVICEAUTH_JWT_ISSUER
