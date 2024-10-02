@@ -33,6 +33,7 @@
   * `redis.username`, `redis.password`, `redis.addr`
   * These have all been replaced by the redis connection string format:
   * `redis://<username>:<password>@addr[/<db>]`
+* Requires helm >= 3.10.0
 
 ## Version 5.10.1
 * Fix invalid regexp in default storage proxy rule.
