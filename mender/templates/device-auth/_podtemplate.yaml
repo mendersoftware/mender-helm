@@ -104,29 +104,14 @@ spec:
       value: "true"
     {{- end }}
     {{- if and .dot.Values.global.enterprise }}
-    {{- if and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) }}
-    # redis_address deprecated from 3.7
-    - name: DEVICEAUTH_REDIS_ADDR
-      value: {{ include "redis_address" . }}
-    - name: DEVICEAUTH_REDIS_USERNAME
-      value: {{ .dot.Values.global.redis.username | default "" | quote }}
-    - name: DEVICEAUTH_REDIS_PASSWORD
-      value: {{ .dot.Values.global.redis.password | default "" | quote }}
-    - name: DEVICEAUTH_REDIS_DB
-      value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_DB | default "1" | quote }}
-    - name: DEVICEAUTH_REDIS_TIMEOUT_SEC
-      value: {{ .dot.Values.useradm.env.DEVICEAUTH_REDIS_TIMEOUT_SEC | default "1" | quote }}
-    {{- else }}
     {{- if not .dot.Values.global.redis.existingSecret }}
-    # redis_address deprecated from 3.7
     - name: DEVICEAUTH_REDIS_CONNECTION_STRING
       value: {{ include "redis_connection_string" . }}
-    {{- end }}
     - name: DEVICEAUTH_REDIS_KEY_PREFIX
       value: {{ .dot.Values.device_auth.env.DEVICEAUTH_REDIS_KEY_PREFIX | default "deviceauth:v1" | quote }}
-    {{- end }}
     - name: DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC
       value: {{ .dot.Values.device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC | default "3600" | quote }}
+    {{- end }}
     {{- end }}
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.device_auth) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
@@ -137,13 +122,11 @@ spec:
       secretRef:
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
 
-    {{- if not (and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) ) }}
     {{- if and .dot.Values.global.redis.existingSecret .dot.Values.global.enterprise ( not .dot.Values.global.redis.URL ) ( not .dot.Values.redis.enabled ) }}
     # Redis existingSecret
     - prefix: DEVICEAUTH_
       secretRef:
         name: {{ .dot.Values.global.redis.existingSecret | quote }}
-    {{- end }}
     {{- end }}
 
 

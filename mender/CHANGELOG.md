@@ -29,6 +29,10 @@
 * Changed gui httpPort default from privileged 80 to unpriviliged 8090
 * Changed default `api_gateway.env.SSL` to `false`
 * Changed default `global.enterprise` to `false`
+* Removed deprecated redis configurations
+  * `redis.username`, `redis.password`, `redis.addr`
+  * These have all been replaced by the redis connection string format:
+  * `redis://<username>:<password>@addr[/<db>]`
 
 ## Version 5.10.1
 * Fix invalid regexp in default storage proxy rule.

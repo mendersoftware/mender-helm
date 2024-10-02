@@ -325,46 +325,6 @@ imagePullPolicy: {{ include "mender.imagePullPolicy" (dict
 {{- end }}
 
 {{/*
-Define Mender major and minor version
-to be able to apply some conditional logic
-*/}}
-{{- define "menderVersionMajor" }}
-{{- $dot := (ternary . .dot (empty .dot)) -}}
-{{- $mndr_version := split "." $dot.Chart.AppVersion }}
-{{- with $dot.Values.global.image }}
-  {{- if contains "-" .tag }}
-    {{- $mndr_splitted := split "-" .tag -}}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." $mndr_splitted._1 }}
-    {{- end }}
-  {{- else }}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." .tag }}
-    {{- end }}
-  {{- end }}
-{{- end }}
-{{- printf "%s" $mndr_version._0 }}
-{{- end }}
-
-{{- define "menderVersionMinor" }}
-{{- $dot := (ternary . .dot (empty .dot)) -}}
-{{- $mndr_version := split "." $dot.Chart.AppVersion }}
-{{- with $dot.Values.global.image }}
-  {{- if contains "-" .tag }}
-    {{- $mndr_splitted := split "-" .tag -}}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." $mndr_splitted._1 }}
-    {{- end }}
-  {{- else }}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." .tag }}
-    {{- end }}
-  {{- end }}
-{{- end }}
-{{- printf "%s" $mndr_version._1 }}
-{{- end }}
-
-{{/*
 Create the name of the service account
 */}}
 {{- define "mender.serviceAccountName" -}}
