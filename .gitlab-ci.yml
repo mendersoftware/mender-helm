@@ -42,14 +42,14 @@ stages:
   - version-bump
 
 include:
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-commits-signoffs.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-license.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-github-status-updates.yml'
-  - project: 'Northern.tech/Mender/mendertesting'
-    file: '.gitlab-ci-check-helm-version-bump.yml'
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-commits-signoffs.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-license.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-github-status-updates.yml"
+  - project: "Northern.tech/Mender/mendertesting"
+    file: ".gitlab-ci-check-helm-version-bump.yml"
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
   - export AWS_DEFAULT_REGION=eu-central-1
@@ -125,7 +125,7 @@ build:
   before_script:
     - apt-get update -y
     - apt-get install -y curl make
-    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
+    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.10.2" bash
   script:
     - make lint
     - make package
@@ -134,8 +134,7 @@ build:
     paths:
       - mender-*.tgz
 
-.get_kubectl_and_tools: &get_kubectl_and_tools
-  # Install kubectl
+.get_kubectl_and_tools: &get_kubectl_and_tools # Install kubectl
   - apt update && apt install -yyq curl
   - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
   - chmod +x ./kubectl
@@ -148,8 +147,8 @@ build:
   # Install kubectx
   - apt install -yyq kubectx
 
-.setup_eks_cluster_staging: &setup_eks_cluster_staging
-  # Configure AWS CLI for staging cluster
+.setup_eks_cluster_staging:
+  &setup_eks_cluster_staging # Configure AWS CLI for staging cluster
   - *set_eks_helmci_vars
   - aws eks --region $CI_JOBS_AWS_REGION_STAGING update-kubeconfig --name $CI_JOBS_AWS_EKS_CLUSTER_NAME_STAGING
   - kubectl config set-context --current --namespace=mender-helm-tests
@@ -725,7 +724,7 @@ publish:helm_chart_publishing:
   tags:
     - hetzner-amd-beefy
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_TAG"
       changes:
         - mender/Chart.yaml
   stage: publish
