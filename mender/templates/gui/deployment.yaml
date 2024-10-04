@@ -11,7 +11,9 @@ metadata:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
     app.kubernetes.io/component: gui
 spec:
+  {{- if not (or .Values.gui.hpa .Values.default.hpa ) }}
   replicas: {{ .Values.gui.replicas }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
