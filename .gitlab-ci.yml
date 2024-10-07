@@ -858,13 +858,15 @@ changelog:
         --target-branch=${CI_COMMIT_REF_NAME}
     # git cliff: override the changelog
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
-    - git clone https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
-    - cd ${GITHUB_REPO_URL#*/}
+    - git remote add github https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
+    - gh repo set-default https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
     - echo "INFO - generating changelog notes from git cliff"
         && gh pr checkout $RELEASE_PLEASE_PR
-        && git cliff --unreleased --output mender/CHANGELOG.md --bump --github-repo ${GITHUB_REPO_URL}
+        && git cliff --unreleased --bump --prepend mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
+        && sed -i 's/# Mender Helm chart//' mender/CHANGELOG.md
+        && sed -i 's/---/# Mender Helm chart\n/' mender/CHANGELOG.md
         && git add mender/CHANGELOG.md
         && git commit --amend -s --no-edit
         && git push origin --force
