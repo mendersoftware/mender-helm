@@ -849,8 +849,6 @@ changelog:
     - npm install -g git-cliff
     # GITHUB_TOKEN for Github cli authentication
     - export GITHUB_TOKEN=${GITHUB_CLI_TOKEN}
-    # getting the centralized git cliff config
-    - wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
   script:
     - release-please release-pr
         --token=${GITHUB_BOT_TOKEN_REPO_FULL}
@@ -864,12 +862,11 @@ changelog:
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
     - echo "INFO - generating changelog notes from git cliff"
         && gh pr checkout $RELEASE_PLEASE_PR
-        && git cliff --unreleased --bump --prepend mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
-        && sed -i 's/# Mender Helm chart//' mender/CHANGELOG.md
-        && sed -i 's/---/# Mender Helm chart\n/' mender/CHANGELOG.md
+        && wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
+        && git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
         && git add mender/CHANGELOG.md
         && git commit --amend -s --no-edit
-        && git push origin --force
+        && git push github --force
     # note: using sed to prevent release-please to mess up with the Github Release body
     - echo "INFO - updating PR body"
         && git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL}
