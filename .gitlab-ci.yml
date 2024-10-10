@@ -862,6 +862,8 @@ changelog:
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
     - echo "INFO - generating changelog notes from git cliff"
         && gh pr checkout $RELEASE_PLEASE_PR
+        && git fetch github-${TS_SUFFIX} pull/${RELEASE_PLEASE_PR}/head
+        && git reset --hard FETCH_HEAD
         && wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
         && git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
         && git add mender/CHANGELOG.md
