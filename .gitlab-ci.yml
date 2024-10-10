@@ -849,6 +849,7 @@ changelog:
     - npm install -g git-cliff
     # GITHUB_TOKEN for Github cli authentication
     - export GITHUB_TOKEN=${GITHUB_CLI_TOKEN}
+    - export TS_SUFFIX=$(date +%s)
   script:
     - release-please release-pr
         --token=${GITHUB_BOT_TOKEN_REPO_FULL}
@@ -856,7 +857,7 @@ changelog:
         --target-branch=${CI_COMMIT_REF_NAME}
     # git cliff: override the changelog
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
-    - git remote add github https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
+    - git remote add github-${TS_SUFFIX} https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - gh repo set-default https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
@@ -866,7 +867,7 @@ changelog:
         && git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
         && git add mender/CHANGELOG.md
         && git commit --amend -s --no-edit
-        && git push github --force
+        && git push github-${TS_SUFFIX} --force
     # note: using sed to prevent release-please to mess up with the Github Release body
     - echo "INFO - updating PR body"
         && git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL}
