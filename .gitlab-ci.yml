@@ -856,25 +856,27 @@ changelog:
         --target-branch=${CI_COMMIT_REF_NAME}
     # git cliff: override the changelog
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
-    - git remote add github https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true  # Ignore already existing remote
+    - git remote add github-${CI_JOB_ID} https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true  # Ignore already existing remote
     - gh repo set-default https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
     - echo "INFO - generating changelog notes from git cliff"
         && gh pr checkout $RELEASE_PLEASE_PR
-        && git fetch github pull/${RELEASE_PLEASE_PR}/head
-        && git reset --hard FETCH_HEAD
-        && wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
+    - git fetch github-${CI_JOB_ID} pull/${RELEASE_PLEASE_PR}/head
+    - git reset --hard FETCH_HEAD
+    - wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
         && git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
         && git add mender/CHANGELOG.md
         && git commit --amend -s --no-edit
-        && git push github --force
+        && git push github-${CI_JOB_ID} --force
     # note: using sed to prevent release-please to mess up with the Github Release body
     - echo "INFO - updating PR body"
         && git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL}
         && sed -i 's/## mender-\([0-9.]*\)/## \1/' tmp_pr_body.md
         && gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md
         && rm tmp_pr_body.md
+  after_script:
+    - git remote remove github-${CI_JOB_ID}
 
 release:github:
   image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/node:20
