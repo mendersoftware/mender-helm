@@ -35,6 +35,26 @@
   * `redis://<username>:<password>@addr[/<db>]`
 * Requires helm >= 3.10.0
 
+## 5.11.0 - 2024-10-14
+
+
+### Bug Fixes
+
+
+- Traefik container ports optionals([MEN-7595](https://northerntech.atlassian.net/browse/MEN-7595)) ([12dc357](https://github.com/mendersoftware/mender-helm/commit/12dc357184f39edf878105f4cde2787dbcd1b0b7))  by @oldgiova
+  You can choose to not to set either httpPort or httpsPort in the
+  api_gateway, to prevent upload timeout with the Mender Cli, as reported
+  by customers.
+
+
+### Features
+
+
+- Add gui hpa ([8f6d9f4](https://github.com/mendersoftware/mender-helm/commit/8f6d9f46c0c9db16939a8c851ed4bda21e7ca5f3))  by @oldgiova
+  Added Horizontal Pod Autoscaler resource to the gui container, to scale
+  it automatically when the service experiences more load.
+
+
 ## Version 5.10.1
 * Fix invalid regexp in default storage proxy rule.
 
