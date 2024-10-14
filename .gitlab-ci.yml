@@ -856,9 +856,7 @@ changelog:
     - gh repo set-default https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
-    - gh pr checkout $RELEASE_PLEASE_PR
-    - git fetch github-${CI_JOB_ID} pull/${RELEASE_PLEASE_PR}/head
-    - git reset --hard FETCH_HEAD
+    - gh pr checkout --force $RELEASE_PLEASE_PR
     - wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
     - git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
     - git add mender/CHANGELOG.md
