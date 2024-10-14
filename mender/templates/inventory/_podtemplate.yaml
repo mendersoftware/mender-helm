@@ -84,10 +84,23 @@ spec:
       value: {{ .dot.Values.useradm.env.INVENTORY_REDIS_CACHE_EXPIRE_SEC | default "1800" | quote }}
     {{- end }}
     {{- end }}
+    - name: INVENTORY_NATS_URI
+    {{- if .dot.Values.global.nats.existingSecret }}
+      valueFrom:
+        secretKeyRef:
+          key: NATS_URI
+          name: {{ .dot.Values.global.nats.existingSecret }}
+    {{- else }}
+      value: {{ template "nats_uri" . }}
+    {{- end }}
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.inventory) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
-    # Supported configuration settings: https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
-    # Set in order, last value for the key will be used in case duplications.
+    {{- /*
+    Supported configuration settings:
+      https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
+    Set in order, last value for the key will be used in case duplications.
+    */}}
+
     envFrom:
     - prefix: INVENTORY_
       secretRef:
