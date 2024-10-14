@@ -1,5 +1,7 @@
 {{- if .Values.deviceconfig.enabled }}
-{{- $context := (dict "dot" . "component" "deviceconfig") -}}
+{{- $context := dict "dot" .
+                     "component" "deviceconfig"
+                     "override" .Values.deviceconfig -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

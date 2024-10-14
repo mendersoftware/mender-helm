@@ -1,5 +1,5 @@
 {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
-{{- $context := (dict "dot" . "component" "auditlogs") -}}
+{{- $context := dict "dot" . "component" "auditlogs" "override" .Values.auditlogs -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

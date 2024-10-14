@@ -1,5 +1,11 @@
 {{- if and (.Values.global.enterprise) (.Values.tenantadm.enabled) (.Values.dbmigration.enable) }}
-{{- $context := (dict "dot" . "component" "tenantadm" "migration" "true"  "args" (default (list "migrate") .Values.tenantadm.migrationArgs ) "restartPolicy" (default "Never" .Values.tenantadm.migrationRestartPolicy) "extraResources" .Values.tenantadm.migrationResources) }}
+{{- $context := dict "dot" .
+                     "component" "tenantadm"
+                     "override" .Values.tenantadm
+                     "migration" "true"
+                     "args" (default (list "migrate") .Values.tenantadm.migrationArgs )
+                     "restartPolicy" (default "Never" .Values.tenantadm.migrationRestartPolicy)
+                     "extraResources" .Values.tenantadm.migrationResources -}}
 apiVersion: batch/v1
 kind: Job
 metadata:

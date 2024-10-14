@@ -1,5 +1,8 @@
 {{- if .Values.device_auth.enabled }}
-{{- $context := (dict "dot" . "component" "device-auth") -}}
+{{- $context := dict "dot" .
+                     "component" "device-auth"
+                     "imageComponent" "deviceauth"
+                     "override" .Values.device_auth -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

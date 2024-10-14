@@ -1,5 +1,5 @@
 {{- if .Values.inventory.enabled }}
-{{- $context := (dict "dot" . "component" "inventory") -}}
+{{- $context := dict "dot" . "component" "inventory" "override" .Values.inventory -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

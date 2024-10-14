@@ -1,5 +1,10 @@
 {{- if and .Values.global.enterprise .Values.dbmigration.enable }}
-{{- $context := (dict "dot" . "component" "devicemonitor" "migration" "true" "restartPolicy" (default "Never" .Values.devicemonitor.migrationRestartPolicy) "extraResources" .Values.devicemonitor.migrationResources) }}
+{{- $context := dict "dot" .
+                     "component" "devicemonitor"
+                     "override" .Values.devicemonitor
+                     "migration" "true"
+                     "restartPolicy" (default "Never" .Values.devicemonitor.migrationRestartPolicy)
+                     "extraResources" .Values.devicemonitor.migrationResources -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
