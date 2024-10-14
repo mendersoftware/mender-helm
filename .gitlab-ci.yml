@@ -834,18 +834,15 @@ changelog:
     # install release-please
     - npm install -g release-please
     # install github-cli
-    - |
-      mkdir -p -m 755 /etc/apt/keyrings \
-        && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-        && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-        && apt update \
-        && apt install gh jq -y
-    # Setting up git
-    - |
-      echo "INFO - setting up git"
-      git config --global user.email "${GITHUB_USER_EMAIL}"
-      git config --global user.name "${GITHUB_USER_NAME}"
+    - mkdir -p -m 755 /etc/apt/keyrings
+    - wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+    - chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    - apt update
+    - apt install gh jq -y
+    # setting up git
+    - git config --global user.email "${GITHUB_USER_EMAIL}"
+    - git config --global user.name "${GITHUB_USER_NAME}"
     - npm install -g git-cliff
     # GITHUB_TOKEN for Github cli authentication
     - export GITHUB_TOKEN=${GITHUB_CLI_TOKEN}
@@ -860,21 +857,20 @@ changelog:
     - gh repo set-default https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
-    - echo "INFO - generating changelog notes from git cliff"
-        && gh pr checkout $RELEASE_PLEASE_PR
+    - gh pr checkout $RELEASE_PLEASE_PR
     - git fetch github-${CI_JOB_ID} pull/${RELEASE_PLEASE_PR}/head
     - git reset --hard FETCH_HEAD
     - wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
-        && git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
-        && git add mender/CHANGELOG.md
-        && git commit --amend -s --no-edit
-        && git push github-${CI_JOB_ID} --force
+    - git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
+    - git add mender/CHANGELOG.md
+    - git commit --amend -s --no-edit
+    - git push github-${CI_JOB_ID} --force
+    # Update the PR body
+    - git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL}
     # note: using sed to prevent release-please to mess up with the Github Release body
-    - echo "INFO - updating PR body"
-        && git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL}
-        && sed -i 's/## mender-\([0-9.]*\)/## \1/' tmp_pr_body.md
-        && gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md
-        && rm tmp_pr_body.md
+    - sed -i 's/## mender-\([0-9.]*\)/## \1/' tmp_pr_body.md
+    - gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md
+    - rm tmp_pr_body.md
   after_script:
     - git remote remove github-${CI_JOB_ID}
 
