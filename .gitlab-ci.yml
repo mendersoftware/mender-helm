@@ -34,10 +34,37 @@ variables:
     options:
       - "true"
       - "false"
+  DEFAULT_BRANCH: "master"
+  GITHUB_REPO_URL:
+    description: "The Github Repo URL for release-please, in the format of 'owner/repo'"
+    value: "mendersoftware/mender-helm"
+  GITHUB_USER:
+    description: "The Github user for release-please"
+    value: "mender-test-bot"
+  GITHUB_USER_NAME:
+    description: "The Github username for release-please"
+    value: "mender-test-bot"
+  GITHUB_USER_EMAIL:
+    description: "The Github user email for release-please"
+    value: "mender@northern.tech"
+  RUN_RELEASE:
+    description: "Run a new release"
+    value: "false"
+    options:
+      - "true"
+      - "false"
+  GIT_CLIFF:
+    description: "Run git cliff to override the release-please changelog"
+    value: "true"
+    options:
+      - "true"
+      - "false"
 
 stages:
   - build
   - test
+  - changelog
+  - release
   - publish
   - version-bump
 
@@ -113,7 +140,7 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: debian:buster
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:buster
   tags:
     - hetzner-amd-beefy
   rules:
@@ -734,7 +761,7 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: debian:buster
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:buster
   before_script:
     - apt-get update -y
     - apt-get install -y curl make git
@@ -790,3 +817,74 @@ cleanup_eks_cluster:success:
 cleanup_eks_cluster:failed:manual:
   when: manual
   <<: *eks_cleanup
+
+changelog:
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/node:20
+  stage: changelog
+  tags:
+    - hetzner-amd-beefy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+    - if: $RUN_RELEASE == "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/"
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
+  before_script:
+    # install release-please
+    - npm install -g release-please
+    # install github-cli
+    - mkdir -p -m 755 /etc/apt/keyrings
+    - wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+    - chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    - apt update
+    - apt install gh jq -y
+    # setting up git
+    - git config --global user.email "${GITHUB_USER_EMAIL}"
+    - git config --global user.name "${GITHUB_USER_NAME}"
+    - npm install -g git-cliff
+    # GITHUB_TOKEN for Github cli authentication
+    - export GITHUB_TOKEN=${GITHUB_CLI_TOKEN}
+  script:
+    - release-please release-pr
+        --token=${GITHUB_BOT_TOKEN_REPO_FULL}
+        --repo-url=${GITHUB_REPO_URL}
+        --target-branch=${CI_COMMIT_REF_NAME}
+    # git cliff: override the changelog
+    - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
+    - git remote add github-${CI_JOB_ID} https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true  # Ignore already existing remote
+    - gh repo set-default https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
+    - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
+    - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
+    - gh pr checkout --force $RELEASE_PLEASE_PR
+    - wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
+    - git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
+    - git add mender/CHANGELOG.md
+    - git commit --amend -s --no-edit
+    - git push github-${CI_JOB_ID} --force
+    # Update the PR body
+    - git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL}
+    # note: using sed to prevent release-please to mess up with the Github Release body
+    - sed -i 's/## mender-\([0-9.]*\)/## \1/' tmp_pr_body.md
+    - gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md
+    - rm tmp_pr_body.md
+  after_script:
+    - git remote remove github-${CI_JOB_ID}
+
+release:github:
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/node:20
+  stage: release
+  tags:
+    - hetzner-amd-beefy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+    - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/" && $RUN_RELEASE == "true"
+    - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH && $RUN_RELEASE == "true"
+  script:
+    - npm install -g release-please
+    - release-please github-release
+        --token=${GITHUB_BOT_TOKEN_REPO_FULL}
+        --repo-url=${GITHUB_REPO_URL}
+        --target-branch=${CI_COMMIT_REF_NAME}
