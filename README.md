@@ -515,6 +515,12 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `gui.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `gui.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `gui.hpa` | HorizontalPodAutoscaler support | `nil` |
+| `gui.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
+| `gui.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
+| `gui.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
+| `gui.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
+| `gui.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
 
 ### Parameters: inventory
 
