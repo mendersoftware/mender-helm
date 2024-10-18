@@ -7,7 +7,7 @@ global:
   priorityClassName: ""
   mongodb:
     existingSecret: ""
-    URL: mongodb://mongodb
+    URL: ""
   nats:
     existingSecret: ""
     URL: nats://nats:4222
@@ -147,7 +147,7 @@ tests:
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
-  enabled: false
+  enabled: true
   architecture: replicaset
   externalAccess:
     enabled: false
