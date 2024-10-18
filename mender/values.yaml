@@ -1325,7 +1325,7 @@ devicemonitor:
 # Using a bitnami sub-chart by default = test usage only
 # It's recommended to use a suitable Redis Cluster for Production
 redis:
-  enabled: true
+  enabled: false
   architecture: replication
   commonAnnotations:
     helm.sh/hook: "pre-install"
