@@ -17,7 +17,7 @@ global:
   storage: "aws"
   s3:
     existingSecret: ""
-    AWS_URI: ""
+    AWS_URI: "https://mender.example.com"
     AWS_EXTERNAL_URI: ""
     AWS_BUCKET: mender-artifact-storage
     AWS_REGION: us-east-1
@@ -133,13 +133,13 @@ ingress:
   #     serviceName: ssl-redirect
   #     servicePort: use-annotation
   hosts:
-    - mender.example.org
+    - mender.example.com
   tls:
     # this secret must exists or can be created from a working cert-manager
     # instance
     - secretName: mender-ingress-tls
       hosts:
-        - mender.example.org
+        - mender.example.com
 
 # Helm chart smoke tests
 tests:
@@ -239,14 +239,14 @@ api_gateway:
   env:
     SSL: false
   minio:
-    enabled: true
+    enabled: false
     podAnnotations: {}
     url: "http://minio:9000"
     customRule: null
   storage_proxy:
-    enabled: false
-    url: ""
-    customRule: "HostRegexp(`{domain:^artifacts.*$}`)"
+    enabled: true
+    url: "http://seaweedfs-s3:8333"
+    customRule: "PathRegexp(`^/mender-artifact-storage`)"
     passHostHeader: false
   compression: true
   security_redirect: null
@@ -364,7 +364,9 @@ deployments:
   #     memory: 64Mi
 
   # custom envs
-  customEnvs: []
+  customEnvs:
+    - name: DEPLOYMENTS_STORAGE_PROXY_URI
+      value: "mender.example.com"
   # - name: LOG_LEVEL
   #   value: DEBUG
 
