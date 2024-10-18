@@ -10,7 +10,7 @@ global:
     URL: ""
   nats:
     existingSecret: ""
-    URL: nats://nats:4222
+    URL: ""
   redis:
     URL: ""
     existingSecret: ""
@@ -189,7 +189,7 @@ mongodb:
 # Using default values from
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
-  enabled: false
+  enabled: true
   cluster:
     enabled: true
     replicas: 3
