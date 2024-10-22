@@ -828,6 +828,8 @@ changelog:
       when: never
     - if: $RUN_RELEASE == "true"
       when: never
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
     - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/"
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH
   before_script:
@@ -879,6 +881,8 @@ release:github:
     - hetzner-amd-beefy
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+    - if: '$RUN_PLAYGROUND == "true"'
       when: never
     - if: $CI_COMMIT_BRANCH =~ "/^\d+\.\d+\.x$/" && $RUN_RELEASE == "true"
     - if: $CI_COMMIT_BRANCH == $DEFAULT_BRANCH && $RUN_RELEASE == "true"
