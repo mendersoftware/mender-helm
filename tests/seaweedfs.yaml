@@ -1,0 +1,13 @@
+---
+global:
+  createClusterRole: false
+filer:
+  s3:
+    enabled: true
+    enableAuth: true
+    createBuckets:
+      - name: "mender-artifacts-seaweedfs"
+  storageClass: "gp2"
+s3:
+  enabled: true
+  enableAuth: true

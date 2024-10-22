@@ -1,14 +1,7 @@
 global:
-  enterprise: false
-  mongodb:
-    URL: ""
-  nats:
-    URL: ""
-  redis:
-    URL: ""
   s3:
-    AWS_URI: http://mender-minio:9000
-    AWS_REGION: eu-central-1
+    AWS_URI: http://seaweedfs-s3:8333
+    AWS_REGION: us-east-1
 
 ingress:
   enabled: true
@@ -61,7 +54,6 @@ nats:
   cluster:
     enabled: false
   nats:
-    image: "nats:2.7.4-scratch"
     jetstream:
       enabled: true
       memStorage:
@@ -72,25 +64,4 @@ nats:
   podAnnotations: {}
   statefulSetAnnotations: {}
   serviceAnnotations: {}
- 
-# Redis as a subchart
-# Using a standalone bitnami helm chart by default = test usage only
-# It's recommended to use a suitable Redis Cluster for Production
-redis:
-  enabled: true
-  architecture: replication
-  commonAnnotations:
-    helm.sh/hook: "pre-install"
-    helm.sh/hook-weight: "-50"
-  auth:
-    enabled: false
-  master:
-    persistence:
-      enabled: false
-  replica:
-    persistence:
-      enabled: false
 
-api_gateway:
-  env:
-    SSL: false
