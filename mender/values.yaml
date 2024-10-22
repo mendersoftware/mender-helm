@@ -7,17 +7,17 @@ global:
   priorityClassName: ""
   mongodb:
     existingSecret: ""
-    URL: mongodb://mongodb
+    URL: ""
   nats:
     existingSecret: ""
-    URL: nats://nats:4222
+    URL: ""
   redis:
     URL: ""
     existingSecret: ""
   storage: "aws"
   s3:
     existingSecret: ""
-    AWS_URI: ""
+    AWS_URI: "https://mender.example.com"
     AWS_EXTERNAL_URI: ""
     AWS_BUCKET: mender-artifact-storage
     AWS_REGION: us-east-1
@@ -133,13 +133,13 @@ ingress:
   #     serviceName: ssl-redirect
   #     servicePort: use-annotation
   hosts:
-    - mender.example.org
+    - mender.example.com
   tls:
     # this secret must exists or can be created from a working cert-manager
     # instance
     - secretName: mender-ingress-tls
       hosts:
-        - mender.example.org
+        - mender.example.com
 
 # Helm chart smoke tests
 tests:
@@ -147,7 +147,7 @@ tests:
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
-  enabled: false
+  enabled: true
   architecture: replicaset
   externalAccess:
     enabled: false
@@ -189,7 +189,7 @@ mongodb:
 # Using default values from
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
-  enabled: false
+  enabled: true
   cluster:
     enabled: true
     replicas: 3
@@ -239,14 +239,14 @@ api_gateway:
   env:
     SSL: false
   minio:
-    enabled: true
+    enabled: false
     podAnnotations: {}
     url: "http://minio:9000"
     customRule: null
   storage_proxy:
-    enabled: false
-    url: ""
-    customRule: "HostRegexp(`{domain:^artifacts.*$}`)"
+    enabled: true
+    url: "http://seaweedfs-s3:8333"
+    customRule: "PathRegexp(`^/mender-artifact-storage`)"
     passHostHeader: false
   compression: true
   security_redirect: null
@@ -364,7 +364,9 @@ deployments:
   #     memory: 64Mi
 
   # custom envs
-  customEnvs: []
+  customEnvs:
+    - name: DEPLOYMENTS_STORAGE_PROXY_URI
+      value: "mender.example.com"
   # - name: LOG_LEVEL
   #   value: DEBUG
 
@@ -574,6 +576,9 @@ gui:
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
+
+  # Horizontal Pod Autoscaling
+  hpa: {}
 
 inventory:
   enabled: true
@@ -1322,7 +1327,7 @@ devicemonitor:
 # Using a bitnami sub-chart by default = test usage only
 # It's recommended to use a suitable Redis Cluster for Production
 redis:
-  enabled: true
+  enabled: false
   architecture: replication
   commonAnnotations:
     helm.sh/hook: "pre-install"

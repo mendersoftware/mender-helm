@@ -1,0 +1,5 @@
+{{- if .Values.gui.enabled }}
+{{- $servicename := "gui" }}
+{{- $context := (dict "default" .Values.default "override" .Values.gui "name" (printf "%s-%s" (include "mender.fullname" . ) $servicename ) ) -}}
+{{- include "mender.autoscaler" $context }}
+{{- end }}
