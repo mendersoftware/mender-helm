@@ -16,7 +16,6 @@ variables:
   GITHUB_HELM_REPO: "github.com/mendersoftware/mender-helm.git"
   SYNC_ENVIRONMENT: "${SYNC_ENVIRONMENT:-staging}"
   CHART_DIR: "mender"
-  GITHUB_USER: "mender-test-bot"
   GITHUB_TOKEN: "${GITHUB_BOT_TOKEN_REPO_FULL}"
   MAIN_BRANCH: "master"
   RUN_PLAYGROUND:
@@ -38,9 +37,6 @@ variables:
   GITHUB_REPO_URL:
     description: "The Github Repo URL for release-please, in the format of 'owner/repo'"
     value: "mendersoftware/mender-helm"
-  GITHUB_USER:
-    description: "The Github user for release-please"
-    value: "mender-test-bot"
   GITHUB_USER_NAME:
     description: "The Github username for release-please"
     value: "mender-test-bot"
@@ -821,6 +817,9 @@ cleanup_eks_cluster:failed:manual:
 changelog:
   image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/node:20
   stage: changelog
+  variables:
+    GIT_DEPTH: 0  # Always get the full history
+    GIT_STRATEGY: clone  # Always get the full history
   tags:
     - hetzner-amd-beefy
   rules:
@@ -855,8 +854,8 @@ changelog:
         --target-branch=${CI_COMMIT_REF_NAME}
     # git cliff: override the changelog
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
-    - git remote add github-${CI_JOB_ID} https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true  # Ignore already existing remote
-    - gh repo set-default https://${GITHUB_USER}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
+    - git remote add github-${CI_JOB_ID} https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true  # Ignore already existing remote
+    - gh repo set-default https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
     - gh pr checkout --force $RELEASE_PLEASE_PR
