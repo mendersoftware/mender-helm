@@ -1,5 +1,10 @@
 {{- if and .Values.global.enterprise .Values.dbmigration.enable }}
-{{- $context := (dict "dot" . "component" "useradm" "migration" "true" "restartPolicy" (default "Never" .Values.useradm.migrationRestartPolicy) "extraResources" .Values.useradm.migrationResources) }}
+{{- $context := dict "dot" .
+                     "component" "useradm"
+                     "override" .Values.useradm
+                     "migration" "true"
+                     "restartPolicy" (default "Never" .Values.useradm.migrationRestartPolicy)
+                     "extraResources" .Values.useradm.migrationResources }}
 apiVersion: batch/v1
 kind: Job
 metadata:

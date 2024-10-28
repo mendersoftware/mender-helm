@@ -1,4 +1,5 @@
 {{- if .Values.gui.enabled }}
+{{- $context := dict "dot" . "override" .Values.gui "component" "gui"}}
 {{- $merged := merge (deepCopy .Values.gui) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -52,8 +53,8 @@ spec:
 
       containers:
       - name: gui
-        image: {{ .Values.gui.image.registry }}/{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.gui.image.imagePullPolicy }}
+        image: {{ include "mender.image" $context }}
+        imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
 {{- if .Values.gui.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.gui.containerSecurityContext "enabled" | toYaml | nindent 10 }}
 {{- end }}
@@ -90,9 +91,9 @@ spec:
         - name: HAVE_MULTITENANT
           value: {{ .Values.global.enterprise | quote }}
         - name: MENDER_VERSION
-          value: {{ trimPrefix "mender-" .Values.global.image.tag | quote }}
+          value: {{ trimPrefix "v" .Chart.AppVersion | quote }}
         - name: INTEGRATION_VERSION
-          value: {{ trimPrefix "mender-" .Values.global.image.tag | quote }}
+          value: {{ trimPrefix "v" .Chart.AppVersion | quote }}
         {{- end }}
         {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: HAVE_AUDITLOGS
@@ -112,7 +113,7 @@ spec:
         {{- end }}
         {{- include "mender.customEnvs" (merge (deepCopy .Values.gui) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
 
-{{- if .Values.global.image.username }}
+{{- if and .Values.global.image .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- else }}

@@ -23,12 +23,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "workflows" "workflows-migration" (empty .migration) | quote }}
-    {{- if .dot.Values.global.enterprise }}
-    image: {{ .dot.Values.workflows.image.registry | default "registry.mender.io" }}/{{ .dot.Values.workflows.image.repository | default "mendersoftware/workflows-enterprise" }}{{ ternary "" "-worker" (empty .worker) }}:{{ .dot.Values.workflows.image.tag | default .dot.Values.global.image.tag }}
-    {{- else }}
-    image: {{ .dot.Values.workflows.image.registry | default "docker.io" }}/{{ .dot.Values.workflows.image.repository | default "mendersoftware/workflows" }}{{ ternary "" "-worker" (empty .worker) }}:{{ .dot.Values.workflows.image.tag | default .dot.Values.global.image.tag }}
-    {{- end }}
-    imagePullPolicy: {{ .dot.Values.workflows.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.workflows.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.workflows.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -37,22 +33,22 @@ spec:
     resources: {{- nindent 6 . }}
     {{- end }}
 
-    {{- if (not .migration) }}
-    {{- if and .dot.Values.workflows.automigrate (not .worker) }}
-    args: ["server", "--automigrate"]
-    {{- else if and (not .dot.Values.workflows.automigrate) (not .worker) }}
-    args: ["server"]
-    {{- else if and .dot.Values.workflows.automigrate .worker }}
-    args: ["worker", "--excluded-workflows", "generate_artifact", "--automigrate"]
-    {{- else if and (not .dot.Values.workflows.automigrate) .worker }}
-    args: ["worker", "--excluded-workflows", "generate_artifact"]
-    {{- else }}
-    {{- fail "Missing args. This condition is not expected" }}
-    {{- end }}
-    {{- else }}
-    args: ["migrate", "--skip-nats"]
-    {{- end }}
-
+    args:
+      {{- if .migration}}
+      - migrate
+      - --skip-nats
+      {{- else }}
+      {{- if  .worker }}
+      - worker
+      - --excluded-workflows
+      - generate_artifact
+      {{- else }}
+      - server
+      {{- end }}
+      {{- if .dot.Values.workflows.automigrate }}
+      - --automigrate
+      {{- end }}
+      {{- end }}
 
     {{- if and (not .migration) (not .worker) }}
     # Readiness/liveness probes
@@ -126,7 +122,7 @@ spec:
     volumeMounts: {{ toYaml .volumeMounts | nindent 6 }}
     {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

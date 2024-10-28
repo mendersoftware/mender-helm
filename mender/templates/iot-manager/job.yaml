@@ -1,5 +1,10 @@
 {{- if and .Values.iot_manager.enabled .Values.dbmigration.enable }}
-{{- $context := (dict "dot" . "component" "iot-manager" "migration" "true" "restartPolicy" (default "Never" .Values.iot_manager.migrationRestartPolicy) "extraResources" .Values.iot_manager.migrationResources) }}
+{{- $context := dict "dot" .
+                     "component" "iot-manager"
+                     "override" .Values.iot_manager
+                     "migration" "true"
+                     "restartPolicy" (default "Never" .Values.iot_manager.migrationRestartPolicy)
+                     "extraResources" .Values.iot_manager.migrationResources -}}
 apiVersion: batch/v1
 kind: Job
 metadata:

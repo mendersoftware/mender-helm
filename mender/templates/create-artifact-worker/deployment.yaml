@@ -1,4 +1,7 @@
 {{- if .Values.create_artifact_worker.enabled }}
+{{- $context := dict "dot" .
+    "override" .Values.create_artifact_worker
+    "component" "create-artifact-worker" -}}
 {{- $merged := merge (deepCopy .Values.create_artifact_worker) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -49,8 +52,8 @@ spec:
 
       containers:
       - name: create-artifact-worker
-        image: {{ .Values.create_artifact_worker.image.registry }}/{{ .Values.create_artifact_worker.image.repository }}:{{ .Values.create_artifact_worker.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.create_artifact_worker.image.imagePullPolicy }}
+        image: {{ include "mender.image" $context }}
+        imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
 {{- if .Values.create_artifact_worker.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.create_artifact_worker.containerSecurityContext "enabled" | toYaml | nindent 10 }}
 {{- end }}
@@ -92,7 +95,7 @@ spec:
             name: {{ .Values.global.nats.existingSecret }}
         {{- end }}
 
-{{- if .Values.global.image.username }}
+{{- if and .Values.global.image .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- else }}
