@@ -1,5 +1,10 @@
 {{- if and .Values.device_auth.enabled .Values.dbmigration.enable }}
-{{- $context := (dict "dot" . "component" "deviceauth" "migration" "true" "restartPolicy" (default "Never" .Values.device_auth.migrationRestartPolicy) "extraResources" .Values.device_auth.migrationResources) }}
+{{- $context := dict "dot" .
+                     "component" "deviceauth"
+                     "override" .Values.device_auth
+                     "migration" "true"
+                     "restartPolicy" (default "Never" .Values.device_auth.migrationRestartPolicy)
+                     "extraResources" .Values.device_auth.migrationResources }}
 apiVersion: batch/v1
 kind: Job
 metadata:

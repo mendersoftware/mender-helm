@@ -1,24 +1,11 @@
 global:
-  enterprise: true
   mongodb:
     URL: mongodb://mender-mongo-mongodb
-  nats:
-    URL: "nats://nats:4222"
   s3:
     AWS_URI: http://seaweedfs-s3:8333
-    AWS_REGION: us-east-1
+    AWS_REGION: eu-central-1
 
-default:
-  imagePullSecrets:
-    - name: my-mender-pull-secret
-
-
-mongodb:
-  enabled: false
-nats:
-  enabled: false
 redis:
-  enabled: true
   architecture: standalone
   master:
     persistence:
@@ -26,3 +13,7 @@ redis:
   replica:
     persistence:
       enabled: false
+
+api_gateway:
+  env:
+    SSL: false

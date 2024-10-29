@@ -16,106 +16,127 @@ This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes]
 
 ## Prerequisites
 
-- Kubernetes 1.12+
-- Helm >= 3.7.0
+- Kubernetes 1.26+
+- Helm >= 3.10.0
+- Object storage (AWS S3, Azure Blob Storage, GCS, MinIO, SeaweedFS)
 
-## External services required
 
-This Helm chart does not install the following external services and dependencies which are required to run Mender:
+## Object storage setup
+Supported object storage services are:
+* Amazon S3
+* Azure Blob Storage
+* Google Cloud Storage
+* Cloudflare R2
 
-- MinIO
+You can also use other S3-compatible object storage services like MinIO or
+SeaweedFS, for development and testing purposes only.
 
-### Installing mongodb
+Following some setup sample. Please refer to the official documentation of the
+object storage service you are using for more information.
 
-MongoDB is integrated as a sub-chart deployment: you can enable it with
-the following settings:
+### Amazon S3
 
-```
-mongodb:
-  enabled: true
+Create a new bucket in Amazon S3, then a IAM user and its access key with
+the proper permissions to access the bucket.
 
-# or via the --set argument:
---set="mongodb.enabled=true"
-```
+You can find the required permissions in the
+[Requirements section](https://docs.mender.io/overview/requirements#amazon-s3-iam-policies)
+of the official documentation.
 
-You can customize it by following the [provider's](https://artifacthub.io/packages/helm/bitnami/mongodb)
-specifications.
-It's recommended to use an external deployment in Production.
-
-### Installing MinIO
-
-You can install MinIO using the official MinIO Helm chart using `helm`:
+Then, export the following environment variables:
 
 ```bash
-cat >minio-operator.yml <<EOF
-tenants: {}
-EOF
-
-helm repo add minio https://operator.min.io/
-helm repo update
-helm install minio-operator minio/minio-operator --version 4.1.7 -f minio-operator.yml
-
-export MINIO_ACCESS_KEY=$(pwgen 32 1)
-export MINIO_SECRET_KEY=$(pwgen 32 1)
-
-cat >minio.yml <<EOF
-apiVersion: v1
-kind: Secret
-metadata:
-  name: minio-creds-secret
-type: Opaque
-data:
-  accesskey: $(echo -n $MINIO_ACCESS_KEY | base64)
-  secretkey: $(echo -n $MINIO_SECRET_KEY | base64)
----
-apiVersion: minio.min.io/v2
-kind: Tenant
-metadata:
-  name: minio
-  labels:
-    app: minio
-spec:
-  image: minio/minio:RELEASE.2021-06-17T00-10-46Z
-  credsSecret:
-    name: minio-creds-secret
-  pools:
-    - servers: 2
-      volumesPerServer: 2
-      volumeClaimTemplate:
-        metadata:
-          name: data
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 10Gi
-          storageClassName: "standard"
-  mountPath: /export
-  requestAutoCert: false
-EOF
-
-kubectl apply -f minio.yml
+export AWS_ACCESS_KEY_ID="replace-with-your-access-key-id"
+export AWS_SECRET_ACCESS="replace-with-your-secret-access-key"
+export AWS_REGION="replace-with-your-aws-region"
+export STORAGE_BUCKET="replace-with-your-bucket-name"
 ```
 
-### Installing NATS
+### SeaweedFS
 
-NATS is integrated as a sub-chart deployment: you can enable it with
-the following settings:
+Alternatively to Amazon S3, you can install SeaweedFS, a compatible S3
+solution.
 
-```
-nats:
+**Important**: the following setup is intended for development
+and testing purposes only. For production usage, it's recommended to use
+an external object storage service like AWS S3 or Azure Blob Storage.
+
+Installing SeaweedFS:
+
+```bash
+export STORAGE_CLASS="default"
+export STORAGE_BUCKET="replace-with-your-bucket-name"
+
+cat >seaweedfs.yml <<EOF
+filer:
+  s3:
+    enabled: true
+    enableAuth: true
+    createBuckets:
+      - name: "${STORAGE_BUCKET}"
+  storageClass: ${STORAGE_CLASS}
+
+s3:
   enabled: true
+  enableAuth: true
+EOF
 
-# or via the --set argument:
---set="nats.enabled=true"
+helm repo add seaweedfs https://seaweedfs.github.io/seaweedfs/helm
+helm repo update
+helm install seaweedfs --wait -f seaweedfs.yml  seaweedfs/seaweedfs
+
+```
+Finally, export the following environment variables, needed for installing
+Mender:
+
+```bash
+export AWS_ACCESS_KEY_ID=$(kubectl get secret seaweedfs-s3-secret -o jsonpath='{.data.admin_access_key_id}' |base64 -d)
+export AWS_SECRET_ACCESS_KEY=$(kubectl  get secret seaweedfs-s3-secret -o jsonpath='{.data.admin_secret_access_key}' |base64 -d)
+export AWS_REGION="us-east-1"
+export STORAGE_ENDPOINT="http://seaweedfs-s3:8333"
 ```
 
-You can customize it by following the [provider's](https://docs.nats.io/running-a-nats-service/nats-kubernetes/helm-charts)
-specifications.
-It's recommended to use an external deployment in Production.
+## Installing Mender
 
-## Installing the Chart
+This is the minimum configuration needed to install Mender:
+
+```bash
+export MENDER_SERVER_DOMAIN="mender.example.com"
+export MENDER_SERVER_URL="https://${MENDER_SERVER_DOMAIN}"
+
+cat >values.yaml <<EOF
+global:
+  s3:
+    AWS_URI: "${MENDER_SERVER_URL}"
+    AWS_BUCKET: "${STORAGE_BUCKET}"
+    AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+    AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+  url: "${MENDER_SERVER_URL}"
+
+ingress:
+  enabled: true
+  annotations:
+    <your ingress controller specific annotations>
+  hosts:
+    - ${MENDER_SERVER_DOMAIN}
+  tls:
+    - secretName: <your-tls-secret>
+      hosts:
+        - ${MENDER_SERVER_DOMAIN}
+
+api_gateway:
+  storage_proxy:
+    enabled: true
+    url: "${STORAGE_ENDPOINT}"
+    customRule: "PathRegexp(\`^/${STORAGE_BUCKET}\`)"
+
+deployments:
+  customEnvs:
+    - name: DEPLOYMENTS_STORAGE_PROXY_URI
+      value: "${MENDER_SERVER_URL}"
+
+EOF
+```
 
 To install the chart with the release name `my-release` using `helm`:
 
@@ -127,56 +148,11 @@ The command deploys Mender on the Kubernetes cluster in the default configuratio
 
 > **Tip**: List all releases using `helm list`
 
-This is the minimum `values.yaml` file needed to install Mender:
 
-```yaml
-global:
-  image:
-    username: <your_user>
-    password: <your_password>
-  url: https://mender.example.com
+## Upgrading from Helm Chart 5.x and Meneder Server 3.7.x
 
-api_gateway:
-  certs:
-    cert: |-
-      -----BEGIN CERTIFICATE-----
-      MIIFcjCCBFq...
-    key: |-
-      -----BEGIN PRIVATE KEY-----
-      MIIEvgIBADA...
-
-device_auth:
-  certs:
-    key: |-
-      -----BEGIN RSA PRIVATE KEY-----
-      MIIEvgIBADA...
-
-tenantadm:
-  certs:
-    key: |-
-      -----BEGIN RSA PRIVATE KEY-----
-      MIIEvgIBADA...
-
-useradm:
-  certs:
-    key: |-
-      -----BEGIN RSA PRIVATE KEY-----
-      MIIEvgIBADA...
-```
-
-You can generate your `cert` and `key` for `api-gareway` using `openssl`:
-
-```bash
-openssl req -x509 -sha256 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) -keyout private.key -out certificate.crt -subj /CN="your.host.name"
-```
-
-You can generate the RSA private keys for `device-auth`, `tenantadm` and `useradm` using `openssl`:
-
-```bash
-openssl genpkey -algorithm RSA -out device_auth.key -pkeyopt rsa_keygen_bits:3072
-openssl rsa -in device_auth.key -out device_auth_converted.key
-mv device_auth_converted.key device_auth.key
-```
+Please refer to [this document](UPGRADE_from_v5_to_v6.md) for the upgrade
+procedure details.
 
 ## Uninstalling the Chart
 

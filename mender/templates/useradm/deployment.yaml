@@ -1,5 +1,7 @@
 {{- if .Values.useradm.enabled }}
-{{- $context := (dict "dot" . "component" "useradm") -}}
+{{- $context := (dict "dot" .
+                      "component" "useradm"
+                      "override" .Values.useradm) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

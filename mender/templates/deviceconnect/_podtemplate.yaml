@@ -23,8 +23,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "deviceconnect" "deviceconnect-migration" (empty .migration) | quote }}
-    image: {{ .dot.Values.deviceconnect.image.registry }}/{{ .dot.Values.deviceconnect.image.repository }}:{{ .dot.Values.deviceconnect.image.tag | default .dot.Values.global.image.tag }}
-    imagePullPolicy: {{ .dot.Values.deviceconnect.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.deviceconnect.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.deviceconnect.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -124,7 +124,7 @@ spec:
   terminationGracePeriodSeconds: {{ .dot.Values.deviceconnect.terminationGracePeriodSeconds }}
   {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}
