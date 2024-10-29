@@ -233,6 +233,7 @@ test:helm_chart_install:
         --set global.s3.AWS_ACCESS_KEY_ID="${SEAWEEDFS_ACCESS_KEY_ID}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${SEAWEEDFS_SECRET_ACCESS_KEY}" \
         --namespace "${NAMESPACE}" \
+        --set default.image.tag="main" \
         ./mender || exit 3;
     - make test
   after_script:
@@ -290,6 +291,7 @@ test:helm_chart_install_sub_charts:
         --set global.s3.AWS_ACCESS_KEY_ID="${SEAWEEDFS_ACCESS_KEY_ID}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${SEAWEEDFS_SECRET_ACCESS_KEY}" \
         --namespace "${NAMESPACE}" \
+        --set default.image.tag="main" \
         ./mender || exit 3;
     - SKIP_TEARDOWN="true" make test
     - |
@@ -411,6 +413,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
         --set global.s3.AWS_ACCESS_KEY_ID="${SEAWEEDFS_ACCESS_KEY_ID}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${SEAWEEDFS_SECRET_ACCESS_KEY}" \
         --namespace "${NAMESPACE}" \
+        --set default.image.tag="main" \
         ./mender || exit 3;
     - helm history mender
     - make test
@@ -507,6 +510,7 @@ test:helm_chart_install_opensource:
         --set global.s3.AWS_ACCESS_KEY_ID="${SEAWEEDFS_ACCESS_KEY_ID}" \
         --set global.s3.AWS_SECRET_ACCESS_KEY="${SEAWEEDFS_SECRET_ACCESS_KEY}" \
         --namespace "${NAMESPACE}" \
+        --set default.image.tag="main" \
         ./mender || exit 3;
     - IS_OPENSOURCE="true" SKIP_TEARDOWN="true" make test
     - |
@@ -569,6 +573,7 @@ test:helm_chart_install_with_r2:
         --set global.s3.AWS_SECRET_ACCESS_KEY="${R2_TEST_SECRET_ACCESS_KEY}" \
         --set global.s3.AWS_REGION="us-east-1" \
         --namespace "${NAMESPACE}" \
+        --set default.image.tag="main" \
         ./mender || exit 3;
     - SKIP_TEARDOWN="true" make test
     - |
