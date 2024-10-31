@@ -1,5 +1,6 @@
 {{- if .Values.api_gateway.enabled }}
 {{- $merged := merge (deepCopy .Values.api_gateway) (deepCopy (default (dict) .Values.default)) -}}
+{{- $context := dict "dot" . "override" .Values.api_gateway "component" "api-gateway" "imageComponent" "traefik" }}
 {{- if or .Values.api_gateway.podSecurityContext.enabled .Values.api_gateway.containerSecurityContext.enabled }}
   {{- if and .Values.api_gateway.httpPort (lt (int .Values.api_gateway.httpPort) 1024)  }}
     {{- fail ".Values.api_gateway.httpPort can't be less than 1024 when Security Context is enabled" }}
@@ -64,8 +65,11 @@ spec:
 
       containers:
       - name: api-gateway
-        image: {{ .Values.api_gateway.image.registry }}/{{ .Values.api_gateway.image.repository }}:{{ .Values.api_gateway.image.tag }}
-        imagePullPolicy: {{ .Values.api_gateway.image.imagePullPolicy }}
+        image: {{ printf "%s/%s:%s"
+                (include "mender.image.registry" $context)
+                (include "mender.image.repository" $context)
+                (include "mender.image.tag" $context) }}
+        imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
 {{- if .Values.api_gateway.containerSecurityContext.enabled }}
         securityContext: {{- omit .Values.api_gateway.containerSecurityContext "enabled" | toYaml | nindent 10 }}
 {{- end }}
@@ -176,7 +180,7 @@ spec:
           {{- end }}
 {{- end }}
 
-{{- if .Values.global.image.username }}
+{{- if and .Values.global.image .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- else }}

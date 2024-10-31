@@ -1,4 +1,7 @@
 {{- if .Values.deployments.directUpload.enabled }}
+{{- $context := dict "dot" .
+                     "component" "deployments"
+                     "override" .Values.deployments -}}
 {{- $merged := merge (deepCopy .Values.deployments) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: batch/v1
 kind: CronJob
@@ -38,11 +41,8 @@ spec:
           {{- end }}
           containers:
           - name: deployments-storage-daemon
-            {{- if .Values.global.enterprise }}
-            image: {{ .Values.deployments.image.registry | default "registry.mender.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
-            {{- else }}
-            image: {{ .Values.deployments.image.registry | default "docker.io" }}/{{ .Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .Values.deployments.image.tag | default .Values.global.image.tag }}
-            {{- end }}
+            image: {{ include "mender.image" $context }}
+            imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
             args: ["storage-daemon", "--time-jitter={{ .Values.deployments.directUpload.jitter}}"]
             env:
             - name: DEPLOYMENTS_STORAGE_DEFAULT
@@ -63,7 +63,7 @@ spec:
             {{- end }}
           restartPolicy: Never
 
-{{- if .Values.global.image.username }}
+{{- if and .Values.global.image .Values.global.image.username }}
           imagePullSecrets:
           - name: docker-registry
 {{- else }}
