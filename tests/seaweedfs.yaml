@@ -7,7 +7,8 @@ filer:
     enableAuth: true
     createBuckets:
       - name: "mender-artifacts-seaweedfs"
-  storageClass: "gp2"
+  data:
+    type: "emptyDir"
 s3:
   enabled: true
   enableAuth: true
