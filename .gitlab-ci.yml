@@ -302,7 +302,7 @@ test:helm_chart_install_sub_charts:
     - echo "INFO - cleaning up resources"
     - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
-test:helm_chart_upgrade_from_previous_lts_to_current_lts:
+.test:helm_chart_upgrade_from_previous_lts_to_current_lts:  # TODO: enable this for the next LTS
   # For example: from Mender 3.6 to Mender 3.7
   tags:
     - hetzner-amd-beefy
