@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright 2023 Northern.tech AS
-#    
+#
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
@@ -32,6 +32,9 @@ helm repo add opensearch https://opensearch-project.github.io/helm-charts/
 
 log "add helm repo: mender"
 helm repo add mender https://charts.mender.io
+
+log "add helm repo: seaweedfs"
+helm repo add seaweedfs https://seaweedfs.github.io/seaweedfs/helm
 
 log "update help repositories"
 helm repo update

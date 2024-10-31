@@ -1,70 +1,42 @@
 auditlogs:
   image:
-    tag: staging_30ef14b41e93112296a60b254dbe173a03d05f3d
-    registry: registry.mender.io
-    repository: mendersoftware/auditlogs
+    tag: main
 deployments:
   image:
-    tag: staging_65865b7ea08e33bbbb11158da250c0c8e540fd89
-    registry: registry.mender.io
-    repository: mendersoftware/deployments-enterprise
+    tag: main
 inventory:
   image:
-    tag: staging_577f67b1a50ae315ad806dac56057d439b1768d9
-    registry: registry.mender.io
-    repository: mendersoftware/inventory-enterprise
+    tag: main
 create_artifact_worker:
   image:
-    tag: staging_cefd1ece55f7aff4d32d9f57fc485a84ba7387e1
-    registry: mendersoftware
-    repository: create-artifact-worker
+    tag: main
 generate_delta_worker:
   image:
-    tag: staging_325a5afd0020bf7333338699789c39c16f3b5ab3
-    registry: registry.mender.io
-    repository: mendersoftware/generate-delta-worker
+    tag: main
 deviceconnect:
   image:
-    tag: staging_92aaa95434687a01ed4450a9d1e79aa6803a836f
-    registry: mendersoftware
-    repository: deviceconnect
+    tag: main
 device_auth:
   image:
-    tag: staging_54298e101140e3907caba7c3a5b236d81541a4c3
-    registry: registry.mender.io
-    repository: mendersoftware/deviceauth-enterprise
+    tag: main
 tenantadm:
   image:
-    tag: staging_92382ad5f8bc0caf2984139f4c8aea9ef3d2f7e6
-    registry: registry.mender.io
-    repository: mendersoftware/tenantadm
+    tag: main
 devicemonitor:
   image:
-    tag: staging_07ab86e98a67280af2c1b5d54f9983a033ac9ce1
-    registry: registry.mender.io
-    repository: mendersoftware/devicemonitor
+    tag: main
 useradm:
   image:
-    tag: staging_58481e7b4bc05aacfe7cf672b0fba6d04ff61eb8
-    registry: registry.mender.io
-    repository: mendersoftware/useradm-enterprise
+    tag: main
 deviceconfig:
   image:
-    tag: staging_506fe908ecd9f6f2fb50ac0dd98b5e54b6a1fbe9
-    registry: mendersoftware
-    repository: deviceconfig
+    tag: main
 iot_manager:
   image:
-    tag: staging_cb37171952a4ff68f907eeb4f3dae3b2dffcc0aa
-    registry: mendersoftware
-    repository: iot-manager
+    tag: main
 workflows:
   image:
-    tag: staging_415a8e4bbcd489897df41728f090af668d661a05
-    registry: registry.mender.io
-    repository: mendersoftware/workflows-enterprise
+    tag: main
 gui:
   image:
-    tag: staging_9f40f6ed5a86c9f76db53c15c1ea39c1e28e70ad
-    registry: mendersoftware
-    repository: gui
+    tag: main

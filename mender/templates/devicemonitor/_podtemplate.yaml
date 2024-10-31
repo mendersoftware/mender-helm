@@ -23,8 +23,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "devicemonitor" "devicemonitor-migration" (empty .migration) | quote }}
-    image: {{ .dot.Values.devicemonitor.image.registry }}/{{ .dot.Values.devicemonitor.image.repository }}:{{ .dot.Values.devicemonitor.image.tag | default .dot.Values.global.image.tag }}
-    imagePullPolicy: {{ .dot.Values.devicemonitor.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.devicemonitor.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.devicemonitor.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -89,7 +89,7 @@ spec:
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
 
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

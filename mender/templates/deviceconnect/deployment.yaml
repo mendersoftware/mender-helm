@@ -1,5 +1,7 @@
 {{- if .Values.deviceconnect.enabled }}
-{{- $context := (dict "dot" . "component" "deviceconnect") -}}
+{{- $context := dict "dot" .
+                     "override" .Values.deviceconnect
+                     "component" "deviceconnect" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
