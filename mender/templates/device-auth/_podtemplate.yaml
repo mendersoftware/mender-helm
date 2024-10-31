@@ -139,7 +139,7 @@ spec:
   - name: rsa
     secret:
       {{- if and .dot.Values.device_auth.certs .dot.Values.device_auth.certs.existingSecret }}
-      secretName: {{ .existingSecret }}
+      secretName: {{ .dot.Values.device_auth.certs.existingSecret }}
       {{- else }}
       secretName: rsa-device-auth
       {{- end }}
