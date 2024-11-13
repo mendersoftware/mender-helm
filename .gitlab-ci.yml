@@ -33,7 +33,6 @@ variables:
     options:
       - "true"
       - "false"
-  DEFAULT_BRANCH: "master"
   GITHUB_REPO_URL:
     description: "The Github Repo URL for release-please, in the format of 'owner/repo'"
     value: "mendersoftware/mender-helm"
@@ -46,12 +45,6 @@ variables:
   GITHUB_USER_EMAIL:
     description: "The Github user email for release-please"
     value: "mender@northern.tech"
-  RUN_RELEASE:
-    description: "Run a new release"
-    value: "false"
-    options:
-      - "true"
-      - "false"
   GIT_CLIFF:
     description: "Run git cliff to override the release-please changelog"
     value: "true"
@@ -710,12 +703,12 @@ changelog:
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
     - gh pr checkout --force $RELEASE_PLEASE_PR
     - wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
-    - git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL}
+    - git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
     - git add mender/CHANGELOG.md
     - git commit --amend -s --no-edit
     - git push github-${CI_JOB_ID} --force
     # Update the PR body
-    - git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL}
+    - git cliff --unreleased --bump -o tmp_pr_body.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
     # note: using sed to prevent release-please to mess up with the Github Release body
     - sed -i 's/## mender-\([0-9.]*\)/## \1/' tmp_pr_body.md
     - gh pr edit $RELEASE_PLEASE_PR --body-file tmp_pr_body.md
