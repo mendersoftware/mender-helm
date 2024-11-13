@@ -85,13 +85,16 @@ spec:
 {{- end }}
 {{- if .Values.api_gateway.httpPort }}
             - --entrypoints.http.address=:{{- .Values.api_gateway.httpPort }}
+            - --entryPoints.http.transport.respondingTimeouts.idleTimeout=7200
+            - --entryPoints.http.transport.respondingTimeouts.readTimeout=7200
+            - --entryPoints.http.transport.respondingTimeouts.writeTimeout=7200
 {{- end }}
 {{- if .Values.api_gateway.httpsPort }}
             - --entrypoints.https.address=:{{- .Values.api_gateway.httpsPort }}
-{{- end }}
             - --entryPoints.https.transport.respondingTimeouts.idleTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.readTimeout=7200
             - --entryPoints.https.transport.respondingTimeouts.writeTimeout=7200
+{{- end }}
             - --metrics=true
             - --metrics.prometheus=true
             - --metrics.prometheus.buckets=0.100000,0.300000,1.200000,5.000000
