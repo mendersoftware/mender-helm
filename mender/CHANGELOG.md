@@ -5,6 +5,9 @@
 ### Bug Fixes
 
 
+- Add http timeouts, only apply https timeouts when https is enabled
+ ([9ead1c8](https://github.com/mendersoftware/mender-helm/commit/9ead1c8e3b7942b80e1d238a0b535c7ff1b58087))  by @chriswiggins
+
 - Passing string to object value `nats.image`
  ([31faa8a](https://github.com/mendersoftware/mender-helm/commit/31faa8ae5025b8be378b480cbef6b180754583fb))  by @alfrunes
 - `tenantadm.certs` are no longer required
