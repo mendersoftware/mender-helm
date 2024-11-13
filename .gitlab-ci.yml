@@ -33,7 +33,6 @@ variables:
     options:
       - "true"
       - "false"
-  DEFAULT_BRANCH: "master"
   GITHUB_REPO_URL:
     description: "The Github Repo URL for release-please, in the format of 'owner/repo'"
     value: "mendersoftware/mender-helm"
@@ -46,12 +45,6 @@ variables:
   GITHUB_USER_EMAIL:
     description: "The Github user email for release-please"
     value: "mender@northern.tech"
-  RUN_RELEASE:
-    description: "Run a new release"
-    value: "false"
-    options:
-      - "true"
-      - "false"
   GIT_CLIFF:
     description: "Run git cliff to override the release-please changelog"
     value: "true"
