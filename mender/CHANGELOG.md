@@ -1,4 +1,15 @@
-# Mender Helm chart
+---
+## mender-5.11.1 - 2024-11-13
+
+
+### Bug Fixes
+
+
+- Add http timeouts, only apply https timeouts when https is enabled
+ ([c055454](https://github.com/mendersoftware/mender-helm/commit/c0554549b61b68c1947640420010b1c704fe909f)) by @chriswiggins
+
+
+
 
 ## 5.11.0 - 2024-10-14
 
