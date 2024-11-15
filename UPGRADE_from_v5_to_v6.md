@@ -1,4 +1,4 @@
-# Upgrading from Helm Chart 5.x and Meneder Server 3.7.x
+# Upgrading from Helm Chart 5.x and Mender Server 3.7.x
 
 With the latest changes in the Helm Chart for the Mender Server,
 starting from version 4.0 of the Mender Server, we’ve made some important
