@@ -243,7 +243,7 @@ api_gateway:
   storage_proxy:
     enabled: false
     url: ""
-    customRule: "HostRegexp(`{domain:^artifacts.*$}`)"
+    customRule: "HostRegexp(`^artifacts.*$`)"
     passHostHeader: false
   compression: true
   security_redirect: null

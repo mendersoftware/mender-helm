@@ -1,4 +1,30 @@
-# Mender Helm chart
+---
+## mender-5.11.2 - 2024-11-15
+
+
+### Bug Fixes
+
+
+- Invalid regexp in default value `storage_proxy.rule`
+([MEN-7741](https://northerntech.atlassian.net/browse/MEN-7741)) ([f5a6bd3](https://github.com/mendersoftware/mender-helm/commit/f5a6bd3ceb9b0dcd434e323bcafe519ca2606f47))
+
+
+  The expression is using the former Traefik v2 regexp syntax.
+
+
+
+
+## mender-5.11.1 - 2024-11-13
+
+
+### Bug Fixes
+
+
+- Add http timeouts, only apply https timeouts when https is enabled
+ ([c055454](https://github.com/mendersoftware/mender-helm/commit/c0554549b61b68c1947640420010b1c704fe909f)) by @chriswiggins
+
+
+
 
 ## 5.11.0 - 2024-10-14
 
