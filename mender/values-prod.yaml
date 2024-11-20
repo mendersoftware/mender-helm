@@ -1,70 +1,42 @@
-useradm:
-  image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/useradm-enterprise
-generate_delta_worker:
-  image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/generate-delta-worker
 auditlogs:
   image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/auditlogs
-device_auth:
-  image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/deviceauth-enterprise
-deviceconfig:
-  image:
-    tag: saas-v2024.08.20
-    registry: mendersoftware
-    repository: deviceconfig
-create_artifact_worker:
-  image:
-    tag: saas-v2024.08.20
-    registry: mendersoftware
-    repository: create-artifact-worker
+    tag: v4.0.0-rc.2
 deployments:
   image:
-    tag: saas-v2024.09.01
-    registry: registry.mender.io
-    repository: mendersoftware/deployments-enterprise
-devicemonitor:
-  image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/devicemonitor
-iot_manager:
-  image:
-    tag: saas-v2024.09.03
-    registry: mendersoftware
-    repository: iot-manager
-workflows:
-  image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/workflows-enterprise
-tenantadm:
-  image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/tenantadm
-deviceconnect:
-  image:
-    tag: saas-v2024.08.20
-    registry: mendersoftware
-    repository: deviceconnect
+    tag: v4.0.0-rc.2
 inventory:
   image:
-    tag: saas-v2024.08.20
-    registry: registry.mender.io
-    repository: mendersoftware/inventory-enterprise
+    tag: v4.0.0-rc.2
+create_artifact_worker:
+  image:
+    tag: v4.0.0-rc.2
+generate_delta_worker:
+  image:
+    tag: v4.0.0-rc.2
+deviceconnect:
+  image:
+    tag: v4.0.0-rc.2
+device_auth:
+  image:
+    tag: v4.0.0-rc.2
+tenantadm:
+  image:
+    tag: v4.0.0-rc.2
+devicemonitor:
+  image:
+    tag: v4.0.0-rc.2
+useradm:
+  image:
+    tag: v4.0.0-rc.2
+deviceconfig:
+  image:
+    tag: v4.0.0-rc.2
+iot_manager:
+  image:
+    tag: v4.0.0-rc.2
+workflows:
+  image:
+    tag: v4.0.0-rc.2
 gui:
   image:
-    tag: saas-v2024.08.20
-    registry: mendersoftware
-    repository: gui
+    tag: v4.0.0-rc.2
