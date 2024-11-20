@@ -1,4 +1,7 @@
 {{- if and .Values.global.enterprise .Values.generate_delta_worker.enabled }}
+{{- $context := dict "dot" .
+                     "override" .Values.generate_delta_worker
+                     "component" "generate-delta-worker" }}
 {{- $merged := merge (deepCopy .Values.generate_delta_worker) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: apps/v1
 kind: StatefulSet
@@ -73,8 +76,8 @@ spec:
 
       containers:
       - name: generate-delta-worker
-        image: {{ .Values.generate_delta_worker.image.registry }}/{{ .Values.generate_delta_worker.image.repository }}:{{ .Values.generate_delta_worker.image.tag | default .Values.global.image.tag }}
-        imagePullPolicy: {{ .Values.generate_delta_worker.image.imagePullPolicy }}
+        image: {{ include "mender.image" $context }}
+        imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
         resources:
 {{ toYaml .Values.generate_delta_worker.resources | indent 10 }}
 
@@ -127,7 +130,7 @@ spec:
         {{- end }}
         {{- end }}
 
-{{- if .Values.global.image.username }}
+{{- if and .Values.global.image .Values.global.image.username }}
       imagePullSecrets:
       - name: docker-registry
 {{- else }}

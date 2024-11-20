@@ -1,31 +1,23 @@
 fullnameOverride: ""
 
 global:
-  enterprise: true
+  enterprise: false
   hosted: false
   auditlogs: true
   priorityClassName: ""
-  image:
-    registry: registry.mender.io
-    username: null
-    password: null
-    tag: mender-3.7.7
-
   mongodb:
     existingSecret: ""
-    URL: mongodb://mongodb
+    URL: ""
   nats:
     existingSecret: ""
-    URL: nats://nats:4222
+    URL: ""
   redis:
-    username: null
-    password: null
     URL: ""
     existingSecret: ""
   storage: "aws"
   s3:
     existingSecret: ""
-    AWS_URI: ""
+    AWS_URI: "https://mender.example.com"
     AWS_EXTERNAL_URI: ""
     AWS_BUCKET: mender-artifact-storage
     AWS_REGION: us-east-1
@@ -59,6 +51,16 @@ global:
 default:
   affinity: {}
   tolerations: {}
+
+  # The default.image depends on the state of `global.enterprise`:
+  # If true:  registry.mender.io/mender-server-enterprise
+  # If false: docker.io/mendersoftware
+  # The tag defaults to the chart version.
+  # image:
+  #   registry: docker.io|registry.mender.io
+  #   repository: mendersoftware|mender-server-enterprise
+  #   tag: {{ .Chart.AppVersion }}
+  #   pullPolicy: IfNotPresent
 
   # HorizontalPodAutoscaler default resources
   hpa: {}
@@ -97,7 +99,8 @@ default:
       maxUnavailable: 0
 
   # Override the properties of the Readiness and Liveness probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 1
     # successThreshold: 1
     # failureThreshold: 3
@@ -130,14 +133,13 @@ ingress:
   #     serviceName: ssl-redirect
   #     servicePort: use-annotation
   hosts:
-    - mender.example.org
+    - mender.example.com
   tls:
     # this secret must exists or can be created from a working cert-manager
     # instance
     - secretName: mender-ingress-tls
       hosts:
-        - mender.example.org
-
+        - mender.example.com
 
 # Helm chart smoke tests
 tests:
@@ -145,7 +147,7 @@ tests:
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
 mongodb:
-  enabled: false
+  enabled: true
   architecture: replicaset
   externalAccess:
     enabled: false
@@ -187,13 +189,14 @@ mongodb:
 # Using default values from
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
-  enabled: false
+  enabled: true
   cluster:
     enabled: true
     replicas: 3
   fullnameOverride: ""
   nats:
-    image: "nats:2.9.20-scratch"
+    image:
+      tag: "2.9.20-scratch"
     jetstream:
       enabled: true
       memStorage:
@@ -234,16 +237,16 @@ api_gateway:
     httpPort: 80
     httpsPort: 443
   env:
-    SSL: true
+    SSL: false
   minio:
-    enabled: true
+    enabled: false
     podAnnotations: {}
     url: "http://minio:9000"
     customRule: null
   storage_proxy:
-    enabled: false
-    url: ""
-    customRule: "HostRegexp(`^artifacts.*$`)"
+    enabled: true
+    url: "http://seaweedfs-s3:8333"
+    customRule: "PathRegexp(`^/mender-artifact-storage`)"
     passHostHeader: false
   compression: true
   security_redirect: null
@@ -289,7 +292,8 @@ api_gateway:
   # prometheus pod monitor
   podMonitor:
     enabled: false
-    customLabels: {}
+    customLabels:
+      {}
       # prometheus-operated: "true"
 
   # Override the properties of the Readiness, Liveness and Startup probes
@@ -316,10 +320,10 @@ deployments:
     jitter: "3s"
     skipVerify: false
   daemonSchedule: "15 * * * *"
-  image:
-    registry: ""
-    repository: ""
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -360,7 +364,9 @@ deployments:
   #     memory: 64Mi
 
   # custom envs
-  customEnvs: []
+  customEnvs:
+    - name: DEPLOYMENTS_STORAGE_PROXY_URI
+      value: "mender.example.com"
   # - name: LOG_LEVEL
   #   value: DEBUG
 
@@ -372,7 +378,8 @@ deployments:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -390,10 +397,10 @@ device_auth:
       cpu: 350m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: ""
-    repository: ""
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -458,7 +465,8 @@ device_auth:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -493,10 +501,11 @@ generate_delta_worker:
       cpu: 100m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: registry.mender.io
-    repository: mendersoftware/generate-delta-worker
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   priorityClassName: ""
@@ -525,10 +534,11 @@ gui:
       cpu: 5m
       memory: 16Mi
   affinity: {}
-  image:
-    registry: docker.io
-    repository: mendersoftware/gui
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: docker.io
+  #   repository: mendersoftware/gui
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -537,7 +547,7 @@ gui:
     type: ClusterIP
     port: 80
     portError: 8080
-  httpPort: 80
+  httpPort: 8090
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
@@ -561,7 +571,8 @@ gui:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -583,10 +594,11 @@ inventory:
       cpu: 300m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: ""
-    repository: ""
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -637,7 +649,8 @@ inventory:
   #   value: DEBUG
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -654,10 +667,11 @@ tenantadm:
       cpu: 150m
       memory: 64Mi
   affinity: {}
-  image:
-    registry: registry.mender.io
-    repository: mendersoftware/tenantadm
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -682,12 +696,6 @@ tenantadm:
   hpa: {}
   pdb: {}
   priorityClassName: ""
-  certs: {}
-  # key: |-
-  #   -----BEGIN PRIVATE KEY-----
-  #   ...
-  #   -----END PRIVATE KEY-----
-  # existingSecret: my-secret-name
 
   ## Migration Job
 
@@ -723,7 +731,8 @@ tenantadm:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -741,10 +750,11 @@ useradm:
       cpu: 150m
       memory: 64Mi
   affinity: {}
-  image:
-    registry: ""
-    repository: ""
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -809,7 +819,8 @@ useradm:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -827,10 +838,11 @@ workflows:
       cpu: 10m
       memory: 64Mi
   affinity: {}
-  image:
-    registry: ""
-    repository: ""
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -891,11 +903,11 @@ workflows:
   #       secretName: my-credential-file
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
-
 
 create_artifact_worker:
   enabled: true
@@ -910,10 +922,11 @@ create_artifact_worker:
       cpu: 100m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: docker.io
-    repository: mendersoftware/create-artifact-worker
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   podSecurityContext:
@@ -954,10 +967,11 @@ auditlogs:
       cpu: 50m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: registry.mender.io
-    repository: mendersoftware/auditlogs
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -1006,7 +1020,8 @@ auditlogs:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -1024,10 +1039,11 @@ iot_manager:
       cpu: 50m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: docker.io
-    repository: mendersoftware/iot-manager
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -1081,7 +1097,8 @@ iot_manager:
     existingSecret: ""
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -1099,10 +1116,11 @@ deviceconnect:
       cpu: 100m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: docker.io
-    repository: mendersoftware/deviceconnect
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -1153,7 +1171,8 @@ deviceconnect:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -1171,10 +1190,11 @@ deviceconfig:
       cpu: 100m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: docker.io
-    repository: mendersoftware/deviceconfig
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -1223,7 +1243,8 @@ deviceconfig:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -1241,10 +1262,10 @@ devicemonitor:
       cpu: 100m
       memory: 128Mi
   affinity: {}
-  image:
-    registry: registry.mender.io
-    repository: mendersoftware/devicemonitor
-    imagePullPolicy: IfNotPresent
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
   service:
@@ -1296,7 +1317,8 @@ devicemonitor:
   #     maxUnavailable: 25%
 
   # Override the properties of the Readiness, Liveness and Startup probes
-  probesOverrides: {}
+  probesOverrides:
+    {}
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
@@ -1305,7 +1327,7 @@ devicemonitor:
 # Using a bitnami sub-chart by default = test usage only
 # It's recommended to use a suitable Redis Cluster for Production
 redis:
-  enabled: true
+  enabled: false
   architecture: replication
   commonAnnotations:
     helm.sh/hook: "pre-install"

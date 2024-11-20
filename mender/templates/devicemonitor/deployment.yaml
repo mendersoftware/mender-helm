@@ -1,5 +1,7 @@
 {{- if and .Values.devicemonitor.enabled .Values.global.enterprise }}
-{{- $context := (dict "dot" . "component" "devicemonitor") -}}
+{{- $context := dict "dot" .
+                     "component" "devicemonitor"
+                     "override" .Values.devicemonitor -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
