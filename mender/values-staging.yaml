@@ -1,44 +1,78 @@
 auditlogs:
   image:
-    tag: main@sha256:c7b54f13bac4d6555abde98adc00a4eb8f2f74dd929ead019bdbefff1d8678c5
+    tag: main@sha256:e88686f0499cb9d7b0ff67c7eca9a5370362f3ba18ca6ed19ad7fb1c076fb2b0
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 deployments:
   image:
-    tag: main@sha256:008d0437730a8413812f6d27e5b6c8f18dd297f999a2e5b14bc9c7d78e373b16
+    tag: main@sha256:2cfa4809800fb935d33b8bddfdf952fd1a0d1bb0df5ae4e4fb4b356fd8a6ab5e
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 inventory:
   image:
-    tag: main@sha256:abf8067af5c9904f8fc2d1f6dddbb1688e619e9e5423eaa79c2c7989a66e2ff7
+    tag: main@sha256:a0c6946087f7255bca9b56af06f038fcac80133255aa95cd2254cae4cd8d45e4
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 create_artifact_worker:
   image:
-    tag: main@sha256:d0ae81898c003cb1f2d3ebac98630bb6470dcf2dd3a3a3ecfb5d3d01fbf969a4
+    tag: main@sha256:e1478c9d2c01441dce04afcf0a31e2831ef1137a54d3e1bc4173e96edd18deeb
 generate_delta_worker:
   image:
-    tag: main@sha256:775b3d871a8138a5c90f92c1a03efe0f7aeb36ebb9e5253b3c866dcdc5edcd6b
+    tag: main@sha256:01d7ae27f60084f283347b409ff5e6c182ec4197926a571496a8ec4ebe9faff4
 deviceconnect:
   image:
-    tag: main@sha256:37442ab735e14c1fd543689c9afbe6fe3b5b23b0cb020719452704707f84b545
+    tag: main@sha256:5d016c76c26239c6bd2c8800ca341ef73276d0c2d5e6e6b35665acfc850d4d2b
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 device_auth:
   image:
-    tag: main@sha256:fa4a33af6d479013b02929650d29f7d64619d6f1e6d1a169384bf48a1fac0ba2
+    tag: main@sha256:0c99f3c029ba63f5e120106558fb1290491b729c9bad96baec5a5954a11a6cba
 tenantadm:
   image:
-    tag: main@sha256:27241dfe7cb3e69f5a140c6b5a5e1ad0efc81b5cb3cd38c349a2ef7a5bdd17a0
+    tag: main@sha256:4fd76f4d0336da9d49a6f462bd5bf8ef47b25f6f73e57bba599793ed769b0441
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 devicemonitor:
   image:
-    tag: main@sha256:3c04d9e47993030cb9d328d3640080d78ef2fb02e15045aa69fe6dbd69570501
+    tag: main@sha256:9d0f573f4b840b363d4eaf36385c552a279c0fbc9fd23ec059474d19ddeb204d
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 useradm:
   image:
-    tag: main@sha256:abb8d7556fd638ab04508d4d0ba34d18c5c611192755225b5ae1434e6f4342aa
+    tag: main@sha256:48bf23f14091787a8dbbeae9ad757a6db1e1ff35e856bb35ac3c3f4d8be6661a
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 deviceconfig:
   image:
-    tag: main@sha256:8ddf6f94bb4aae707ec61089c2aa5c2a2adcfc6d11666743c1073488e784ce58
+    tag: main@sha256:15541545494b5a66e9a96981509a958c80bb94e6584eedfb38adf9839aa70158
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 iot_manager:
   image:
-    tag: main@sha256:6d5539a35a6e5184259ce9cac51f577850041c33ce9693ca024a61516190c28f
+    tag: main@sha256:daa32e65246ef66dab45bc23bebd0f99f9dcdd058af91ba750f03f4cc2985771
 workflows:
   image:
-    tag: main@sha256:429841781e554e7f3d72ab3a9aa77a954d31fa872bcf7fddd0d8757145d6cc41
+    tag: main@sha256:3853241acc0d978cb7320d5ad001cefc6d08d35c482e5226a85236bcd413d249
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
 gui:
   image:
-    tag: main@sha256:a5e9c805a444777e624e5edbe9f3ba6949189fdd8ce01f0ed301c66cc6cf4d91
-    registry: docker.io
-    repository: mendersoftware
+    tag: main@sha256:da65c2de0291eecef1cf5a59d905d4dd4dcca851cdcfbfbbd0dd79ec4d622a5c
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
+iot-manager:
+  image:
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
+create-artifact-worker:
+  image:
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
+generate-delta-worker:
+  image:
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
+deviceauth:
+  image:
+    registry: 175683096866.dkr.ecr.us-east-1.amazonaws.com
+    repository: mender-server-enterprise
