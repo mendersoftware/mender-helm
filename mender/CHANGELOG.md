@@ -1,4 +1,30 @@
 ---
+## mender-6.0.0-rc.2 - 2024-11-28
+
+
+### Bug Fixes
+
+
+- Tenantadm endpoint fix
+ ([14f15a1](https://github.com/mendersoftware/mender-helm/commit/14f15a16faf3ede3b49eefb5a820be8695a69f10))  by @oldgiova
+
+
+
+
+### Typo
+
+
+- Update UPGRADE_from_v5_to_v6.md
+ ([f4256fc](https://github.com/mendersoftware/mender-helm/commit/f4256fcc4d4d876a827fa60510ddb51df31857a2))  by @LinAnt
+
+
+  Fixes typo in the header
+
+
+
+
+
+
 ## mender-6.0.0 - 2024-10-31
 
 
@@ -745,11 +771,11 @@
   As described in 'feat: Device count via deviceauth-enterprise cli.'
   in the documentation [1], Device License Count is only available
   with Enterprise.
-  
+
   Avoid ImagePullBackOff and ErrImagePull by not deploying the
   device-auth-license-count cron job when global.enterprise is
   disabled.
-  
+
   [1] https://github.com/mendersoftware/mender-docs/commit/0f4ca50dbee9fd98f131e6e15ae7c0572b7d79d7
 
 
@@ -765,9 +791,9 @@
   To make enabling the device-auth-license-count cron job
   even more robust, add a new variable to control this
   preview feature.
-  
+
   Thank you to @oldgiova for the suggestion [1].
-  
+
   [1] https://github.com/mendersoftware/mender-helm/pull/151#discussion_r1193086966
 
 
@@ -1006,7 +1032,7 @@
 
   This commit reworks the test job and the helper scripts to run the tests
   in HM staging, namespace mender-helm-tests.
-  
+
   It assumes only one CI pipeline is running in parallel.
 - Update chart for Mender 2.6.0
 ([MEN-4486](https://northerntech.atlassian.net/browse/MEN-4486)) ([f009fb9](https://github.com/mendersoftware/mender-helm/commit/f009fb9549fba5943b8c7340d358321b3d8b9343))  by @lluiscampos
