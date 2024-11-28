@@ -380,9 +380,7 @@ data:
 {{- end }}
           rule: >-
             (Method(`OPTIONS`) || Method(`POST`)) &&
-            PathRegexp(`/api/management/v[0-9]+/tenantadm/tenants`) ||
-            (Method(`OPTIONS`) || Method(`POST`)) &&
-            PathRegexp(`/api/management/v[0-9]+/tenantadm/tenants/trial`)
+            PathRegexp(`/api/management/v[0-9]+/tenantadm/tenants/trial$`)
           service: tenantadm
           tls: {{ $isTls }}
 
