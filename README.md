@@ -386,6 +386,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `deployments.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `deployments.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `deployments.mongodbExistingSecret` | Use a different MongoDB secret for this service | `nil` |
 
 ### Parameters: device-auth
 
