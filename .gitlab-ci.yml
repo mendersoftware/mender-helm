@@ -133,7 +133,7 @@ build:setup_eks_cluster:
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_EKSAccess_8c2574e21d9fc21c --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl utils associate-iam-oidc-provider --cluster ${EKS_CLUSTER_NAME} --approve
     - eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKS_EBS_CSI_DriverRole --role-only --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --approve
-    - eksctl create iamserviceaccount --name=aws-load-balancer-controller --namespace=kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::017659451055:policy/AWSLoadBalancerControllerIAMPolicy  --approve
+    - eksctl create iamserviceaccount --name=aws-load-balancer-controller --namespace=kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess --approve
     - helm repo add eks https://aws.github.io/eks-charts
     - helm repo update eks
     - helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=${EKS_CLUSTER_NAME} --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller --wait
@@ -703,7 +703,7 @@ changelog:
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
     - gh pr checkout --force $RELEASE_PLEASE_PR
     - wget --output-document cliff.toml https://raw.githubusercontent.com/mendersoftware/mendertesting/master/utils/cliff.toml
-    - git cliff --bump --output mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
+    - git cliff --unreleased --bump --prepend mender/CHANGELOG.md --github-repo ${GITHUB_REPO_URL} --use-branch-tags
     - git add mender/CHANGELOG.md
     - git commit --amend -s --no-edit
     - git push github-${CI_JOB_ID} --force
