@@ -1,4 +1,23 @@
 ---
+## mender-6.0.0-rc.3 - 2024-11-30
+
+
+### Features
+
+
+- Added mongodb secret override
+([MEN-6493](https://northerntech.atlassian.net/browse/MEN-6493)) ([e7e4326](https://github.com/mendersoftware/mender-helm/commit/e7e4326cfdb24840154312e13077f692be74f377))  by @oldgiova
+
+
+  With this override, you can choose a different secret for the
+  deployments service, for example a secondary connection or a admin
+  connection
+
+
+
+
+
+
 ## mender-6.0.0-rc.2 - 2024-11-28
 
 
