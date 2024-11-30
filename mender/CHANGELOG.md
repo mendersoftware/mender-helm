@@ -1,5 +1,5 @@
 ---
-## mender-6.0.0-rc.2 - 2024-11-28
+## mender-5.11.1 - 2024-11-30
 
 
 ### Bug Fixes
@@ -19,116 +19,6 @@
 
 
   Fixes typo in the header
-
-
-
-
-
-
-## mender-6.0.0 - 2024-10-31
-
-
-### Bug Fixes
-
-
-- Add http timeouts, only apply https timeouts when https is enabled
- ([9ead1c8](https://github.com/mendersoftware/mender-helm/commit/9ead1c8e3b7942b80e1d238a0b535c7ff1b58087))  by @chriswiggins
-
-- Passing string to object value `nats.image`
- ([31faa8a](https://github.com/mendersoftware/mender-helm/commit/31faa8ae5025b8be378b480cbef6b180754583fb))  by @alfrunes
-- `tenantadm.certs` are no longer required
- ([d74b41c](https://github.com/mendersoftware/mender-helm/commit/d74b41c975529024f5a80ebe391fd8df0ded0dc2))  by @alfrunes
-  - **BREAKING**: `tenantadm.certs` are no longer required
-
-
-  Starting with Mender server v4.0.0 the secret is no longer in used.
-  The secret is not created/mounted to the service unless explicitly
-  specified.
-- Change gui default targetPort to 8090
- ([9f42928](https://github.com/mendersoftware/mender-helm/commit/9f42928daebc7d377db6f074a0e9be1cd099962e))  by @alfrunes
-  - **BREAKING**: Change gui default targetPort to 8090
-- Changed default `global.enterprise` to false
- ([fd7676d](https://github.com/mendersoftware/mender-helm/commit/fd7676d78d483daa73e8661776e10f06fc5df77c))  by @alfrunes
-- Remove deprecated redis values
- ([356a3eb](https://github.com/mendersoftware/mender-helm/commit/356a3eb4eb624f82e7442ae9ff7380c7b8d1e0a2))  by @alfrunes
-- Traefik container ports optionals
-([MEN-7595](https://northerntech.atlassian.net/browse/MEN-7595)) ([9654235](https://github.com/mendersoftware/mender-helm/commit/9654235292dfeeeb0d1f9d203e5faffc5b9ed230))  by @oldgiova
-
-
-  You can choose to not to set either httpPort or httpsPort in the
-  api_gateway, to prevent upload timeout with the Mender Cli, as reported
-  by customers.
-
-
-
-
-### Documentation
-
-
-- Added remark about global.image.username/password to changelog
- ([360ed7a](https://github.com/mendersoftware/mender-helm/commit/360ed7aac1e024fb9655f5e5bb9e9a7b241a23d6))  by @alfrunes
-- New v6.x setup
- ([df07622](https://github.com/mendersoftware/mender-helm/commit/df076223f8c5c6fb60714eeb26cef101098b1b1a))  by @oldgiova
-
-
-  With Seaweedfs, v6 breaking changes, and a dedicated upgrade document
-
-
-
-
-### Features
-
-
-- Update docker image references to follow new repository scheme
- ([cd1a87a](https://github.com/mendersoftware/mender-helm/commit/cd1a87aafd1e539a618b8417b83537d5c2c72bcb))  by @alfrunes
-  - **BREAKING**: See CHANGELOG.md
-- Autogenerate required useradm/deviceauth secrets
- ([501dfaf](https://github.com/mendersoftware/mender-helm/commit/501dfaf6988b41ec7b918e7f62ffc55be4c63c0c))  by @alfrunes
-- Add gui hpa
- ([44a693a](https://github.com/mendersoftware/mender-helm/commit/44a693ab6d83a6b488df45409121e7df9704e066))  by @oldgiova
-
-
-  Added Horizontal Pod Autoscaler resource to the gui container, to scale
-  it automatically when the service experiences more load.
-- Mongodb sub-chart enabled by default
- ([7d21622](https://github.com/mendersoftware/mender-helm/commit/7d216224eada725facf37405d9b4456b0970e92c))  by @oldgiova
-  - **BREAKING**: mongodb sub-chart enabled by default
-
-
-  To ease the Mender Server onboarding for Open source users.
-  If you want to use an external provided MongoDB, make sure to disable
-  it.
-- NATS sub-chart enabled by default
- ([9218f04](https://github.com/mendersoftware/mender-helm/commit/9218f047f8968aa16549132f6f536b7c6f7ba97b))  by @oldgiova
-  - **BREAKING**: NATS sub-chart enabled by default
-
-
-  To ease the Mender Server onboarding for Open source users.
-  If you want to use an external provided NATS, make sure to disable
-  it.
-- Redis subchart disabled by default
- ([2a7790a](https://github.com/mendersoftware/mender-helm/commit/2a7790ae5f60a77290aafc9aa67aa861cfe0f2ba))  by @oldgiova
-  - **BREAKING**: redis subchart disabled by default
-
-
-  Redis is not used by default in the Open source version. Letting it
-  enabled generates confusion, so let's disable it.
-- Storage proxy enabled by default
- ([3b9cfd2](https://github.com/mendersoftware/mender-helm/commit/3b9cfd23f2fa7e31fc8f59769d78c8cf63e7fc17))  by @oldgiova
-  - **BREAKING**: storage proxy enabled by default
-
-
-  The default install proposes the storage proxy feature enabled by
-  default to a simplify onboarding experience
-
-
-
-
-### Refactor
-
-
-- *(workflows)* Made workflows template arguments easier to read
- ([87c10ff](https://github.com/mendersoftware/mender-helm/commit/87c10ff848583eb3a982eb5c2565436d5fad6224))  by @alfrunes
 
 
 
@@ -164,6 +54,7 @@
 
 
 
+
 ## 5.10.1 - 2024-08-21
 
 
@@ -176,6 +67,7 @@
 
   The regular expression in the hostname rule was using incompatible
   Traefik v2 regex.
+
 
 
 
@@ -199,6 +91,7 @@
 
 
 
+
 ## 5.9.2 - 2024-06-24
 
 
@@ -211,6 +104,7 @@
 
   Fix using an external secret in the generate delta worker service, when
   using MongoDB subchart.
+
 
 
 
@@ -231,6 +125,7 @@
 
 
 
+
 ## 5.8.2 - 2024-06-04
 
 
@@ -242,6 +137,7 @@
 
 
   in the iot-manager service
+
 
 
 
@@ -273,6 +169,7 @@
 
 
 
+
 ## 5.7.1 - 2024-05-29
 
 
@@ -284,6 +181,7 @@
 
 
   Don't create the smtp secret when an existingSecret is created
+
 
 
 
@@ -330,6 +228,7 @@
 
 
 
+
 ## 5.6.0 - 2024-03-22
 
 
@@ -340,6 +239,7 @@
  ([f495ca4](https://github.com/mendersoftware/mender-helm/commit/f495ca4c18a784e4ae651bd7054275c031e0da26))  by @alfrunes
 - Bump chart version to 5.6.0
  ([08c53bc](https://github.com/mendersoftware/mender-helm/commit/08c53bce2b3e78533d64a07e365f01546d1a186d))  by @alfrunes
+
 
 
 
@@ -356,6 +256,7 @@
 
   When the api_gateway.authRateLimit is set, a malformed authorization
   header error is displayed at login. This fix solves the issue
+
 
 
 
@@ -389,6 +290,7 @@
 
   Added optional volumeMounts support to the workflows service. You can
   mount a secret as a file into the service.
+
 
 
 
@@ -440,6 +342,7 @@
 
 
 
+
 ## 5.5.0 - 2024-02-01
 
 
@@ -458,6 +361,7 @@
 
 
 
+
 ## 5.4.0 - 2024-01-01
 
 
@@ -468,6 +372,7 @@
  ([a3d5b39](https://github.com/mendersoftware/mender-helm/commit/a3d5b39da10c0ace1413b47fdb9bd03821239651))  by @tranchitella
 - Update the Redis settings to use a connection string
  ([e40d498](https://github.com/mendersoftware/mender-helm/commit/e40d498d44d893c29fa70c8c2fa9cd58b3b16f8e))  by @tranchitella
+
 
 
 
@@ -491,6 +396,7 @@
 
 - Graceful shutdown for deviceconnect
  ([572c20d](https://github.com/mendersoftware/mender-helm/commit/572c20d4cf56cf6aaaba35b7d725d64db74fd582))  by @tranchitella
+
 
 
 
@@ -536,6 +442,7 @@
 
 
 
+
 ## 5.2.4 - 2023-09-21
 
 
@@ -561,6 +468,7 @@
 
 
 
+
 ## 5.2.3 - 2023-08-26
 
 
@@ -574,6 +482,7 @@
   To align HM with the Helm Chart
 - Set Mender 3.6.2 image tags
  ([ee67fb6](https://github.com/mendersoftware/mender-helm/commit/ee67fb610d3820a99c7292602be7d891b6f15047))  by @tranchitella
+
 
 
 
@@ -604,6 +513,7 @@
 
 
 
+
 ## 5.2.1 - 2023-08-19
 
 
@@ -614,6 +524,7 @@
  ([c279c9f](https://github.com/mendersoftware/mender-helm/commit/c279c9f879689fcd72dfd44819fba9a923c69517))  by @alfrunes
 - Define default PodDisruptionBudget and updateStrategy for mongodb
  ([3a5f7a7](https://github.com/mendersoftware/mender-helm/commit/3a5f7a7ce1d3130b4451d75b351c216de269c602))  by @alfrunes
+
 
 
 
@@ -630,6 +541,7 @@
 
 
 
+
 ## 5.0.3 - 2023-07-28
 
 
@@ -638,6 +550,7 @@
 
 - Renamed to the correct variables for useradm auditlogs
  ([2386a91](https://github.com/mendersoftware/mender-helm/commit/2386a91fd693fbfe877b167b2b91238cbdfe82ca))  by @oldgiova
+
 
 
 
@@ -683,6 +596,7 @@
 
 
 
+
 ## 5.0.1 - 2023-07-03
 
 
@@ -691,6 +605,7 @@
 
 - Issues with replicaset and authentication
  ([3a71575](https://github.com/mendersoftware/mender-helm/commit/3a7157507db87c6dc4687afb8fdadb88405b0deb))  by @oldgiova
+
 
 
 
@@ -746,6 +661,7 @@
 
 
 
+
 ## 4.0.3 - 2023-05-18
 
 
@@ -754,6 +670,7 @@
 
 - Workaround to permissions error with S3 bucket
 ([MEN-6482](https://northerntech.atlassian.net/browse/MEN-6482)) ([df95913](https://github.com/mendersoftware/mender-helm/commit/df959133ec16425274f45fb3d3c4017b9af57f1e))  by @oldgiova
+
 
 
 
@@ -771,11 +688,11 @@
   As described in 'feat: Device count via deviceauth-enterprise cli.'
   in the documentation [1], Device License Count is only available
   with Enterprise.
-
+  
   Avoid ImagePullBackOff and ErrImagePull by not deploying the
   device-auth-license-count cron job when global.enterprise is
   disabled.
-
+  
   [1] https://github.com/mendersoftware/mender-docs/commit/0f4ca50dbee9fd98f131e6e15ae7c0572b7d79d7
 
 
@@ -791,10 +708,11 @@
   To make enabling the device-auth-license-count cron job
   even more robust, add a new variable to control this
   preview feature.
-
+  
   Thank you to @oldgiova for the suggestion [1].
-
+  
   [1] https://github.com/mendersoftware/mender-helm/pull/151#discussion_r1193086966
+
 
 
 
@@ -816,6 +734,7 @@
 
 - Using global registry.image.tag instead of specifying it in every deployment
  ([90fbe64](https://github.com/mendersoftware/mender-helm/commit/90fbe6487ea83cd759c41d9f6a633931d2c25720))  by @oldgiova
+
 
 
 
@@ -861,6 +780,7 @@
 
 
 
+
 ## 3.5.0 - 2023-02-23
 
 
@@ -889,6 +809,7 @@
 
 
 
+
 ## 3.4.0 - 2022-09-28
 
 
@@ -912,6 +833,7 @@
 
 - Configurable container ports for api-gateway
  ([a3d7e36](https://github.com/mendersoftware/mender-helm/commit/a3d7e365ec4e5e41a58bdcf1212bf98992560838))  by @WalterMoar
+
 
 
 
@@ -1008,6 +930,7 @@
 
 
 
+
 ## 2.7.0 - 2021-07-12
 
 
@@ -1016,6 +939,7 @@
 
 - Use k8s service account to access s3 bucket
  ([48d36d9](https://github.com/mendersoftware/mender-helm/commit/48d36d9ba2b8da99b0b51cc8acb4cd4f11ac1e88))  by @ffoysal
+
 
 
 
@@ -1032,13 +956,14 @@
 
   This commit reworks the test job and the helper scripts to run the tests
   in HM staging, namespace mender-helm-tests.
-
+  
   It assumes only one CI pipeline is running in parallel.
 - Update chart for Mender 2.6.0
 ([MEN-4486](https://northerntech.atlassian.net/browse/MEN-4486)) ([f009fb9](https://github.com/mendersoftware/mender-helm/commit/f009fb9549fba5943b8c7340d358321b3d8b9343))  by @lluiscampos
 
 
   Adding new services auditlogs and deviceconnect.
+
 
 
 
@@ -1051,6 +976,7 @@
 
 - Install minio and mongodb from upstream charts instead of stable
  ([5bee4dc](https://github.com/mendersoftware/mender-helm/commit/5bee4dca5db22e009e0ebbf953c5adf2cb97ec3a))  by @tranchitella
+
 
 
 
