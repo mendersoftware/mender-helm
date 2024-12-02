@@ -1,5 +1,6 @@
 {{- if and (.Values.device_auth.enabled) (.Values.global.enterprise)
            (.Values.device_license_count.enabled) }}
+{{- $context := dict "dot" . "component" "deviceauth" "override" .Values.device_auth}}
 {{- $merged := merge (deepCopy .Values.device_auth) (deepCopy (default (dict) .Values.default)) -}}
 apiVersion: batch/v1
 kind: CronJob
@@ -32,7 +33,8 @@ spec:
           {{- end }}
           containers:
           - name: device-auth-license-count
-            image: {{ .Values.device_auth.image.registry | default "registry.mender.io" }}/{{ .Values.device_auth.image.repository | default "mendersoftware/deviceauth-enterprise" }}:{{ .Values.device_auth.image.tag | default .Values.global.image.tag }}
+            image: {{ include "mender.image" $context }}
+            imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
             command: ["/usr/bin/deviceauth-enterprise", "license-count"]
 
             envFrom:
@@ -42,7 +44,7 @@ spec:
 
           restartPolicy: Never
 
-{{- if .Values.global.image.username }}
+{{- if and .Values.global.image .Values.global.image.username }}
           imagePullSecrets:
           - name: docker-registry
 {{- else }}
