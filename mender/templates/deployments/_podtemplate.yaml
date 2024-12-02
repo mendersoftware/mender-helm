@@ -115,7 +115,11 @@ spec:
     envFrom:
     - prefix: DEPLOYMENTS_
       secretRef:
+      {{- if .dot.Values.deployments.mongodbExistingSecret }}
+        name: {{ .dot.Values.deployments.mongodbExistingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+      {{- else }}
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+      {{- end }}
     {{- if (not .migration) }}
     - prefix: DEPLOYMENTS_
       secretRef:
