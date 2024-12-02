@@ -1,4 +1,23 @@
 ---
+## mender-6.0.0-rc.3 - 2024-12-02
+
+
+### Features
+
+
+- Added mongodb secret override
+([MEN-6493](https://northerntech.atlassian.net/browse/MEN-6493)) ([e7e4326](https://github.com/mendersoftware/mender-helm/commit/e7e4326cfdb24840154312e13077f692be74f377))  by @oldgiova
+
+
+  With this override, you can choose a different secret for the
+  deployments service, for example a secondary connection or a admin
+  connection
+
+
+
+
+
+
 ## mender-6.0.0-rc.3 - 2024-11-30
 
 
@@ -182,6 +201,51 @@
 
 
 
+
+## [6.0.0-rc.4](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.3...mender-6.0.0-rc.4) (2024-12-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* storage proxy enabled by default
+* redis subchart disabled by default
+* NATS sub-chart enabled by default
+* mongodb sub-chart enabled by default
+* `tenantadm.certs` are no longer required
+* See CHANGELOG.md
+* Change gui default targetPort to 8090
+* `tenantadm.certs` are no longer required
+* See CHANGELOG.md
+
+### Features
+
+* add gui hpa ([44a693a](https://github.com/mendersoftware/mender-helm/commit/44a693ab6d83a6b488df45409121e7df9704e066))
+* add gui hpa ([8f6d9f4](https://github.com/mendersoftware/mender-helm/commit/8f6d9f46c0c9db16939a8c851ed4bda21e7ca5f3))
+* added mongodb secret override ([ec15419](https://github.com/mendersoftware/mender-helm/commit/ec154197deb411cc347e068b789683211db0bbb6))
+* added mongodb secret override ([e7e4326](https://github.com/mendersoftware/mender-helm/commit/e7e4326cfdb24840154312e13077f692be74f377))
+* Autogenerate required useradm/deviceauth secrets ([501dfaf](https://github.com/mendersoftware/mender-helm/commit/501dfaf6988b41ec7b918e7f62ffc55be4c63c0c))
+* mongodb sub-chart enabled by default ([7d21622](https://github.com/mendersoftware/mender-helm/commit/7d216224eada725facf37405d9b4456b0970e92c))
+* NATS sub-chart enabled by default ([9218f04](https://github.com/mendersoftware/mender-helm/commit/9218f047f8968aa16549132f6f536b7c6f7ba97b))
+* redis subchart disabled by default ([2a7790a](https://github.com/mendersoftware/mender-helm/commit/2a7790ae5f60a77290aafc9aa67aa861cfe0f2ba))
+* storage proxy enabled by default ([3b9cfd2](https://github.com/mendersoftware/mender-helm/commit/3b9cfd23f2fa7e31fc8f59769d78c8cf63e7fc17))
+* Update docker image references to follow new repository scheme ([500dd8e](https://github.com/mendersoftware/mender-helm/commit/500dd8e6d3937b650bcc6e880b287a1c9a9192e1))
+* Update docker image references to follow new repository scheme ([cd1a87a](https://github.com/mendersoftware/mender-helm/commit/cd1a87aafd1e539a618b8417b83537d5c2c72bcb))
+
+
+### Bug Fixes
+
+* `tenantadm.certs` are no longer required ([eaaf800](https://github.com/mendersoftware/mender-helm/commit/eaaf800cb583460e19fbcab643e5575b0e9fbfc8))
+* `tenantadm.certs` are no longer required ([d74b41c](https://github.com/mendersoftware/mender-helm/commit/d74b41c975529024f5a80ebe391fd8df0ded0dc2))
+* Add http timeouts, only apply https timeouts when https is enabled ([9ead1c8](https://github.com/mendersoftware/mender-helm/commit/9ead1c8e3b7942b80e1d238a0b535c7ff1b58087))
+* Change gui default targetPort to 8090 ([9f42928](https://github.com/mendersoftware/mender-helm/commit/9f42928daebc7d377db6f074a0e9be1cd099962e))
+* Changed default `global.enterprise` to false ([fd7676d](https://github.com/mendersoftware/mender-helm/commit/fd7676d78d483daa73e8661776e10f06fc5df77c))
+* Passing string to object value `nats.image` ([31faa8a](https://github.com/mendersoftware/mender-helm/commit/31faa8ae5025b8be378b480cbef6b180754583fb))
+* Remove deprecated redis values ([356a3eb](https://github.com/mendersoftware/mender-helm/commit/356a3eb4eb624f82e7442ae9ff7380c7b8d1e0a2))
+* tenantadm endpoint fix ([44e3aaa](https://github.com/mendersoftware/mender-helm/commit/44e3aaad4778269d3ba9d48ed7f4e5c3e9a2f0db))
+* tenantadm endpoint fix ([14f15a1](https://github.com/mendersoftware/mender-helm/commit/14f15a16faf3ede3b49eefb5a820be8695a69f10))
+* traefik container ports optionals ([9654235](https://github.com/mendersoftware/mender-helm/commit/9654235292dfeeeb0d1f9d203e5faffc5b9ed230))
+* traefik container ports optionals ([671b5fe](https://github.com/mendersoftware/mender-helm/commit/671b5fe61901fc013b189949634f8228fb711a78))
+* traefik container ports optionals ([12dc357](https://github.com/mendersoftware/mender-helm/commit/12dc357184f39edf878105f4cde2787dbcd1b0b7))
 
 ## 5.10.1 - 2024-08-21
 
