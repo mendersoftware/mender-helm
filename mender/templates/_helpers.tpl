@@ -86,7 +86,7 @@ Redis connection string
 MongoDB URI
 */}}
 {{- define "mongodb_uri" }}
-  {{- if and .Values.mongodb.enabled ( not .Values.global.mongodb.URL ) }}
+  {{- if and .Values.mongodb.enabled }}
     {{- if and (eq .Values.mongodb.architecture "replicaset") .Values.mongodb.externalAccess.enabled (eq .Values.mongodb.externalAccess.service.type "ClusterIP") }}
       {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword }}
         {{- printf "mongodb://root:%s@%s-0" .Values.mongodb.auth.rootPassword ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
@@ -233,6 +233,87 @@ spec:
 {{- printf "%s-%s" ( include "mender.fullname" .dot ) .component }}
 {{- end }}
 
+{{/* Helper for "mender.image" */}}
+{{- define "mender.image.registry" }}
+{{- if and .override.image .override.image.registry }}
+{{- print .override.image.registry -}}
+{{- else if and .dot.Values.global
+                .dot.Values.global.image
+                .dot.Values.global.image.registry}}
+{{- print .dot.Values.global.image.registry -}}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.registry}}
+{{- print .dot.Values.default.image.registry -}}
+{{- else if .dot.Values.global.enterprise }}
+{{- print "registry.mender.io" -}}
+{{- else }}
+{{- print "docker.io" -}}
+{{- end }}
+{{- end }}
+
+{{/* Helper for "mender.image" */}}
+{{- define "mender.image.repository" }}
+{{- if and .override.image .override.image.repository }}
+{{- print .override.image.repository -}}
+{{- else if and .dot.Values.global
+                .dot.Values.global.image
+                .dot.Values.global.image.repository }}
+{{- print .dot.Values.global.image.repository }}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.repository}}
+{{- print .dot.Values.default.image.repository -}}
+{{- else if .dot.Values.global.enterprise }}
+{{- print "mender-server-enterprise" -}}
+{{- else }}
+{{- print "mendersoftware" -}}
+{{- end }}
+{{- end }}
+
+{{/* Helper for "mender.image" */}}
+{{- define "mender.image.tag" }}
+{{- if and .override.image .override.image.tag }}
+{{- print .override.image.tag -}}
+{{- else if and .dot.Values.global
+                .dot.Values.global.image
+                .dot.Values.global.image.tag }}
+{{- print .dot.Values.global.image.tag -}}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.tag}}
+{{- print .dot.Values.default.image.tag -}}
+{{- else }}
+{{- print .dot.Chart.AppVersion -}}
+{{- end }}
+{{- end }}
+
+{{/*
+Synopsis:
+image: {{ include "mender.image" (dict
+  "dot" .
+  "component" "<service>"
+  "override" .Values.<service> }}
+*/}}
+{{- define "mender.image" }}
+{{- printf "%s/%s/%s:%s"
+  (include "mender.image.registry" .)
+  (include "mender.image.repository" .)
+  (default .component .imageComponent)
+  (include "mender.image.tag" .) }}
+{{- end }}
+
+{{/*
+Synopsis:
+imagePullPolicy: {{ include "mender.imagePullPolicy" (dict
+  "dot" .
+  "component" "<service>"
+  "override" .Values.<service> }}
+*/}}
+{{- define "mender.imagePullPolicy" }}
+{{- if and .override.image .override.image.pullPolicy }}
+{{ .override.image.pullPolicy }}
+{{- else if and .dot.Values.default.image .dot.Values.default.image.pullPolicy }}
+{{- .dot.Values.default.image.pullPolicy }}
+{{- else }}
+{{- "IfNotPresent" }}
+{{- end }}
+{{- end }}
+
 {{- define "mender.resources" -}}
 {{- $resources := dict }}
 {{- range . }}{{- if . }}
@@ -241,46 +322,6 @@ spec:
 {{- if $resources }}
 {{- toYaml $resources }}
 {{- end }}
-{{- end }}
-
-{{/*
-Define Mender major and minor version
-to be able to apply some conditional logic
-*/}}
-{{- define "menderVersionMajor" }}
-{{- $dot := (ternary . .dot (empty .dot)) -}}
-{{- $mndr_version := split "." $dot.Chart.AppVersion }}
-{{- with $dot.Values.global.image }}
-  {{- if contains "-" .tag }}
-    {{- $mndr_splitted := split "-" .tag -}}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." $mndr_splitted._1 }}
-    {{- end }}
-  {{- else }}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." .tag }}
-    {{- end }}
-  {{- end }}
-{{- end }}
-{{- printf "%s" $mndr_version._0 }}
-{{- end }}
-
-{{- define "menderVersionMinor" }}
-{{- $dot := (ternary . .dot (empty .dot)) -}}
-{{- $mndr_version := split "." $dot.Chart.AppVersion }}
-{{- with $dot.Values.global.image }}
-  {{- if contains "-" .tag }}
-    {{- $mndr_splitted := split "-" .tag -}}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." $mndr_splitted._1 }}
-    {{- end }}
-  {{- else }}
-    {{- if (regexMatch "^[0-9]+\\.[0-9]+" $mndr_splitted._1) }}
-      {{- $mndr_version = split "." .tag }}
-    {{- end }}
-  {{- end }}
-{{- end }}
-{{- printf "%s" $mndr_version._1 }}
 {{- end }}
 
 {{/*

@@ -1,0 +1,14 @@
+---
+global:
+  createClusterRole: false
+filer:
+  s3:
+    enabled: true
+    enableAuth: true
+    createBuckets:
+      - name: "mender-artifacts-seaweedfs"
+  data:
+    type: "emptyDir"
+s3:
+  enabled: true
+  enableAuth: true

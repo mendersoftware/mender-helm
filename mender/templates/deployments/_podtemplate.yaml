@@ -27,12 +27,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "deployments" "deployments-migration" (empty .migration) | quote }}
-    {{- if .dot.Values.global.enterprise }}
-    image: {{ .dot.Values.deployments.image.registry | default "registry.mender.io" }}/{{ .dot.Values.deployments.image.repository | default "mendersoftware/deployments-enterprise" }}:{{ .dot.Values.deployments.image.tag | default .dot.Values.global.image.tag }}
-    {{- else }}
-    image: {{ .dot.Values.deployments.image.registry | default "docker.io" }}/{{ .dot.Values.deployments.image.repository | default "mendersoftware/deployments" }}:{{ .dot.Values.deployments.image.tag | default .dot.Values.global.image.tag }}
-    {{- end }}
-    imagePullPolicy: {{ .dot.Values.deployments.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.deployments.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.deployments.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -119,7 +115,11 @@ spec:
     envFrom:
     - prefix: DEPLOYMENTS_
       secretRef:
+      {{- if .dot.Values.deployments.mongodbExistingSecret }}
+        name: {{ .dot.Values.deployments.mongodbExistingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+      {{- else }}
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+      {{- end }}
     {{- if (not .migration) }}
     - prefix: DEPLOYMENTS_
       secretRef:
@@ -138,7 +138,7 @@ spec:
     {{- end }}
 
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}

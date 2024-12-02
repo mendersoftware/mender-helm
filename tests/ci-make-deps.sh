@@ -13,36 +13,34 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-. tests/variables.sh
 . tests/functions.sh
 
 set -e
 
-local_minio_only=${1:-"false"}
+local_seaweedfs_only=${1:-"false"}
 
-log "deploying dependencies: minio"
-kubectl create secret generic mender-minio --from-literal=root-user=${MINIO_accessKey} --from-literal=root-password=${MINIO_secretKey}
-kubectl apply -f tests/minio-standalone/minio.yaml
+log "deploying dependencies: seaweedfs"
+helm install seaweedfs --wait -f tests/seaweedfs.yaml seaweedfs/seaweedfs
 
-if [[ "$local_minio_only" == "true" ]]; then
+if [[ "$local_seaweedfs_only" == "true" ]]; then
   log "not deploying mongodb"
 else
   log "deploying dependencies: mongodb"
   helm install mender-mongo bitnami/mongodb \
       --version 12.1.31 \
-      --set "image.tag=4.4.13-debian-10-r63" \
+      --set "image.tag=6.0.13-debian-11-r21" \
       --set "auth.enabled=false" \
       --set "persistence.enabled=false" \
       -f ./tests/affinity-x86_64-standard.yaml
 fi
 
-if [[ "$local_minio_only" == "true" ]]; then
+if [[ "$local_seaweedfs_only" == "true" ]]; then
   log "not deploying nats"
 else
 log "deploying dependencies: nats"
 helm install nats nats/nats \
     --version 0.8.2 \
-    --set "nats.image=nats:2.7.4-scratch" \
+    --set "nats.image=nats:2.9.25-scratch" \
     --set "nats.jetstream.enabled=true" \
     -f ./tests/affinity-x86_64-standard.yaml
 fi

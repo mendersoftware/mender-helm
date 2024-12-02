@@ -1,10 +1,12 @@
 global:
-  mongodb:
-    URL: ""
-  nats:
-    URL: ""
-  redis:
-    URL: ""
+  enterprise: true
+  s3:
+    AWS_URI: http://seaweedfs-s3:8333
+    AWS_REGION: us-east-1
+
+default:
+  imagePullSecrets:
+    - name: my-mender-pull-secret
 
 ingress:
   enabled: true
@@ -58,7 +60,6 @@ nats:
   cluster:
     enabled: false
   nats:
-    image: "nats:2.7.4-scratch"
     jetstream:
       enabled: true
       memStorage:
@@ -69,7 +70,7 @@ nats:
   podAnnotations: {}
   statefulSetAnnotations: {}
   serviceAnnotations: {}
- 
+
 # Redis as a subchart
 # Using a standalone bitnami helm chart by default = test usage only
 # It's recommended to use a suitable Redis Cluster for Production
@@ -87,7 +88,3 @@ redis:
   replica:
     persistence:
       enabled: false
-
-api_gateway:
-  env:
-    SSL: false

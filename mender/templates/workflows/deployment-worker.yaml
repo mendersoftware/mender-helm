@@ -1,5 +1,9 @@
 {{- if .Values.workflows.enabled }}
-{{- $context := (dict "dot" . "component" "workflows-worker" "worker" "true") -}}
+{{- $context := dict "dot" .
+                     "component" "workflows-worker"
+                     "imageComponent" "workflows"
+                     "override" .Values.workflows
+                     "worker" "true" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
