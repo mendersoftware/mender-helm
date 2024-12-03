@@ -78,8 +78,13 @@ spec:
 
     env:
     # NATS uri
-    {{- if not .dot.Values.global.nats.existingSecret }}
     - name: WORKFLOWS_NATS_URI
+    {{- if .dot.Values.global.nats.existingSecret }}
+      valueFrom:
+        secretKeyRef:
+          key: NATS_URI
+          name: {{ .dot.Values.global.nats.existingSecret }}
+    {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}
 
@@ -113,11 +118,6 @@ spec:
         name: {{ .dot.Values.global.smtp.existingSecret | default "smtp" }}
     {{- end }}
 
-    {{- if .dot.Values.global.nats.existingSecret }}
-    - prefix: WORKFLOWS_
-      secretRef:
-        name: {{ .dot.Values.global.nats.existingSecret }}
-    {{- end }}
     {{- with .dot.Values.workflows.mountSecrets }}
     volumeMounts: {{ toYaml .volumeMounts | nindent 6 }}
     {{- end }}
