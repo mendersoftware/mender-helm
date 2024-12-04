@@ -1,3 +1,16 @@
+## mender-5.12.0 - 2024-12-04
+
+
+### Features
+
+
+- Upgrade to Mender version `3.7.8`
+ ([b4aeb02](https://github.com/mendersoftware/mender-helm/commit/b4aeb026660c0760cdd0167421a2e7fc42318773)) 
+
+
+
+
+
 ---
 ## mender-5.11.2 - 2024-11-15
 
