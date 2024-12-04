@@ -66,7 +66,7 @@ template_helm_chart_current_lts: ## Run the template of the current LTS
 		-f mender/values.yaml \
 		-f tests/keys.yaml \
 		-f tests/values-helmci.yaml \
-		--set global.image.tag="mender-3.7.7" \
+		--set global.image.tag="mender-3.7.8" \
     --set global.image.username=nt_fakeuser \
     --set global.image.password=nt_fakepassword \
     --set global.s3.AWS_ACCESS_KEY_ID="fakeaccesskey" \
