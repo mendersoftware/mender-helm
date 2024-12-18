@@ -72,8 +72,13 @@ spec:
 
     env:
     # NATS uri
-    {{- if not .dot.Values.global.nats.existingSecret }}
     - name: DEVICECONNECT_NATS_URI
+    {{- if .dot.Values.global.nats.existingSecret }}
+      valueFrom:
+        secretKeyRef:
+          key: NATS_URI
+          name: {{ .dot.Values.global.nats.existingSecret }}
+    {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}
     # Enable audit logging
@@ -104,11 +109,6 @@ spec:
     - prefix: DEVICECONNECT_
       secretRef:
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
-    {{- if .dot.Values.global.nats.existingSecret }}
-    - prefix: DEVICECONNECT_
-      secretRef:
-        name: {{ .dot.Values.global.nats.existingSecret }}
-    {{- end }}
 
     {{- if (not .migration) }}
     # Graceful shutdown

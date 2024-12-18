@@ -682,6 +682,9 @@ changelog:
       when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
+    # Don't run release-please on staging and prod branches
+    - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "prod"
+      when: never
     # Only run for protected branches (main and maintenance branches)
     - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_BRANCH != ""
   before_script:
@@ -725,6 +728,9 @@ release:github:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
     - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    # Don't run release-please on staging and prod branches
+    - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "prod"
       when: never
     # Only make available for protected branches (main and maintenance branches)
     - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_BRANCH != ""
