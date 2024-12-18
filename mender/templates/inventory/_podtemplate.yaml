@@ -24,14 +24,8 @@ spec:
   {{- end }}
   containers:
   - name: {{ ternary "inventory" "inventory-migration" (empty .migration) | quote }}
-
-    {{- if .dot.Values.global.enterprise }}
-    image: {{ .dot.Values.inventory.image.registry | default "registry.mender.io" }}/{{ .dot.Values.inventory.image.repository | default "mendersoftware/inventory-enterprise" }}:{{ .dot.Values.inventory.image.tag | default .dot.Values.global.image.tag }}
-    {{- else }}
-    image: {{ .dot.Values.inventory.image.registry | default "docker.io" }}/{{ .dot.Values.inventory.image.repository | default "mendersoftware/inventory" }}:{{ .dot.Values.inventory.image.tag | default .dot.Values.global.image.tag }}
-    {{- end }}
-
-    imagePullPolicy: {{ .dot.Values.inventory.image.imagePullPolicy }}
+    image: {{ include "mender.image" . }}
+    imagePullPolicy: {{ include "mender.imagePullPolicy" . }}
     {{- if .dot.Values.inventory.containerSecurityContext.enabled }}
     securityContext: {{- omit .dot.Values.inventory.containerSecurityContext "enabled" | toYaml | nindent 6 }}
     {{- end }}
@@ -81,21 +75,32 @@ spec:
     - name: INVENTORY_MIDDLEWARE
       value: {{ .dot.Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
     {{- if and .dot.Values.global.enterprise }}
-    {{- if not (and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 )) }}
     {{- if not .dot.Values.global.redis.existingSecret }}
     - name: INVENTORY_REDIS_CONNECTION_STRING
       value: {{ include "redis_connection_string" . }}
-    {{- end }}
     - name: INVENTORY_REDIS_KEY_PREFIX
       value: {{ .dot.Values.device_auth.env.INVENTORY_REDIS_KEY_PREFIX | default "inventory:v1" | quote }}
     - name: INVENTORY_REDIS_CACHE_EXPIRE_SEC
       value: {{ .dot.Values.useradm.env.INVENTORY_REDIS_CACHE_EXPIRE_SEC | default "1800" | quote }}
     {{- end }}
     {{- end }}
+    - name: INVENTORY_NATS_URI
+    {{- if .dot.Values.global.nats.existingSecret }}
+      valueFrom:
+        secretKeyRef:
+          key: NATS_URI
+          name: {{ .dot.Values.global.nats.existingSecret }}
+    {{- else }}
+      value: {{ template "nats_uri" . }}
+    {{- end }}
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.inventory) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
-    # Supported configuration settings: https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
-    # Set in order, last value for the key will be used in case duplications.
+    {{- /*
+    Supported configuration settings:
+      https://github.com/mendersoftware/inventory-enterprise/blob/master/config.yaml
+    Set in order, last value for the key will be used in case duplications.
+    */}}
+
     envFrom:
     - prefix: INVENTORY_
       secretRef:
@@ -105,16 +110,14 @@ spec:
         name: {{ .dot.Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
       {{- end }}
 
-    {{- if not (and ( le (int (include "menderVersionMajor" .)) 3 ) ( lt (int (include "menderVersionMinor" .)) 7 ) ) }}
     {{- if and .dot.Values.global.redis.existingSecret .dot.Values.global.enterprise ( not .dot.Values.global.redis.URL ) ( not .dot.Values.redis.enabled ) }}
     # Redis existingSecret
     - prefix: INVENTORY_
       secretRef:
         name: {{ .dot.Values.global.redis.existingSecret | quote }}
     {{- end }}
-    {{- end }}
 
-  {{- if .dot.Values.global.image.username }}
+  {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:
   - name: {{ ternary "docker-registry" "docker-registry-prerelease" (empty .migration) }}
   {{- else }}
