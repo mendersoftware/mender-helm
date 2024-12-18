@@ -183,6 +183,14 @@
 
 
 
+## [6.0.0-rc.4](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.3...mender-6.0.0-rc.4) (2024-12-18)
+
+
+### Bug Fixes
+
+* consistency between nats_uri declaration ([e218a6a](https://github.com/mendersoftware/mender-helm/commit/e218a6a5ae88452fbe1fed06a737ef6b8398795c))
+* consistency between nats_uri declaration ([e904956](https://github.com/mendersoftware/mender-helm/commit/e904956f1ad3ef1915aade0844582ac7b9dedcbc))
+
 ## 5.10.1 - 2024-08-21
 
 
