@@ -215,7 +215,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.1.2
+    tag: v3.3.0
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -547,7 +547,6 @@ gui:
     annotations: {}
     type: ClusterIP
     port: 80
-    portError: 8080
   httpPort: 8090
   podSecurityContext:
     enabled: false
