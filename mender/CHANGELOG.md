@@ -1,4 +1,18 @@
 ---
+## mender-6.0.0-rc.6 - 2025-01-08
+
+
+### Bug Fixes
+
+
+- Bump Traefik to v3.3.1
+ ([8fff88e](https://github.com/mendersoftware/mender-helm/commit/8fff88ea6734ef16315ab8d0847f0974f2a96dd8))  by @alfrunes
+
+
+
+
+
+
 ## mender-6.0.0-rc.5 - 2025-01-07
 
 
@@ -200,6 +214,13 @@
 
 
 
+
+## [6.0.0-rc.6](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.5...mender-6.0.0-rc.6) (2025-01-08)
+
+
+### Bug Fixes
+
+* Bump Traefik to v3.3.1 ([8fff88e](https://github.com/mendersoftware/mender-helm/commit/8fff88ea6734ef16315ab8d0847f0974f2a96dd8))
 
 ## [6.0.0-rc.5](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.4...mender-6.0.0-rc.5) (2025-01-07)
 
