@@ -1,4 +1,36 @@
 ---
+## mender-6.0.0-rc.6 - 2025-01-08
+
+
+### Bug Fixes
+
+
+- Bump Traefik to v3.3.1
+ ([8fff88e](https://github.com/mendersoftware/mender-helm/commit/8fff88ea6734ef16315ab8d0847f0974f2a96dd8))  by @alfrunes
+
+
+
+
+
+
+## mender-6.0.0-rc.5 - 2025-01-07
+
+
+### Bug Fixes
+
+
+- Remove errorPort from gui
+ ([88f0a43](https://github.com/mendersoftware/mender-helm/commit/88f0a4355bae41b3ebe1fd316f791eb22b3a22ce))  by @oldgiova
+  - **BREAKING**: remove errorPort from gui
+
+
+  Follow up removing the error reponder middleware from Traefik
+
+
+
+
+
+
 ## mender-6.0.0-rc.3 - 2024-11-30
 
 
@@ -182,6 +214,24 @@
 
 
 
+
+## [6.0.0-rc.6](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.5...mender-6.0.0-rc.6) (2025-01-08)
+
+
+### Bug Fixes
+
+* Bump Traefik to v3.3.1 ([8fff88e](https://github.com/mendersoftware/mender-helm/commit/8fff88ea6734ef16315ab8d0847f0974f2a96dd8))
+
+## [6.0.0-rc.5](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.4...mender-6.0.0-rc.5) (2025-01-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove errorPort from gui
+
+### Bug Fixes
+
+* remove errorPort from gui ([88f0a43](https://github.com/mendersoftware/mender-helm/commit/88f0a4355bae41b3ebe1fd316f791eb22b3a22ce))
 
 ## [6.0.0-rc.4](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.3...mender-6.0.0-rc.4) (2024-12-18)
 

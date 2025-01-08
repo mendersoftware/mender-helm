@@ -53,8 +53,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/auditlogs`)"
           service: auditlogs
           tls: {{ $isTls }}
@@ -71,8 +69,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/iot-manager`)"
           service: iot-manager
           tls: {{ $isTls }}
@@ -89,10 +85,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/devices/v[0-9]+/deployments`)"
           service: deployments
           tls: {{ $isTls }}
@@ -102,10 +94,6 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/devices/v[0-9]+/deployments/download`)"
           service: deployments
           tls: {{ $isTls }}
@@ -119,8 +107,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/deployments`)"
           service: deployments
           tls: {{ $isTls }}
@@ -149,8 +135,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/devauth`)"
           service: deviceauth
           tls: {{ $isTls }}
@@ -167,10 +151,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/devices/v[0-9]+/deviceconfig`)"
           service: deviceconfig
           tls: {{ $isTls }}
@@ -184,8 +164,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/deviceconfig`)"
           service: deviceconfig
           tls: {{ $isTls }}
@@ -202,10 +180,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/devices/v[0-9]+/deviceconnect`)"
           service: deviceconnect
           tls: {{ $isTls }}
@@ -219,10 +193,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/deviceconnect`)"
           service: deviceconnect
           tls: {{ $isTls }}
@@ -239,10 +209,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/devices/v[0-9]+/devicemonitor`)"
           service: devicemonitor
           tls: {{ $isTls }}
@@ -256,8 +222,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/devicemonitor`)"
           service: devicemonitor
           tls: {{ $isTls }}
@@ -276,10 +240,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathPrefix(`/`)"
           priority: 1
           service: gui
@@ -298,10 +258,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/devices/v1/inventory`)"
           service: inventory
           tls: {{ $isTls }}
@@ -315,10 +271,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder2
-          - json-error-responder3
-          - json-error-responder4
           rule: "PathRegexp(`^/api/devices/v2/inventory`)"
           service: inventory
           tls: {{ $isTls }}
@@ -333,8 +285,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v1/inventory`)"
           service: inventory
           tls: {{ $isTls }}
@@ -348,8 +298,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v2/inventory`)"
           service: inventory
           tls: {{ $isTls }}
@@ -396,8 +344,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder1
-          - json-error-responder4
           rule: "PathRegexp(`^/api/management/v[0-9]+/useradm`)"
           service: useradm
           tls: {{ $isTls }}
@@ -414,7 +360,6 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          - json-error-responder4
           rule: >-
             !Path(`/api/management/v1/useradm/auth/logout`) &&
             PathRegexp(`^/api/management/v[0-9]+/useradm/(auth|oauth2|oidc)`)
@@ -489,11 +434,6 @@ data:
           loadBalancer:
             servers:
             - url: "http://{{ .Values.deployments.service.name }}:{{ .Values.deployments.service.port }}"
-
-        error-responder:
-          loadBalancer:
-            servers:
-            - url: "http://{{ .Values.gui.service.name }}:8080"
 
         gui:
           loadBalancer:
@@ -584,30 +524,6 @@ data:
           forwardAuth:
             address: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}/api/internal/v1/useradm/auth/verify"
             authResponseHeaders: "X-MEN-RequestID,X-MEN-RBAC-Inventory-Groups,X-MEN-RBAC-Deployments-Groups,X-MEN-RBAC-Releases-Tags"
-
-        json-error-responder1:
-          errors:
-            service: error-responder
-            query: "/{status}.json"
-            status: "401-404"
-
-        json-error-responder2:
-          errors:
-            service: error-responder
-            query: "/{status}.json"
-            status: "500-504"
-
-        json-error-responder3:
-          errors:
-            service: error-responder
-            query: "/{status}.json"
-            status: "408"
-
-        json-error-responder4:
-          errors:
-            service: error-responder
-            query: "/{status}.json"
-            status: "429"
 
         inventoryV1-replacepathregex:
           replacepathregex:
