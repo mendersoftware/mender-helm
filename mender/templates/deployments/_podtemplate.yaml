@@ -98,7 +98,10 @@ spec:
       value: "true"
     {{- end }}
     {{- end }}
-
+    {{- if .dot.Values.api_gateway.storage_proxy.enabled }}
+    - name: DEPLOYMENTS_STORAGE_PROXY_URI
+      value: {{ printf "%q" .dot.Values.global.url }}
+    {{- end }}
     {{- if .dot.Values.global.enterprise }}
     {{- if not .dot.Values.global.redis.existingSecret }}
     - name: DEPLOYMENTS_REDIS_CONNECTION_STRING
