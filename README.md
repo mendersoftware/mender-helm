@@ -416,8 +416,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `device_auth.service.port` | Port for the service | `8080` |
 | `device_auth.service.nodePort` | Node port for the service | `nil` |
-| `device_auth.env.DEVICEAUTH_INVENTORY_ADDR` | Set the DEVICEAUTH_INVENTORY_ADDR variable | `http://mender-inventory:8080/` |
-| `device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR` | Set the DEVICEAUTH_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080` |
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
@@ -425,7 +423,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable **[Deprecated from 3.7.0]** | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
-| `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `device_auth.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `device_auth.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `device_auth.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
@@ -685,7 +682,6 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable **[Deprecated from 3.7.0]** | `2` |
 | `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
-| `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 | `useradm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `useradm.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
@@ -1013,8 +1009,6 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `devicemonitor.service.port` | Port for the service | `8080` |
 | `devicemonitor.service.nodePort` | Node port for the service | `nil` |
-| `devicemonitor.env.DEVICEMONITOR_USERADM_URL` | Set the DEVICEMONITOR_USERADM_URL variable | `http://mender-useradm:8080/` |
-| `devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL` | Set the DEVICEMONITOR_WORKFLOWS_URL variable | `http://mender-workflows-server:8080` |
 | `devicemonitor.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `devicemonitor.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `devicemonitor.podSecurityContext.runAsUser` | User ID for the pod | `65534` |

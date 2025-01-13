@@ -93,7 +93,7 @@ spec:
 
     # Workflows orchestrator address
     - name: DEVICECONNECT_WORKFLOWS_URL
-      value: http://mender-workflows-server:8080/
+      value: {{ printf "http://%s:%d" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
 
     - name: DEVICECONNECT_WS_ALLOWED_ORIGINS
       value: >-
