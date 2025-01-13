@@ -1,4 +1,28 @@
 ---
+## mender-6.0.0-rc.7 - 2025-01-13
+
+
+### Bug Fixes
+
+
+- Use more sensible defaults when storage proxy is enabled
+ ([fdfa432](https://github.com/mendersoftware/mender-helm/commit/fdfa43231bc7cfec35cc8572fc7142cb057c7bdd))  by @alfrunes
+
+
+  Set storage.proxy_uri setting in deployments to the public URL
+  {{.Values.global.url}}.
+- Use sample global.url to avoid confusion
+ ([99ab65e](https://github.com/mendersoftware/mender-helm/commit/99ab65ebfe0258b2f9d6688c05662ffeffaa91c7))  by @oldgiova
+
+
+  Set default .Values.global.url to the sample public URL to avoid
+  confusion.
+
+
+
+
+
+
 ## mender-6.0.0-rc.6 - 2025-01-08
 
 
@@ -214,6 +238,16 @@
 
 
 
+
+## [6.0.0-rc.7](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.6...mender-6.0.0-rc.7) (2025-01-13)
+
+
+### Bug Fixes
+
+* Use more sensible defaults when storage proxy is enabled ([69aeb93](https://github.com/mendersoftware/mender-helm/commit/69aeb93683e143f7d3f3e04fa877cabd020de461))
+* Use more sensible defaults when storage proxy is enabled ([fdfa432](https://github.com/mendersoftware/mender-helm/commit/fdfa43231bc7cfec35cc8572fc7142cb057c7bdd))
+* Use sample global.url to avoid confusion ([ffb0476](https://github.com/mendersoftware/mender-helm/commit/ffb047680b9ab69d2d8496436f47ca7940700739))
+* Use sample global.url to avoid confusion ([99ab65e](https://github.com/mendersoftware/mender-helm/commit/99ab65ebfe0258b2f9d6688c05662ffeffaa91c7))
 
 ## [6.0.0-rc.6](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.5...mender-6.0.0-rc.6) (2025-01-08)
 
