@@ -856,7 +856,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `iot_manager.resources.requests.cpu` | Resources CPU request | `50m` |
 | `iot_manager.resources.requests.memory` | Resources memory request | `128Mi` |
-| `iot_manager.service.name` | Name of the service | `mender-iot_manager` |
+| `iot_manager.service.name` | Name of the service | `mender-iot-manager` |
 | `iot_manager.service.annotations` | Annotations map for the service | `{}` |
 | `iot_manager.service.type` | Service type | `ClusterIP` |
 | `iot_manager.service.loadBalancerIP` | Service load balancer IP | `nil` |
