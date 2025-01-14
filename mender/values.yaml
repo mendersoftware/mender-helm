@@ -408,15 +408,12 @@ device_auth:
     type: ClusterIP
     port: 8080
   env:
-    DEVICEAUTH_INVENTORY_ADDR: http://mender-inventory:8080/
-    DEVICEAUTH_ORCHESTRATOR_ADDR: http://mender-workflows-server:8080/
     DEVICEAUTH_JWT_ISSUER: Mender
     DEVICEAUTH_JWT_EXP_TIMEOUT: 604800
     DEVICEAUTH_MIDDLEWARE: prod
     DEVICEAUTH_REDIS_DB: "1"
     DEVICEAUTH_REDIS_TIMEOUT_SEC: "1"
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
-    DEVICEAUTH_TENANTADM_ADDR: http://mender-tenantadm:8080
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
@@ -767,7 +764,6 @@ useradm:
     USERADM_REDIS_DB: "1"
     USERADM_REDIS_TIMEOUT_SEC: "1"
     USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
-    USERADM_TENANTADM_ADDR: http://mender-tenantadm:8080
     USERADM_TOTP_ISSUER: Mender
   podSecurityContext:
     enabled: false
@@ -1270,9 +1266,6 @@ devicemonitor:
     annotations: {}
     type: ClusterIP
     port: 8080
-  env:
-    DEVICEMONITOR_USERADM_URL: http://mender-useradm:8080/
-    DEVICEMONITOR_WORKFLOWS_URL: http://mender-workflows-server:8080/
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
