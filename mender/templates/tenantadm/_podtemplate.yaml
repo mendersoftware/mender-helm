@@ -82,8 +82,14 @@ spec:
       value: {{ .dot.Values.tenantadm.env.TENANTADM_MIDDLEWARE | quote }}
     - name: TENANTADM_SERVER_PRIV_KEY_PATH
       value: {{ .dot.Values.tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH | quote }}
+    - name: TENANTADM_DEPLOYMENTS_ADDR
+      value: {{ printf "http://%s:%d" .dot.Values.deployments.service.name .dot.Values.deployments.service.port | quote }}
+    - name: TENANTADM_DEVICEAUTH_ADDR
+      value: {{ printf "http://%s:%d" .dot.Values.device_auth.service.name .dot.Values.device_auth.service.port | quote }}
     - name: TENANTADM_ORCHESTRATOR_ADDR
-      value: {{ .dot.Values.tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR | quote }}
+      value: {{ printf "http://%s:%d" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
+    - name: TENANTADM_USERADM_ADDR
+      value: {{ printf "http://%s:%d" .dot.Values.useradm.service.name .dot.Values.useradm.service.port | quote }}
     - name: TENANTADM_RECAPTCHA_URL_VERIFY
       value: {{ .dot.Values.tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY | quote }}
     - name: TENANTADM_DEFAULT_API_LIMITS

@@ -610,7 +610,6 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.service.nodePort` | Node port for the service | `nil` |
 | `tenantadm.env.TENANTADM_MIDDLEWARE` | Set the TENANTADM_MIDDLEWARE variable | `prod` |
 | `tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH` | Set the TENANTADM_SERVER_PRIV_KEY_PATH variable | `/etc/tenantadm/rsa/private.pem` |
-| `tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR` | Set the TENANTADM_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080/` |
 | `tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY` | Set the TENANTADM_RECAPTCHA_URL_VERIFY variable | `https://www.google.com/recaptcha/api/siteverify` |
 | `tenantadm.env.TENANTADM_DEFAULT_API_LIMITS` | Set the TENANTADM_DEFAULT_API_LIMITS variable, defining the default rate limits | see below for the default values |
 | `tenantadm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
@@ -857,7 +856,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `iot_manager.resources.requests.cpu` | Resources CPU request | `50m` |
 | `iot_manager.resources.requests.memory` | Resources memory request | `128Mi` |
-| `iot_manager.service.name` | Name of the service | `mender-iot_manager` |
+| `iot_manager.service.name` | Name of the service | `mender-iot-manager` |
 | `iot_manager.service.annotations` | Annotations map for the service | `{}` |
 | `iot_manager.service.type` | Service type | `ClusterIP` |
 | `iot_manager.service.loadBalancerIP` | Service load balancer IP | `nil` |
