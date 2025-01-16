@@ -76,7 +76,7 @@ spec:
     - name: AUDITLOGS_USERADM_ADDRESS
       value: {{ printf "http://%s:%d" .dot.Values.useradm.service.name }}
     - name: AUDITLOGS_DEVICEAUTH_ADDRESS
-      value: {{ printf "http://%s:%d" .dot.Values.deviceauth.service.name }}
+      value: {{ printf "http://%s:%d" .dot.Values.device_auth.service.name }}
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.auditlogs) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
     # Supported configuration settings: https://github.com/mendersoftware/auditlogs/blob/master/config.yaml
     # Set in order, last value for the key will be used in case duplications.
