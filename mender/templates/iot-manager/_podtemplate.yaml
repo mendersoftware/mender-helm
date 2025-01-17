@@ -72,7 +72,7 @@ spec:
 
     env:
     - name: IOT_MANAGER_DEVICEAUTH_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.device_auth.service.name .dot.Values.device_auth.service.port | quote }}
+      value: {{ printf "http://%s:%v" .dot.Values.device_auth.service.name .dot.Values.device_auth.service.port | quote }}
     - name: IOT_MANAGER_NATS_URI
     {{- if .dot.Values.global.nats.existingSecret }}
       valueFrom:
