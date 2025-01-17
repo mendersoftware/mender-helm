@@ -81,11 +81,11 @@ spec:
 
     env:
     - name: DEVICEAUTH_INVENTORY_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.inventory.service.name .dot.Values.inventory.service.port }}
+      value: {{ printf "http://%s:%v" .dot.Values.inventory.service.name .dot.Values.inventory.service.port }}
     - name: DEVICEAUTH_IOT_MANAGER_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.iot_manager.service.name .dot.Values.iot_manager.service.port }}
+      value: {{ printf "http://%s:%v" .dot.Values.iot_manager.service.name .dot.Values.iot_manager.service.port }}
     - name: DEVICEAUTH_ORCHESTRATOR_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.workflows.service.name .dot.Values.workflows.service.port }}
+      value: {{ printf "http://%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port }}
     - name: DEVICEAUTH_SERVER_PRIV_KEY_PATH
       value: /etc/deviceauth/rsa/private.pem
     - name: DEVICEAUTH_JWT_ISSUER
@@ -98,7 +98,7 @@ spec:
     - name: DEVICEAUTH_HAVE_ADDONS
       value: "true"
     - name: DEVICEAUTH_TENANTADM_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.tenantadm.service.name .dot.Values.tenantadm.service.port }}
+      value: {{ printf "http://%s:%v" .dot.Values.tenantadm.service.name .dot.Values.tenantadm.service.port }}
     {{- end }}
     # Enable audit logging
     {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}

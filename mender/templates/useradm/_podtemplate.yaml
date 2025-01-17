@@ -80,9 +80,9 @@ spec:
 
     env:
     - name: USERADM_INVENTORY_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.inventory.service.name .dot.Values.inventory.service.port | quote }}
+      value: {{ printf "http://%s:%v" .dot.Values.inventory.service.name .dot.Values.inventory.service.port | quote }}
     - name: USERADM_ORCHESTRATOR_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
+      value: {{ printf "http://%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
     - name: USERADM_MIDDLEWARE
       value: {{ .dot.Values.useradm.env.USERADM_MIDDLEWARE | quote }}
     - name: USERADM_PROXY_COUNT
@@ -99,7 +99,7 @@ spec:
     - name: USERADM_HAVE_ADDONS
       value: "true"
     - name: USERADM_TENANTADM_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.tenantadm.service.name .dot.Values.tenantadm.service.port | quote }}
+      value: {{ printf "http://%s:%v" .dot.Values.tenantadm.service.name .dot.Values.tenantadm.service.port | quote }}
     {{- end }}
     - name: USERADM_TOTP_ISSUER
       value: {{ .dot.Values.useradm.env.USERADM_TOTP_ISSUER | quote }}

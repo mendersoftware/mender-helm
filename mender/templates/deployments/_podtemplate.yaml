@@ -78,7 +78,7 @@ spec:
     - name: DEPLOYMENTS_STORAGE_DEFAULT
       value: {{ .dot.Values.global.storage | quote }}
     - name: DEPLOYMENTS_INVENTORY_ADDR
-      value: {{ printf "http://%s:%d" .dot.Values.inventory.service.name .dot.Values.inventory.service.port }}
+      value: {{ printf "http://%s:%v" .dot.Values.inventory.service.name .dot.Values.inventory.service.port }}
     - name: DEPLOYMENTS_MIDDLEWARE
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
     - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
