@@ -1,4 +1,45 @@
 ---
+## mender-6.0.0-rc.8 - 2025-01-17
+
+
+### Bug Fixes
+
+
+- Remove tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR value
+ ([c4f6f2d](https://github.com/mendersoftware/mender-helm/commit/c4f6f2dfbdcefa4c20287cd80e50addd339652ed))  by @alfrunes
+
+
+  The value should be inferred from the workflows service name and port.
+- Add and replace configuration values for internal addresses
+ ([aae4180](https://github.com/mendersoftware/mender-helm/commit/aae4180cc2a919b8f01f7eebd38d15644e36b2d2))  by @alfrunes
+
+
+  The internal addresses are uniquely determined from the name and port of
+  the respective service. They should not be configurable. The following
+  values have been removed and will be ineffectual:
+  - `device_auth.env.DEVICEAUTH_INVENTORY_ADDR`
+  - `device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR`
+  - `device_auth.env.DEVICEAUTH_TENANTADM_ADDR`
+  - `useradm.env.USERADM_TENANTADM_ADDR`
+  - `devicemonitor.env.DEVICEMONITOR_USERADM_URL`
+  - `devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL`
+- Use correct device_auth key
+ ([a138560](https://github.com/mendersoftware/mender-helm/commit/a138560c3cd46c2061ea0c8dbc3ea9686d3e7969))  by @oldgiova
+
+
+
+
+### Documentation
+
+
+- Fix typo in default value for IoT Manager service name
+ ([178e89d](https://github.com/mendersoftware/mender-helm/commit/178e89deaf25e040a21ef6db83ed6d28724e2785))  by @alfrunes
+
+
+
+
+
+
 ## mender-6.0.0-rc.7 - 2025-01-13
 
 
@@ -238,6 +279,16 @@
 
 
 
+
+## [6.0.0-rc.8](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.7...mender-6.0.0-rc.8) (2025-01-17)
+
+
+### Bug Fixes
+
+* Add and replace configuration values for internal addresses ([aae4180](https://github.com/mendersoftware/mender-helm/commit/aae4180cc2a919b8f01f7eebd38d15644e36b2d2))
+* Remove tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR value ([c4f6f2d](https://github.com/mendersoftware/mender-helm/commit/c4f6f2dfbdcefa4c20287cd80e50addd339652ed))
+* use correct device_auth key ([501d33b](https://github.com/mendersoftware/mender-helm/commit/501d33bcb0c4e2b5ede5b628693bde4fb6a34f71))
+* use correct device_auth key ([a138560](https://github.com/mendersoftware/mender-helm/commit/a138560c3cd46c2061ea0c8dbc3ea9686d3e7969))
 
 ## [6.0.0-rc.7](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.6...mender-6.0.0-rc.7) (2025-01-13)
 
