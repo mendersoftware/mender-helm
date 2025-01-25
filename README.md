@@ -635,6 +635,8 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `tenantadm.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `tenantadm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `tenantadm.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
+| `tenantadm.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
 
 The default value for the rate limits are:
 
@@ -879,6 +881,8 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `iot_manager.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
+| `iot_manager.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
 
 ### Parameters: deviceconnect
 

@@ -731,6 +731,38 @@ tenantadm:
     # successThreshold: 2
     # failureThreshold: 6
 
+  #
+  # Optional cronjobs for tenantadm.
+  # These cronjobs are used to perform maintenance tasks, like deleting
+  # suspended tenants created for temporary purposes.
+  #
+  cronjobs:
+    enabled: false
+    jobs: []
+    #   - name: drop-suspended-tenants
+    #     schedule: "0 6 * * *"
+    #     command: []
+    #     args:
+    #     - "maintenance"
+    #     - "delete-suspended-tenants"
+    #     - "--threshold-days=30"
+    #     customEnvs:
+    #       - name: TENANTADM_MONGO
+    #         valueFrom:
+    #           secretKeyRef:
+    #             key: MONGO_URL
+    #             name: mongodb-common
+    #     resources:
+    #       limits:
+    #         cpu: 100m
+    #         memory: 100Mi
+    #       requests:
+    #         cpu: 50m
+    #         memory: 50Mi
+    #     tolerations: []
+    #     priorityClassName: "mender-low-priority"
+    #     affinity: {}
+
 useradm:
   enabled: true
   podAnnotations: {}
@@ -1095,6 +1127,41 @@ iot_manager:
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
+
+  #
+  # Optional cronjobs for iot-manager.
+  # These cronjobs are used to perform maintenance tasks, like deleting
+  # suspended tenants created for temporary purposes.
+  #
+  cronjobs:
+    enabled: false
+    jobs: []
+    #   - name: iot-manager-sync-devices
+    #     schedule: "42 0 * * *"
+    #     command: []
+    #     args:
+    #     - "sync-devices'
+    #     - "--batch-size'
+    #     - "100"
+    #     customEnvs:
+    #     - name: IOT_MANAGER_WORKFLOWS_URL
+    #       value: http://mender-workflows-server:8080
+    #     - name: IOT_MANAGER_DEVICEAUTH_URL
+    #       value: http://mender-device-auth:8080
+    #     customEnvFroms:
+    #     - prefix: IOT_MANAGER_
+    #       secretRef:
+    #         name: mongodb-common
+    #     resources:
+    #       limits:
+    #         cpu: 150m
+    #         memory: 100Mi
+    #       requests:
+    #         cpu: 150m
+    #         memory: 64Mi
+    #     tolerations: []
+    #     priorityClassName: "mender-low-priority"
+    #     affinity: {}
 
 deviceconnect:
   enabled: true
