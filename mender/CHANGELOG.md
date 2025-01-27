@@ -1,4 +1,23 @@
 ---
+## mender-6.0.0-rc.9 - 2025-01-27
+
+
+### Features
+
+
+- Maintenance cronjobs
+ ([78e5ff3](https://github.com/mendersoftware/mender-helm/commit/78e5ff366ac23a6d1a10f4fd78983167c4f90f76))  by @oldgiova
+
+
+  Added optional cronjobs for tenantadm and iot-manager services. A
+  possible use case is to periodically delete suspended tenants that has
+  been created for testing purposes.
+
+
+
+
+
+
 ## mender-6.0.0-rc.8 - 2025-01-17
 
 
@@ -279,6 +298,14 @@
 
 
 
+
+## [6.0.0-rc.9](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.8...mender-6.0.0-rc.9) (2025-01-27)
+
+
+### Features
+
+* maintenance cronjobs ([c97ae49](https://github.com/mendersoftware/mender-helm/commit/c97ae49510e19ce965ef4ef890c9f468554b06a3))
+* maintenance cronjobs ([78e5ff3](https://github.com/mendersoftware/mender-helm/commit/78e5ff366ac23a6d1a10f4fd78983167c4f90f76))
 
 ## [6.0.0-rc.8](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.7...mender-6.0.0-rc.8) (2025-01-17)
 
