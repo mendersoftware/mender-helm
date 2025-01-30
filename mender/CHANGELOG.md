@@ -1,4 +1,26 @@
 ---
+## mender-6.0.0-rc.10 - 2025-01-30
+
+
+### Features
+
+
+- Upgrade dependency MongoDB to 7.0
+ ([5a2fb43](https://github.com/mendersoftware/mender-helm/commit/5a2fb43ed0b8201ce4cbbf99096182126076a7ed))  by @alfrunes
+  - **BREAKING**: Upgrade MongoDB dependency from 6.0 to 7.0
+
+
+  In this release we have upgraded mongodb to the next major version.
+  Please ensure you have a recent backup of the database before proceeding
+  with the upgrade.
+  Please consult with the official MongoDB documentation before proceeding
+  https://www.mongodb.com/docs/manual/release-notes/7.0-upgrade-replica-set/
+
+
+
+
+
+
 ## mender-6.0.0-rc.9 - 2025-01-27
 
 
@@ -298,6 +320,18 @@
 
 
 
+
+## [6.0.0-rc.10](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.9...mender-6.0.0-rc.10) (2025-01-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* Upgrade MongoDB dependency from 6.0 to 7.0
+
+### Features
+
+* Upgrade dependency MongoDB to 7.0 ([c723598](https://github.com/mendersoftware/mender-helm/commit/c723598eb6433e15413d9e3bc1f7f453b7486d1a))
+* Upgrade dependency MongoDB to 7.0 ([5a2fb43](https://github.com/mendersoftware/mender-helm/commit/5a2fb43ed0b8201ce4cbbf99096182126076a7ed))
 
 ## [6.0.0-rc.9](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.8...mender-6.0.0-rc.9) (2025-01-27)
 
