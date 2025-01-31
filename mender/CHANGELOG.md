@@ -1,4 +1,5 @@
 ---
+
 ## mender-6.0.0-rc.10 - 2025-01-30
 
 
@@ -320,6 +321,13 @@
 
 
 
+
+## [6.0.0-rc.11](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.10...mender-6.0.0-rc.11) (2025-01-31)
+
+
+### Bug Fixes
+
+* update nats image to 2.9.25-scratch ([a53f654](https://github.com/mendersoftware/mender-helm/commit/a53f654e16de7e355f5c30b770a3f3f4ffddbcba))
 
 ## [6.0.0-rc.10](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0-rc.9...mender-6.0.0-rc.10) (2025-01-30)
 
