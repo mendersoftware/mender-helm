@@ -2,157 +2,16 @@
 
 [Mender](https://mender.io/) is a robust and secure way to update all your software and deploy your IoT devices at scale with support for customization.
 
-## TL;DR;
+## Installation
 
-Using `helm`:
-
-```bash
-helm install mender ./mender
-```
-
-## Introduction
-
-This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
-
-## Prerequisites
-
-- Kubernetes 1.26+
-- Helm >= 3.10.0
-- Object storage (AWS S3, Azure Blob Storage, GCS, MinIO, SeaweedFS)
-
-
-## Object storage setup
-Supported object storage services are:
-* Amazon S3
-* Azure Blob Storage
-* Google Cloud Storage
-* Cloudflare R2
-
-You can also use other S3-compatible object storage services like MinIO or
-SeaweedFS, for development and testing purposes only.
-
-Following some setup sample. Please refer to the official documentation of the
-object storage service you are using for more information.
-
-### Amazon S3
-
-Create a new bucket in Amazon S3, then a IAM user and its access key with
-the proper permissions to access the bucket.
-
-You can find the required permissions in the
-[Requirements section](https://docs.mender.io/overview/requirements#amazon-s3-iam-policies)
-of the official documentation.
-
-Then, export the following environment variables:
-
-```bash
-export AWS_ACCESS_KEY_ID="replace-with-your-access-key-id"
-export AWS_SECRET_ACCESS="replace-with-your-secret-access-key"
-export AWS_REGION="replace-with-your-aws-region"
-export STORAGE_BUCKET="replace-with-your-bucket-name"
-```
-
-### SeaweedFS
-
-Alternatively to Amazon S3, you can install SeaweedFS, a compatible S3
-solution.
-
-**Important**: the following setup is intended for development
-and testing purposes only. For production usage, it's recommended to use
-an external object storage service like AWS S3 or Azure Blob Storage.
-
-Installing SeaweedFS:
-
-```bash
-export STORAGE_CLASS="default"
-export STORAGE_BUCKET="replace-with-your-bucket-name"
-
-cat >seaweedfs.yml <<EOF
-filer:
-  s3:
-    enabled: true
-    enableAuth: true
-    createBuckets:
-      - name: "${STORAGE_BUCKET}"
-  storageClass: ${STORAGE_CLASS}
-
-s3:
-  enabled: true
-  enableAuth: true
-EOF
-
-helm repo add seaweedfs https://seaweedfs.github.io/seaweedfs/helm
-helm repo update
-helm install seaweedfs --wait -f seaweedfs.yml  seaweedfs/seaweedfs
-
-```
-Finally, export the following environment variables, needed for installing
-Mender:
-
-```bash
-export AWS_ACCESS_KEY_ID=$(kubectl get secret seaweedfs-s3-secret -o jsonpath='{.data.admin_access_key_id}' |base64 -d)
-export AWS_SECRET_ACCESS_KEY=$(kubectl  get secret seaweedfs-s3-secret -o jsonpath='{.data.admin_secret_access_key}' |base64 -d)
-export AWS_REGION="us-east-1"
-export STORAGE_ENDPOINT="http://seaweedfs-s3:8333"
-```
-
-## Installing Mender
-
-This is the minimum configuration needed to install Mender:
-
-```bash
-export MENDER_SERVER_DOMAIN="mender.example.com"
-export MENDER_SERVER_URL="https://${MENDER_SERVER_DOMAIN}"
-
-cat >values.yaml <<EOF
-global:
-  s3:
-    AWS_URI: "${MENDER_SERVER_URL}"
-    AWS_BUCKET: "${STORAGE_BUCKET}"
-    AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-    AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-  url: "${MENDER_SERVER_URL}"
-
-ingress:
-  enabled: true
-  annotations:
-    <your ingress controller specific annotations>
-  hosts:
-    - ${MENDER_SERVER_DOMAIN}
-  tls:
-    - secretName: <your-tls-secret>
-      hosts:
-        - ${MENDER_SERVER_DOMAIN}
-
-api_gateway:
-  storage_proxy:
-    enabled: true
-    url: "${STORAGE_ENDPOINT}"
-    customRule: "PathRegexp(\`^/${STORAGE_BUCKET}\`)"
-
-deployments:
-  customEnvs:
-    - name: DEPLOYMENTS_STORAGE_PROXY_URI
-      value: "${MENDER_SERVER_URL}"
-
-EOF
-```
-
-To install the chart with the release name `my-release` using `helm`:
-
-```bash
-helm install my-release -f values.yaml ./mender
-```
-
-The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
-
-> **Tip**: List all releases using `helm list`
+Please follow the [official documentation](https://docs.mender.io/server-installation/production-installation-with-kubernetes)
+for comprehensive installation guidelines.
 
 
 ## Upgrading from Helm Chart 5.x and Meneder Server 3.7.x
 
 Please refer to [this document](UPGRADE_from_v5_to_v6.md) for the upgrade
-procedure details.
+procedure details, or follow the [official documentation](https://docs.mender.io/server-installation/upgrading-from-previous-versions).
 
 ## Uninstalling the Chart
 
