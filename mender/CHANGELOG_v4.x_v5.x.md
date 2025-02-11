@@ -1,5 +1,8 @@
 # Mender Helm chart
 
+For more recent changelog entries, please refer to the
+[5.x branch](https://github.com/mendersoftware/mender-helm/blob/5.x/mender/CHANGELOG.md).
+
 ## 5.11.0 - 2024-10-14
 
 
