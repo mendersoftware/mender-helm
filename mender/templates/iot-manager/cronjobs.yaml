@@ -1,0 +1,72 @@
+{{- if and (.Values.iot_manager.enabled) (.Values.iot_manager.cronjobs.enabled) }}
+{{- $context := (dict "dot" . "component" "iot-manager" "override" .Values.iot_manager) -}}
+{{- range $index, $job := .Values.iot_manager.cronjobs.jobs }}
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "mender.fullname" $ }}-{{ $job.name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "mender.labels" $ | nindent 4 -}}
+    app.kubernetes.io/name: {{ include "mender.fullname" $ }}-{{ $job.name }}
+    app.kubernetes.io/component: iot_manager
+spec:
+  schedule: {{ $job.schedule | quote }}
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit | default "1" }}
+  successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit | default "1" }}
+  suspend: {{ $job.suspend | default "false" }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: {{ $job.name }}
+            image: {{ include "mender.image" $context }}
+            imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
+            {{- with $job.command }}
+            command:
+{{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with $job.args }}
+            args:
+{{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with $job.customEnvs }}
+            env:
+{{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with $job.customEnvFroms }}
+            envFrom:
+{{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with $job.resources }}
+            resources:
+{{- toYaml . | nindent 14 }}
+            {{- end }}
+          {{- with $job.tolerations }}
+          tolerations:
+{{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- with $job.affinity }}
+          affinity:
+{{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if and $.Values.global.image $.Values.global.image.username }}
+          imagePullSecrets:
+          - name: "docker-registry"
+          {{- else }}
+          {{- $ips := coalesce $.Values.iot_manager.imagePullSecrets $.Values.default.imagePullSecrets  }}
+          {{- if $ips }}
+          imagePullSecrets:
+          {{- toYaml $ips | nindent 10}}
+          {{- end }}
+          {{- end }}
+          {{- with $job.priorityClassName }}
+          priorityClassName: {{ . }}
+          {{- end }}
+          restartPolicy: {{ $job.restartPolicy | default "Never" }}
+{{- end }}
+{{- end }}

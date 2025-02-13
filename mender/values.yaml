@@ -40,7 +40,7 @@ global:
     SMTP_USERNAME: "null"
     SMTP_PASSWORD: "null"
     SMTP_SSL: "false"
-  url: "https://mender-api-gateway"
+  url: "https://mender.example.com"
   # guardrails for subcharts
   namespaceOverride: ""
 
@@ -168,8 +168,6 @@ mongodb:
     enabled: true
     minAvailable: 2
     maxUnavailable: 1
-  image:
-    tag: "6.0.13"
   auth:
     enabled: true
     rootPassword: "pleasechangeme"
@@ -196,7 +194,7 @@ nats:
   fullnameOverride: ""
   nats:
     image:
-      tag: "2.9.20-scratch"
+      tag: "2.9.25-scratch"
     jetstream:
       enabled: true
       memStorage:
@@ -215,7 +213,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.3.1
+    tag: 3.3.3
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -365,9 +363,7 @@ deployments:
   #     memory: 64Mi
 
   # custom envs
-  customEnvs:
-    - name: DEPLOYMENTS_STORAGE_PROXY_URI
-      value: "mender.example.com"
+  # customEnvs:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
@@ -410,15 +406,12 @@ device_auth:
     type: ClusterIP
     port: 8080
   env:
-    DEVICEAUTH_INVENTORY_ADDR: http://mender-inventory:8080/
-    DEVICEAUTH_ORCHESTRATOR_ADDR: http://mender-workflows-server:8080/
     DEVICEAUTH_JWT_ISSUER: Mender
     DEVICEAUTH_JWT_EXP_TIMEOUT: 604800
     DEVICEAUTH_MIDDLEWARE: prod
     DEVICEAUTH_REDIS_DB: "1"
     DEVICEAUTH_REDIS_TIMEOUT_SEC: "1"
     DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC: "3600"
-    DEVICEAUTH_TENANTADM_ADDR: http://mender-tenantadm:8080
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
@@ -683,7 +676,6 @@ tenantadm:
     TENANTADM_DEFAULT_API_LIMITS: '{"management":{"bursts":[],"quota":{"max_calls":600,"interval_sec":60}},"devices":{"bursts":[{"action":"POST","uri":"/api/devices/v1/authentication","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v2/deployments/device/deployments/next","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"PATCH","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5},{"action":"PUT","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/alert","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/alert","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/config","min_interval_sec":5}],"quota":{"max_calls":60,"interval_sec":60}}}'
     TENANTADM_MIDDLEWARE: prod
     TENANTADM_SERVER_PRIV_KEY_PATH: /etc/tenantadm/rsa/private.pem
-    TENANTADM_ORCHESTRATOR_ADDR: http://mender-workflows-server:8080/
     TENANTADM_RECAPTCHA_URL_VERIFY: https://www.google.com/recaptcha/api/siteverify
   podSecurityContext:
     enabled: false
@@ -737,6 +729,38 @@ tenantadm:
     # successThreshold: 2
     # failureThreshold: 6
 
+  #
+  # Optional cronjobs for tenantadm.
+  # These cronjobs are used to perform maintenance tasks, like deleting
+  # suspended tenants created for temporary purposes.
+  #
+  cronjobs:
+    enabled: false
+    jobs: []
+    #   - name: drop-suspended-tenants
+    #     schedule: "0 6 * * *"
+    #     command: []
+    #     args:
+    #     - "maintenance"
+    #     - "delete-suspended-tenants"
+    #     - "--threshold-days=30"
+    #     customEnvs:
+    #       - name: TENANTADM_MONGO
+    #         valueFrom:
+    #           secretKeyRef:
+    #             key: MONGO_URL
+    #             name: mongodb-common
+    #     resources:
+    #       limits:
+    #         cpu: 100m
+    #         memory: 100Mi
+    #       requests:
+    #         cpu: 50m
+    #         memory: 50Mi
+    #     tolerations: []
+    #     priorityClassName: "mender-low-priority"
+    #     affinity: {}
+
 useradm:
   enabled: true
   podAnnotations: {}
@@ -770,7 +794,6 @@ useradm:
     USERADM_REDIS_DB: "1"
     USERADM_REDIS_TIMEOUT_SEC: "1"
     USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
-    USERADM_TENANTADM_ADDR: http://mender-tenantadm:8080
     USERADM_TOTP_ISSUER: Mender
   podSecurityContext:
     enabled: false
@@ -1103,6 +1126,41 @@ iot_manager:
     # successThreshold: 2
     # failureThreshold: 6
 
+  #
+  # Optional cronjobs for iot-manager.
+  # These cronjobs are used to perform maintenance tasks, like deleting
+  # suspended tenants created for temporary purposes.
+  #
+  cronjobs:
+    enabled: false
+    jobs: []
+    #   - name: iot-manager-sync-devices
+    #     schedule: "42 0 * * *"
+    #     command: []
+    #     args:
+    #     - "sync-devices'
+    #     - "--batch-size'
+    #     - "100"
+    #     customEnvs:
+    #     - name: IOT_MANAGER_WORKFLOWS_URL
+    #       value: http://mender-workflows-server:8080
+    #     - name: IOT_MANAGER_DEVICEAUTH_URL
+    #       value: http://mender-device-auth:8080
+    #     customEnvFroms:
+    #     - prefix: IOT_MANAGER_
+    #       secretRef:
+    #         name: mongodb-common
+    #     resources:
+    #       limits:
+    #         cpu: 150m
+    #         memory: 100Mi
+    #       requests:
+    #         cpu: 150m
+    #         memory: 64Mi
+    #     tolerations: []
+    #     priorityClassName: "mender-low-priority"
+    #     affinity: {}
+
 deviceconnect:
   enabled: true
   podAnnotations: {}
@@ -1273,9 +1331,6 @@ devicemonitor:
     annotations: {}
     type: ClusterIP
     port: 8080
-  env:
-    DEVICEMONITOR_USERADM_URL: http://mender-useradm:8080/
-    DEVICEMONITOR_WORKFLOWS_URL: http://mender-workflows-server:8080/
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
