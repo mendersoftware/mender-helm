@@ -77,7 +77,8 @@ spec:
     env:
     - name: DEPLOYMENTS_STORAGE_DEFAULT
       value: {{ .dot.Values.global.storage | quote }}
-
+    - name: DEPLOYMENTS_INVENTORY_ADDR
+      value: {{ printf "http://%s:%v" .dot.Values.inventory.service.name .dot.Values.inventory.service.port }}
     - name: DEPLOYMENTS_MIDDLEWARE
       value: {{ .dot.Values.deployments.env.DEPLOYMENTS_MIDDLEWARE | quote }}
     - name: DEPLOYMENTS_AWS_TAG_ARTIFACT
@@ -98,7 +99,10 @@ spec:
       value: "true"
     {{- end }}
     {{- end }}
-
+    {{- if .dot.Values.api_gateway.storage_proxy.enabled }}
+    - name: DEPLOYMENTS_STORAGE_PROXY_URI
+      value: {{ printf "%q" .dot.Values.global.url }}
+    {{- end }}
     {{- if .dot.Values.global.enterprise }}
     {{- if not .dot.Values.global.redis.existingSecret }}
     - name: DEPLOYMENTS_REDIS_CONNECTION_STRING

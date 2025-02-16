@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: v4.0.0
 description: Mender is a robust and secure way to update all your software and deploy your IoT devices at scale with support for customization
 name: mender
-version: 6.0.0-1673047664-staging
+version: 6.0.1
 keywords:
   - mender
   - iot
@@ -21,7 +21,7 @@ dependencies:
     repository: "https://charts.bitnami.com/bitnami"
     condition: redis.enabled
   - name: mongodb
-    version: ~13.18.5
+    version: ~14.13.0
     repository: "https://charts.bitnami.com/bitnami"
     condition: mongodb.enabled
   - name: nats

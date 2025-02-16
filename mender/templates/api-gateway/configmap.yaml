@@ -389,6 +389,7 @@ data:
           entrypoints: {{ $scheme }}
           middlewares:
           - ratelimit
+          - storageProxyHeaders
           rule: {{ include "mender.storageProxyRule" . }}
           priority: 65535
           service: storage_proxy
@@ -479,6 +480,14 @@ data:
         redirect-to-https:
           redirectscheme:
             scheme: https
+{{- end }}
+{{- if .Values.api_gateway.storage_proxy.enabled }}
+{{/* Workaround for SeaweedFS which replaces the Host header with X-Forwarded-Host */}}
+        storageProxyHeaders:
+          headers:
+            customRequestHeaders:
+              X-Forwarded-Host: ""
+              X-Forwarded-Port: ""
 {{- end }}
 
 {{- if .Values.api_gateway.security_redirect }}
