@@ -78,6 +78,28 @@ spec:
 
     env:
     # NATS uri
+    - name: AUDITLOGS_ADDR
+      value: {{ printf "%s:%v" .dot.Values.auditlogs.service.name .dot.Values.auditlogs.service.port }}
+    - name: DEPLOYMENTS_ADDR
+      value: {{ printf "%s:%v" .dot.Values.deployments.service.name .dot.Values.deployments.service.port }}
+    - name: DEVICEAUTH_ADDR
+      value: {{ printf "%s:%v" .dot.Values.device_auth.service.name .dot.Values.device_auth.service.port }}
+    - name: DEVICECONFIG_ADDR
+      value: {{ printf "%s:%v" .dot.Values.deviceconfig.service.name .dot.Values.deviceconfig.service.port }}
+    - name: DEVICECONNECT_ADDR
+      value: {{ printf "%s:%v" .dot.Values.deviceconnect.service.name .dot.Values.deviceconnect.service.port }}
+    - name: DEVICEMONITOR_ADDR
+      value: {{ printf "%s:%v" .dot.Values.devicemonitor.service.name .dot.Values.devicemonitor.service.port }}
+    - name: INVENTORY_ADDR
+      value: {{ printf "%s:%v" .dot.Values.inventory.service.name .dot.Values.inventory.service.port }}
+    - name: IOT_MANAGER_ADDR
+      value: {{ printf "%s:%v" .dot.Values.iot_manager.service.name .dot.Values.iot_manager.service.port }}
+    - name: TENANTADM_ADDR
+      value: {{ printf "%s:%v" .dot.Values.tenantadm.service.name .dot.Values.tenantadm.service.port }}
+    - name: USERADM_ADDR
+      value: {{ printf "%s:%v" .dot.Values.useradm.service.name .dot.Values.useradm.service.port }}
+    - name: WORKFLOWS_SERVER_ADDR
+      value: {{ printf "%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port }}
     - name: WORKFLOWS_NATS_URI
     {{- if .dot.Values.global.nats.existingSecret }}
       valueFrom:
