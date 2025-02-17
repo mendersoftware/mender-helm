@@ -72,6 +72,10 @@ spec:
     {{- end }}
 
     env:
+    - name: INVENTORY_DEVICEMONITOR_ADDR
+      value: {{ printf "http://%s:%v" .dot.Values.devicemonitor.service.name .dot.Values.devicemonitor.service.port | quote }}
+    - name: INVENTORY_ORCHESTRATOR_ADDR
+      value: {{ printf "http://%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
     - name: INVENTORY_MIDDLEWARE
       value: {{ .dot.Values.inventory.env.INVENTORY_MIDDLEWARE | quote }}
     {{- if and .dot.Values.global.enterprise }}

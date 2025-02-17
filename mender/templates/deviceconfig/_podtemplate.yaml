@@ -79,7 +79,7 @@ spec:
     {{- end }}
     # Workflows orchestrator address
     - name: DEVICECONFIG_WORKFLOWS_URL
-      value: http://mender-workflows-server:8080/
+      value: {{ printf "http://%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.deviceconfig) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
     # Supported configuration settings: https://github.com/mendersoftware/deviceconfig/blob/master/config.yaml

@@ -2,157 +2,16 @@
 
 [Mender](https://mender.io/) is a robust and secure way to update all your software and deploy your IoT devices at scale with support for customization.
 
-## TL;DR;
+## Installation
 
-Using `helm`:
-
-```bash
-helm install mender ./mender
-```
-
-## Introduction
-
-This chart bootstraps a [Mender](https://mender.io) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
-
-## Prerequisites
-
-- Kubernetes 1.26+
-- Helm >= 3.10.0
-- Object storage (AWS S3, Azure Blob Storage, GCS, MinIO, SeaweedFS)
-
-
-## Object storage setup
-Supported object storage services are:
-* Amazon S3
-* Azure Blob Storage
-* Google Cloud Storage
-* Cloudflare R2
-
-You can also use other S3-compatible object storage services like MinIO or
-SeaweedFS, for development and testing purposes only.
-
-Following some setup sample. Please refer to the official documentation of the
-object storage service you are using for more information.
-
-### Amazon S3
-
-Create a new bucket in Amazon S3, then a IAM user and its access key with
-the proper permissions to access the bucket.
-
-You can find the required permissions in the
-[Requirements section](https://docs.mender.io/overview/requirements#amazon-s3-iam-policies)
-of the official documentation.
-
-Then, export the following environment variables:
-
-```bash
-export AWS_ACCESS_KEY_ID="replace-with-your-access-key-id"
-export AWS_SECRET_ACCESS="replace-with-your-secret-access-key"
-export AWS_REGION="replace-with-your-aws-region"
-export STORAGE_BUCKET="replace-with-your-bucket-name"
-```
-
-### SeaweedFS
-
-Alternatively to Amazon S3, you can install SeaweedFS, a compatible S3
-solution.
-
-**Important**: the following setup is intended for development
-and testing purposes only. For production usage, it's recommended to use
-an external object storage service like AWS S3 or Azure Blob Storage.
-
-Installing SeaweedFS:
-
-```bash
-export STORAGE_CLASS="default"
-export STORAGE_BUCKET="replace-with-your-bucket-name"
-
-cat >seaweedfs.yml <<EOF
-filer:
-  s3:
-    enabled: true
-    enableAuth: true
-    createBuckets:
-      - name: "${STORAGE_BUCKET}"
-  storageClass: ${STORAGE_CLASS}
-
-s3:
-  enabled: true
-  enableAuth: true
-EOF
-
-helm repo add seaweedfs https://seaweedfs.github.io/seaweedfs/helm
-helm repo update
-helm install seaweedfs --wait -f seaweedfs.yml  seaweedfs/seaweedfs
-
-```
-Finally, export the following environment variables, needed for installing
-Mender:
-
-```bash
-export AWS_ACCESS_KEY_ID=$(kubectl get secret seaweedfs-s3-secret -o jsonpath='{.data.admin_access_key_id}' |base64 -d)
-export AWS_SECRET_ACCESS_KEY=$(kubectl  get secret seaweedfs-s3-secret -o jsonpath='{.data.admin_secret_access_key}' |base64 -d)
-export AWS_REGION="us-east-1"
-export STORAGE_ENDPOINT="http://seaweedfs-s3:8333"
-```
-
-## Installing Mender
-
-This is the minimum configuration needed to install Mender:
-
-```bash
-export MENDER_SERVER_DOMAIN="mender.example.com"
-export MENDER_SERVER_URL="https://${MENDER_SERVER_DOMAIN}"
-
-cat >values.yaml <<EOF
-global:
-  s3:
-    AWS_URI: "${MENDER_SERVER_URL}"
-    AWS_BUCKET: "${STORAGE_BUCKET}"
-    AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-    AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-  url: "${MENDER_SERVER_URL}"
-
-ingress:
-  enabled: true
-  annotations:
-    <your ingress controller specific annotations>
-  hosts:
-    - ${MENDER_SERVER_DOMAIN}
-  tls:
-    - secretName: <your-tls-secret>
-      hosts:
-        - ${MENDER_SERVER_DOMAIN}
-
-api_gateway:
-  storage_proxy:
-    enabled: true
-    url: "${STORAGE_ENDPOINT}"
-    customRule: "PathRegexp(\`^/${STORAGE_BUCKET}\`)"
-
-deployments:
-  customEnvs:
-    - name: DEPLOYMENTS_STORAGE_PROXY_URI
-      value: "${MENDER_SERVER_URL}"
-
-EOF
-```
-
-To install the chart with the release name `my-release` using `helm`:
-
-```bash
-helm install my-release -f values.yaml ./mender
-```
-
-The command deploys Mender on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
-
-> **Tip**: List all releases using `helm list`
+Please follow the [official documentation](https://docs.mender.io/server-installation/production-installation-with-kubernetes)
+for comprehensive installation guidelines.
 
 
 ## Upgrading from Helm Chart 5.x and Meneder Server 3.7.x
 
 Please refer to [this document](UPGRADE_from_v5_to_v6.md) for the upgrade
-procedure details.
+procedure details, or follow the [official documentation](https://docs.mender.io/server-installation/upgrading-from-previous-versions).
 
 ## Uninstalling the Chart
 
@@ -416,8 +275,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `device_auth.service.port` | Port for the service | `8080` |
 | `device_auth.service.nodePort` | Node port for the service | `nil` |
-| `device_auth.env.DEVICEAUTH_INVENTORY_ADDR` | Set the DEVICEAUTH_INVENTORY_ADDR variable | `http://mender-inventory:8080/` |
-| `device_auth.env.DEVICEAUTH_ORCHESTRATOR_ADDR` | Set the DEVICEAUTH_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080` |
 | `device_auth.env.DEVICEAUTH_JWT_ISSUER` | Set the DEVICEAUTH_JWT_ISSUER variable | `Mender` |
 | `device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT` | Set the DEVICEAUTH_JWT_EXP_TIMEOUT variable | `604800` |
 | `device_auth.env.DEVICEAUTH_MIDDLEWARE` | Set the DEVICEAUTH_MIDDLEWARE variable | `prod` |
@@ -425,7 +282,6 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.env.DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC` | Set the DEVICEAUTH_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `device_auth.env.DEVICEAUTH_REDIS_DB` | Set the DEVICEAUTH_REDIS_DB variable **[Deprecated from 3.7.0]** | `1` |
 | `device_auth.env.DEVICEAUTH_REDIS_TIMEOUT_SEC` | Set the DEVICEAUTH_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
-| `device_auth.env.DEVICEAUTH_TENANTADM_ADDR` | Set the DEVICEAUTH_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `device_auth.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `device_auth.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `device_auth.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
@@ -610,7 +466,6 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.service.nodePort` | Node port for the service | `nil` |
 | `tenantadm.env.TENANTADM_MIDDLEWARE` | Set the TENANTADM_MIDDLEWARE variable | `prod` |
 | `tenantadm.env.TENANTADM_SERVER_PRIV_KEY_PATH` | Set the TENANTADM_SERVER_PRIV_KEY_PATH variable | `/etc/tenantadm/rsa/private.pem` |
-| `tenantadm.env.TENANTADM_ORCHESTRATOR_ADDR` | Set the TENANTADM_ORCHESTRATOR_ADDR variable | `http://mender-workflows-server:8080/` |
 | `tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY` | Set the TENANTADM_RECAPTCHA_URL_VERIFY variable | `https://www.google.com/recaptcha/api/siteverify` |
 | `tenantadm.env.TENANTADM_DEFAULT_API_LIMITS` | Set the TENANTADM_DEFAULT_API_LIMITS variable, defining the default rate limits | see below for the default values |
 | `tenantadm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
@@ -639,6 +494,8 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `tenantadm.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `tenantadm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `tenantadm.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
+| `tenantadm.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
 
 The default value for the rate limits are:
 
@@ -686,7 +543,6 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.env.USERADM_REDIS_LIMITS_EXPIRE_SEC` | Set the USERADM_REDIS_LIMITS_EXPIRE_SEC variable | `3600` |
 | `useradm.env.USERADM_REDIS_DB` | Set the USERADM_REDIS_DB variable **[Deprecated from 3.7.0]** | `2` |
 | `useradm.env.USERADM_REDIS_TIMEOUT_SEC` | Set the USERADM_REDIS_TIMEOUT_SEC variable **[Deprecated from 3.7.0]** | `1` |
-| `useradm.env.USERADM_TENANTADM_ADDR` | Set the USERADM_TENANTADM_ADDR variable | `http://mender-tenantadm:8080` |
 | `useradm.env.USERADM_TOTP_ISSUER` | Set the USERADM_TOTP_ISSUER variable | `Mender` |
 | `useradm.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `useradm.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
@@ -857,7 +713,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `iot_manager.resources.requests.cpu` | Resources CPU request | `50m` |
 | `iot_manager.resources.requests.memory` | Resources memory request | `128Mi` |
-| `iot_manager.service.name` | Name of the service | `mender-iot_manager` |
+| `iot_manager.service.name` | Name of the service | `mender-iot-manager` |
 | `iot_manager.service.annotations` | Annotations map for the service | `{}` |
 | `iot_manager.service.type` | Service type | `ClusterIP` |
 | `iot_manager.service.loadBalancerIP` | Service load balancer IP | `nil` |
@@ -884,6 +740,8 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `iot_manager.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
+| `iot_manager.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -1014,8 +872,6 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
 | `devicemonitor.service.port` | Port for the service | `8080` |
 | `devicemonitor.service.nodePort` | Node port for the service | `nil` |
-| `devicemonitor.env.DEVICEMONITOR_USERADM_URL` | Set the DEVICEMONITOR_USERADM_URL variable | `http://mender-useradm:8080/` |
-| `devicemonitor.env.DEVICEMONITOR_WORKFLOWS_URL` | Set the DEVICEMONITOR_WORKFLOWS_URL variable | `http://mender-workflows-server:8080` |
 | `devicemonitor.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `devicemonitor.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `devicemonitor.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
