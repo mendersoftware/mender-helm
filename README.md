@@ -307,6 +307,8 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `device_auth.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `device_auth.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `device_auth.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
+| `device_auth.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
 
 ### Parameters: gui
 
