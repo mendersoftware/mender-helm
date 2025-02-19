@@ -1,4 +1,25 @@
 ---
+## mender-6.1.0 - 2025-02-19
+
+
+### Features
+
+
+- Optionals deviceauth cronjobs
+ ([a170750](https://github.com/mendersoftware/mender-helm/commit/a17075072d55d5ca7fa2f76d6c40d744357344a5))  by @oldgiova
+
+
+  You can create custom cronjobs based on the deviceauth service.
+  This feature is going to deprecate the device_license_count feature,
+  that could be installed as a custom cronjob, with the provided example
+  in the Values file.
+  The device_license_count key will be removed in the future.
+
+
+
+
+
+
 ## mender-6.0.1 - 2025-02-12
 
 
@@ -14,6 +35,13 @@
 
 
 # Changelog
+
+## [6.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.1...mender-6.1.0) (2025-02-19)
+
+
+### Features
+
+* optionals deviceauth cronjobs ([a170750](https://github.com/mendersoftware/mender-helm/commit/a17075072d55d5ca7fa2f76d6c40d744357344a5))
 
 ## [6.0.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.0...mender-6.0.1) (2025-02-12)
 
