@@ -465,6 +465,35 @@ device_auth:
     # successThreshold: 2
     # failureThreshold: 6
 
+  #
+  # Optional cronjobs for device auth.
+  # These cronjobs are used to perform maintenance tasks, like device licensing
+  #
+  cronjobs:
+    enabled: false
+    jobs: []
+    #   - name: device-auth-license-count
+    #     schedule: "7 3 * * *"
+    #     command: []
+    #     args:
+    #     - "license-count"
+    #     customEnvs:
+    #       - name: DEVICEAUTH_MONGO
+    #         valueFrom:
+    #           secretKeyRef:
+    #             key: MONGO_URL
+    #             name: mongodb-common
+    #     resources:
+    #       limits:
+    #         cpu: 100m
+    #         memory: 100Mi
+    #       requests:
+    #         cpu: 50m
+    #         memory: 50Mi
+    #     tolerations: []
+    #     priorityClassName: "mender-low-priority"
+    #     affinity: {}
+
 # Generate Delta Worker feature
 # Experimental feature, still in beta
 # will be released in the next Mender versions
@@ -1415,5 +1444,7 @@ dbmigration:
 # Feature preview: Device License Count
 # Only available from version 3.6,
 # and available in Mender Enterprise
+# **WARNING**: This will be deprecated in the Helm Chart v7.0.0
+# and will be replaced by the `device_auth.cronjobs` feature.
 device_license_count:
   enabled: false
