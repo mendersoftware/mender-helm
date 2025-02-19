@@ -35,7 +35,7 @@ spec:
           - name: device-auth-license-count
             image: {{ include "mender.image" $context }}
             imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
-            command: ["/usr/bin/deviceauth-enterprise", "license-count"]
+            command: ["/usr/bin/deviceauth", "license-count"]
 
             envFrom:
             - prefix: DEVICEAUTH_
