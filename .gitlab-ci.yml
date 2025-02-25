@@ -739,7 +739,7 @@ release:github:
       when: never
     # Only make available for protected branches (main and maintenance branches)
     - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "5.x"
-      when: manual
+      when: always
       allow_failure: true
   script:
     - release-please github-release
