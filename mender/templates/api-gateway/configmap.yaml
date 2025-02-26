@@ -547,8 +547,8 @@ data:
 {{- if $isTls }}
     tls:
       certificates:
-        - certFile: /etc/traefik/certs/tls.crt
-          keyFile: /etc/traefik/certs/tls.key
+        - certFile: /etc/traefik/certs/cert.crt
+          keyFile: /etc/traefik/certs/private.key
           stores:
             - default
 {{- end }}
