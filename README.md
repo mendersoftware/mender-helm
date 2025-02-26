@@ -179,7 +179,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.certs` | certificate management | `nil` |
 | `api_gateway.certs.cert` | Public certificate (with full chain optionally) in PEM format | `nil` |
 | `api_gateway.certs.key` | Private key in PEM format | `nil` |
-| `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
+| `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `tls.crt`) and the Key (key `tls.key`) | `nil` |
 | `api_gateway.updateStrategy` | The strategy to use to update existing pods | `nil` |
 | `api_gateway.accesslogs` | Traefik Access Logs, enabled by default | `true` |
 | `api_gateway.podMonitor.enabled` | If enabled, creates a PodMonitor resource for scraping Traefik metrics | `false` |
