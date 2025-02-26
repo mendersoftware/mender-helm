@@ -1,4 +1,19 @@
 ---
+## mender-6.2.0 - 2025-02-26
+
+
+### Features
+
+
+- *(api-gateway)* Switch tls certificate to k8s tls type
+ ([2117620](https://github.com/mendersoftware/mender-helm/commit/21176200d44d5ab2a4dcad3b5dad45f34f832f63))  by @chriswiggins
+
+
+
+
+
+
+
 ## mender-6.1.0 - 2025-02-19
 
 
@@ -35,6 +50,13 @@
 
 
 # Changelog
+
+## [6.2.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.1.0...mender-6.2.0) (2025-02-26)
+
+
+### Features
+
+* **api-gateway:** switch tls certificate to k8s tls type ([2117620](https://github.com/mendersoftware/mender-helm/commit/21176200d44d5ab2a4dcad3b5dad45f34f832f63))
 
 ## [6.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.1...mender-6.1.0) (2025-02-19)
 
