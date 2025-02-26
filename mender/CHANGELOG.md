@@ -1,4 +1,24 @@
 ---
+## mender-6.2.1 - 2025-02-26
+
+
+### Revert
+
+
+- "Merge pull request #443 from chriswiggins/feat/apigateway-tls-secret"
+ ([3b831be](https://github.com/mendersoftware/mender-helm/commit/3b831be9b25e72f45626ca592cc19ec9fc04a85c))  by @alfrunes
+
+
+  Retracting breaking change from mender-helm v6.2
+  
+  This reverts commit d6979f7529c5a779a1af7a37b64c8811cdd84f29, reversing
+  changes made to 7a61679d5b70e0f070a665fd499f4b99e3beb260.
+
+
+
+
+
+
 ## mender-6.2.0 - 2025-02-26
 
 
@@ -50,6 +70,14 @@
 
 
 # Changelog
+
+## [6.2.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.2.0...mender-6.2.1) (2025-02-26)
+
+
+### Reverts
+
+* "Merge pull request [#443](https://github.com/mendersoftware/mender-helm/issues/443) from chriswiggins/feat/apigateway-tl… ([f22031c](https://github.com/mendersoftware/mender-helm/commit/f22031ce7e5a537956b59c2a932ddfe7311d87c4))
+* "Merge pull request [#443](https://github.com/mendersoftware/mender-helm/issues/443) from chriswiggins/feat/apigateway-tls-secret" ([3b831be](https://github.com/mendersoftware/mender-helm/commit/3b831be9b25e72f45626ca592cc19ec9fc04a85c))
 
 ## [6.2.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.1.0...mender-6.2.0) (2025-02-26)
 
