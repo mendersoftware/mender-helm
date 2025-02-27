@@ -1,4 +1,26 @@
 ---
+## mender-6.3.0 - 2025-02-27
+
+
+### Features
+
+
+- *(api-gateway)* Switch tls certificate to k8s tls type
+ ([58687a0](https://github.com/mendersoftware/mender-helm/commit/58687a0a22b809c8c6229f255a981165f8acb4bf))  by @chriswiggins
+
+- Enable featureGates parameter for the k8sTlsSecrets
+ ([3c907b6](https://github.com/mendersoftware/mender-helm/commit/3c907b6be200296f9f3cc80028cc9b04de5f3a11))  by @oldgiova
+
+
+  Commit 58687a0a22b809c8c6229f255a981165f8acb4bf introduces a breaking
+  change when using api_gateway.certs.existingSecrets; by introducing the
+  featureGates.k8sTlsSecrets option, the new feature is optional.
+
+
+
+
+
+
 ## mender-6.2.1 - 2025-02-26
 
 
@@ -70,6 +92,14 @@
 
 
 # Changelog
+
+## [6.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.2.1...mender-6.3.0) (2025-02-27)
+
+
+### Features
+
+* **api-gateway:** switch tls certificate to k8s tls type ([58687a0](https://github.com/mendersoftware/mender-helm/commit/58687a0a22b809c8c6229f255a981165f8acb4bf))
+* enable featureGates parameter for the k8sTlsSecrets ([3c907b6](https://github.com/mendersoftware/mender-helm/commit/3c907b6be200296f9f3cc80028cc9b04de5f3a11))
 
 ## [6.2.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.2.0...mender-6.2.1) (2025-02-26)
 
