@@ -1448,3 +1448,10 @@ dbmigration:
 # and will be replaced by the `device_auth.cronjobs` feature.
 device_license_count:
   enabled: false
+
+# Feature preview
+featureGates:
+  # Use K8s TLS Secret type for the API Gateway:
+  # tls.crt and tls.key replace cert.crt and private.key
+  # This affects api_gateway.certs when SSL is enabled
+  k8sTlsSecrets: false
