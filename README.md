@@ -344,7 +344,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.certs` | certificate management | `nil` |
 | `api_gateway.certs.cert` | Public certificate (with full chain optionally) in PEM format | `nil` |
 | `api_gateway.certs.key` | Private key in PEM format | `nil` |
-| `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`) | `nil` |
+| `api_gateway.certs.existingSecret` | Preexisting secret containing the Cert (key `cert.crt`) and the Key (key `private.key`). **Deprecation notice**: these keys will be moved to `tls.crt` and `tls.key` respectively in the next releases. If you want to use it in advance, please enable `featureGates.k8sTlsSecrets` | `nil` |
 | `api_gateway.updateStrategy` | The strategy to use to update existing pods | `nil` |
 | `api_gateway.accesslogs` | Traefik Access Logs, enabled by default | `true` |
 | `api_gateway.podMonitor.enabled` | If enabled, creates a PodMonitor resource for scraping Traefik metrics | `false` |
@@ -1122,6 +1122,17 @@ The following table lists the parameters for the `redis` component and their def
 | `redis.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `redis.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
 | `redis.containerSecurityContext.runAsUser` | User ID for the container | `999` |
+
+### Parameters: featureGates
+
+The special parameter `featureGates` is used to enable specific features
+that are still under development or are going to replace existing ones.
+
+The following table lists the parameters:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `featureGates.k8sTlsSecrets` | Use K8s TLS Secret type for the API Gateway: `tls.crt` and `tls.key` instead of `cert.crt` and `private.key` | `false` |
 
 ## Create a tenant and a user from command line
 
