@@ -1,3 +1,25 @@
+---
+## mender-5.13.0 - 2025-03-02
+
+
+### Features
+
+
+- *(api-gateway)* Switch tls certificate to k8s tls type
+ ([3df6d0f](https://github.com/mendersoftware/mender-helm/commit/3df6d0f861049c55f3556fc3aa0cc8f47463bfa1)) by @chriswiggins
+
+- Enable featureGates parameter for the k8sTlsSecrets
+ ([17b4150](https://github.com/mendersoftware/mender-helm/commit/17b41506ed8d8812807db13182300aaefcf4215c)) by @oldgiova
+
+
+  Commit 58687a0a22b809c8c6229f255a981165f8acb4bf introduces a breaking
+  change when using api_gateway.certs.existingSecrets; by introducing the
+  featureGates.k8sTlsSecrets option, the new feature is optional.
+
+
+
+
+
 ## mender-5.12.0 - 2024-12-04
 
 
