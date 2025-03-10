@@ -253,7 +253,6 @@ data:
           middlewares:
           - ratelimit
           - devauth
-          - inventoryV1-replacepathregex
           - sec-headers
 {{- if .Values.api_gateway.compression }}
           - compression
@@ -280,7 +279,6 @@ data:
           middlewares:
           - ratelimit
           - userauth
-          - inventoryMgmtV1-replacepathregex
           - sec-headers
 {{- if .Values.api_gateway.compression }}
           - compression
@@ -533,16 +531,6 @@ data:
           forwardAuth:
             address: "http://{{ .Values.useradm.service.name }}:{{ .Values.useradm.service.port }}/api/internal/v1/useradm/auth/verify"
             authResponseHeaders: "X-MEN-RequestID,X-MEN-RBAC-Inventory-Groups,X-MEN-RBAC-Deployments-Groups,X-MEN-RBAC-Releases-Tags"
-
-        inventoryV1-replacepathregex:
-          replacepathregex:
-            regex: "^/api/devices/v1/inventory/(.*)"
-            replacement: "/api/0.1.0/attributes"
-
-        inventoryMgmtV1-replacepathregex:
-          replacepathregex:
-            regex: "^/api/management/v1/inventory/(.*)"
-            replacement: "/api/0.1.0/$1"
 
 {{- if $isTls }}
     tls:
