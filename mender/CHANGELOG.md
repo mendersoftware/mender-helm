@@ -1,4 +1,38 @@
 ---
+## mender-6.3.1 - 2025-03-12
+
+
+### Bug Fixes
+
+
+- Bump traefik from 3.3.3 to 3.3.4 in /mender
+ ([ee48fe1](https://github.com/mendersoftware/mender-helm/commit/ee48fe19502662a28cac58a1ef1ed4d6ebab3b1a))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.3.3 to 3.3.4.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Use mongodb secret variable if present
+ ([1c5e091](https://github.com/mendersoftware/mender-helm/commit/1c5e091e3f702f079bbe5157904f9b6db6fccd6a))  by @thall
+
+
+  If mongodb secret is configured, cronjob will fail to start with error
+  message `secret "mongodb-common" not found: CreateContainerConfigError`,
+  since the hardcoded secret will be used instead of the configured one.
+  
+  This should probably have been updated when this PR was submitted:
+  https://github.com/mendersoftware/mender-helm/pull/392
+
+
+
+
+
+
 ## mender-6.3.0 - 2025-02-27
 
 
@@ -92,6 +126,16 @@
 
 
 # Changelog
+
+## [6.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.0...mender-6.3.1) (2025-03-12)
+
+
+### Bug Fixes
+
+* bump traefik from 3.3.3 to 3.3.4 in /mender ([55b8e3c](https://github.com/mendersoftware/mender-helm/commit/55b8e3c01f317c10426273de23b6e3c67b0d799f))
+* bump traefik from 3.3.3 to 3.3.4 in /mender ([ee48fe1](https://github.com/mendersoftware/mender-helm/commit/ee48fe19502662a28cac58a1ef1ed4d6ebab3b1a))
+* **deployments:** use mongodb secret variable if present ([884ca84](https://github.com/mendersoftware/mender-helm/commit/884ca840c494372c1b2122b12f86318309767b7c))
+* use mongodb secret variable if present ([1c5e091](https://github.com/mendersoftware/mender-helm/commit/1c5e091e3f702f079bbe5157904f9b6db6fccd6a))
 
 ## [6.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.2.1...mender-6.3.0) (2025-02-27)
 
