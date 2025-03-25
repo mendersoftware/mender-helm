@@ -1,4 +1,23 @@
 ---
+## mender-6.3.2 - 2025-03-25
+
+
+### Bug Fixes
+
+
+- Set ingress namespace explicit
+ ([64dba39](https://github.com/mendersoftware/mender-helm/commit/64dba399d3cf7761a159a69179b25f4be36035e9))  by @oldgiova
+
+
+  When templating the helm chart, the ingress doesn't came with a named
+  namespace. This could be an issue when you apply the manifests generated
+  from the helm template
+
+
+
+
+
+
 ## mender-6.3.1 - 2025-03-12
 
 
@@ -126,6 +145,14 @@
 
 
 # Changelog
+
+## [6.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.1...mender-6.3.2) (2025-03-25)
+
+
+### Bug Fixes
+
+* set ingress namespace explicit ([3604252](https://github.com/mendersoftware/mender-helm/commit/3604252e21fbe9c83790377810bdbf12e2669dc1))
+* set ingress namespace explicit ([64dba39](https://github.com/mendersoftware/mender-helm/commit/64dba399d3cf7761a159a69179b25f4be36035e9))
 
 ## [6.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.0...mender-6.3.1) (2025-03-12)
 
