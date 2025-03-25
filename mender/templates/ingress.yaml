@@ -15,6 +15,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Chart.Name }}-ingress
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "mender.labels" . | nindent 4 }}
 {{- with .Values.ingress.annotations }}
