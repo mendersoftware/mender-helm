@@ -23,9 +23,12 @@ spec:
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
 
-  # We are executign js minify at container startup. This is expensive and time consuming.
-  # Give container minimum time to finish before it's considered ready.
-  minReadySeconds: 120
+  # We are executing js minify at container startup. This is expensive and time consuming.
+  # The default for this service is 120
+  {{- $minReadySeconds := coalesce .Values.gui.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
 
   # Rollout upgrade
   {{- $updateStrategy := coalesce .Values.gui.updateStrategy .Values.default.updateStrategy }}
