@@ -54,7 +54,11 @@ spec:
             envFrom:
             - prefix: DEPLOYMENTS_
               secretRef:
-                name: mongodb-common
+              {{- if .Values.deployments.mongodbExistingSecret }}
+                name: {{ .Values.deployments.mongodbExistingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+              {{- else }}
+                name: {{ .Values.global.mongodb.existingSecret | default (ternary "mongodb-common" "mongodb-common-prerelease" (empty .migration)) }}
+              {{- end }}
             - prefix: DEPLOYMENTS_
               secretRef:
                 name: {{ .Values.global.s3.existingSecret | default "artifacts-storage" }}
