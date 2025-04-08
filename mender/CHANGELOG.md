@@ -1,4 +1,38 @@
 ---
+## mender-6.3.2 - 2025-04-08
+
+
+### Bug Fixes
+
+
+- Set ingress namespace explicit
+ ([64dba39](https://github.com/mendersoftware/mender-helm/commit/64dba399d3cf7761a159a69179b25f4be36035e9))  by @oldgiova
+
+
+  When templating the helm chart, the ingress doesn't came with a named
+  namespace. This could be an issue when you apply the manifests generated
+  from the helm template
+- Bump traefik from 3.3.4 to 3.3.5 in /mender
+ ([38621a7](https://github.com/mendersoftware/mender-helm/commit/38621a7460bc3aedf58d51dce77f8c0793fa25d3))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.3.4 to 3.3.5.
+
+
+
+
+
+### Documentation
+
+
+- Fixed documented default for redis state
+ ([b3c6ecd](https://github.com/mendersoftware/mender-helm/commit/b3c6ecd97dd21a346a6a907e72011f0bc4a93ab6))  by @nickanderson
+
+
+
+
+
+
 ## mender-6.3.1 - 2025-03-12
 
 
@@ -10,7 +44,7 @@
 
 
   Bumps traefik from 3.3.3 to 3.3.4.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -24,7 +58,7 @@
   If mongodb secret is configured, cronjob will fail to start with error
   message `secret "mongodb-common" not found: CreateContainerConfigError`,
   since the hardcoded secret will be used instead of the configured one.
-  
+
   This should probably have been updated when this PR was submitted:
   https://github.com/mendersoftware/mender-helm/pull/392
 
@@ -66,7 +100,7 @@
 
 
   Retracting breaking change from mender-helm v6.2
-  
+
   This reverts commit d6979f7529c5a779a1af7a37b64c8811cdd84f29, reversing
   changes made to 7a61679d5b70e0f070a665fd499f4b99e3beb260.
 
@@ -126,6 +160,16 @@
 
 
 # Changelog
+
+## [6.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.1...mender-6.3.2) (2025-04-08)
+
+
+### Bug Fixes
+
+* bump traefik from 3.3.4 to 3.3.5 in /mender ([7aa788c](https://github.com/mendersoftware/mender-helm/commit/7aa788c331823f92526e7982c3d593c37f237900))
+* bump traefik from 3.3.4 to 3.3.5 in /mender ([38621a7](https://github.com/mendersoftware/mender-helm/commit/38621a7460bc3aedf58d51dce77f8c0793fa25d3))
+* set ingress namespace explicit ([3604252](https://github.com/mendersoftware/mender-helm/commit/3604252e21fbe9c83790377810bdbf12e2669dc1))
+* set ingress namespace explicit ([64dba39](https://github.com/mendersoftware/mender-helm/commit/64dba399d3cf7761a159a69179b25f4be36035e9))
 
 ## [6.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.0...mender-6.3.1) (2025-03-12)
 
