@@ -932,7 +932,7 @@ The following table lists the parameters for the `redis` component and their def
 
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `redis.enabled` | Enable the component | `true` |
+| `redis.enabled` | Enable the component | `false` |
 | `redis.image.registry` | Docker image registry | `docker.io` |
 | `redis.image.repository` | Docker image repository | `redis` |
 | `redis.image.tag` | Docker image tag | `6.0.16-alpine` |
