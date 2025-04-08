@@ -90,6 +90,10 @@ spec:
       value: {{ printf "http://%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
     - name: TENANTADM_USERADM_ADDR
       value: {{ printf "http://%s:%v" .dot.Values.useradm.service.name .dot.Values.useradm.service.port | quote }}
+    {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
+    - name: TENANTADM_AUDITLOGS_ADDR
+      value: {{ printf "http://%s:%v" .dot.Values.auditlogs.service.name .dot.Values.auditlogs.service.port | quote }}
+    {{- end }}
     - name: TENANTADM_RECAPTCHA_URL_VERIFY
       value: {{ .dot.Values.tenantadm.env.TENANTADM_RECAPTCHA_URL_VERIFY | quote }}
     - name: TENANTADM_DEFAULT_API_LIMITS
