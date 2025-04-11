@@ -547,8 +547,13 @@ data:
 {{- if $isTls }}
     tls:
       certificates:
+        {{- if .Values.featureGates.k8sTlsSecrets }}
+        - certFile: /etc/traefik/certs/tls.crt
+          keyFile: /etc/traefik/certs/tls.key
+        {{- else }}
         - certFile: /etc/traefik/certs/cert.crt
           keyFile: /etc/traefik/certs/private.key
+        {{- end }}
           stores:
             - default
 {{- end }}
