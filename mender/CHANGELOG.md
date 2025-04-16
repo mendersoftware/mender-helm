@@ -1,4 +1,129 @@
 ---
+## mender-6.3.2 - 2025-04-08
+
+
+### Bug Fixes
+
+
+- Set ingress namespace explicit
+ ([64dba39](https://github.com/mendersoftware/mender-helm/commit/64dba399d3cf7761a159a69179b25f4be36035e9))  by @oldgiova
+
+
+  When templating the helm chart, the ingress doesn't came with a named
+  namespace. This could be an issue when you apply the manifests generated
+  from the helm template
+- Bump traefik from 3.3.4 to 3.3.5 in /mender
+ ([38621a7](https://github.com/mendersoftware/mender-helm/commit/38621a7460bc3aedf58d51dce77f8c0793fa25d3))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.3.4 to 3.3.5.
+
+
+
+
+
+### Documentation
+
+
+- Fixed documented default for redis state
+ ([b3c6ecd](https://github.com/mendersoftware/mender-helm/commit/b3c6ecd97dd21a346a6a907e72011f0bc4a93ab6))  by @nickanderson
+
+
+
+
+
+
+## mender-6.3.1 - 2025-03-12
+
+
+### Bug Fixes
+
+
+- Bump traefik from 3.3.3 to 3.3.4 in /mender
+ ([ee48fe1](https://github.com/mendersoftware/mender-helm/commit/ee48fe19502662a28cac58a1ef1ed4d6ebab3b1a))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.3.3 to 3.3.4.
+
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Use mongodb secret variable if present
+ ([1c5e091](https://github.com/mendersoftware/mender-helm/commit/1c5e091e3f702f079bbe5157904f9b6db6fccd6a))  by @thall
+
+
+  If mongodb secret is configured, cronjob will fail to start with error
+  message `secret "mongodb-common" not found: CreateContainerConfigError`,
+  since the hardcoded secret will be used instead of the configured one.
+
+  This should probably have been updated when this PR was submitted:
+  https://github.com/mendersoftware/mender-helm/pull/392
+
+
+
+
+
+
+## mender-6.3.0 - 2025-02-27
+
+
+### Features
+
+
+- *(api-gateway)* Switch tls certificate to k8s tls type
+ ([58687a0](https://github.com/mendersoftware/mender-helm/commit/58687a0a22b809c8c6229f255a981165f8acb4bf))  by @chriswiggins
+
+- Enable featureGates parameter for the k8sTlsSecrets
+ ([3c907b6](https://github.com/mendersoftware/mender-helm/commit/3c907b6be200296f9f3cc80028cc9b04de5f3a11))  by @oldgiova
+
+
+  Commit 58687a0a22b809c8c6229f255a981165f8acb4bf introduces a breaking
+  change when using api_gateway.certs.existingSecrets; by introducing the
+  featureGates.k8sTlsSecrets option, the new feature is optional.
+
+
+
+
+
+
+## mender-6.2.1 - 2025-02-26
+
+
+### Revert
+
+
+- "Merge pull request #443 from chriswiggins/feat/apigateway-tls-secret"
+ ([3b831be](https://github.com/mendersoftware/mender-helm/commit/3b831be9b25e72f45626ca592cc19ec9fc04a85c))  by @alfrunes
+
+
+  Retracting breaking change from mender-helm v6.2
+
+  This reverts commit d6979f7529c5a779a1af7a37b64c8811cdd84f29, reversing
+  changes made to 7a61679d5b70e0f070a665fd499f4b99e3beb260.
+
+
+
+
+
+
+## mender-6.2.0 - 2025-02-26
+
+
+### Features
+
+
+- *(api-gateway)* Switch tls certificate to k8s tls type
+ ([2117620](https://github.com/mendersoftware/mender-helm/commit/21176200d44d5ab2a4dcad3b5dad45f34f832f63))  by @chriswiggins
+
+
+
+
+
+
+
 ## mender-6.1.0 - 2025-02-19
 
 
@@ -35,6 +160,49 @@
 
 
 # Changelog
+
+## [6.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.1...mender-6.3.2) (2025-04-08)
+
+
+### Bug Fixes
+
+* bump traefik from 3.3.4 to 3.3.5 in /mender ([7aa788c](https://github.com/mendersoftware/mender-helm/commit/7aa788c331823f92526e7982c3d593c37f237900))
+* bump traefik from 3.3.4 to 3.3.5 in /mender ([38621a7](https://github.com/mendersoftware/mender-helm/commit/38621a7460bc3aedf58d51dce77f8c0793fa25d3))
+* set ingress namespace explicit ([3604252](https://github.com/mendersoftware/mender-helm/commit/3604252e21fbe9c83790377810bdbf12e2669dc1))
+* set ingress namespace explicit ([64dba39](https://github.com/mendersoftware/mender-helm/commit/64dba399d3cf7761a159a69179b25f4be36035e9))
+
+## [6.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.0...mender-6.3.1) (2025-03-12)
+
+
+### Bug Fixes
+
+* bump traefik from 3.3.3 to 3.3.4 in /mender ([55b8e3c](https://github.com/mendersoftware/mender-helm/commit/55b8e3c01f317c10426273de23b6e3c67b0d799f))
+* bump traefik from 3.3.3 to 3.3.4 in /mender ([ee48fe1](https://github.com/mendersoftware/mender-helm/commit/ee48fe19502662a28cac58a1ef1ed4d6ebab3b1a))
+* **deployments:** use mongodb secret variable if present ([884ca84](https://github.com/mendersoftware/mender-helm/commit/884ca840c494372c1b2122b12f86318309767b7c))
+* use mongodb secret variable if present ([1c5e091](https://github.com/mendersoftware/mender-helm/commit/1c5e091e3f702f079bbe5157904f9b6db6fccd6a))
+
+## [6.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.2.1...mender-6.3.0) (2025-02-27)
+
+
+### Features
+
+* **api-gateway:** switch tls certificate to k8s tls type ([58687a0](https://github.com/mendersoftware/mender-helm/commit/58687a0a22b809c8c6229f255a981165f8acb4bf))
+* enable featureGates parameter for the k8sTlsSecrets ([3c907b6](https://github.com/mendersoftware/mender-helm/commit/3c907b6be200296f9f3cc80028cc9b04de5f3a11))
+
+## [6.2.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.2.0...mender-6.2.1) (2025-02-26)
+
+
+### Reverts
+
+* "Merge pull request [#443](https://github.com/mendersoftware/mender-helm/issues/443) from chriswiggins/feat/apigateway-tl… ([f22031c](https://github.com/mendersoftware/mender-helm/commit/f22031ce7e5a537956b59c2a932ddfe7311d87c4))
+* "Merge pull request [#443](https://github.com/mendersoftware/mender-helm/issues/443) from chriswiggins/feat/apigateway-tls-secret" ([3b831be](https://github.com/mendersoftware/mender-helm/commit/3b831be9b25e72f45626ca592cc19ec9fc04a85c))
+
+## [6.2.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.1.0...mender-6.2.0) (2025-02-26)
+
+
+### Features
+
+* **api-gateway:** switch tls certificate to k8s tls type ([2117620](https://github.com/mendersoftware/mender-helm/commit/21176200d44d5ab2a4dcad3b5dad45f34f832f63))
 
 ## [6.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.0.1...mender-6.1.0) (2025-02-19)
 
