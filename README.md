@@ -359,7 +359,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `gui.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `gui.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
-| `gui.minReadySeconds` | Wait before considering the new pod available | `120` |
+| `gui.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: inventory
 

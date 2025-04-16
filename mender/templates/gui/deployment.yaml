@@ -23,8 +23,6 @@ spec:
   # needs to be big enough to rollout to complete
   progressDeadlineSeconds: 600
 
-  # We are executing js minify at container startup. This is expensive and time consuming.
-  # The default for this service is 120
   {{- $minReadySeconds := coalesce .Values.gui.minReadySeconds .Values.default.minReadySeconds }}
   {{- if $minReadySeconds }}
   minReadySeconds: {{ $minReadySeconds }}
@@ -75,6 +73,17 @@ spec:
         readinessProbe:
           tcpSocket:
             port: {{ .Values.gui.httpPort }}
+          periodSeconds: 15
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.gui.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
+
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.gui.httpPort }}
+          # We are executing js minify at container startup. This is expensive and time consuming.
+          # The default for this service is 120
+          initialDelaySeconds: 120
           periodSeconds: 15
           {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.gui.probesOverrides ) }}
           {{- nindent 10 . }}
