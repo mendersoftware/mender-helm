@@ -110,7 +110,7 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 helm install --name my-release -f values.yaml ./mender
 ```
 
-> **Tip**: You can use the default [values.yaml](values.yaml)
+> **Tip**: You can use the default [values.yaml](./mender/values.yaml)
 
 ### Parameters: api-gateway
 
@@ -507,7 +507,7 @@ The default value for the rate limits are:
   * 60 API calls/minute
   * 1 API call/5 seconds for each API end-point
 
-You can customize the default API limits setting a custom JSON document. See the [default one here](./mender/templates/tenantadm-deploy.yaml#L82).
+You can customize the default API limits setting a custom JSON document. See the [default one here](./mender/templates/tenantadm/_podtemplate.yaml#L100).
 
 ### Parameters: useradm
 
