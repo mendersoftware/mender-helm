@@ -85,6 +85,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `default.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `default.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `default.minReadySeconds` | Wait before considering the new pod available | `0` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
@@ -187,6 +188,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `api_gateway.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `api_gateway.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `3` |
+| `api_gateway.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: deployments
 
@@ -246,6 +248,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `deployments.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `deployments.mongodbExistingSecret` | Use a different MongoDB secret for this service | `nil` |
+| `deployments.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: device-auth
 
@@ -309,6 +312,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `device_auth.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
 | `device_auth.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
+| `device_auth.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: gui
 
@@ -355,6 +359,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.hpa.maxReplicas` | HorizontalPodAutoscaler maxReplicas | `nil` |
 | `gui.hpa.metrics` | HorizontalPodAutoscaler metrics as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#metricspec-v2-autoscaling) | `nil` |
 | `gui.hpa.behavior` | HorizontalPodAutoscaler behavior as defined in the [reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerbehavior-v2-autoscaling) | `nil` |
+| `gui.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: inventory
 
@@ -410,6 +415,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `inventory.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `inventory.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `inventory.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: reporting
 
@@ -498,6 +504,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `tenantadm.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
 | `tenantadm.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
+| `tenantadm.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 The default value for the rate limits are:
 
@@ -571,6 +578,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `useradm.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `useradm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `useradm.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: workflows
 
@@ -614,6 +622,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `workflows.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `workflows.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `workflows.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: create_artifact_worker
 
@@ -644,6 +653,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.containerSecurityContext.runAsUser` | User ID for the container | `65534` |
 | `create_artifact_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `create_artifact_worker.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `create_artifact_worker.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: auditlogs
 
@@ -693,6 +703,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `auditlogs.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `auditlogs.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `auditlogs.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: iot-manager
 
@@ -744,6 +755,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `iot_manager.cronjobs.enabled` | Enable optional maintenance cronjobs | `false` |
 | `iot_manager.cronjobs.jobs` | List of optional maintenance cronjobs | `nil` |
+| `iot_manager.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: deviceconnect
 
@@ -797,6 +809,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `deviceconnect.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `deviceconnect.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `deviceconnect.minreadyseconds` | wait before considering the new pod available | `nil` |
 
 ### Parameters: deviceconfig
 
@@ -845,6 +858,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `deviceconfig.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `deviceconfig.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `deviceconfig.minreadyseconds` | wait before considering the new pod available | `nil` |
 
 ### Parameters: devicemonitor
 
@@ -893,6 +907,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `devicemonitor.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `devicemonitor.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `devicemonitor.minreadyseconds` | wait before considering the new pod available | `nil` |
 
 ### Parameters: generate_delta_worker
 Please notice that this feature is still under active development and it is
@@ -925,6 +940,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.resources.requests.memory` | Resources memory request | `128Mi` |
 | `generate_delta_worker.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `generate_delta_worker.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `generate_delta_worker.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
 ### Parameters: redis
 
