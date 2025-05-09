@@ -22,6 +22,11 @@ spec:
   updateStrategy: {{- toYaml $updateStrategy | nindent 4 }}
   {{- end }}
 
+  {{- $minReadySeconds := coalesce .Values.generate_delta_worker.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
+
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
