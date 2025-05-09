@@ -29,6 +29,11 @@ spec:
   strategy: {{- toYaml $updateStrategy | nindent 4 }}
   {{- end }}
 
+  {{- $minReadySeconds := coalesce .Values.create_artifact_worker.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
+
   template:
     metadata:
       {{- with .Values.create_artifact_worker.podAnnotations }}

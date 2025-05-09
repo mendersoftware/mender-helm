@@ -1,4 +1,61 @@
 ---
+## mender-6.4.0 - 2025-05-09
+
+
+### Bug Fixes
+
+
+- Bump traefik from 3.3.5 to 3.3.6 in /mender
+ ([34da58e](https://github.com/mendersoftware/mender-helm/commit/34da58ed75c81e91c29fe5725b298ab59cf3a36a))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.3.5 to 3.3.6.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.3.6
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+### Documentation
+
+
+- Update yaml customize links
+ ([3492bef](https://github.com/mendersoftware/mender-helm/commit/3492bef1a84a2b27811d19e778ce7ddaf1d34421))  by @guspan-tanadi
+
+
+
+
+### Features
+
+
+- Added Mender HTTP headers to display the chart version + name
+ ([f513a45](https://github.com/mendersoftware/mender-helm/commit/f513a450651328a158a6b4ac63ca5684be5e83af))  by @mzedel
+- Add minReadySeconds
+ ([fa14a2d](https://github.com/mendersoftware/mender-helm/commit/fa14a2db7387691b8222c1236ddbd315259dd9a1))  by @oldgiova
+
+
+  minReadySeconds could be useful when a new deployment came, and you
+  have to coinsider the pod ready some time after the readinessProbe
+- Slow gui start to startupProbe
+ ([f19bdd1](https://github.com/mendersoftware/mender-helm/commit/f19bdd10f7bf5c3306f4e63b2e632ed2685566eb))  by @oldgiova
+
+
+  The gui container is slow starting because of js minify at container
+  startup. Previously, the slow start was managed by minReadySeconds, this
+  commit moves it to the startupProbe instead, with an initialDelaySeconds
+  of 120s
+
+
+
+
+
+
 ## mender-6.3.2 - 2025-04-08
 
 
@@ -160,6 +217,22 @@
 
 
 # Changelog
+
+## [6.4.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.2...mender-6.4.0) (2025-05-09)
+
+
+### Features
+
+* add minReadySeconds ([c752189](https://github.com/mendersoftware/mender-helm/commit/c752189084afd4daa06a2c8eeca3eb08b64fe712))
+* add minReadySeconds ([fa14a2d](https://github.com/mendersoftware/mender-helm/commit/fa14a2db7387691b8222c1236ddbd315259dd9a1))
+* added Mender HTTP headers to display the chart version + name ([f513a45](https://github.com/mendersoftware/mender-helm/commit/f513a450651328a158a6b4ac63ca5684be5e83af))
+* slow gui start to startupProbe ([f19bdd1](https://github.com/mendersoftware/mender-helm/commit/f19bdd10f7bf5c3306f4e63b2e632ed2685566eb))
+
+
+### Bug Fixes
+
+* bump traefik from 3.3.5 to 3.3.6 in /mender ([801926b](https://github.com/mendersoftware/mender-helm/commit/801926b598743470b2d91013ed2b5c2a8ac803c6))
+* bump traefik from 3.3.5 to 3.3.6 in /mender ([34da58e](https://github.com/mendersoftware/mender-helm/commit/34da58ed75c81e91c29fe5725b298ab59cf3a36a))
 
 ## [6.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-6.3.1...mender-6.3.2) (2025-04-08)
 

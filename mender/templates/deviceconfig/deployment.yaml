@@ -30,6 +30,11 @@ spec:
   strategy: {{- toYaml $updateStrategy | nindent 4 }}
   {{- end }}
 
+  {{- $minReadySeconds := coalesce .Values.deviceconfig.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
+
   template:
     {{- include "mender.deviceconfigPodTemplate" $context | nindent 4 }}
 

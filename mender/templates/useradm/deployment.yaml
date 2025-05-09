@@ -31,6 +31,11 @@ spec:
   strategy: {{- toYaml $updateStrategy | nindent 4 }}
   {{- end }}
 
+  {{- $minReadySeconds := coalesce .Values.useradm.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
+
   template:
     {{- include "mender.useradmPodTemplate" $context | nindent 4 }}
 

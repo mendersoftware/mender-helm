@@ -28,6 +28,11 @@ spec:
   strategy: {{- toYaml $updateStrategy | nindent 4 }}
   {{- end }}
 
+  {{- $minReadySeconds := coalesce .Values.inventory.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
+
   template:
     {{- include "mender.inventoryPodTemplate" $context | nindent 4 }}
 
