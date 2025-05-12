@@ -98,6 +98,10 @@ default:
       maxSurge: 25%
       maxUnavailable: 0
 
+  # default.minReadySeconds: Minimum number of seconds for which a newly
+  # created pod should be ready without any of its containers crashing,
+  minReadySeconds: 0
+
   # Override the properties of the Readiness and Liveness probes
   probesOverrides:
     {}
@@ -213,7 +217,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: 3.3.5
+    tag: 3.3.6
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
