@@ -1,4 +1,13 @@
 ---
+## mender-5.13.1 - 2025-05-26
+
+
+### Bug Fixes
+* Bump Mender image to v3.7.11
+
+
+
+---
 ## mender-5.13.0 - 2025-03-02
 
 
@@ -27,7 +36,7 @@
 
 
 - Upgrade to Mender version `3.7.8`
- ([b4aeb02](https://github.com/mendersoftware/mender-helm/commit/b4aeb026660c0760cdd0167421a2e7fc42318773)) 
+ ([b4aeb02](https://github.com/mendersoftware/mender-helm/commit/b4aeb026660c0760cdd0167421a2e7fc42318773))
 
 
 
