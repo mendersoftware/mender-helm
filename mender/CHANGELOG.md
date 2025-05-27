@@ -1,4 +1,24 @@
 ---
+## mender-6.4.2 - 2025-05-27
+
+
+### Bug Fixes
+
+
+- Mender server update to 4.0.1
+ ([2949f8a](https://github.com/mendersoftware/mender-helm/commit/2949f8a76bde79ed852e859624939e9476481e70))  by @kjaskiewiczz
+- Display Mender Version
+ ([ef9463d](https://github.com/mendersoftware/mender-helm/commit/ef9463d63092ddb79199e941d53c943b43f64f9e))  by @oldgiova
+
+
+  Display the actual Mender version based on the computed Tag, not just on
+  Chart.Appversion
+
+
+
+
+
+
 ## mender-6.4.1 - 2025-05-20
 
 
@@ -242,6 +262,16 @@
 
 
 # Changelog
+
+## [6.4.2](https://github.com/mendersoftware/mender-helm/compare/mender-6.4.1...mender-6.4.2) (2025-05-27)
+
+
+### Bug Fixes
+
+* display Mender Version ([1c04381](https://github.com/mendersoftware/mender-helm/commit/1c04381a20f8c4a0f65b4b1d1051b2b30a492175))
+* display Mender Version ([ef9463d](https://github.com/mendersoftware/mender-helm/commit/ef9463d63092ddb79199e941d53c943b43f64f9e))
+* mender server update to 4.0.1 ([e7eebad](https://github.com/mendersoftware/mender-helm/commit/e7eebad013e35461e5aff1499d909bc1b50c54a9))
+* mender server update to 4.0.1 ([2949f8a](https://github.com/mendersoftware/mender-helm/commit/2949f8a76bde79ed852e859624939e9476481e70))
 
 ## [6.4.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.4.0...mender-6.4.1) (2025-05-20)
 
