@@ -250,6 +250,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.mongodbExistingSecret` | Use a different MongoDB secret for this service | `nil` |
 | `deployments.minReadySeconds` | Wait before considering the new pod available | `nil` |
 | `deployments.storageMaxImageSize` | Maximum Artifacts image size in bytes. | `10737418240` |
+| `deployments.storageMaxGenerateDataSize` | Maximum data size for requests to generate artifacts in bytes. | `536870912` |
 
 ### Parameters: device-auth
 

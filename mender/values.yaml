@@ -388,6 +388,9 @@ deployments:
   # Maximum Artifacts image size in bytes.
   storageMaxImageSize: "10737418240" # 10 GiB
 
+  # Maximum data size for requests to generate artifacts.
+  storageMaxGenerateDataSize: "536870912" # 512 MiB
+
 
 device_auth:
   enabled: true

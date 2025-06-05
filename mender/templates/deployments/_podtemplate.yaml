@@ -115,6 +115,10 @@ spec:
     - name: DEPLOYMENTS_STORAGE_MAX_IMAGE_SIZE
       value: {{ .dot.Values.deployments.storageMaxImageSize | default "10737418240" | quote }}
     {{- end }}
+    {{- if .dot.Values.deployments.storageMaxGenerateDataSize }}
+    - name: DEPLOYMENTS_STORAGE_MAX_GENERATE_DATA_SIZE
+      value: {{ .dot.Values.deployments.storageMaxGenerateDataSize | default "536870912" | quote }}
+    {{- end }}
 
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.deployments) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
