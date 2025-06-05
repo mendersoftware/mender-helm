@@ -111,6 +111,10 @@ spec:
     - name: DEPLOYMENTS_REDIS_KEY_PREFIX
       value: {{ .dot.Values.device_auth.env.DEPLOYMENTS_REDIS_KEY_PREFIX | default "deployments:v1" | quote }}
     {{- end }}
+    {{- if .dot.Values.deployments.storageMaxImageSize }}
+    - name: DEPLOYMENTS_STORAGE_MAX_IMAGE_SIZE
+      value: {{ .dot.Values.deployments.storageMaxImageSize | default "10737418240" | quote }}
+    {{- end }}
 
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.deployments) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 

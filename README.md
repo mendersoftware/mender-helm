@@ -249,6 +249,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `deployments.mongodbExistingSecret` | Use a different MongoDB secret for this service | `nil` |
 | `deployments.minReadySeconds` | Wait before considering the new pod available | `nil` |
+| `deployments.storageMaxImageSize` | Maximum Artifacts image size in bytes. | `10737418240` |
 
 ### Parameters: device-auth
 

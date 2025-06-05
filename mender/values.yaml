@@ -385,6 +385,10 @@ deployments:
     # successThreshold: 2
     # failureThreshold: 6
 
+  # Maximum Artifacts image size in bytes.
+  storageMaxImageSize: "10737418240" # 10 GiB
+
+
 device_auth:
   enabled: true
   podAnnotations: {}
