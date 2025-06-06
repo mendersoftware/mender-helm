@@ -1,4 +1,45 @@
 ---
+## mender-6.5.0 - 2025-06-06
+
+
+### Bug Fixes
+
+
+- Bump traefik from 3.4.0 to 3.4.1 in /mender
+ ([a4fd9a3](https://github.com/mendersoftware/mender-helm/commit/a4fd9a302950a93b9f445c7e167e34d19249ebf2))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.4.0 to 3.4.1.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.4.1
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Display Mender Version
+ ([41a0d0d](https://github.com/mendersoftware/mender-helm/commit/41a0d0d7bcc245a4404ca50a076f7b86ae151799))  by @oldgiova
+
+
+  Avoid nil pointer exception when default.image.tag is not set
+
+
+
+
+### Features
+
+
+- Add configurable artifacts upload size
+ ([bae5288](https://github.com/mendersoftware/mender-helm/commit/bae5288c8a9c6ee25ae053b8544d207e8c9c6e58))  by @oldgiova
+- Add configurable requests data size
+ ([da4bc9a](https://github.com/mendersoftware/mender-helm/commit/da4bc9a96762abe98ddf481e0d9d455bfaa16df4))  by @oldgiova
+
+
+
+
+
+
 ## mender-6.4.2 - 2025-05-27
 
 
@@ -262,6 +303,23 @@
 
 
 # Changelog
+
+## [6.5.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.4.2...mender-6.5.0) (2025-06-06)
+
+
+### Features
+
+* add configurable artifacts upload size ([4b919ce](https://github.com/mendersoftware/mender-helm/commit/4b919ce09a49809fc67c00df5d754a1d408ffa3a))
+* add configurable artifacts upload size ([bae5288](https://github.com/mendersoftware/mender-helm/commit/bae5288c8a9c6ee25ae053b8544d207e8c9c6e58))
+* add configurable requests data size ([da4bc9a](https://github.com/mendersoftware/mender-helm/commit/da4bc9a96762abe98ddf481e0d9d455bfaa16df4))
+
+
+### Bug Fixes
+
+* bump traefik from 3.4.0 to 3.4.1 in /mender ([f796911](https://github.com/mendersoftware/mender-helm/commit/f7969118dff2b103006078fa62a3471c110e47c0))
+* bump traefik from 3.4.0 to 3.4.1 in /mender ([a4fd9a3](https://github.com/mendersoftware/mender-helm/commit/a4fd9a302950a93b9f445c7e167e34d19249ebf2))
+* display Mender Version ([1c30c47](https://github.com/mendersoftware/mender-helm/commit/1c30c472b38302f76e3f50f78da5a9220256cef2))
+* display Mender Version ([41a0d0d](https://github.com/mendersoftware/mender-helm/commit/41a0d0d7bcc245a4404ca50a076f7b86ae151799))
 
 ## [6.4.2](https://github.com/mendersoftware/mender-helm/compare/mender-6.4.1...mender-6.4.2) (2025-05-27)
 
