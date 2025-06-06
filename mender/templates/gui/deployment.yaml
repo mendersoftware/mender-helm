@@ -103,9 +103,9 @@ spec:
         - name: HAVE_MULTITENANT
           value: {{ .Values.global.enterprise | quote }}
         - name: MENDER_VERSION
-          value: {{ trimPrefix "v" .Chart.AppVersion | quote }}
+          value: {{ trimPrefix "v" (.Values.default.image.tag | default .Chart.AppVersion) | quote }}
         - name: INTEGRATION_VERSION
-          value: {{ trimPrefix "v" .Chart.AppVersion | quote }}
+          value: {{ trimPrefix "v" (.Values.default.image.tag | default .Chart.AppVersion) | quote }}
         {{- end }}
         {{- if and .Values.auditlogs.enabled .Values.global.enterprise }}
         - name: HAVE_AUDITLOGS
