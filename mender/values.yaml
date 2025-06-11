@@ -56,7 +56,7 @@ default:
   # If true:  registry.mender.io/mender-server-enterprise
   # If false: docker.io/mendersoftware
   # The tag defaults to the chart version.
-  # image:
+  image: {}
   #   registry: docker.io|registry.mender.io
   #   repository: mendersoftware|mender-server-enterprise
   #   tag: {{ .Chart.AppVersion }}
@@ -217,7 +217,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: 3.4.0
+    tag: 3.4.1
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -384,6 +384,13 @@ deployments:
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6
+
+  # Maximum Artifacts image size in bytes.
+  storageMaxImageSize: "10737418240" # 10 GiB
+
+  # Maximum data size for requests to generate artifacts.
+  storageMaxGenerateDataSize: "536870912" # 512 MiB
+
 
 device_auth:
   enabled: true
