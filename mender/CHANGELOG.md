@@ -1,4 +1,36 @@
 ---
+## mender-6.6.0 - 2025-06-12
+
+
+### Bug Fixes
+
+
+- Some migration jobs don't run for open source
+ ([c9dec92](https://github.com/mendersoftware/mender-helm/commit/c9dec9298954fcc356fe7dd37f1c47e1a1e3cc6e))  by @oldgiova
+
+
+  The migration jobs for the Workflows and Useradm service are not running
+  for the Open Source helm chart by default. This fix enables them.
+
+
+
+
+### Features
+
+
+- Automigrate false by default
+ ([5ebb642](https://github.com/mendersoftware/mender-helm/commit/5ebb642507e4b35c9ff64ea74b6c7ab1275c5bec))  by @oldgiova
+
+
+  Switching off the automigrate feature from the services when they start:
+  the migration is completely delegated to the jobs invoked by Helm
+  Install/Upgrade hooks
+
+
+
+
+
+
 ## mender-6.5.0 - 2025-06-06
 
 
@@ -303,6 +335,20 @@
 
 
 # Changelog
+
+## [6.6.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.5.0...mender-6.6.0) (2025-06-12)
+
+
+### Features
+
+* automigrate false by default ([63ace82](https://github.com/mendersoftware/mender-helm/commit/63ace820be478c6a51e0664b9d8e087f84df2cb1))
+* automigrate false by default ([5ebb642](https://github.com/mendersoftware/mender-helm/commit/5ebb642507e4b35c9ff64ea74b6c7ab1275c5bec))
+
+
+### Bug Fixes
+
+* some migration jobs don't run for open source ([4601995](https://github.com/mendersoftware/mender-helm/commit/4601995e5b91036244f2ed5ab8ed2bed85e9dcf5))
+* some migration jobs don't run for open source ([c9dec92](https://github.com/mendersoftware/mender-helm/commit/c9dec9298954fcc356fe7dd37f1c47e1a1e3cc6e))
 
 ## [6.5.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.4.2...mender-6.5.0) (2025-06-06)
 
