@@ -27,6 +27,7 @@ spec:
   {{- end }}
   ports:
   - port: {{ .Values.workflows.service.port }}
+    name: http
     protocol: TCP
     targetPort: 8080
     {{- if .Values.workflows.service.nodePort }}
