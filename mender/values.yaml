@@ -835,6 +835,7 @@ useradm:
     USERADM_REDIS_TIMEOUT_SEC: "1"
     USERADM_REDIS_LIMITS_EXPIRE_SEC: "3600"
     USERADM_TOTP_ISSUER: Mender
+    USERADM_MEN-8168: "true"
   podSecurityContext:
     enabled: false
     runAsNonRoot: true
