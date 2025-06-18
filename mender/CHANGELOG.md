@@ -1,4 +1,18 @@
 ---
+## mender-6.6.1 - 2025-06-18
+
+
+### Bug Fixes
+
+
+- Removed duplicated PeriodSeconds
+ ([8c2ad46](https://github.com/mendersoftware/mender-helm/commit/8c2ad46d2f5d2459c867fc89bd7329ae4c745ec9))  by @oldgiova
+
+
+
+
+
+
 ## mender-6.6.0 - 2025-06-18
 
 
@@ -347,6 +361,14 @@
 
 
 # Changelog
+
+## [6.6.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.6.0...mender-6.6.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* removed duplicated PeriodSeconds ([f0a313c](https://github.com/mendersoftware/mender-helm/commit/f0a313c373de4e0f6d452a2e0c00a31adb75ca1d))
+* removed duplicated PeriodSeconds ([8c2ad46](https://github.com/mendersoftware/mender-helm/commit/8c2ad46d2f5d2459c867fc89bd7329ae4c745ec9))
 
 ## [6.6.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.5.0...mender-6.6.0) (2025-06-18)
 
