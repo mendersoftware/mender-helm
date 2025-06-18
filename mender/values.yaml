@@ -605,7 +605,8 @@ gui:
 
   # Override the properties of the Readiness, Liveness and Startup probes
   probesOverrides:
-    {}
+    initialDelaySeconds: 2
+    periodSeconds: 5
     # timeoutSeconds: 2
     # successThreshold: 2
     # failureThreshold: 6

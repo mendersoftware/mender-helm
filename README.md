@@ -355,6 +355,8 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `gui.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `gui.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `gui.probesOverrides.initialDelaySeconds` | Override the `initialDelaySeconds` for every Readiness and Liveness probes. | `2` |
+| `gui.probesOverrides.periodSeconds` | Override the `periodSeconds` for every Readiness and Liveness probes. | `5` |
 | `gui.hpa` | HorizontalPodAutoscaler support | `nil` |
 | `gui.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
 | `gui.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
