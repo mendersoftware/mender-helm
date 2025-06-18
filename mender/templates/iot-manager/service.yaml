@@ -27,6 +27,7 @@ spec:
   {{- end }}
   ports:
   - port: {{ .Values.iot_manager.service.port }}
+    name: http
     protocol: TCP
     targetPort: 8080
     {{- if .Values.iot_manager.service.nodePort }}

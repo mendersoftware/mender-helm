@@ -197,7 +197,7 @@ The following table lists the parameters for the `deployments` component and the
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `deployments.enabled` | Enable the component | `true` |
-| `deployments.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `deployments.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `deployments.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `deployments.image.repository` | Docker image repository | `mendersoftware/deployments-enterprise` if `global.enterprise` is true, else `mendersoftware/deployments` |
 | `deployments.image.tag` | Docker image tag | `nil` |
@@ -259,7 +259,7 @@ The following table lists the parameters for the `device-auth` component and the
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `device_auth.enabled` | Enable the component | `true` |
-| `device_auth.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `device_auth.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `device_auth.image.registry` | Docker image registry | `docker.io` |
 | `device_auth.image.repository` | Docker image repository | `mendersoftware/deviceauth` |
 | `device_auth.image.tag` | Docker image tag | `nil` |
@@ -355,6 +355,8 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `gui.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `gui.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
+| `gui.probesOverrides.initialDelaySeconds` | Override the `initialDelaySeconds` for every Readiness and Liveness probes. | `2` |
+| `gui.probesOverrides.periodSeconds` | Override the `periodSeconds` for every Readiness and Liveness probes. | `5` |
 | `gui.hpa` | HorizontalPodAutoscaler support | `nil` |
 | `gui.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
 | `gui.hpa.minReplicas` | HorizontalPodAutoscaler minReplicas | `nil` |
@@ -370,7 +372,7 @@ The following table lists the parameters for the `inventory` component and their
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `inventory.enabled` | Enable the component | `true` |
-| `inventory.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `inventory.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `inventory.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `inventory.image.repository` | Docker image repository | `mendersoftware/inventory-enterprise` if `global.enterprise` is true, else `mendersoftware/inventory` |
 | `inventory.image.tag` | Docker image tag | `nil` |
@@ -525,7 +527,7 @@ The following table lists the parameters for the `useradm` component and their d
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `useradm.enabled` | Enable the component | `true` |
-| `useradm.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `useradm.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `useradm.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
 | `useradm.image.tag` | Docker image tag | `nil` |
@@ -589,7 +591,7 @@ The following table lists the parameters for the `workflows-server` component an
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `workflows.enabled` | Enable the component | `true` |
-| `workflows.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `workflows.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `workflows.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `workflows.image.repository` | Docker image repository | `mendersoftware/workflows-enterprise` if `global.enterprise` is true, else `mendersoftware/workflows` |
 | `workflows.image.tag` | Docker image tag | `nil` |
@@ -664,7 +666,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `auditlogs.enabled` | Enable the component | `true` |
-| `auditlogs.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `auditlogs.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `auditlogs.image.registry` | Docker image registry | `registry.mender.io` |
 | `auditlogs.image.repository` | Docker image repository | `mendersoftware/auditlogs` |
 | `auditlogs.image.tag` | Docker image tag | `nil` |
@@ -714,7 +716,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `iot_manager.enabled` | Enable the component | `true` |
-| `iot_manager.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `iot_manager.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `iot_manager.image.registry` | Docker image registry | `docker.io` |
 | `iot_manager.image.repository` | Docker image repository | `mendersoftware/iot-manager` |
 | `iot_manager.image.tag` | Docker image tag | `nil` |
@@ -766,7 +768,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `deviceconnect.enabled` | Enable the component | `true` |
-| `deviceconnect.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `deviceconnect.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `deviceconnect.image.registry` | Docker image registry | `docker.io` |
 | `deviceconnect.image.repository` | Docker image repository | `mendersoftware/deviceconnect` |
 | `deviceconnect.image.tag` | Docker image tag | `nil` |
@@ -820,7 +822,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `deviceconfig.enabled` | Enable the component | `true` |
-| `deviceconfig.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `deviceconfig.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `deviceconfig.image.registry` | Docker image registry | `docker.io` |
 | `deviceconfig.image.repository` | Docker image repository | `mendersoftware/deviceconfig` |
 | `deviceconfig.image.tag` | Docker image tag | `nil` |
@@ -869,7 +871,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `devicemonitor.enabled` | Enable the component | `true` |
-| `devicemonitor.automigrate` | Enable automatic database migrations at service start up | `true` |
+| `devicemonitor.automigrate` | Enable automatic database migrations at service start up | `false` |
 | `devicemonitor.image.registry` | Docker image registry | `registry.mender.io` |
 | `devicemonitor.image.repository` | Docker image repository | `mendersoftware/devicemonitor` |
 | `devicemonitor.image.tag` | Docker image tag | `nil` |
