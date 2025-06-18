@@ -27,6 +27,7 @@ spec:
   {{- end }}
   ports:
   - port: {{ .Values.deployments.service.port }}
+    name: http
     protocol: TCP
     targetPort: 8080
     {{- if .Values.deployments.service.nodePort }}

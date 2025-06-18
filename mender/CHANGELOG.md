@@ -1,4 +1,62 @@
 ---
+## mender-6.6.1 - 2025-06-18
+
+
+### Bug Fixes
+
+
+- Removed duplicated PeriodSeconds
+ ([8c2ad46](https://github.com/mendersoftware/mender-helm/commit/8c2ad46d2f5d2459c867fc89bd7329ae4c745ec9))  by @oldgiova
+
+
+
+
+
+
+## mender-6.6.0 - 2025-06-18
+
+
+### Bug Fixes
+
+
+- Some migration jobs don't run for open source
+ ([c9dec92](https://github.com/mendersoftware/mender-helm/commit/c9dec9298954fcc356fe7dd37f1c47e1a1e3cc6e))  by @oldgiova
+
+
+  The migration jobs for the Workflows and Useradm service are not running
+  for the Open Source helm chart by default. This fix enables them.
+- Avoid useless gui wait start
+ ([0bee899](https://github.com/mendersoftware/mender-helm/commit/0bee899f32b026b7e569761017ba96d38513ac40))  by @oldgiova
+
+
+  The gui container used to have a js minify build which has been
+  refactored long ago and this waiting time is a leftover. Removing it.
+
+
+
+
+### Features
+
+
+- Automigrate false by default
+ ([5ebb642](https://github.com/mendersoftware/mender-helm/commit/5ebb642507e4b35c9ff64ea74b6c7ab1275c5bec))  by @oldgiova
+
+
+  Switching off the automigrate feature from the services when they start:
+  the migration is completely delegated to the jobs invoked by Helm
+  Install/Upgrade hooks
+- Add value ingress.extraPaths.backend.servicePortNumber
+ ([3a4856a](https://github.com/mendersoftware/mender-helm/commit/3a4856aa63110362d664814659d13a8ca0241af0))  by @alfrunes
+
+
+  The new parameter allows specifying a numeric port number instead of
+  name to configure additional ingress routes.
+
+
+
+
+
+
 ## mender-6.5.0 - 2025-06-06
 
 
@@ -303,6 +361,32 @@
 
 
 # Changelog
+
+## [6.6.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.6.0...mender-6.6.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* removed duplicated PeriodSeconds ([f0a313c](https://github.com/mendersoftware/mender-helm/commit/f0a313c373de4e0f6d452a2e0c00a31adb75ca1d))
+* removed duplicated PeriodSeconds ([8c2ad46](https://github.com/mendersoftware/mender-helm/commit/8c2ad46d2f5d2459c867fc89bd7329ae4c745ec9))
+
+## [6.6.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.5.0...mender-6.6.0) (2025-06-18)
+
+
+### Features
+
+* Add value ingress.extraPaths.backend.servicePortNumber ([c11e7b0](https://github.com/mendersoftware/mender-helm/commit/c11e7b0ca5b8725f22d270a650428a8e00ed9a99))
+* Add value ingress.extraPaths.backend.servicePortNumber ([3a4856a](https://github.com/mendersoftware/mender-helm/commit/3a4856aa63110362d664814659d13a8ca0241af0))
+* automigrate false by default ([63ace82](https://github.com/mendersoftware/mender-helm/commit/63ace820be478c6a51e0664b9d8e087f84df2cb1))
+* automigrate false by default ([5ebb642](https://github.com/mendersoftware/mender-helm/commit/5ebb642507e4b35c9ff64ea74b6c7ab1275c5bec))
+
+
+### Bug Fixes
+
+* avoid useless gui wait start ([46e148d](https://github.com/mendersoftware/mender-helm/commit/46e148d17ab125001ecf0ab47895086b84a2b76d))
+* avoid useless gui wait start ([0bee899](https://github.com/mendersoftware/mender-helm/commit/0bee899f32b026b7e569761017ba96d38513ac40))
+* some migration jobs don't run for open source ([4601995](https://github.com/mendersoftware/mender-helm/commit/4601995e5b91036244f2ed5ab8ed2bed85e9dcf5))
+* some migration jobs don't run for open source ([c9dec92](https://github.com/mendersoftware/mender-helm/commit/c9dec9298954fcc356fe7dd37f1c47e1a1e3cc6e))
 
 ## [6.5.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.4.2...mender-6.5.0) (2025-06-06)
 

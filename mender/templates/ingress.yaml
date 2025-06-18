@@ -49,7 +49,11 @@ spec:
               service:
                 name: {{ .backend.serviceName }}
                 port:
+                {{- if .backend.servicePort }}
                   name: {{ .backend.servicePort }}
+                {{- else }}
+                  number: {{ .backend.servicePortNumber }}
+                {{- end }}
           {{- end }}
           - path: {{ $ingressPath }}
             pathType: Prefix
