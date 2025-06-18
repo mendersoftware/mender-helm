@@ -88,7 +88,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.minReadySeconds` | Wait before considering the new pod available | `0` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
-| `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
+| `device_license_count.enabled` | Device license count feature - enterprise only | `true` |
 | `serviceAccount.create` | Create a custom ServiceAccount | `false` |
 | `serviceAccount.name` | Custom ServiceAccount name | `nil` |
 | `serviceAccount.labels` | ServiceAccount labels | `nil` |
