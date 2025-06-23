@@ -27,12 +27,12 @@ spec:
   {{- end }}
   ports:
   - port: {{ .Values.gui.service.port }}
+    name: http
     protocol: TCP
     targetPort: {{ .Values.gui.httpPort }}
     {{- if .Values.gui.service.nodePort }}
     nodePort: {{ .Values.gui.service.nodePort }}
     {{- end }}
-    name: http
   selector:
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-gui
 {{- end }}

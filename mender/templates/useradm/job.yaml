@@ -1,4 +1,4 @@
-{{- if and .Values.global.enterprise .Values.dbmigration.enable }}
+{{- if .Values.dbmigration.enable }}
 {{- $context := dict "dot" .
                      "component" "useradm"
                      "override" .Values.useradm
