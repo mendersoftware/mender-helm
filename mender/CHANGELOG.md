@@ -1,4 +1,41 @@
 ---
+## mender-6.7.0 - 2025-07-02
+
+
+### Bug fixes
+
+
+- Device license count active by default
+ ([76d2bb6](https://github.com/mendersoftware/mender-helm/commit/76d2bb66881b6f583705f0e2246f7a7170ce0cc7))  by @oldgiova
+- Bump traefik from 3.4.1 to 3.4.3 in /mender
+ ([8b20307](https://github.com/mendersoftware/mender-helm/commit/8b20307ebbc6a06a5f50db943ba078ce0663c07e))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.4.1 to 3.4.3.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.4.3
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+### Features
+
+
+- *(api-gateway)* Add deployment annotations to template
+ ([15b5998](https://github.com/mendersoftware/mender-helm/commit/15b5998bd110744b631165b117f1305a0abcdf56))  by @chriswiggins
+
+
+
+
+
+
+
 ## mender-6.6.1 - 2025-06-18
 
 
@@ -361,6 +398,19 @@
 
 
 # Changelog
+
+## [6.7.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.6.1...mender-6.7.0) (2025-07-02)
+
+
+### Features
+
+* **api-gateway:** add deployment annotations to template ([15b5998](https://github.com/mendersoftware/mender-helm/commit/15b5998bd110744b631165b117f1305a0abcdf56))
+
+
+### Bug Fixes
+
+* bump traefik from 3.4.1 to 3.4.3 in /mender ([b2ad3da](https://github.com/mendersoftware/mender-helm/commit/b2ad3da54f6f5f622865d34758137946c5a3a831))
+* bump traefik from 3.4.1 to 3.4.3 in /mender ([8b20307](https://github.com/mendersoftware/mender-helm/commit/8b20307ebbc6a06a5f50db943ba078ce0663c07e))
 
 ## [6.6.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.6.0...mender-6.6.1) (2025-06-18)
 
