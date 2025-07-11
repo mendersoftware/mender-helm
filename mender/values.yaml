@@ -212,12 +212,13 @@ nats:
 
 api_gateway:
   enabled: true
+  deploymentAnnotations: {}
   podAnnotations: {}
   dashboard: false
   image:
     registry: docker.io
     repository: traefik
-    tag: 3.4.1
+    tag: 3.4.3
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -1459,7 +1460,7 @@ dbmigration:
 # **WARNING**: This will be deprecated in the Helm Chart v7.0.0
 # and will be replaced by the `device_auth.cronjobs` feature.
 device_license_count:
-  enabled: false
+  enabled: true
 
 # Feature preview
 featureGates:

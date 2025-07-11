@@ -22,6 +22,10 @@ metadata:
     {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-api-gateway
     app.kubernetes.io/component: api-gateway
+  {{- with .Values.api_gateway.deploymentAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not (or .Values.api_gateway.hpa .Values.default.hpa) }}
   replicas: {{ .Values.api_gateway.replicas }}
