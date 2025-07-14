@@ -88,7 +88,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.minReadySeconds` | Wait before considering the new pod available | `0` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
-| `device_license_count.enabled` | Device license count feature - enterprise only | `false` |
+| `device_license_count.enabled` | Device license count feature - enterprise only | `true` |
 | `serviceAccount.create` | Create a custom ServiceAccount | `false` |
 | `serviceAccount.name` | Custom ServiceAccount name | `nil` |
 | `serviceAccount.labels` | ServiceAccount labels | `nil` |
@@ -127,6 +127,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `api_gateway.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `api_gateway.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `api_gateway.deploymentAnnotations` | add custom deployment annotations | `nil` |
 | `api_gateway.podAnnotations` | add custom pod annotations | `nil` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
