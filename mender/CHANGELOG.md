@@ -1,4 +1,63 @@
 ---
+## mender-6.8.0 - 2025-08-05
+
+
+### Bug fixes
+
+
+- Bump traefik from 3.4.3 to 3.4.4 in /mender
+ ([819130c](https://github.com/mendersoftware/mender-helm/commit/819130ca4e9742c02caaf2229bd5b9e1fc09dea5))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.4.3 to 3.4.4.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.4.4
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Mongodb poddistruptionbudget
+ ([c3636cc](https://github.com/mendersoftware/mender-helm/commit/c3636ccade33013588a4a3991338fd0488902bf8))  by @oldgiova
+
+
+  Don't specify both maxUnavailable and minAvailable which collide in a
+  PodDisruptionBudget resource. By default only minAvailable: 1 is kept
+  within the internal MongoDB.
+- Bump traefik from 3.4.4 to 3.5.0 in /mender
+ ([4018692](https://github.com/mendersoftware/mender-helm/commit/4018692ab0d342eaba29c9310d0863e5844d3e76))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.4.4 to 3.5.0.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.5.0
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
+
+
+
+
+### Features
+
+
+- Update dependency bitnami/mongodb to 16.5.32 (AppVersion: 8.0.11)
+([MEN-8594](https://northerntech.atlassian.net/browse/MEN-8594)) ([26854df](https://github.com/mendersoftware/mender-helm/commit/26854df6bf00beff29f7e3fac20195cac8d7d76b))  by @alfrunes
+
+
+  Upgraded MongoDB to version 8.0. Please refer to MongoDB documentation
+  before upgrading https://www.mongodb.com/docs/manual/release-notes/8.0/
+  Review the "Upgrade from 7.0 to 8.0" before proceeding with the upgrade.
+
+
+
+
+
+
 ## mender-6.7.0 - 2025-07-02
 
 
@@ -398,6 +457,24 @@
 
 
 # Changelog
+
+## [6.8.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.7.0...mender-6.8.0) (2025-08-05)
+
+
+### Features
+
+* Update dependency bitnami/mongodb to 16.5.32 (AppVersion: 8.0.11) ([de817b5](https://github.com/mendersoftware/mender-helm/commit/de817b563c186f33fbbff5c86cb27b9bb7ce0bcc))
+* Update dependency bitnami/mongodb to 16.5.32 (AppVersion: 8.0.11) ([26854df](https://github.com/mendersoftware/mender-helm/commit/26854df6bf00beff29f7e3fac20195cac8d7d76b))
+
+
+### Bug Fixes
+
+* bump traefik from 3.4.3 to 3.4.4 in /mender ([44bca94](https://github.com/mendersoftware/mender-helm/commit/44bca94c15f2d6d610fc995abf1d661b3e0c00f6))
+* bump traefik from 3.4.3 to 3.4.4 in /mender ([819130c](https://github.com/mendersoftware/mender-helm/commit/819130ca4e9742c02caaf2229bd5b9e1fc09dea5))
+* bump traefik from 3.4.4 to 3.5.0 in /mender ([ae29c3d](https://github.com/mendersoftware/mender-helm/commit/ae29c3df2280da5fafa64a76d89eaaed5152a1f5))
+* bump traefik from 3.4.4 to 3.5.0 in /mender ([4018692](https://github.com/mendersoftware/mender-helm/commit/4018692ab0d342eaba29c9310d0863e5844d3e76))
+* mongodb poddistruptionbudget ([968b474](https://github.com/mendersoftware/mender-helm/commit/968b4744b0d996d068f5b6a6cb7f3dc635499d73))
+* mongodb poddistruptionbudget ([c3636cc](https://github.com/mendersoftware/mender-helm/commit/c3636ccade33013588a4a3991338fd0488902bf8))
 
 ## [6.7.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.6.1...mender-6.7.0) (2025-07-02)
 
