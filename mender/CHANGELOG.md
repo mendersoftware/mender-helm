@@ -1,4 +1,23 @@
 ---
+## mender-6.8.1 - 2025-08-14
+
+
+### Bug fixes
+
+
+- *(api-gateway)* Relax routing version regex to allow experimental
+ ([939ce06](https://github.com/mendersoftware/mender-helm/commit/939ce06453cd228a57b192bcd16bbfcdc0ae3a4a))  by @alfrunes
+
+
+  This commit does not provide any visible change to the application, but
+  allows routing to future experimental API endpoints.
+
+
+
+
+
+
+
 ## mender-6.8.0 - 2025-08-05
 
 
@@ -457,6 +476,14 @@
 
 
 # Changelog
+
+## [6.8.1](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.0...mender-6.8.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* **api-gateway:** Relax routing version regex to allow experimental ([e6c381a](https://github.com/mendersoftware/mender-helm/commit/e6c381a5ec0a6d68f2698f41dd61a409a4796ef0))
+* **api-gateway:** Relax routing version regex to allow experimental ([939ce06](https://github.com/mendersoftware/mender-helm/commit/939ce06453cd228a57b192bcd16bbfcdc0ae3a4a))
 
 ## [6.8.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.7.0...mender-6.8.0) (2025-08-05)
 
