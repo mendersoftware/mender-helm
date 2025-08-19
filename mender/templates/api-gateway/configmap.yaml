@@ -506,8 +506,8 @@ data:
             browserXssFilter: true
             customRequestHeaders:
               "X-Forwarded-Proto": "{{ $scheme }}"
-              "X-Mender-Version": "{{ .Chart.Version }}"
-              "X-Mender-Chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
+              "x-mender-version": "{{ .Chart.Version }}"
+              "x-mender-chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
 
         compression:
 {{- if .Values.api_gateway.compression }}
