@@ -53,7 +53,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/auditlogs`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/auditlogs`)"
           service: auditlogs
           tls: {{ $isTls }}
 
@@ -69,7 +69,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/iot-manager`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/iot-manager`)"
           service: iot-manager
           tls: {{ $isTls }}
 
@@ -85,7 +85,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/devices/v[0-9]+/deployments`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9a-z]+/deployments`)"
           service: deployments
           tls: {{ $isTls }}
 
@@ -94,7 +94,7 @@ data:
           middlewares:
           - ratelimit
           - sec-headers
-          rule: "PathRegexp(`^/api/devices/v[0-9]+/deployments/download`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9a-z]+/deployments/download`)"
           service: deployments
           tls: {{ $isTls }}
 
@@ -107,7 +107,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/deployments`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/deployments`)"
           service: deployments
           tls: {{ $isTls }}
 
@@ -122,7 +122,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/devices/v[0-9]+/authentication`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9a-z]+/authentication`)"
           service: deviceauth
           tls: {{ $isTls }}
 
@@ -135,7 +135,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/devauth`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/devauth`)"
           service: deviceauth
           tls: {{ $isTls }}
 
@@ -151,7 +151,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/devices/v[0-9]+/deviceconfig`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9a-z]+/deviceconfig`)"
           service: deviceconfig
           tls: {{ $isTls }}
 
@@ -164,7 +164,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/deviceconfig`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/deviceconfig`)"
           service: deviceconfig
           tls: {{ $isTls }}
 
@@ -180,7 +180,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/devices/v[0-9]+/deviceconnect`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9a-z]+/deviceconnect`)"
           service: deviceconnect
           tls: {{ $isTls }}
 
@@ -193,7 +193,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/deviceconnect`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/deviceconnect`)"
           service: deviceconnect
           tls: {{ $isTls }}
 
@@ -209,7 +209,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/devices/v[0-9]+/devicemonitor`)"
+          rule: "PathRegexp(`^/api/devices/v[0-9a-z]+/devicemonitor`)"
           service: devicemonitor
           tls: {{ $isTls }}
 
@@ -222,7 +222,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/devicemonitor`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/devicemonitor`)"
           service: devicemonitor
           tls: {{ $isTls }}
 
@@ -314,7 +314,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/tenantadm`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/tenantadm`)"
           service: tenantadm
           tls: {{ $isTls }}
 
@@ -328,7 +328,7 @@ data:
 {{- end }}
           rule: >-
             (Method(`OPTIONS`) || Method(`POST`)) &&
-            PathRegexp(`/api/management/v[0-9]+/tenantadm/tenants/trial$`)
+            PathRegexp(`/api/management/v[0-9a-z]+/tenantadm/tenants/trial$`)
           service: tenantadm
           tls: {{ $isTls }}
 
@@ -344,7 +344,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v[0-9]+/useradm`)"
+          rule: "PathRegexp(`^/api/management/v[0-9a-z]+/useradm`)"
           service: useradm
           tls: {{ $isTls }}
 
@@ -362,7 +362,7 @@ data:
 {{- end }}
           rule: >-
             !Path(`/api/management/v1/useradm/auth/logout`) &&
-            PathRegexp(`^/api/management/v[0-9]+/useradm/(auth|oauth2|oidc)`)
+            PathRegexp(`^/api/management/v[0-9a-z]+/useradm/(auth|oauth2|oidc)`)
           service: useradm
           tls: {{ $isTls }}
 {{- if and .Values.api_gateway.storage_proxy.enabled .Values.api_gateway.minio.enabled }}
@@ -505,9 +505,10 @@ data:
             contentTypeNosniff: true
             browserXssFilter: true
             customRequestHeaders:
-              "X-Forwarded-Proto": "{{ $scheme }}"
-              "X-Mender-Version": "{{ .Chart.Version }}"
-              "X-Mender-Chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
+              X-Forwarded-Proto: "{{ $scheme }}"
+            customResponseHeaders:
+              x-mender-version: "{{ .Chart.Version }}"
+              x-mender-chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 
         compression:
 {{- if .Values.api_gateway.compression }}
