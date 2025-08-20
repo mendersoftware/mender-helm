@@ -505,9 +505,10 @@ data:
             contentTypeNosniff: true
             browserXssFilter: true
             customRequestHeaders:
-              "X-Forwarded-Proto": "{{ $scheme }}"
-              "x-mender-version": "{{ .Chart.Version }}"
-              "x-mender-chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
+              X-Forwarded-Proto: "{{ $scheme }}"
+            customResponseHeaders:
+              x-mender-version: "{{ .Chart.Version }}"
+              x-mender-chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 
         compression:
 {{- if .Values.api_gateway.compression }}

@@ -1,4 +1,23 @@
 ---
+## mender-6.8.3 - 2025-08-20
+
+
+### Bug fixes
+
+
+- X-mender headers to customResponseHeaders
+ ([eea61cf](https://github.com/mendersoftware/mender-helm/commit/eea61cfdb0207417cae9f88f175326503baffb13))  by @oldgiova
+
+
+  To correctly expose the custom x-mender headers, we have to set them in
+  the customResponseHeaders, instead of in the customRequestHeaders, which
+  is for client to server communication only.
+
+
+
+
+
+
 ## mender-6.8.2 - 2025-08-19
 
 
@@ -490,6 +509,14 @@
 
 
 # Changelog
+
+## [6.8.3](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.2...mender-6.8.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* x-mender headers to customResponseHeaders ([f697f83](https://github.com/mendersoftware/mender-helm/commit/f697f8310bb46a4d4f03e531eadc616f22b4f59d))
+* x-mender headers to customResponseHeaders ([eea61cf](https://github.com/mendersoftware/mender-helm/commit/eea61cfdb0207417cae9f88f175326503baffb13))
 
 ## [6.8.2](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.1...mender-6.8.2) (2025-08-19)
 
