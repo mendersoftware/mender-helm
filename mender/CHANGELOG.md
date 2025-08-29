@@ -1,4 +1,29 @@
 ---
+## mender-6.9.0 - 2025-08-29
+
+
+### Bug fixes
+
+
+- *(generate-delta-worker)* Set automigrate to false by default
+ ([3f3ded6](https://github.com/mendersoftware/mender-helm/commit/3f3ded61730edef52b4fe2e2074108ee9f6031be))  by @alfrunes
+
+
+
+
+
+### Features
+
+
+- *(workflows)* Set HAVE_DEVICEMONITOR env variable
+ ([264482e](https://github.com/mendersoftware/mender-helm/commit/264482e2057c38b6d992457ba1fbb7120a71f5c3))  by @frodeha
+
+
+
+
+
+
+
 ## mender-6.8.3 - 2025-08-20
 
 
@@ -509,6 +534,19 @@
 
 
 # Changelog
+
+## [6.9.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.3...mender-6.9.0) (2025-08-29)
+
+
+### Features
+
+* **workflows:** set HAVE_DEVICEMONITOR env variable ([264482e](https://github.com/mendersoftware/mender-helm/commit/264482e2057c38b6d992457ba1fbb7120a71f5c3))
+
+
+### Bug Fixes
+
+* **generate-delta-worker:** Set automigrate to false by default ([82242b6](https://github.com/mendersoftware/mender-helm/commit/82242b6477d2cc3176a757f25730ccdf7221cf99))
+* **generate-delta-worker:** Set automigrate to false by default ([3f3ded6](https://github.com/mendersoftware/mender-helm/commit/3f3ded61730edef52b4fe2e2074108ee9f6031be))
 
 ## [6.8.3](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.2...mender-6.8.3) (2025-08-20)
 
