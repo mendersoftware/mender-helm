@@ -511,7 +511,7 @@ device_auth:
 generate_delta_worker:
   enabled: false
   podAnnotations: {}
-  automigrate: true
+  automigrate: false
   replicas: 1
   # persistence specifies parameters for the pvc templates created for the
   # stateful set.
