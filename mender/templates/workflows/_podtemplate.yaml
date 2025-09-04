@@ -125,10 +125,6 @@ spec:
     - name: HAVE_DEVICECONFIG
       value: "true"
     {{- end }}
-    {{- if .dot.Values.devicemonitor.enabled }}
-    - name: HAVE_DEVICEMONITOR
-      value: "true"
-    {{- end }}
     {{- end }}
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.workflows) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
