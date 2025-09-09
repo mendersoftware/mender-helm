@@ -310,6 +310,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `device_auth.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `device_auth.mountSecrets` | Optional `volumeMounts` and `volumes` to inject a credential files in the workflows service  | `nil` |
 | `device_auth.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `device_auth.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `device_auth.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
