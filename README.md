@@ -580,6 +580,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `useradm.updateStrategy` | The strategy to use to update existing pods | `nil` |
+| `useradm.mountSecrets` | Optional `volumeMounts` and `volumes` to inject a credential files in the workflows service  | `nil` |
 | `useradm.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `useradm.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `useradm.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
