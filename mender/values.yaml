@@ -462,6 +462,20 @@ device_auth:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # Custom volumeMounts for mounting
+  # credential files
+  mountSecrets: {}
+  # volumeMounts:
+  #   - mountPath: /my/mount/path
+  #     name: volume-name
+  #     readOnly: true
+  #     subPath: credentials.txt
+  # volumes:
+  #   - name: volume-name
+  #     secret:
+  #       defaultMode: 420
+  #       secretName: my-credential-file
+
   # device_auth.updateStrategy: Strategy to use to update existing pods
   # Example:
   # updateStrategy:
@@ -756,6 +770,20 @@ tenantadm:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # Custom volumeMounts for mounting
+  # credential files
+  mountSecrets: {}
+  # volumeMounts:
+  #   - mountPath: /my/mount/path
+  #     name: volume-name
+  #     readOnly: true
+  #     subPath: credentials.txt
+  # volumes:
+  #   - name: volume-name
+  #     secret:
+  #       defaultMode: 420
+  #       secretName: my-credential-file
+
   # tenantadm.updateStrategy: Strategy to use to update existing pods
   # Example:
   # updateStrategy:
@@ -875,6 +903,20 @@ useradm:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
+  # Custom volumeMounts for mounting
+  # credential files
+  mountSecrets: {}
+  # volumeMounts:
+  #   - mountPath: /my/mount/path
+  #     name: volume-name
+  #     readOnly: true
+  #     subPath: credentials.txt
+  # volumes:
+  #   - name: volume-name
+  #     secret:
+  #       defaultMode: 420
+  #       secretName: my-credential-file
+
   # useradm.updateStrategy: Strategy to use to update existing pods
   # Example:
   # updateStrategy:
@@ -952,7 +994,7 @@ workflows:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
-  # Custom volumeMounts for mouting
+  # Custom volumeMounts for mounting
   # credential files
   mountSecrets: {}
   # volumeMounts:

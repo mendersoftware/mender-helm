@@ -76,6 +76,9 @@ spec:
     - name: rsa
       mountPath: "/etc/useradm/rsa/"
       readOnly: true
+    {{- with .dot.Values.useradm.mountSecrets }}
+    {{- toYaml .volumeMounts | nindent 4 }}
+    {{- end }}
     {{- end }}
 
     env:
@@ -148,6 +151,9 @@ spec:
       {{- else }}
       secretName: rsa-useradm
       {{- end }}
+  {{- with .dot.Values.useradm.mountSecrets }}
+  {{- toYaml .volumes | nindent 2 }}
+  {{- end }}
   {{- end }}
 
   {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
