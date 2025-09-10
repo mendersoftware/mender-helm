@@ -1,4 +1,51 @@
 ---
+## mender-6.9.0 - 2025-09-10
+
+
+### Bug fixes
+
+
+- *(generate-delta-worker)* Set automigrate to false by default
+ ([3f3ded6](https://github.com/mendersoftware/mender-helm/commit/3f3ded61730edef52b4fe2e2074108ee9f6031be))  by @alfrunes
+
+- Bump traefik from 3.5.0 to 3.5.1 in /mender
+ ([c71511e](https://github.com/mendersoftware/mender-helm/commit/c71511ecc0fd890afa30d764cc7849b61b2dc0c5))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.5.0 to 3.5.1.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.5.1
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+### Features
+
+
+- *(deviceauth)* Add value `device_auth.mountSecrets`
+ ([5a83683](https://github.com/mendersoftware/mender-helm/commit/5a83683269cd259c4d59a67bd3fdf367f11bc3e8))  by @alfrunes
+
+- *(tenantadm)* Add value `tenantadm.mountSecrets`
+ ([25077d0](https://github.com/mendersoftware/mender-helm/commit/25077d032fd64d798af2e63481138e3e3b62bdae))  by @alfrunes
+
+- *(useradm)* Add value `useradm.mountSecrets`
+ ([154336c](https://github.com/mendersoftware/mender-helm/commit/154336cedd7cfb8faf722313e967ee81f070fe9c))  by @alfrunes
+
+- *(workflows)* Set HAVE_DEVICEMONITOR env variable
+ ([264482e](https://github.com/mendersoftware/mender-helm/commit/264482e2057c38b6d992457ba1fbb7120a71f5c3))  by @frodeha
+
+
+
+
+
+
+
 ## mender-6.8.3 - 2025-08-20
 
 
@@ -509,6 +556,24 @@
 
 
 # Changelog
+
+## [6.9.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.3...mender-6.9.0) (2025-09-10)
+
+
+### Features
+
+* **deviceauth:** Add value `device_auth.mountSecrets` ([5a83683](https://github.com/mendersoftware/mender-helm/commit/5a83683269cd259c4d59a67bd3fdf367f11bc3e8))
+* **tenantadm:** Add value `tenantadm.mountSecrets` ([25077d0](https://github.com/mendersoftware/mender-helm/commit/25077d032fd64d798af2e63481138e3e3b62bdae))
+* **useradm:** Add value `useradm.mountSecrets` ([154336c](https://github.com/mendersoftware/mender-helm/commit/154336cedd7cfb8faf722313e967ee81f070fe9c))
+* **workflows:** set HAVE_DEVICEMONITOR env variable ([264482e](https://github.com/mendersoftware/mender-helm/commit/264482e2057c38b6d992457ba1fbb7120a71f5c3))
+
+
+### Bug Fixes
+
+* bump traefik from 3.5.0 to 3.5.1 in /mender ([accc7e1](https://github.com/mendersoftware/mender-helm/commit/accc7e1f143a4e0d1d267e1754c8c57e372232c1))
+* bump traefik from 3.5.0 to 3.5.1 in /mender ([c71511e](https://github.com/mendersoftware/mender-helm/commit/c71511ecc0fd890afa30d764cc7849b61b2dc0c5))
+* **generate-delta-worker:** Set automigrate to false by default ([82242b6](https://github.com/mendersoftware/mender-helm/commit/82242b6477d2cc3176a757f25730ccdf7221cf99))
+* **generate-delta-worker:** Set automigrate to false by default ([3f3ded6](https://github.com/mendersoftware/mender-helm/commit/3f3ded61730edef52b4fe2e2074108ee9f6031be))
 
 ## [6.8.3](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.2...mender-6.8.3) (2025-08-20)
 
