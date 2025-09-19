@@ -48,8 +48,6 @@ mongodb:
     database: "mender"
   persistence:
     enabled: false
-  global:
-    storageClass: ""
   commonAnnotations:
     helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-100"

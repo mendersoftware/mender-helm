@@ -150,8 +150,17 @@ tests:
   enabled: false
 
 # Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
+# Using a bitnami sub-chart by default = test usage only
+# It's recommended to use a suitable Redis Cluster for Production
 mongodb:
   enabled: true
+  global:
+    security:
+      allowInsecureImages: true
+    storageClass: ""
+  image:
+    repository: bitnamisecure/mongodb
+    tag: latest
   architecture: replicaset
   externalAccess:
     enabled: false
@@ -179,8 +188,6 @@ mongodb:
     # reference to Bitnami chart only:
     # the database name is managed by Mender only
     database: "mender"
-  global:
-    storageClass: ""
   commonAnnotations:
     helm.sh/hook: "pre-install"
     helm.sh/hook-weight: "-100"
@@ -1466,6 +1473,12 @@ devicemonitor:
 # It's recommended to use a suitable Redis Cluster for Production
 redis:
   enabled: false
+  global:
+    security:
+      allowInsecureImages: true
+  image:
+    repository: bitnamisecure/redis
+    tag: latest
   architecture: replication
   commonAnnotations:
     helm.sh/hook: "pre-install"
@@ -1483,6 +1496,7 @@ redis:
     persistence:
       enabled: false
   fullnameOverride: ""
+
 
 dbmigration:
   enable: true
