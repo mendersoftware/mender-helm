@@ -6,7 +6,13 @@ global:
     AWS_REGION: eu-central-1
 
 redis:
+  global:
+    security:
+      allowInsecureImages: true
   architecture: standalone
+  image:
+    repository: bitnamisecure/mongodb
+    tag: latest
   master:
     persistence:
       enabled: false

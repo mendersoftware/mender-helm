@@ -18,11 +18,11 @@ maintainers:
     url: https://northern.tech
 dependencies:
   - name: redis
-    version: ~17.11.2
+    version: ~22
     repository: "https://charts.bitnami.com/bitnami"
     condition: redis.enabled
   - name: mongodb
-    version: ~16.5.32
+    version: ~16
     repository: "https://charts.bitnami.com/bitnami"
     condition: mongodb.enabled
   - name: nats
