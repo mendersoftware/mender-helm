@@ -48,10 +48,10 @@ app.kubernetes.io/component: {{ .component }}
 {{/*
 Redis address
 */}}
-{{- define "redis_address" }}
+{{- define "mender.redis.serviceName" }}
 {{- $dot := (ternary . .dot (empty .dot)) -}}
   {{- if and $dot.Values.redis.enabled ( not $dot.Values.global.redis.URL ) }}
-    {{- printf "%s-master:6379" ( include "common.names.fullname" $dot.Subcharts.redis ) -}}
+    {{- printf "%s-redis" ( include "mender.fullname" $dot ) -}}
   {{- else }}
     {{- printf $dot.Values.global.redis.URL | quote }}
   {{- end }}
@@ -75,39 +75,28 @@ Redis connection string
 */}}
 {{- define "redis_connection_string" }}
 {{- $dot := (ternary . .dot (empty .dot)) -}}
-  {{- if and $dot.Values.redis.enabled ( not $dot.Values.global.redis.URL ) }}
-    {{- printf "redis://%s-master:6379/0" ( include "common.names.fullname" $dot.Subcharts.redis ) -}}
+  {{- if and $dot.Values.redis.enabled $dot.Values.redis.auth.enabled ( not $dot.Values.global.redis.URL ) }}
+    {{- printf "redis://:%s@%s:6379" $dot.Values.redis.auth.password ( include "mender.redis.serviceName" $dot ) -}}
+  {{- else if and $dot.Values.redis.enabled ( not $dot.Values.redis.auth.enabled ) ( not $dot.Values.global.redis.URL ) }}
+    {{- printf "redis://%s:6379" ( include "mender.redis.serviceName" $dot ) -}}
   {{- else }}
     {{- printf $dot.Values.global.redis.URL | quote }}
   {{- end }}
 {{- end }}
 
 {{/*
+MongoDB Service Name
+*/}}
+{{- define "mender.mongodb.serviceName" -}}
+  {{- printf "%s-mongodb" (include "mender.fullname" .) -}}
+{{- end }}
+
+{{/*
 MongoDB URI
 */}}
 {{- define "mongodb_uri" }}
-  {{- if and .Values.mongodb.enabled }}
-    {{- if and (eq .Values.mongodb.architecture "replicaset") .Values.mongodb.externalAccess.enabled (eq .Values.mongodb.externalAccess.service.type "ClusterIP") }}
-      {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword }}
-        {{- printf "mongodb://root:%s@%s-0" .Values.mongodb.auth.rootPassword ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
-      {{- else }}
-        {{- printf "mongodb://%s-0" ( include "mongodb.fullname" .Subcharts.mongodb ) | b64enc | quote -}}
-      {{- end }}
-    {{- else if not (eq .Values.mongodb.architecture "replicaset") }}
-      {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword  }}
-        {{- printf "mongodb://root:%s@%s" .Values.mongodb.auth.rootPassword ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
-      {{- else }}
-        {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
-      {{- end }}
-    {{- else if and (eq .Values.mongodb.architecture "replicaset") (not .Values.mongodb.externalAccess.enabled) }}
-      {{- if and .Values.mongodb.auth.enabled .Values.mongodb.auth.rootPassword  }}
-        {{- printf "mongodb+srv://root:%s@%s.%s.svc.cluster.local/?tls=false" .Values.mongodb.auth.rootPassword ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) .Release.Namespace | b64enc | quote -}}
-      {{- else }}
-        {{- printf "mongodb://%s" ( include "mongodb.service.nameOverride" .Subcharts.mongodb ) | b64enc | quote -}}
-      {{- end }}
-    {{- else }}
-      {{- fail "Failed: not implemented here." }}
-    {{- end }}
+  {{- if .Values.mongodb.enabled }}
+    {{- printf "mongodb://%s:%s@%s:27017" .Values.mongodb.auth.rootUsername .Values.mongodb.auth.rootPassword ( include "mender.mongodb.serviceName" . ) | b64enc | quote -}}
   {{- else }}
     {{- printf .Values.global.mongodb.URL | b64enc | quote }}
   {{- end }}

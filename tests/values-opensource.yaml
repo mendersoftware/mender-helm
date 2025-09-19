@@ -30,24 +30,6 @@ ingress:
      hosts:
        - mender-helmci-tests.staging.hosted.mender.io
 
-# Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
-mongodb:
-  enabled: true
-  architecture: replicaset
-  auth:
-    enabled: true
-    rootPassword: "changemetest"
-    replicaSetKey: "changemetest"
-    username: "mender"
-    database: "mender"
-  persistence:
-    enabled: false
-  global:
-    storageClass: ""
-  commonAnnotations:
-    helm.sh/hook: "pre-install"
-    helm.sh/hook-weight: "-100"
-
 # Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
   enabled: true

@@ -17,14 +17,6 @@ maintainers:
     email: contact@northern.tech
     url: https://northern.tech
 dependencies:
-  - name: redis
-    version: ~17.11.2
-    repository: "https://charts.bitnami.com/bitnami"
-    condition: redis.enabled
-  - name: mongodb
-    version: ~16.5.32
-    repository: "https://charts.bitnami.com/bitnami"
-    condition: mongodb.enabled
   - name: nats
     version: ~0.19.17
     repository: "https://nats-io.github.io/k8s/helm/charts/"

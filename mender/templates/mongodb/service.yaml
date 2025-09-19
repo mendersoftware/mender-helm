@@ -1,0 +1,23 @@
+{{- if .Values.mongodb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mender.fullname" . }}-mongodb
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-mongodb
+    app.kubernetes.io/component: mongodb
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-100"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 27017
+    targetPort: mongodb
+    protocol: TCP
+    name: mongodb
+  selector:
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-mongodb
+    app.kubernetes.io/component: mongodb
+{{- end }}
