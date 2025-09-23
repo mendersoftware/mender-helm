@@ -77,6 +77,9 @@ spec:
     - name: rsa
       mountPath: "/etc/deviceauth/rsa/"
       readOnly: true
+    {{- with .dot.Values.device_auth.mountSecrets }}
+    {{- toYaml .volumeMounts | nindent 4 }}
+    {{- end }}
     {{- end }}
 
     env:
@@ -145,6 +148,9 @@ spec:
       {{- else }}
       secretName: rsa-device-auth
       {{- end }}
+  {{- with .dot.Values.device_auth.mountSecrets }}
+  {{- toYaml .volumes | nindent 2 }}
+  {{- end }}
   {{- end }}
 
   {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
