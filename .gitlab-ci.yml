@@ -142,6 +142,7 @@ build:setup_eks_cluster:
     - kubectl version
     - helm repo add jetstack https://charts.jetstack.io
     - helm install cert-manager jetstack/cert-manager --wait --set installCRDs=true
+    - sleep 65536
 
 build:
   stage: build
