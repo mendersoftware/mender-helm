@@ -1,0 +1,22 @@
+{{- if and .Values.mongodb.enabled .Values.mongodb.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "mender.fullname" . }}-mongodb-pvc
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-mongodb
+    app.kubernetes.io/component: mongodb
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-150"
+spec:
+  accessModes:
+    - {{ .Values.mongodb.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.persistence.size }}
+  {{- if .Values.mongodb.persistence.storageClass }}
+  storageClassName: {{ .Values.mongodb.persistence.storageClass }}
+  {{- end }}
+{{- end }}

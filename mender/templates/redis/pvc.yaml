@@ -1,0 +1,19 @@
+{{- if and .Values.redis.persistence.enabled .Values.redis.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "mender.fullname" . }}-redis-pvc
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-redis
+    app.kubernetes.io/component: redis
+spec:
+  accessModes:
+    - {{ .Values.redis.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.redis.persistence.size }}
+  {{- if .Values.redis.persistence.storageClass }}
+  storageClassName: {{ .Values.redis.persistence.storageClass }}
+  {{- end }}
+{{- end }}
