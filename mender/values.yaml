@@ -546,11 +546,15 @@ generate_delta_worker:
       whenScaled: "Delete"
   resources:
     limits:
-      cpu: 100m
-      memory: 1024Mi
+      cpu: 2
+      # Warning: the artifact size together with xdelta3 arguments
+      # of window sizes may result in exhaustion of this memory limit,
+      # and the delta generation could fail or take forever to finish.
+      # Please tune it here and/or with xdelta3 arguments
+      memory: 4096Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 2
+      memory: 3.5Gi
   affinity: {}
   # image:
   #   registry: ""
