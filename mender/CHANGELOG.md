@@ -1,4 +1,69 @@
 ---
+## mender-7.0.0 - 2025-09-30
+
+
+### Bug fixes
+
+
+- Bump mongo from 8.0.13 to 8.0.14 in /mender
+ ([00c53a4](https://github.com/mendersoftware/mender-helm/commit/00c53a4187793c6a3262cad222c910d6f9018e2e))  by @dependabot[bot]
+
+
+  Bumps mongo from 8.0.13 to 8.0.14.
+
+  ---
+  updated-dependencies:
+  - dependency-name: mongo
+    dependency-version: 8.0.14
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Bump traefik from 3.5.2 to 3.5.3 in /mender
+ ([0e9c6c4](https://github.com/mendersoftware/mender-helm/commit/0e9c6c4d42111b4f3d5eef4fd01f94d0692b3521))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.5.2 to 3.5.3.
+
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.5.3
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Increase default limits for delta generator
+([MEN-8765](https://northerntech.atlassian.net/browse/MEN-8765)) ([9d45e66](https://github.com/mendersoftware/mender-helm/commit/9d45e6655aed8b87793a64a3816965e6bd69e8f6))  by @merlin-northern
+
+
+
+
+### Features
+
+
+- Bitnami alternatives
+ ([7a035bf](https://github.com/mendersoftware/mender-helm/commit/7a035bfa8fd6aae49a49b6cc088d8bd9bd291fb5))  by @oldgiova
+  - **BREAKING**: bitnami alternatives
+
+
+  Includes sample MongoDB and Redis instances for convenient testing
+  and development use. These are not suitable for production environments.
+
+  UPGRADE INSTRUCTIONS from 6.x to 7.x:
+  If you are using an external MongoDB cluster, you are not affected by this upgrade.
+  If you are using the MongoDB Bitnami subchart from the Mender Helm Chart v6.x, you must:
+
+  1. Back up your MongoDB data before the upgrade
+  2. Run the upgrade to 7.x
+  3. Restore your MongoDB data after the upgrade
+
+  Please note: The MongoDB setup provided with the Mender Helm Chart is
+  intended for testing and development purposes only, not for production use.
+
+
+
+
+
+
 ## mender-6.9.0 - 2025-09-23
 
 
@@ -13,7 +78,7 @@
 
 
   Bumps traefik from 3.5.0 to 3.5.1.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -26,7 +91,7 @@
 
 
   Bumps traefik from 3.5.1 to 3.5.2.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -124,7 +189,7 @@
 
 
   Bumps traefik from 3.4.3 to 3.4.4.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -144,7 +209,7 @@
 
 
   Bumps traefik from 3.4.4 to 3.5.0.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -185,7 +250,7 @@
 
 
   Bumps traefik from 3.4.1 to 3.4.3.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -278,7 +343,7 @@
 
 
   Bumps traefik from 3.4.0 to 3.4.1.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -339,7 +404,7 @@
 
 
   Bumps traefik from 3.3.6 to 3.4.0.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -364,7 +429,7 @@
 
 
   Bumps traefik from 3.3.5 to 3.3.6.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -571,6 +636,21 @@
 
 
 # Changelog
+
+## [7.0.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.9.0...mender-7.0.0) (2025-09-30)
+
+### Features
+* bitnami alternatives ([7a035bf](https://github.com/mendersoftware/mender-helm/commit/7a035bfa8fd6aae49a49b6cc088d8bd9bd291fb5))
+
+### Bug Fixes
+
+* bump mongo from 8.0.13 to 8.0.14 in /mender ([809c3ea](https://github.com/mendersoftware/mender-helm/commit/809c3ea92f1c9ef91b3af2c45e6e2c025307f1f7))
+* bump mongo from 8.0.13 to 8.0.14 in /mender ([00c53a4](https://github.com/mendersoftware/mender-helm/commit/00c53a4187793c6a3262cad222c910d6f9018e2e))
+* bump traefik from 3.5.2 to 3.5.3 in /mender ([255ee65](https://github.com/mendersoftware/mender-helm/commit/255ee65a9356fecb30e50dd7299a7b10aa888b5c))
+* bump traefik from 3.5.2 to 3.5.3 in /mender ([0e9c6c4](https://github.com/mendersoftware/mender-helm/commit/0e9c6c4d42111b4f3d5eef4fd01f94d0692b3521))
+* increase default limits for delta generator ([b6430d2](https://github.com/mendersoftware/mender-helm/commit/b6430d26d8e0cc4381df41ae01b4bf8e6bae2e1b))
+* increase default limits for delta generator ([9d45e66](https://github.com/mendersoftware/mender-helm/commit/9d45e6655aed8b87793a64a3816965e6bd69e8f6))
+
 
 ## [6.9.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.3...mender-6.9.0) (2025-09-23)
 
