@@ -1,4 +1,42 @@
 ---
+## mender-7.0.1 - 2025-10-07
+
+
+### Bug fixes
+
+
+- Bump redis from 8.2.1-alpine to 8.2.2-alpine in /mender
+ ([97e70ec](https://github.com/mendersoftware/mender-helm/commit/97e70ecc547fa347fad902f6bfe958474bcd58b4))  by @dependabot[bot]
+
+
+  Bumps redis from 8.2.1-alpine to 8.2.2-alpine.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: redis
+    dependency-version: 8.2.2-alpine
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Bump mongo from 8.0.14 to 8.0.15 in /mender
+ ([4982e24](https://github.com/mendersoftware/mender-helm/commit/4982e24908b222c2405f6991e9fcc64b20ed2df3))  by @dependabot[bot]
+
+
+  Bumps mongo from 8.0.14 to 8.0.15.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: mongo
+    dependency-version: 8.0.15
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
 ## mender-7.0.0 - 2025-09-30
 
 
@@ -636,6 +674,16 @@
 
 
 # Changelog
+
+## [7.0.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.0...mender-7.0.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.14 to 8.0.15 in /mender ([9940f36](https://github.com/mendersoftware/mender-helm/commit/9940f3660a04ddd245ff5cf04fb34492088ea622))
+* bump mongo from 8.0.14 to 8.0.15 in /mender ([4982e24](https://github.com/mendersoftware/mender-helm/commit/4982e24908b222c2405f6991e9fcc64b20ed2df3))
+* bump redis from 8.2.1-alpine to 8.2.2-alpine in /mender ([42aa4bf](https://github.com/mendersoftware/mender-helm/commit/42aa4bf6fb4ccb20039bc9f6f1d138ef2bfd0215))
+* bump redis from 8.2.1-alpine to 8.2.2-alpine in /mender ([97e70ec](https://github.com/mendersoftware/mender-helm/commit/97e70ecc547fa347fad902f6bfe958474bcd58b4))
 
 ## [7.0.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.9.0...mender-7.0.0) (2025-09-30)
 
