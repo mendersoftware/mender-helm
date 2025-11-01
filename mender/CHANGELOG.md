@@ -1,4 +1,18 @@
 ---
+## mender-7.0.2 - 2025-11-01
+
+
+### Bug fixes
+
+
+- Add missing podAnnotations for gui deployment
+ ([5c531a6](https://github.com/mendersoftware/mender-helm/commit/5c531a6941700177059e473f8a978ea80e194115))  by @whiite
+
+
+
+
+
+
 ## mender-7.0.1 - 2025-10-07
 
 
@@ -674,6 +688,14 @@
 
 
 # Changelog
+
+## [7.0.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.1...mender-7.0.2) (2025-11-01)
+
+
+### Bug Fixes
+
+* add missing podAnnotations for gui deployment ([3f08462](https://github.com/mendersoftware/mender-helm/commit/3f08462d526510aed6d9bb0d614e012e2b280b74))
+* add missing podAnnotations for gui deployment ([5c531a6](https://github.com/mendersoftware/mender-helm/commit/5c531a6941700177059e473f8a978ea80e194115))
 
 ## [7.0.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.0...mender-7.0.1) (2025-10-07)
 
