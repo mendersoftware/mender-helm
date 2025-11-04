@@ -194,6 +194,7 @@ mongodb:
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
   enabled: true
+  replicas: 1
   cluster:
     enabled: true
     replicas: 3
@@ -976,6 +977,8 @@ workflows:
       cpu: 10m
       memory: 64Mi
   affinity: {}
+  nats:
+    replicas: 3
   # image:
   #   registry: ""
   #   repository: ""
