@@ -1,4 +1,42 @@
 ---
+## mender-7.0.4 - 2025-11-11
+
+
+### Bug fixes
+
+
+- Bump redis from 8.2.2-alpine to 8.2.3-alpine in /mender
+ ([73d360a](https://github.com/mendersoftware/mender-helm/commit/73d360a22d6885c3e4a848022041232d6e464012))  by @dependabot[bot]
+
+
+  Bumps redis from 8.2.2-alpine to 8.2.3-alpine.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: redis
+    dependency-version: 8.2.3-alpine
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Bump traefik from 3.5.4 to 3.6.0 in /mender
+ ([55c62f6](https://github.com/mendersoftware/mender-helm/commit/55c62f6545cc7a10e0a978aef1f7160b061f1da7))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.5.4 to 3.6.0.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.6.0
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
+
+
+
+
+
+
 ## mender-7.0.3 - 2025-11-04
 
 
@@ -713,6 +751,16 @@
 
 
 # Changelog
+
+## [7.0.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.3...mender-7.0.4) (2025-11-11)
+
+
+### Bug Fixes
+
+* bump redis from 8.2.2-alpine to 8.2.3-alpine in /mender ([278e2f8](https://github.com/mendersoftware/mender-helm/commit/278e2f8c84baa63f2d0c0f4149b0b34867fa20e1))
+* bump redis from 8.2.2-alpine to 8.2.3-alpine in /mender ([73d360a](https://github.com/mendersoftware/mender-helm/commit/73d360a22d6885c3e4a848022041232d6e464012))
+* bump traefik from 3.5.4 to 3.6.0 in /mender ([e1ef882](https://github.com/mendersoftware/mender-helm/commit/e1ef882338b385c2c041cdea56fce9288c8eecb6))
+* bump traefik from 3.5.4 to 3.6.0 in /mender ([55c62f6](https://github.com/mendersoftware/mender-helm/commit/55c62f6545cc7a10e0a978aef1f7160b061f1da7))
 
 ## [7.0.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.2...mender-7.0.3) (2025-11-04)
 
