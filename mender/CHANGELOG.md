@@ -1,4 +1,218 @@
 ---
+## mender-7.1.0 - 2025-11-12
+
+
+### Bug fixes
+
+
+- *(tenantadm)* Remove duplicate devicemonitor alert rate limit rule
+([MEN-8984](https://northerntech.atlassian.net/browse/MEN-8984)) ([457ac3a](https://github.com/mendersoftware/mender-helm/commit/457ac3a37c2b7e774c95575d314459b43e6d6390))  by @frodeha
+
+
+  Remove a duplicated devicemonitor alert rate limit burst rule from the
+  default rate limit rules configured in tenantadm. The duplicated rule
+  caused the rate limiter to always limit requests to the endpoint unless the
+  default rules were overridden.
+
+
+
+
+
+### Features
+
+
+- Added value `api_gateway.customEnv`
+ ([19eac9a](https://github.com/mendersoftware/mender-helm/commit/19eac9a2f28e53b98cadc5cede199c04c8d9815b))  by @alfrunes
+
+
+  The value follows the same convention for setting custom environment
+  variables as all other helm values with the same name.
+
+
+
+
+
+
+## mender-7.0.4 - 2025-11-11
+
+
+### Bug fixes
+
+
+- Bump redis from 8.2.2-alpine to 8.2.3-alpine in /mender
+ ([73d360a](https://github.com/mendersoftware/mender-helm/commit/73d360a22d6885c3e4a848022041232d6e464012))  by @dependabot[bot]
+
+
+  Bumps redis from 8.2.2-alpine to 8.2.3-alpine.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: redis
+    dependency-version: 8.2.3-alpine
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Bump traefik from 3.5.4 to 3.6.0 in /mender
+ ([55c62f6](https://github.com/mendersoftware/mender-helm/commit/55c62f6545cc7a10e0a978aef1f7160b061f1da7))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.5.4 to 3.6.0.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.6.0
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
+
+
+
+
+
+
+## mender-7.0.3 - 2025-11-04
+
+
+### Bug fixes
+
+
+- Bump traefik from 3.5.3 to 3.5.4 in /mender
+ ([2432f56](https://github.com/mendersoftware/mender-helm/commit/2432f56f87a0c65cba4d53a1a12f13277a47d780))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.5.3 to 3.5.4.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.5.4
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
+## mender-7.0.2 - 2025-11-01
+
+
+### Bug fixes
+
+
+- Add missing podAnnotations for gui deployment
+ ([5c531a6](https://github.com/mendersoftware/mender-helm/commit/5c531a6941700177059e473f8a978ea80e194115))  by @whiite
+
+
+
+
+
+
+## mender-7.0.1 - 2025-10-07
+
+
+### Bug fixes
+
+
+- Bump redis from 8.2.1-alpine to 8.2.2-alpine in /mender
+ ([97e70ec](https://github.com/mendersoftware/mender-helm/commit/97e70ecc547fa347fad902f6bfe958474bcd58b4))  by @dependabot[bot]
+
+
+  Bumps redis from 8.2.1-alpine to 8.2.2-alpine.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: redis
+    dependency-version: 8.2.2-alpine
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Bump mongo from 8.0.14 to 8.0.15 in /mender
+ ([4982e24](https://github.com/mendersoftware/mender-helm/commit/4982e24908b222c2405f6991e9fcc64b20ed2df3))  by @dependabot[bot]
+
+
+  Bumps mongo from 8.0.14 to 8.0.15.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: mongo
+    dependency-version: 8.0.15
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
+## mender-7.0.0 - 2025-09-30
+
+
+### Bug fixes
+
+
+- Bump mongo from 8.0.13 to 8.0.14 in /mender
+ ([00c53a4](https://github.com/mendersoftware/mender-helm/commit/00c53a4187793c6a3262cad222c910d6f9018e2e))  by @dependabot[bot]
+
+
+  Bumps mongo from 8.0.13 to 8.0.14.
+
+  ---
+  updated-dependencies:
+  - dependency-name: mongo
+    dependency-version: 8.0.14
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Bump traefik from 3.5.2 to 3.5.3 in /mender
+ ([0e9c6c4](https://github.com/mendersoftware/mender-helm/commit/0e9c6c4d42111b4f3d5eef4fd01f94d0692b3521))  by @dependabot[bot]
+
+
+  Bumps traefik from 3.5.2 to 3.5.3.
+
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.5.3
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Increase default limits for delta generator
+([MEN-8765](https://northerntech.atlassian.net/browse/MEN-8765)) ([9d45e66](https://github.com/mendersoftware/mender-helm/commit/9d45e6655aed8b87793a64a3816965e6bd69e8f6))  by @merlin-northern
+
+
+
+
+### Features
+
+
+- Bitnami alternatives
+ ([7a035bf](https://github.com/mendersoftware/mender-helm/commit/7a035bfa8fd6aae49a49b6cc088d8bd9bd291fb5))  by @oldgiova
+  - **BREAKING**: bitnami alternatives
+
+
+  Includes sample MongoDB and Redis instances for convenient testing
+  and development use. These are not suitable for production environments.
+
+  UPGRADE INSTRUCTIONS from 6.x to 7.x:
+  If you are using an external MongoDB cluster, you are not affected by this upgrade.
+  If you are using the MongoDB Bitnami subchart from the Mender Helm Chart v6.x, you must:
+
+  1. Back up your MongoDB data before the upgrade
+  2. Run the upgrade to 7.x
+  3. Restore your MongoDB data after the upgrade
+
+  Please note: The MongoDB setup provided with the Mender Helm Chart is
+  intended for testing and development purposes only, not for production use.
+
+
+
+
+
+
 ## mender-6.9.0 - 2025-09-23
 
 
@@ -13,7 +227,7 @@
 
 
   Bumps traefik from 3.5.0 to 3.5.1.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -26,7 +240,7 @@
 
 
   Bumps traefik from 3.5.1 to 3.5.2.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -124,7 +338,7 @@
 
 
   Bumps traefik from 3.4.3 to 3.4.4.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -144,7 +358,7 @@
 
 
   Bumps traefik from 3.4.4 to 3.5.0.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -185,7 +399,7 @@
 
 
   Bumps traefik from 3.4.1 to 3.4.3.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -278,7 +492,7 @@
 
 
   Bumps traefik from 3.4.0 to 3.4.1.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -339,7 +553,7 @@
 
 
   Bumps traefik from 3.3.6 to 3.4.0.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -364,7 +578,7 @@
 
 
   Bumps traefik from 3.3.5 to 3.3.6.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -571,6 +785,70 @@
 
 
 # Changelog
+
+## [7.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.4...mender-7.1.0) (2025-11-12)
+
+
+### Features
+
+* Added value `api_gateway.customEnv` ([7ec2f1a](https://github.com/mendersoftware/mender-helm/commit/7ec2f1a115e5455e58986f94b943b5acd4fd94a0))
+* Added value `api_gateway.customEnv` ([19eac9a](https://github.com/mendersoftware/mender-helm/commit/19eac9a2f28e53b98cadc5cede199c04c8d9815b))
+
+
+### Bug Fixes
+
+* **tenantadm:** remove duplicate devicemonitor alert rate limit rule ([457ac3a](https://github.com/mendersoftware/mender-helm/commit/457ac3a37c2b7e774c95575d314459b43e6d6390))
+
+## [7.0.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.3...mender-7.0.4) (2025-11-11)
+
+
+### Bug Fixes
+
+* bump redis from 8.2.2-alpine to 8.2.3-alpine in /mender ([278e2f8](https://github.com/mendersoftware/mender-helm/commit/278e2f8c84baa63f2d0c0f4149b0b34867fa20e1))
+* bump redis from 8.2.2-alpine to 8.2.3-alpine in /mender ([73d360a](https://github.com/mendersoftware/mender-helm/commit/73d360a22d6885c3e4a848022041232d6e464012))
+* bump traefik from 3.5.4 to 3.6.0 in /mender ([e1ef882](https://github.com/mendersoftware/mender-helm/commit/e1ef882338b385c2c041cdea56fce9288c8eecb6))
+* bump traefik from 3.5.4 to 3.6.0 in /mender ([55c62f6](https://github.com/mendersoftware/mender-helm/commit/55c62f6545cc7a10e0a978aef1f7160b061f1da7))
+
+## [7.0.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.2...mender-7.0.3) (2025-11-04)
+
+
+### Bug Fixes
+
+* bump traefik from 3.5.3 to 3.5.4 in /mender ([9e72bfa](https://github.com/mendersoftware/mender-helm/commit/9e72bfa74702a7cfce261d3115f1337774d510ee))
+* bump traefik from 3.5.3 to 3.5.4 in /mender ([2432f56](https://github.com/mendersoftware/mender-helm/commit/2432f56f87a0c65cba4d53a1a12f13277a47d780))
+
+## [7.0.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.1...mender-7.0.2) (2025-11-01)
+
+
+### Bug Fixes
+
+* add missing podAnnotations for gui deployment ([3f08462](https://github.com/mendersoftware/mender-helm/commit/3f08462d526510aed6d9bb0d614e012e2b280b74))
+* add missing podAnnotations for gui deployment ([5c531a6](https://github.com/mendersoftware/mender-helm/commit/5c531a6941700177059e473f8a978ea80e194115))
+
+## [7.0.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.0...mender-7.0.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.14 to 8.0.15 in /mender ([9940f36](https://github.com/mendersoftware/mender-helm/commit/9940f3660a04ddd245ff5cf04fb34492088ea622))
+* bump mongo from 8.0.14 to 8.0.15 in /mender ([4982e24](https://github.com/mendersoftware/mender-helm/commit/4982e24908b222c2405f6991e9fcc64b20ed2df3))
+* bump redis from 8.2.1-alpine to 8.2.2-alpine in /mender ([42aa4bf](https://github.com/mendersoftware/mender-helm/commit/42aa4bf6fb4ccb20039bc9f6f1d138ef2bfd0215))
+* bump redis from 8.2.1-alpine to 8.2.2-alpine in /mender ([97e70ec](https://github.com/mendersoftware/mender-helm/commit/97e70ecc547fa347fad902f6bfe958474bcd58b4))
+
+## [7.0.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.9.0...mender-7.0.0) (2025-09-30)
+
+### Features
+* bitnami alternatives ([7a035bf](https://github.com/mendersoftware/mender-helm/commit/7a035bfa8fd6aae49a49b6cc088d8bd9bd291fb5))
+
+### Bug Fixes
+
+* bump mongo from 8.0.13 to 8.0.14 in /mender ([809c3ea](https://github.com/mendersoftware/mender-helm/commit/809c3ea92f1c9ef91b3af2c45e6e2c025307f1f7))
+* bump mongo from 8.0.13 to 8.0.14 in /mender ([00c53a4](https://github.com/mendersoftware/mender-helm/commit/00c53a4187793c6a3262cad222c910d6f9018e2e))
+* bump traefik from 3.5.2 to 3.5.3 in /mender ([255ee65](https://github.com/mendersoftware/mender-helm/commit/255ee65a9356fecb30e50dd7299a7b10aa888b5c))
+* bump traefik from 3.5.2 to 3.5.3 in /mender ([0e9c6c4](https://github.com/mendersoftware/mender-helm/commit/0e9c6c4d42111b4f3d5eef4fd01f94d0692b3521))
+* increase default limits for delta generator ([b6430d2](https://github.com/mendersoftware/mender-helm/commit/b6430d26d8e0cc4381df41ae01b4bf8e6bae2e1b))
+* increase default limits for delta generator ([9d45e66](https://github.com/mendersoftware/mender-helm/commit/9d45e6655aed8b87793a64a3816965e6bd69e8f6))
+
 
 ## [6.9.0](https://github.com/mendersoftware/mender-helm/compare/mender-6.8.3...mender-6.9.0) (2025-09-23)
 
