@@ -84,17 +84,17 @@ include:
   - aws sts get-caller-identity
 
 .pre_helm_tests: &pre_helm_tests
-    - eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-    - kubectl create ns "${NAMESPACE}"
-    - kubectl config set-context --current --namespace="${NAMESPACE}"
-    - echo "INFO - installing helm from scratch"
-    - tests/ci-deps-k8s.sh
-    - |
-      kubectl create secret docker-registry my-mender-pull-secret \
-        --docker-username=${REGISTRY_MENDER_IO_USERNAME} \
-        --docker-password=${REGISTRY_MENDER_IO_PASSWORD} \
-        --docker-email=${REGISTRY_MENDER_IO_EMAIL} \
-        --docker-server=registry.mender.io
+  - eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
+  - kubectl create ns "${NAMESPACE}"
+  - kubectl config set-context --current --namespace="${NAMESPACE}"
+  - echo "INFO - installing helm from scratch"
+  - tests/ci-deps-k8s.sh
+  - |
+    kubectl create secret docker-registry my-mender-pull-secret \
+      --docker-username=${REGISTRY_MENDER_IO_USERNAME} \
+      --docker-password=${REGISTRY_MENDER_IO_PASSWORD} \
+      --docker-email=${REGISTRY_MENDER_IO_EMAIL} \
+      --docker-server=registry.mender.io
 
 build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
@@ -157,7 +157,7 @@ build:
   before_script:
     - apt-get update -y
     - apt-get install -y curl make
-    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.10.2" bash
+    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.18.6" bash
   script:
     - make lint
     - make package
@@ -295,7 +295,7 @@ test:helm_chart_install_sub_charts:
     - echo "INFO - cleaning up resources"
     - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
-.test:helm_chart_upgrade_from_previous_lts_to_current_lts:  # TODO: enable this for the next LTS
+.test:helm_chart_upgrade_from_previous_lts_to_current_lts: # TODO: enable this for the next LTS
   # For example: from Mender 3.6 to Mender 3.7
   tags:
     - hetzner-amd-beefy
@@ -674,8 +674,8 @@ changelog:
   image: "registry.gitlab.com/northern.tech/mender/mender-test-containers:release-please-v1-master"
   stage: changelog
   variables:
-    GIT_DEPTH: 0  # Always get the full history
-    GIT_STRATEGY: clone  # Always get the full history
+    GIT_DEPTH: 0 # Always get the full history
+    GIT_STRATEGY: clone # Always get the full history
   tags:
     - hetzner-amd-beefy
   rules:
@@ -699,12 +699,12 @@ changelog:
     - export GITHUB_TOKEN=${GITHUB_CLI_TOKEN}
   script:
     - release-please release-pr
-        --token=${GITHUB_BOT_TOKEN_REPO_FULL}
-        --repo-url=${GITHUB_REPO_URL}
-        --target-branch=${CI_COMMIT_REF_NAME}
+      --token=${GITHUB_BOT_TOKEN_REPO_FULL}
+      --repo-url=${GITHUB_REPO_URL}
+      --target-branch=${CI_COMMIT_REF_NAME}
     # git cliff: override the changelog
     - test $GIT_CLIFF == "false" && echo "INFO - Skipping git-cliff" && exit 0
-    - git remote add github-${CI_JOB_ID} https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true  # Ignore already existing remote
+    - git remote add github-${CI_JOB_ID} https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL} || true # Ignore already existing remote
     - gh repo set-default https://${GITHUB_USER_NAME}:${GITHUB_BOT_TOKEN_REPO_FULL}@github.com/${GITHUB_REPO_URL}
     - RELEASE_PLEASE_PR=$(gh pr list --author "${GITHUB_USER_NAME}" --head "release-please--branches--${CI_COMMIT_REF_NAME}" --json number | jq -r '.[0].number // empty')
     - test -z "$RELEASE_PLEASE_PR" && echo "No release-please PR found" && exit 0
@@ -743,6 +743,6 @@ release:github:
       allow_failure: true
   script:
     - release-please github-release
-        --token=${GITHUB_BOT_TOKEN_REPO_FULL}
-        --repo-url=${GITHUB_REPO_URL}
-        --target-branch=${CI_COMMIT_REF_NAME}
+      --token=${GITHUB_BOT_TOKEN_REPO_FULL}
+      --repo-url=${GITHUB_REPO_URL}
+      --target-branch=${CI_COMMIT_REF_NAME}
