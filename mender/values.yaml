@@ -294,6 +294,17 @@ api_gateway:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
 
+  # Custom environment variable definitions
+  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
+  # customEnvs: []
+  ##  - name: EXAMPLE
+  ##    value: "value"
+  ##  - name: SECRET_EXAMPLE
+  ##    valueFrom:
+  ##      secretKeyRef:
+  ##        name: secret-name
+  ##        key: my-little-secret
+
   # prometheus pod monitor
   podMonitor:
     enabled: false
