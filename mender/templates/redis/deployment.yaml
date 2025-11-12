@@ -1,0 +1,128 @@
+{{- if .Values.redis.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mender.fullname" . }}-redis
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-redis
+    app.kubernetes.io/component: redis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # For single instance with persistent volume
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-redis
+      app.kubernetes.io/component: redis
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-redis
+        app.kubernetes.io/component: redis
+    spec:
+      {{- if .Values.redis.securityContext.enabled }}
+      securityContext:
+        fsGroup: {{ .Values.redis.securityContext.fsGroup }}
+      {{- end }}
+      containers:
+      - name: redis
+        image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+        imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
+        {{- if .Values.redis.securityContext.enabled }}
+        securityContext:
+          runAsUser: {{ .Values.redis.securityContext.runAsUser }}
+          runAsNonRoot: true
+        {{- end }}
+        command:
+        - redis-server
+        {{- if .Values.redis.auth.enabled }}
+        - --requirepass
+        - $(REDIS_PASSWORD)
+        {{- end }}
+        - --maxmemory
+        - {{ .Values.redis.maxMemory }}
+        - --maxmemory-policy
+        - {{ .Values.redis.maxMemoryPolicy }}
+        {{- if .Values.redis.persistence.enabled }}
+        - --appendonly
+        - "yes"
+        - --appendfilename
+        - "redis.aof"
+        - --dir
+        - "/data"
+        {{- end }}
+        {{- range .Values.redis.extraFlags }}
+        - {{ . }}
+        {{- end }}
+        env:
+        {{- if .Values.redis.auth.enabled }}
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "mender.fullname" . }}-redis
+              key: redis-password
+        {{- end }}
+        ports:
+        - name: redis
+          containerPort: 6379
+          protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              {{- if .Values.redis.auth.enabled }}
+              redis-cli -a "$REDIS_PASSWORD" ping
+              {{- else }}
+              redis-cli ping
+              {{- end }}
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              {{- if .Values.redis.auth.enabled }}
+              redis-cli -a "$REDIS_PASSWORD" ping
+              {{- else }}
+              redis-cli ping
+              {{- end }}
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.redis.resources | nindent 10 }}
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        {{- if .Values.redis.config }}
+        - name: config
+          mountPath: /usr/local/etc/redis
+        {{- end }}
+      volumes:
+      - name: redis-data
+        {{- if .Values.redis.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "mender.fullname" . }}-redis-pvc
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+      {{- if .Values.redis.config }}
+      - name: config
+        configMap:
+          name: {{ include "mender.fullname" . }}-redis-config
+      {{- end }}
+      {{- $ips := coalesce .Values.redis.imagePullSecrets .Values.default.imagePullSecrets  }}
+      {{- if $ips }}
+      imagePullSecrets:
+      {{- toYaml $ips | nindent 6 }}
+      {{- end }}
+{{- end }}

@@ -149,43 +149,46 @@ ingress:
 tests:
   enabled: false
 
-# Using default values from https://artifacthub.io/packages/helm/bitnami/mongodb
+# This is a sample mongodb deployment single instance included in the
+# helm chart for convinence. Not recommended in production.
 mongodb:
   enabled: true
-  architecture: replicaset
-  externalAccess:
-    enabled: false
-    service:
-      type: LoadBalancer
-  # replicaCount sets the number of secondaries (min: 2)
-  replicaCount: 2
-  # updateStrategy ensure that the nodes are updated one
-  # at the time to avoid downtime.
-  updateStrategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-  # PodDisruptionBudget ensure that the majority of nodes are available.
-  # Make sure to update the PodDisruptionBudget if you increase the number of
-  # replicas.
-  pdb:
-    enabled: true
-    maxUnavailable: 1
+  image:
+    repository: mongo
+    tag: "8.0.15"
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  # - name: secret1
+  # - name: secret2
+
   auth:
     enabled: true
+    rootUsername: "root"
     rootPassword: "pleasechangeme"
-    replicaSetKey: "pleasechangeme"
-    username: "mender"
-    # reference to Bitnami chart only:
-    # the database name is managed by Mender only
     database: "mender"
-  global:
-    storageClass: ""
-  commonAnnotations:
-    helm.sh/hook: "pre-install"
-    helm.sh/hook-weight: "-100"
-  service:
-    nameOverride: ""
+
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+
+  persistence:
+    enabled: false
+    size: 8Gi
+    accessMode: ReadWriteOnce
+    # storageClass: ""
+
+  initScripts: {}
+  # init.js: |
+  #   db = db.getSiblingDB('myapp');
+  #   db.createUser({
+  #     user: 'appuser',
+  #     pwd: 'apppass',
+  #     roles: ['readWrite']
+  #   });
 
 # Using default values from
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
@@ -217,7 +220,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: 3.5.2
+    tag: 3.6.0
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -290,6 +293,17 @@ api_gateway:
   #   rollingUpdate:
   #     maxSurge: 25%
   #     maxUnavailable: 25%
+
+  # Custom environment variable definitions
+  # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables
+  # customEnvs: []
+  ##  - name: EXAMPLE
+  ##    value: "value"
+  ##  - name: SECRET_EXAMPLE
+  ##    valueFrom:
+  ##      secretKeyRef:
+  ##        name: secret-name
+  ##        key: my-little-secret
 
   # prometheus pod monitor
   podMonitor:
@@ -543,11 +557,15 @@ generate_delta_worker:
       whenScaled: "Delete"
   resources:
     limits:
-      cpu: 100m
-      memory: 1024Mi
+      cpu: 2
+      # Warning: the artifact size together with xdelta3 arguments
+      # of window sizes may result in exhaustion of this memory limit,
+      # and the delta generation could fail or take forever to finish.
+      # Please tune it here and/or with xdelta3 arguments
+      memory: 4096Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 2
+      memory: 3.5Gi
   affinity: {}
   # image:
   #   registry: ""
@@ -728,7 +746,7 @@ tenantadm:
     type: ClusterIP
     port: 8080
   env:
-    TENANTADM_DEFAULT_API_LIMITS: '{"management":{"bursts":[],"quota":{"max_calls":600,"interval_sec":60}},"devices":{"bursts":[{"action":"POST","uri":"/api/devices/v1/authentication","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v2/deployments/device/deployments/next","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"PATCH","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5},{"action":"PUT","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/alert","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/alert","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/config","min_interval_sec":5}],"quota":{"max_calls":60,"interval_sec":60}}}'
+    TENANTADM_DEFAULT_API_LIMITS: '{"management":{"bursts":[],"quota":{"max_calls":600,"interval_sec":60}},"devices":{"bursts":[{"action":"POST","uri":"/api/devices/v1/authentication","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deployments/device/deployments/next","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v2/deployments/device/deployments/next","min_interval_sec":5},{"action":"GET","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/deviceconfig/configuration","min_interval_sec":5},{"action":"PATCH","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5},{"action":"PUT","uri":"/api/devices/v1/inventory/device/attributes","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/alert","min_interval_sec":5},{"action":"POST","uri":"/api/devices/v1/devicemonitor/config","min_interval_sec":5}],"quota":{"max_calls":60,"interval_sec":60}}}'
     TENANTADM_MIDDLEWARE: prod
     TENANTADM_SERVER_PRIV_KEY_PATH: /etc/tenantadm/rsa/private.pem
     TENANTADM_RECAPTCHA_URL_VERIFY: https://www.google.com/recaptcha/api/siteverify
@@ -1461,28 +1479,58 @@ devicemonitor:
     # successThreshold: 2
     # failureThreshold: 6
 
-# Redis as a subchart
-# Using a bitnami sub-chart by default = test usage only
-# It's recommended to use a suitable Redis Cluster for Production
+# This is a sample redis deployment single instance included in the
+# helm chart for convinence. Not recommended in production.
 redis:
   enabled: false
-  architecture: replication
-  commonAnnotations:
-    helm.sh/hook: "pre-install"
-    helm.sh/hook-weight: "-50"
+
+  image:
+    repository: redis
+    tag: "8.2.3-alpine"
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  # - name: secret1
+  # - name: secret2
+
   auth:
+    enabled: true
+    password: changemeplease
+
+  maxMemory: "256mb"
+  maxMemoryPolicy: "allkeys-lru"  # or noeviction, volatile-lru, etc.
+
+  persistence:
     enabled: false
-  commonConfiguration: |-
-    appendonly no
-    save ""
-    tcp-keepalive 0
-  master:
-    persistence:
-      enabled: false
-  replica:
-    persistence:
-      enabled: false
-  fullnameOverride: ""
+    size: 8Gi
+    accessMode: ReadWriteOnce
+    # storageClass: ""
+
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+  securityContext:
+    enabled: true
+    runAsUser: 999
+    fsGroup: 999
+
+  # Extra Redis flags
+  extraFlags: []
+    # - "--save 60 1"  # Save to disk every 60s if 1 key changed
+    # - "--tcp-keepalive 60"
+    # - "--timeout 300"
+
+  # Optional: Custom Redis configuration file
+  config: ""
+    # Example:
+    # config: |
+    #   tcp-backlog 511
+    #   timeout 0
+    #   tcp-keepalive 300
 
 dbmigration:
   enable: true
