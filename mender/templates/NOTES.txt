@@ -3,3 +3,45 @@ Mender helm {{ .Chart.Version }} has been deployed!
 
 Thank you for using Mender.
 Release name: {{ .Release.Name }}
+
+
+{{- if .Values.mongodb.enabled }}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  ⚠️  ⚠️   WARNING: DEVELOPMENT MONGODB - NOT FOR PRODUCTION   ⚠️  ⚠️  ⚠️
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{{ .Release.Name }} is using the built-in MongoDB service with:
+  ❌ Single instance (no high availability)
+  ❌ Basic authentication only
+  {{- if not .Values.mongodb.persistence.enabled }}
+  ❌ Ephemeral storage - DATA WILL BE LOST ON RESTART!
+  {{- else }}
+  ⚠️  Local persistent volume (single node)
+  {{- end }}
+  ❌ No automated backups
+  ❌ No monitoring or alerting
+
+👉 FOR PRODUCTION, use an external MongoDB:
+   https://docs.mender.io/server-installation/production-installation-with-kubernetes/mender-server#external-services
+
+{{- end }}
+
+
+{{- if .Values.redis.enabled }}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  ⚠️  ⚠️   WARNING: DEVELOPMENT REDIS - NOT FOR PRODUCTION   ⚠️  ⚠️  ⚠️
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are using the internal Redis deployment. This configuration is:
+  ❌ Single instance (no high availability)
+  ❌ No monitoring or alerting
+  {{- if not .Values.redis.persistence.enabled }}
+  ❌ Ephemeral storage - DATA WILL BE LOST ON RESTART!
+  {{- else }}
+  ⚠️  Local persistent volume (single node)
+  {{- end }}
+
+👉 FOR PRODUCTION, use an external Redis:
+   https://docs.mender.io/server-installation/production-installation-with-kubernetes/mender-server#external-services
+
+{{- end }}

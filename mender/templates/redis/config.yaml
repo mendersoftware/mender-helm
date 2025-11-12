@@ -1,0 +1,13 @@
+{{- if and .Values.redis.config .Values.redis.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mender.fullname" . }}-redis-config
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-redis
+    app.kubernetes.io/component: redis
+data:
+  redis.conf: |
+{{ .Values.redis.config | indent 4 }}
+{{- end }}

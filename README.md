@@ -42,8 +42,6 @@ The following table lists the global, default, and other parameters supported by
 | `global.nats.URL` | NATS URL | `nats://nats:4222` |
 | `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `nil` |
 | `global.redis.existingSecret` | Optional Redis URL from a secret, used with an external service when `redis.enabled=false`. The key has to be `REDIS_CONNECTION_STRING` | `nil` |
-| `global.redis.username` | Optional Redis Username **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
-| `global.redis.password` | Optional Redis Password **[Deprecated from 3.7.0: use `global.redis.URL` instead ]** | `nil` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |
 | `global.storage` | Artifacts storage type  (available types: `aws` and `azure`) | `aws` |
 | `global.s3.AWS_URI` | AWS S3 / MinIO URI | value from `global.url` |
@@ -957,29 +955,50 @@ The following table lists the parameters for the `redis` component and their def
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `redis.enabled` | Enable the component | `false` |
-| `redis.image.registry` | Docker image registry | `docker.io` |
 | `redis.image.repository` | Docker image repository | `redis` |
-| `redis.image.tag` | Docker image tag | `6.0.16-alpine` |
-| `redis.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `redis.replicas` | Number of replicas | `1` |
-| `redis.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `redis.resources.limits.cpu` | Resources CPU limit | `50m` |
-| `redis.resources.limits.memory` | Resources memory limit | `64Mi` |
-| `redis.resources.requests.cpu` | Resources CPU request | `100m` |
-| `redis.resources.requests.memory` | Resources memory request | `128Mi` |
-| `redis.service.name` | Name of the service | `mender-redis` |
-| `redis.service.annotations` | Annotations map for the service | `{}` |
-| `redis.service.type` | Service type | `ClusterIP` |
-| `redis.service.loadBalancerIP` | Service load balancer IP | `nil` |
-| `redis.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
-| `redis.service.port` | Port for the service | `6379` |
-| `redis.service.nodePort` | Node port for the service | `nil` |
-| `redis.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
-| `redis.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
-| `redis.podSecurityContext.runAsUser` | User ID for the pod | `999` |
-| `redis.containerSecurityContext.enabled` | Enable container [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
-| `redis.containerSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation for container | `false` |
-| `redis.containerSecurityContext.runAsUser` | User ID for the container | `999` |
+| `redis.image.tag` | Docker image tag | `8.2.1-alpine` |
+| `redis.image.pullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `redis.imagePullSecrets` | List of pre-existing secrets, with the format of `- name: my-secret` | `nil` |
+| `redis.auth.enabled` | Whether to enable the authentication  | `true` |
+| `redis.auth.password` | Default sample password to be changed  | `changemeplease` |
+| `redis.maxMemory` | Memory Tuning | `256mb` |
+| `redis.maxMemoryPolicy` | Memory Tuning | `allkeys-lru` |
+| `redis.persistence.enabled` | Whether to enable persistence | `false` |
+| `redis.persistence.size` | Persistence size | `8Gi` |
+| `redis.persistence.accessMode` | Storage access mode | `ReadWriteOnce` |
+| `redis.resources.limits.cpu` | Deployment resources | `500m` |
+| `redis.resources.limits.memory` | Deployment resources | `512Mi` |
+| `redis.resources.requests.cpu` | Deployment resources | `100m` |
+| `redis.resources.requests.memory` | Deployment resources | `256Mi` |
+| `redis.securityContext.enabled` | Whether to enable the securityContext | `true` |
+| `redis.securityContext.runAsUser` | SecurityContext runAsUser | `999` |
+| `redis.securityContext.fsGroup` | SecurityContext fsGroup | `999` |
+| `redis.extraFlags` | Optional extra Flags for redis | `nil` |
+| `redis.config` | Optional extra config for redis | `nil` |
+
+### Parameters: mongodb
+
+The following table lists the parameters for the `mongodb` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `mongodb.enabled` | Enable the component | `true` |
+| `mongodb.image.repository` | Docker image repository | `mongo` |
+| `mongodb.image.tag` | Docker image tag | `8.0.13 |
+| `mongodb.image.pullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `mongodb.imagePullSecrets` | List of pre-existing secrets, with the format of `- name: my-secret` | `nil` |
+| `mongodb.auth.enabled` | Whether to enable the authentication  | `true` |
+| `mongodb.auth.rootUsername` | Default root user | `root` |
+| `mongodb.auth.rootPassword` | Default sample root password to be changed  | `changemeplease` |
+| `mongodb.auth.database` | Default database | `mender` |
+| `mongodb.resources.limits.cpu` | Deployment resources | `1` |
+| `mongodb.resources.limits.memory` | Deployment resources | `1Gi` |
+| `mongodb.resources.requests.cpu` | Deployment resources | `500m` |
+| `mongodb.resources.requests.memory` | Deployment resources | `512Mi` |
+| `mongodb.persistence.enabled` | Whether to enable persistence | `false` |
+| `mongodb.persistence.size` | Persistence size | `8Gi` |
+| `mongodb.persistence.accessMode` | Storage access mode | `ReadWriteOnce` |
+| `mongodb.initScripts` | Optional initScripts | `nil` |
 
 ### Parameters: featureGates
 

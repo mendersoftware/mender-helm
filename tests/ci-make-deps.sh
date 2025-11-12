@@ -23,24 +23,26 @@ log "deploying dependencies: seaweedfs"
 helm install seaweedfs --wait -f tests/seaweedfs.yaml seaweedfs/seaweedfs
 
 if [[ "$local_seaweedfs_only" == "true" ]]; then
-  log "not deploying mongodb"
+    log "not deploying mongodb"
 else
-  log "deploying dependencies: mongodb"
-  helm install mender-mongo bitnami/mongodb \
-      --version 12.1.31 \
-      --set "image.tag=6.0.13-debian-11-r21" \
-      --set "auth.enabled=false" \
-      --set "persistence.enabled=false" \
-      -f ./tests/affinity-x86_64-standard.yaml
+    log "deploying dependencies: mongodb"
+    helm install mender-mongo bitnami/mongodb \
+        --version 16.5.45 \
+        --set "global.security.allowInsecureImages=true" \
+        --set "image.repository=bitnamisecure/mongodb" \
+        --set "image.tag=latest" \
+        --set "auth.enabled=false" \
+        --set "persistence.enabled=false" \
+        -f ./tests/affinity-x86_64-standard.yaml
 fi
 
 if [[ "$local_seaweedfs_only" == "true" ]]; then
-  log "not deploying nats"
+    log "not deploying nats"
 else
-log "deploying dependencies: nats"
-helm install nats nats/nats \
-    --version 0.8.2 \
-    --set "nats.image=nats:2.9.25-scratch" \
-    --set "nats.jetstream.enabled=true" \
-    -f ./tests/affinity-x86_64-standard.yaml
+    log "deploying dependencies: nats"
+    helm install nats nats/nats \
+        --version 0.8.2 \
+        --set "nats.image=nats:2.9.25-scratch" \
+        --set "nats.jetstream.enabled=true" \
+        -f ./tests/affinity-x86_64-standard.yaml
 fi

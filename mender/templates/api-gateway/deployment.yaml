@@ -119,6 +119,10 @@ spec:
 {{- if .Values.api_gateway.extraArgs }}
 {{- .Values.api_gateway.extraArgs | toYaml | nindent 12 }}
 {{- end }}
+        {{- with (coalesce .Values.api_gateway.customEnvs .Values.default.customEnvs) }}
+        env:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
         resources:
 {{ toYaml .Values.api_gateway.resources | indent 10 }}
 
