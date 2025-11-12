@@ -1,4 +1,38 @@
 ---
+## mender-7.1.0 - 2025-11-12
+
+
+### Bug fixes
+
+
+- *(tenantadm)* Remove duplicate devicemonitor alert rate limit rule
+([MEN-8984](https://northerntech.atlassian.net/browse/MEN-8984)) ([457ac3a](https://github.com/mendersoftware/mender-helm/commit/457ac3a37c2b7e774c95575d314459b43e6d6390))  by @frodeha
+
+
+  Remove a duplicated devicemonitor alert rate limit burst rule from the
+  default rate limit rules configured in tenantadm. The duplicated rule
+  caused the rate limiter to always limit requests to the endpoint unless the
+  default rules were overridden.
+
+
+
+
+
+### Features
+
+
+- Added value `api_gateway.customEnv`
+ ([19eac9a](https://github.com/mendersoftware/mender-helm/commit/19eac9a2f28e53b98cadc5cede199c04c8d9815b))  by @alfrunes
+
+
+  The value follows the same convention for setting custom environment
+  variables as all other helm values with the same name.
+
+
+
+
+
+
 ## mender-7.0.4 - 2025-11-11
 
 
@@ -751,6 +785,19 @@
 
 
 # Changelog
+
+## [7.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.4...mender-7.1.0) (2025-11-12)
+
+
+### Features
+
+* Added value `api_gateway.customEnv` ([7ec2f1a](https://github.com/mendersoftware/mender-helm/commit/7ec2f1a115e5455e58986f94b943b5acd4fd94a0))
+* Added value `api_gateway.customEnv` ([19eac9a](https://github.com/mendersoftware/mender-helm/commit/19eac9a2f28e53b98cadc5cede199c04c8d9815b))
+
+
+### Bug Fixes
+
+* **tenantadm:** remove duplicate devicemonitor alert rate limit rule ([457ac3a](https://github.com/mendersoftware/mender-helm/commit/457ac3a37c2b7e774c95575d314459b43e6d6390))
 
 ## [7.0.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.3...mender-7.0.4) (2025-11-11)
 
