@@ -214,7 +214,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      run: {{ .name }}
+      app.kubernetes.io/name: {{ .name }}
 {{- end }}
 {{- end }}
 
