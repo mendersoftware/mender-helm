@@ -600,6 +600,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `workflows.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `workflows.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `workflows.nats.replicas` | Number of NATS replicas | `3` |
 | `workflows.podAnnotations` | add custom pod annotations | `nil` |
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
