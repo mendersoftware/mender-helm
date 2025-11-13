@@ -1,4 +1,21 @@
 ---
+## mender-7.1.1 - 2025-11-13
+
+
+### Bug fixes
+
+
+- Right PodDisruptionBudget selector
+ ([4ad0b5d](https://github.com/mendersoftware/mender-helm/commit/4ad0b5d08892139465cef69c0cf61e941e7c4d74))  by @oldgiova
+
+
+  The selector label `run` was replaced by app.kubernetes.io/name
+
+
+
+
+
+
 ## mender-7.1.0 - 2025-11-12
 
 
@@ -785,6 +802,14 @@
 
 
 # Changelog
+
+## [7.1.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.1.0...mender-7.1.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* right PodDisruptionBudget selector ([d4acbd9](https://github.com/mendersoftware/mender-helm/commit/d4acbd92ebb000a7513fb392a8c171900a187b8a))
+* right PodDisruptionBudget selector ([4ad0b5d](https://github.com/mendersoftware/mender-helm/commit/4ad0b5d08892139465cef69c0cf61e941e7c4d74))
 
 ## [7.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.0.4...mender-7.1.0) (2025-11-12)
 
