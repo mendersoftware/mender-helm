@@ -324,6 +324,20 @@ deployments:
   automigrate: false
   mongodbExistingSecret: ""
   replicas: 1
+  config: {}
+    ## Configuration mounted as `/etc/deployments/config.yaml`
+    ## Please refer to the reference configuration shipped with the container
+    ## for a complete reference of configuration options.
+    # request_size_limit: 1048576
+    # rate_limits: # enterprise only
+    #   new_device_deployments:
+    #     enabled: true
+    #     per_tenant:
+    #       burst: 200
+    #       interval: 1m
+    #     global:
+    #       burst: 5000
+    #       interval: 1m
   resources:
     limits:
       cpu: 300m
