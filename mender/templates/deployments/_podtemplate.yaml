@@ -148,7 +148,19 @@ spec:
       secretRef:
         name: {{ .dot.Values.global.redis.existingSecret | quote }}
     {{- end }}
+    {{- if and .dot.Values.deployments.enabled .dot.Values.deployments.config }}
+    volumeMounts:
+      - mountPath: /etc/deployments/config.yaml
+        name: config
+        subPath: config.yaml
+    {{- end }}
 
+  {{- if and .dot.Values.deployments.enabled .dot.Values.deployments.config }}
+  volumes:
+  - name: config
+    configMap:
+      name: {{ include "mender.fullname" .dot }}-deployments
+  {{- end }}
 
   {{- if and .dot.Values.global.image .dot.Values.global.image.username }}
   imagePullSecrets:

@@ -803,6 +803,13 @@
 
 # Changelog
 
+## [7.2.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.1.1...mender-7.2.0) (2025-11-24)
+
+
+### Features
+
+* Added value deployments.config for overwriting config.yaml ([c38e181](https://github.com/mendersoftware/mender-helm/commit/c38e181b07350f9d0be109257139e041fab5354f))
+
 ## [7.1.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.1.0...mender-7.1.1) (2025-11-13)
 
 
