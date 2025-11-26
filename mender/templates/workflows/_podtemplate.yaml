@@ -109,6 +109,8 @@ spec:
     {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}
+    - name: WORKFLOWS_NATS_STREAM_REPLICAS
+      value: {{ .dot.Values.workflows.nats.replicas }}
 
     {{- if .worker }}
     - name: WORKFLOWS_MENDER_URL

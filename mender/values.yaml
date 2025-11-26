@@ -976,6 +976,8 @@ workflows:
       cpu: 10m
       memory: 64Mi
   affinity: {}
+  nats:
+    replicas: 3
   # image:
   #   registry: ""
   #   repository: ""
