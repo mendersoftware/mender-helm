@@ -841,6 +841,14 @@
 
 # Changelog
 
+## [7.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.2.1...mender-7.3.0) (2025-12-04)
+
+
+### Features
+
+* **workflows:** add value `workflows.nats.replicas` ([c49f804](https://github.com/mendersoftware/mender-helm/commit/c49f8048e37b13717a7782553714144ff7135ae9))
+* **workflows:** add value `workflows.nats.replicas` ([9c2b114](https://github.com/mendersoftware/mender-helm/commit/9c2b114e73a7f1b1fe6bcb77158c69248b0eb077))
+
 ## [7.2.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.2.0...mender-7.2.1) (2025-11-25)
 
 
