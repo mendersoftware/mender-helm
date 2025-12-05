@@ -17,6 +17,9 @@ mongodb:
   enabled: false
 nats:
   enabled: false
+workflows:
+  nats:
+    replicas: "1"
 redis:
   enabled: true
   architecture: standalone
