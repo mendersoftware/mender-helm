@@ -12,6 +12,12 @@
       "matchPackageNames": ["mongo", "nats", "redis"],
       "matchUpdateTypes": ["patch"],
       "groupName": "infrastructure-deps"
+    },
+    {
+      "matchManagers": ["helm-values", "helmv3"],
+      "matchPackageNames": ["mongo", "nats", "redis"],
+      "matchUpdateTypes": ["minor", "major"],
+      "enabled": false
     }
   ]
 }
