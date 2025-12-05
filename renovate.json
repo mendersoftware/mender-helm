@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":gitSignOff"
+  ],
+  "reviewers": ["team:sre-dependabot-reviewers"],
+  "prConcurrentLimit": 1,
+  "packageRules": [
+    {
+      "matchManagers": ["helm-values", "helmv3"],
+      "matchPackageNames": ["mongo", "nats", "redis"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "infrastructure-deps"
+    }
+  ]
+}
