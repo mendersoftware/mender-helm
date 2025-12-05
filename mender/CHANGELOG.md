@@ -841,6 +841,13 @@
 
 # Changelog
 
+## [7.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.0...mender-7.3.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.15 to 8.0.16 in /mender ([9ae6278](https://github.com/mendersoftware/mender-helm/commit/9ae627837a0dbf661853983ebc6dba37b86ea402))
+
 ## [7.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.2.1...mender-7.3.0) (2025-12-04)
 
 
