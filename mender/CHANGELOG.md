@@ -10,7 +10,7 @@
 
 
   Bumps traefik from 3.6.0 to 3.6.2.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -23,7 +23,7 @@
 
 
   Bumps redis from 8.2.3-alpine to 8.4.0-alpine.
-  
+
   ---
   updated-dependencies:
   - dependency-name: redis
@@ -99,7 +99,7 @@
 
 
   Bumps redis from 8.2.2-alpine to 8.2.3-alpine.
-  
+
   ---
   updated-dependencies:
   - dependency-name: redis
@@ -112,7 +112,7 @@
 
 
   Bumps traefik from 3.5.4 to 3.6.0.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -137,7 +137,7 @@
 
 
   Bumps traefik from 3.5.3 to 3.5.4.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -176,7 +176,7 @@
 
 
   Bumps redis from 8.2.1-alpine to 8.2.2-alpine.
-  
+
   ---
   updated-dependencies:
   - dependency-name: redis
@@ -189,7 +189,7 @@
 
 
   Bumps mongo from 8.0.14 to 8.0.15.
-  
+
   ---
   updated-dependencies:
   - dependency-name: mongo
@@ -840,6 +840,13 @@
 
 
 # Changelog
+
+## [7.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.1...mender-7.3.2) (2025-12-09)
+
+
+### Bug Fixes
+
+* bump traefik from 3.6.2 to 3.6.4 in /mender ([28b1fcd](https://github.com/mendersoftware/mender-helm/commit/28b1fcd95c23fb8c8bb87a0828dc77bab63d7438))
 
 ## [7.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.0...mender-7.3.1) (2025-12-05)
 
