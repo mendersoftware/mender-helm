@@ -10,7 +10,7 @@
 
 
   Bumps traefik from 3.6.0 to 3.6.2.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -23,7 +23,7 @@
 
 
   Bumps redis from 8.2.3-alpine to 8.4.0-alpine.
-  
+
   ---
   updated-dependencies:
   - dependency-name: redis
@@ -99,7 +99,7 @@
 
 
   Bumps redis from 8.2.2-alpine to 8.2.3-alpine.
-  
+
   ---
   updated-dependencies:
   - dependency-name: redis
@@ -112,7 +112,7 @@
 
 
   Bumps traefik from 3.5.4 to 3.6.0.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -137,7 +137,7 @@
 
 
   Bumps traefik from 3.5.3 to 3.5.4.
-  
+
   ---
   updated-dependencies:
   - dependency-name: traefik
@@ -176,7 +176,7 @@
 
 
   Bumps redis from 8.2.1-alpine to 8.2.2-alpine.
-  
+
   ---
   updated-dependencies:
   - dependency-name: redis
@@ -189,7 +189,7 @@
 
 
   Bumps mongo from 8.0.14 to 8.0.15.
-  
+
   ---
   updated-dependencies:
   - dependency-name: mongo
@@ -840,6 +840,35 @@
 
 
 # Changelog
+
+## [7.3.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.2...mender-7.3.3) (2025-12-09)
+
+
+### Bug Fixes
+
+* **deployments:** handle prerelease configmap ([2305452](https://github.com/mendersoftware/mender-helm/commit/230545231eb171f73da102e875e916947ffd0251))
+
+## [7.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.1...mender-7.3.2) (2025-12-09)
+
+
+### Bug Fixes
+
+* bump traefik from 3.6.2 to 3.6.4 in /mender ([28b1fcd](https://github.com/mendersoftware/mender-helm/commit/28b1fcd95c23fb8c8bb87a0828dc77bab63d7438))
+
+## [7.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.0...mender-7.3.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.15 to 8.0.16 in /mender ([9ae6278](https://github.com/mendersoftware/mender-helm/commit/9ae627837a0dbf661853983ebc6dba37b86ea402))
+
+## [7.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.2.1...mender-7.3.0) (2025-12-04)
+
+
+### Features
+
+* **workflows:** add value `workflows.nats.replicas` ([c49f804](https://github.com/mendersoftware/mender-helm/commit/c49f8048e37b13717a7782553714144ff7135ae9))
+* **workflows:** add value `workflows.nats.replicas` ([9c2b114](https://github.com/mendersoftware/mender-helm/commit/9c2b114e73a7f1b1fe6bcb77158c69248b0eb077))
 
 ## [7.2.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.2.0...mender-7.2.1) (2025-11-25)
 
