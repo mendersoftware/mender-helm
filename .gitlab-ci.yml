@@ -711,6 +711,8 @@ publish:helm_chart_publishing:
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
   id_tokens:
     AWS_OIDC_TOKEN:

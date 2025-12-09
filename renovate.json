@@ -18,6 +18,11 @@
       "matchPackageNames": ["mongo", "nats", "redis"],
       "matchUpdateTypes": ["minor", "major"],
       "enabled": false
+    },
+    {
+      "matchManagers": ["gitlabci", "gitlabci-include"],
+      "enabled": true,
+      "semanticCommitType": "ci"
     }
   ]
 }
