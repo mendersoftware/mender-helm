@@ -841,6 +841,13 @@
 
 # Changelog
 
+## [7.3.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.2...mender-7.3.3) (2025-12-09)
+
+
+### Bug Fixes
+
+* **deployments:** handle prerelease configmap ([2305452](https://github.com/mendersoftware/mender-helm/commit/230545231eb171f73da102e875e916947ffd0251))
+
 ## [7.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.1...mender-7.3.2) (2025-12-09)
 
 
