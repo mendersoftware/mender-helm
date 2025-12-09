@@ -176,7 +176,7 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:bookworm
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie
   tags:
     - hetzner-amd-beefy
   rules:
@@ -676,7 +676,7 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:bookworm
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie
   before_script:
     - apt-get update -y
     - apt-get install -y curl make git
