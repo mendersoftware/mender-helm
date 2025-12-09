@@ -841,6 +841,14 @@
 
 # Changelog
 
+## [7.3.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.3...mender-7.3.4) (2025-12-09)
+
+
+### Bug Fixes
+
+* **deployments:** fix correct naming for prerelease cm ([e4c8911](https://github.com/mendersoftware/mender-helm/commit/e4c891171788c77a6e9260b585c3e8c8f8e3dc30))
+* **deployments:** fix correct naming for prerelease cm ([e1ac409](https://github.com/mendersoftware/mender-helm/commit/e1ac4092a498b5a5f8e34e605d63ced3a4558247))
+
 ## [7.3.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.2...mender-7.3.3) (2025-12-09)
 
 
