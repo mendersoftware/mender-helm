@@ -159,7 +159,7 @@ spec:
   volumes:
   - name: config
     configMap:
-      name: {{ include "mender.fullname" .dot }}-deployments
+      name: {{ printf "%s-deployments%s" (include "mender.fullname" .dot) (ternary "" "-prerelease" (empty .migration)) }}
   {{- end }}
 
   {{- if and .dot.Values.global.image .dot.Values.global.image.username }}

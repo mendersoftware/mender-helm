@@ -155,7 +155,7 @@ mongodb:
   enabled: true
   image:
     repository: mongo
-    tag: "8.0.15"
+    tag: "8.0.16"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1
@@ -194,6 +194,7 @@ mongodb:
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
   enabled: true
+  replicas: 1
   cluster:
     enabled: true
     replicas: 3
@@ -220,7 +221,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: 3.6.2
+    tag: 3.6.4
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -976,6 +977,8 @@ workflows:
       cpu: 10m
       memory: 64Mi
   affinity: {}
+  nats:
+    replicas: 3
   # image:
   #   registry: ""
   #   repository: ""
