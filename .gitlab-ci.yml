@@ -51,6 +51,22 @@ variables:
     options:
       - "true"
       - "false"
+  # Renovate required variables
+  RENOVATE_PLATFORM: github
+  RENOVATE_ENDPOINT: "https://api.github.com"
+  RENOVATE_GIT_AUTHOR: "mender-test-bot <mender@northern.tech>"
+  RENOVATE_TOKEN: $GITHUB_BOT_TOKEN_REPO_FULL
+  RENOVATE_GITHUB_COM_TOKEN: $GITHUB_BOT_TOKEN_REPO_FULL
+  RENOVATE_REPOSITORIES: "mendersoftware/$CI_PROJECT_NAME"
+  RENOVATE_REQUIRE_CONFIG: "optional"
+  RENOVATE_ONBOARDING: "false"
+  RENOVATE_GIT_PRIVATE_KEY: $SSH_PRIVATE_KEY
+  FORCE_RENOVATE_RUN:
+    description: "Force a renovate bot run"
+    value: "false"
+    options:
+      - "true"
+      - "false"
 
 stages:
   - build
@@ -69,6 +85,17 @@ include:
     file: ".gitlab-ci-github-status-updates.yml"
   - project: "Northern.tech/Mender/mendertesting"
     file: ".gitlab-ci-check-helm-version-bump.yml"
+  - component: gitlab.com/renovate-bot/renovate-runner/renovate.gitlab-ci@main
+
+# Override rules
+renovate:
+  needs: []
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+  stage: build
+  tags:
+    - hetzner-amd-beefy
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
   - export AWS_DEFAULT_REGION=eu-central-1
@@ -104,6 +131,10 @@ build:setup_eks_cluster:
   resource_group: helm
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
   id_tokens:
@@ -145,7 +176,7 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:bookworm
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie
   tags:
     - hetzner-amd-beefy
   rules:
@@ -205,6 +236,10 @@ test:helm_chart_install:
       when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-setup-test"
@@ -245,6 +280,10 @@ test:helm_chart_install_sub_charts:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
     - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
@@ -309,6 +348,10 @@ test:helm_chart_install_sub_charts:
       when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-upgrade-test-previous-tls"
@@ -370,6 +413,10 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
       when: never
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-upgrade-test-current-lts"
@@ -422,6 +469,10 @@ test:kubeconform_tests:
   rules:
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   id_tokens:
     AWS_OIDC_TOKEN:
@@ -464,6 +515,10 @@ test:helm_chart_install_opensource:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
     - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
@@ -530,6 +585,10 @@ test:helm_chart_install_with_r2:
     # contains protected variables: never run on non protected branches
     - if: '$CI_COMMIT_REF_PROTECTED != "true"'
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-setup-test-r2"
@@ -589,6 +648,10 @@ test:playground_eks_cluster:
   dependencies:
     - build:setup_eks_cluster
   rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     - if: '$RUN_PLAYGROUND == "true"'
   id_tokens:
     AWS_OIDC_TOKEN:
@@ -613,7 +676,7 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:bookworm
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie
   before_script:
     - apt-get update -y
     - apt-get install -y curl make git
@@ -647,6 +710,8 @@ publish:helm_chart_publishing:
     - build:setup_eks_cluster
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
   id_tokens:
@@ -688,9 +753,12 @@ changelog:
     # Don't run release-please on staging and prod branches
     - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "prod"
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
     # Only run for some protected branches (master and LTS branches)
     - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "5.x"
-      when: always
   before_script:
     # setting up git
     - git config --global user.email "${GITHUB_USER_EMAIL}"
@@ -736,6 +804,10 @@ release:github:
       when: never
     # Don't run release-please on staging and prod branches
     - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "prod"
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
     # Only make available for protected branches (main and maintenance branches)
     - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "5.x"
