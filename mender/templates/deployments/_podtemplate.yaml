@@ -1,8 +1,13 @@
 {{- define "mender.deploymentsPodTemplate" -}}
 metadata:
-  {{- with .dot.Values.deployments.podAnnotations }}
+  {{- if or ( and .dot.Values.deployments.enabled .dot.Values.deployments.config ) .dot.Values.deployments.podAnnotations }}
   annotations:
+    {{- if and .dot.Values.deployments.enabled .dot.Values.deployments.config }}
+    checksum/config: {{ include (print .dot.Template.BasePath "/deployments/configmap" (ternary "-prerelease" "" (not (empty .migration))) ".yaml") .dot | sha256sum }}
+    {{- end }}
+    {{- with .dot.Values.deployments.podAnnotations }}
     {{- toYaml . | nindent 4 }}
+    {{- end }}
   {{- end }}
   labels:
     {{- include "mender.labels" . | nindent 4 }}
