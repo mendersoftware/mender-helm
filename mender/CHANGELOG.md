@@ -1,4 +1,26 @@
 ---
+## mender-7.3.5 - 2025-12-10
+
+
+### Bug fixes
+
+
+- *(deployments)* Reload when configmap changes
+([MEN-8964](https://northerntech.atlassian.net/browse/MEN-8964)) ([82686f8](https://github.com/mendersoftware/mender-helm/commit/82686f81eba4392834ab99d1c7eb4f641bc5e66c))  by @oldgiova
+
+
+
+
+
+  Automatically reload the deployment service deployment resource when the
+  configmap changes
+
+
+
+
+
+
+
 ## mender-7.2.1 - 2025-11-25
 
 
@@ -841,12 +863,18 @@
 
 # Changelog
 
+## [7.3.5](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.4...mender-7.3.5) (2025-12-10)
+
+
+### Bug Fixes
+
+* **deployments:** reload when configmap changes ([82686f8](https://github.com/mendersoftware/mender-helm/commit/82686f81eba4392834ab99d1c7eb4f641bc5e66c))
+
 ## [7.3.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.3...mender-7.3.4) (2025-12-09)
 
 
 ### Bug Fixes
 
-* **deployments:** fix correct naming for prerelease cm ([e4c8911](https://github.com/mendersoftware/mender-helm/commit/e4c891171788c77a6e9260b585c3e8c8f8e3dc30))
 * **deployments:** fix correct naming for prerelease cm ([e1ac409](https://github.com/mendersoftware/mender-helm/commit/e1ac4092a498b5a5f8e34e605d63ced3a4558247))
 
 ## [7.3.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.2...mender-7.3.3) (2025-12-09)
