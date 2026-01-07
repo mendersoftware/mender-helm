@@ -1,0 +1,179 @@
+suite: test workflows HPA
+templates:
+  - templates/workflows/hpa.yaml
+tests:
+  - it: should not create HPA when workflows is disabled
+    set:
+      workflows.enabled: false
+      workflows.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create HPA when hpa is disabled
+    set:
+      workflows.enabled: true
+      workflows.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create HPA when hpa is not configured
+    set:
+      workflows.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create HPA when both workflows and hpa are enabled
+    set:
+      workflows.enabled: true
+      workflows.hpa:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 5
+        metrics:
+          - type: External
+            external:
+              metric:
+                name: nats_consumer_lag
+                selector:
+                  matchLabels:
+                    consumer_name: workflows-worker
+              target:
+                type: Value
+                value: "50"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler
+      - equal:
+          path: apiVersion
+          value: autoscaling/v2
+      - equal:
+          path: spec.scaleTargetRef.kind
+          value: Deployment
+      - matchRegex:
+          path: spec.scaleTargetRef.name
+          pattern: .*workflows-worker$
+      - equal:
+          path: spec.minReplicas
+          value: 1
+      - equal:
+          path: spec.maxReplicas
+          value: 5
+
+  - it: should configure external metrics correctly
+    set:
+      workflows.enabled: true
+      workflows.hpa:
+        enabled: true
+        metrics:
+          - type: External
+            external:
+              metric:
+                name: nats_consumer_lag
+                selector:
+                  matchLabels:
+                    consumer_name: workflows-worker
+              target:
+                type: Value
+                value: "50"
+    asserts:
+      - equal:
+          path: spec.metrics[0].type
+          value: External
+      - equal:
+          path: spec.metrics[0].external.metric.name
+          value: nats_consumer_lag
+      - equal:
+          path: spec.metrics[0].external.metric.selector.matchLabels.consumer_name
+          value: workflows-worker
+      - equal:
+          path: spec.metrics[0].external.target.type
+          value: Value
+      - equal:
+          path: spec.metrics[0].external.target.value
+          value: "50"
+
+  - it: should configure scale behavior when provided
+    set:
+      workflows.enabled: true
+      workflows.hpa:
+        enabled: true
+        metrics:
+          - type: External
+        behavior:
+          scaleUp:
+            policies:
+              - type: Pods
+                value: 2
+                periodSeconds: 45
+            stabilizationWindowSeconds: 120
+          scaleDown:
+            policies:
+              - type: Pods
+                value: 1
+                periodSeconds: 120
+            stabilizationWindowSeconds: 240
+    asserts:
+      - equal:
+          path: spec.behavior.scaleUp.stabilizationWindowSeconds
+          value: 120
+      - equal:
+          path: spec.behavior.scaleDown.stabilizationWindowSeconds
+          value: 240
+      - equal:
+          path: spec.behavior.scaleUp.policies[0].type
+          value: Pods
+      - equal:
+          path: spec.behavior.scaleUp.policies[0].value
+          value: 2
+
+  - it: should use default replicas when not specified
+    set:
+      workflows.enabled: true
+      workflows.hpa:
+        enabled: true
+        metrics:
+          - type: External
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 1
+      - equal:
+          path: spec.maxReplicas
+          value: 1
+
+  - it: should merge default and override hpa values
+    set:
+      default.hpa:
+        minReplicas: 2
+        maxReplicas: 10
+      workflows.enabled: true
+      workflows.hpa:
+        enabled: true
+        maxReplicas: 5
+        metrics:
+          - type: External
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 2
+      - equal:
+          path: spec.maxReplicas
+          value: 5
+
+  - it: should include namespace in metadata when set
+    set:
+      workflows.enabled: true
+      workflows.hpa:
+        enabled: true
+        metrics:
+          - type: External
+    release:
+      namespace: test-namespace
+    asserts:
+      - hasDocuments:
+          count: 1
