@@ -890,6 +890,13 @@
 
 # Changelog
 
+## [7.4.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.6...mender-7.4.0) (2026-01-07)
+
+
+### Features
+
+* **workflows:** add optional hpa ([f06ec51](https://github.com/mendersoftware/mender-helm/commit/f06ec51c515177e0d31c61f2ed4ffa9c623c8402))
+
 ## [7.3.6](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.5...mender-7.3.6) (2025-12-31)
 
 
