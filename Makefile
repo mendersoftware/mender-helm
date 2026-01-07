@@ -36,9 +36,16 @@ upload: package ## Upload the mender helm package to the charts repository
 template: ## Render the mender helm chart template
 	helm template $(NAME)/ -f values-enterprise.yaml > $(NAME)-$(VERSION).yaml
 
+.PHONY: unittest
+unittest: ## Run helm unit tests
+	helm unittest $(NAME)/
+
 .PHONY: test
-test: ## Run tests
+test: ## Run integration tests
 	bash tests/tests.sh
+
+.PHONY: test-all
+test-all: lint unittest kubeconform test ## Run all tests (lint, unit, kubeconform, integration)
 
 .PHONY: kubeconform
 kubeconform: ## Run kubeconform over helm chart rendered template

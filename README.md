@@ -630,6 +630,54 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.probesOverrides.timeoutSeconds` | Override the `timeoutSeconds` for every Readiness and Liveness probes. | `nil` |
 | `workflows.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `workflows.minReadySeconds` | Wait before considering the new pod available | `nil` |
+| `workflows.hpa` | HorizontalPodAutoscaler support. Please use an external metric targeting the NATS queue for it[^1]. | `nil` |
+
+#### Prometheus Adapter Configuration for workflows HPA
+
+[^1]: To use the HPA with external metrics based on NATS queue depth, you need to configure the [Prometheus Adapter](https://github.com/kubernetes-sigs/prometheus-adapter) to expose the NATS consumer lag as an external metric. Below is a sample configuration:
+
+**Prometheus Adapter configuration** (e.g., in your `prometheus-adapter` Helm values):
+
+```yaml
+prometheus:
+  url: http://prometheus-operated.monitoring.svc.cluster.local
+  port: 9090
+
+rules:
+  default: false
+  custom: []
+  external:
+    - seriesQuery: 'nats_consumer_num_pending{stream_name=~".+"}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+      name:
+        as: "nats_consumer_lag"
+      metricsQuery: 'sum(nats_consumer_num_pending{<<.LabelMatchers>>}) by (stream_name, consumer_name, namespace)'
+```
+
+**Example HPA configuration** for the workflows service:
+
+```yaml
+workflows:
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    metrics:
+      - type: External
+        external:
+          metric:
+            name: nats_consumer_lag
+            selector:
+              matchLabels:
+                consumer_name: workflows-worker
+          target:
+            type: Value
+            value: "50"  # Scale up when 50+ messages are pending
+```
+
+This configuration will automatically scale the workflows worker pods based on the NATS queue depth, ensuring efficient processing of pending workflow jobs.
 
 ### Parameters: create_artifact_worker
 

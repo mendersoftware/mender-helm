@@ -20,7 +20,8 @@ set -e
 local_seaweedfs_only=${1:-"false"}
 
 log "deploying dependencies: seaweedfs"
-helm install seaweedfs --wait -f tests/seaweedfs.yaml seaweedfs/seaweedfs
+# Stick to version 4.0.404 because of QA-1446
+helm install seaweedfs --wait -f tests/seaweedfs.yaml seaweedfs/seaweedfs --version 4.0.404
 
 if [[ "$local_seaweedfs_only" == "true" ]]; then
     log "not deploying mongodb"

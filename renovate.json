@@ -6,6 +6,13 @@
   ],
   "reviewers": ["team:sre-dependabot-reviewers"],
   "prConcurrentLimit": 1,
+  "regexManagers": [
+    {
+      "fileMatch": ["^tests/.*\\.sh$"],
+      "matchStrings": ["(?<depName>[\\w/-]+)[\\s\\\\]+--version\\s+(?<currentValue>\\S+)"],
+      "datasourceTemplate": "helm"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": ["helm-values", "helmv3"],
