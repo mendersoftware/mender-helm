@@ -1,4 +1,31 @@
 ---
+## mender-7.3.6 - 2025-12-31
+
+
+### Bug fixes
+
+
+- Bump traefik from 3.6.4 to 3.6.5 in /mender
+ ([653b8b5](https://github.com/mendersoftware/mender-helm/commit/653b8b5fd4b3eb0abb1ad2964cc30cb6b273fa38))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from 3.6.4 to 3.6.5.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.6.5
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
 ## mender-7.3.5 - 2025-12-10
 
 
@@ -862,6 +889,14 @@
 
 
 # Changelog
+
+## [7.3.6](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.5...mender-7.3.6) (2025-12-31)
+
+
+### Bug Fixes
+
+* bump traefik from 3.6.4 to 3.6.5 in /mender ([eefb6df](https://github.com/mendersoftware/mender-helm/commit/eefb6df1ae3f6740b599231a4bcb2f41b9480229))
+* bump traefik from 3.6.4 to 3.6.5 in /mender ([653b8b5](https://github.com/mendersoftware/mender-helm/commit/653b8b5fd4b3eb0abb1ad2964cc30cb6b273fa38))
 
 ## [7.3.5](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.4...mender-7.3.5) (2025-12-10)
 

@@ -503,6 +503,25 @@ test:kubeconform_tests:
         || echo "INFO - test failed with version ${kubeversion}: this is expected"
       done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
 
+test:helm_unittest:
+  tags:
+    - k8s-small
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  rules:
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
+    - when: on_success
+  script:
+    - echo "INFO - installing helm-unittest plugin"
+    - helm plugin install https://github.com/helm-unittest/helm-unittest --version v0.3.3
+    - echo "INFO - running helm unit tests"
+    - helm unittest mender/
+
 test:helm_chart_install_opensource:
   tags:
     - hetzner-amd-beefy
