@@ -1,4 +1,20 @@
 ---
+## mender-7.5.0 - 2026-01-13
+
+
+### Features
+
+
+- Mender server update to 4.1.0
+ ([86e9c84](https://github.com/mendersoftware/mender-helm/commit/86e9c8437d3051650c5c530d1c73dc9c2e2d4e08))  by @kjaskiewiczz
+
+
+
+
+
+
+
+
 ## mender-7.3.6 - 2025-12-31
 
 
@@ -889,6 +905,14 @@
 
 
 # Changelog
+
+## [7.5.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.4.0...mender-7.5.0) (2026-01-13)
+
+
+### Features
+
+* mender server update to 4.1.0 ([50543f4](https://github.com/mendersoftware/mender-helm/commit/50543f444dd6c5abab90cc9378c8e78e137c8866))
+* mender server update to 4.1.0 ([86e9c84](https://github.com/mendersoftware/mender-helm/commit/86e9c8437d3051650c5c530d1c73dc9c2e2d4e08))
 
 ## [7.4.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.6...mender-7.4.0) (2026-01-07)
 
