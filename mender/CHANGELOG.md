@@ -932,6 +932,14 @@
 
 # Changelog
 
+## [7.5.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.1...mender-7.5.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* resolve CORS issue by adding port support ([f7940ec](https://github.com/mendersoftware/mender-helm/commit/f7940eca738375f94215d08151a06542794c0896))
+* resolve CORS issue by adding port support ([264bc08](https://github.com/mendersoftware/mender-helm/commit/264bc082355b1d050028cb7f0d9a85f0ae1a86d4))
+
 ## [7.5.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.0...mender-7.5.1) (2026-01-20)
 
 
