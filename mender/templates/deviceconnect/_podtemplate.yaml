@@ -98,7 +98,7 @@ spec:
     - name: DEVICECONNECT_WS_ALLOWED_ORIGINS
       value: >-
         {{ with (urlParse .dot.Values.global.url) -}}
-        {{.hostname}} https://{{.hostname}} wss://{{.hostname}}
+        {{.host}} https://{{.host}} wss://{{.host}}
         {{- end }}
 
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.deviceconnect) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}

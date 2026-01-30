@@ -1,4 +1,46 @@
 ---
+## mender-7.5.1 - 2026-01-20
+
+
+### Bug fixes
+
+
+- Bump traefik from v3.6.6 to 3.6.7 in /mender
+ ([4fe12e3](https://github.com/mendersoftware/mender-helm/commit/4fe12e371a2d79330b369462b7022546fd42ffb8))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.6.6 to 3.6.7.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.6.7
+    dependency-type: direct:production
+  ...
+
+
+
+
+
+
+## mender-7.5.0 - 2026-01-13
+
+
+### Features
+
+
+- Mender server update to 4.1.0
+ ([86e9c84](https://github.com/mendersoftware/mender-helm/commit/86e9c8437d3051650c5c530d1c73dc9c2e2d4e08))  by @kjaskiewiczz
+
+
+
+
+
+
+
+
 ## mender-7.3.6 - 2025-12-31
 
 
@@ -889,6 +931,30 @@
 
 
 # Changelog
+
+## [7.5.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.1...mender-7.5.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* resolve CORS issue by adding port support ([f7940ec](https://github.com/mendersoftware/mender-helm/commit/f7940eca738375f94215d08151a06542794c0896))
+* resolve CORS issue by adding port support ([264bc08](https://github.com/mendersoftware/mender-helm/commit/264bc082355b1d050028cb7f0d9a85f0ae1a86d4))
+
+## [7.5.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.0...mender-7.5.1) (2026-01-20)
+
+
+### Bug Fixes
+
+* bump traefik from v3.6.6 to 3.6.7 in /mender ([5ddd725](https://github.com/mendersoftware/mender-helm/commit/5ddd7258e5238ef97ef098cd33f36e67e322f05a))
+* bump traefik from v3.6.6 to 3.6.7 in /mender ([4fe12e3](https://github.com/mendersoftware/mender-helm/commit/4fe12e371a2d79330b369462b7022546fd42ffb8))
+
+## [7.5.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.4.0...mender-7.5.0) (2026-01-13)
+
+
+### Features
+
+* mender server update to 4.1.0 ([50543f4](https://github.com/mendersoftware/mender-helm/commit/50543f444dd6c5abab90cc9378c8e78e137c8866))
+* mender server update to 4.1.0 ([86e9c84](https://github.com/mendersoftware/mender-helm/commit/86e9c8437d3051650c5c530d1c73dc9c2e2d4e08))
 
 ## [7.4.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.3.6...mender-7.4.0) (2026-01-07)
 

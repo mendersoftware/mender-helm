@@ -221,7 +221,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.6.6
+    tag: 3.6.7
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -1099,7 +1099,7 @@ auditlogs:
   automigrate: false
   # logRetentionSeconds gives the number of seconds before
   # an audit event is evicted from the database
-  logRetentionSeconds: 7776000
+  logRetentionSeconds: 31536000
   replicas: 1
   resources:
     limits:
