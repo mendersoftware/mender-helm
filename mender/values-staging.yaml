@@ -1,70 +1,70 @@
 auditlogs:
   image:
-    tag: main@sha256:b95cd11c46601dd26648f7ef8ce14dc0f659b17bb9191b06d430ee1e0f8ca4fd
+    tag: main@sha256:c2f37a667c58d512f1698e4839ce1ed4d1823d40edc4ddf89ab0239601fa1144
     registry: registry.mender.io
     repository: mender-server-enterprise
 deployments:
   image:
-    tag: main@sha256:d61413ebc26b60674264b07d14ce034534a79b307f109a79f1494cf9f840e292
+    tag: main@sha256:d200ab79936d73e3d9396a580d1fedab54ca8f30dce788cc14fe608632f2e521
     registry: registry.mender.io
     repository: mender-server-enterprise
 inventory:
   image:
-    tag: main@sha256:a3dd226ce8efb87cd63829903c29549e9aa3016adf6bf9c4603b478c9f57d8a7
+    tag: main@sha256:af945948ad44f6aeb9605ff401bfd39d832301fb7ab602977685a5f52cf53ff5
     registry: registry.mender.io
     repository: mender-server-enterprise
 create_artifact_worker:
   image:
-    tag: main@sha256:3db65a2c295d121bf1f9e359ead0599a667ffa8d7c59a874a0502e0a38c7789b
+    tag: main@sha256:61cb6074efdf1b6dba544889774e323cdd650d338f829f712c903311d39a6515
     registry: registry.mender.io
     repository: mender-server-enterprise
 generate_delta_worker:
   image:
-    tag: main@sha256:00710634b35c5d708fa7ede26fd180cb91baf81c4e576f1c1d39f670ffb527f8
+    tag: main@sha256:d92409d8885c05804100cfa9b337c65831676e4ea161d5a2bd72c3102931f6ef
     registry: registry.mender.io
     repository: mender-server-enterprise
 deviceconnect:
   image:
-    tag: main@sha256:f768aee8dd2e56833b4df4237bf9af2475b491f446276186e0cdbd958c45ffe3
+    tag: main@sha256:2af20b22928173fe2ad7cc97c021495fea5ffd35fc0bec6fe08a6d718c201c31
     registry: registry.mender.io
     repository: mender-server-enterprise
 device_auth:
   image:
-    tag: main@sha256:e59a167c10b691bed0a49738247e66b33cb7b287e5a65720dbc8c98284b0db78
+    tag: main@sha256:c16df399fa7c7c6451f7d16849bebfdf5a1898c02ee8c131dd1282279577268b
     registry: registry.mender.io
     repository: mender-server-enterprise
 tenantadm:
   image:
-    tag: main@sha256:8211969282a4604406ca1e6793ea132ae812bff5849fe7741403c6c9fa10b11c
+    tag: main@sha256:67c7895720e5f998aed088a588b79a764df9ce50467ec7afce8de85a0ae7f536
     registry: registry.mender.io
     repository: mender-server-enterprise
 devicemonitor:
   image:
-    tag: main@sha256:72a62762b7bab4a9b7248f76c523e1f0fd91a59c3e1ca0679cbe4b537ddeb499
+    tag: main@sha256:24eab66fa90e7f08b31a256404e1fb050344865f1cedb8215d89770efc7fe2bf
     registry: registry.mender.io
     repository: mender-server-enterprise
 useradm:
   image:
-    tag: main@sha256:0226078666af8849e698f38f882ae0f9c93174699555926b249acea272699540
+    tag: main@sha256:bdd355888a9fde10da608c5dee401873dc2d7b21da12f7579e2ab4516c039755
     registry: registry.mender.io
     repository: mender-server-enterprise
 deviceconfig:
   image:
-    tag: main@sha256:d29f9ff958aef7a84981d1faf9c184298a564aea312042590c39c6da9646aaee
+    tag: main@sha256:4852831bb23332c3b2ed530fa2c880505c49d6ce4164d0841a5041e176c2264c
     registry: registry.mender.io
     repository: mender-server-enterprise
 iot_manager:
   image:
-    tag: main@sha256:f1a83b588ec6036b6bc14f4650a75786e0fbfae79335e91b1c0f82c92f03d6be
+    tag: main@sha256:c2e0550120d17e7084675551c9bef8d13926a6f056be0f285f390948a2d882e3
     registry: registry.mender.io
     repository: mender-server-enterprise
 workflows:
   image:
-    tag: main@sha256:08bc75d85cba4ee4b10946262e6d366d5073c756fe7559ed6ea37f23d3eac5b1
+    tag: main@sha256:2e01d31bc6ea5e159a01140c9c177d77e3e2fe0b97e81c06ce20fc5ba1927eb6
     registry: registry.mender.io
     repository: mender-server-enterprise
 gui:
   image:
-    tag: "main@sha256:3a63c1b1b89f2c536cd7869d3dbda574470e04d6f1e4aa6dd8b084fe4c536210"
-    registry: docker.io
-    repository: mendersoftware
+    tag: "main@sha256:84ab6f6fbb70aa2b428b96466c3f890c45fe6bc91ad79c7a60a920d225a42ea5"
+    registry: registry.mender.io
+    repository: mender-server-enterprise
