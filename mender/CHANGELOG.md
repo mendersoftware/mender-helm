@@ -959,6 +959,13 @@
 
 # Changelog
 
+## [7.5.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.3...mender-7.5.4) (2026-02-26)
+
+
+### Bug Fixes
+
+* bump redis from 8.4.0-alpine to 8.6.0-alpine in /mender ([4ae7e56](https://github.com/mendersoftware/mender-helm/commit/4ae7e5672445b4d75f6faa38b0ae977044ef9564))
+
 ## [7.5.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.2...mender-7.5.3) (2026-02-17)
 
 
