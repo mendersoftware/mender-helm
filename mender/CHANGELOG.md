@@ -1,4 +1,31 @@
 ---
+## mender-7.5.5 - 2026-03-03
+
+
+### Bug fixes
+
+
+- Bump redis from 8.6.0-alpine to 8.6.1-alpine in /mender
+ ([bc91fa3](https://github.com/mendersoftware/mender-helm/commit/bc91fa3b6a20e33c786a03c6bd33baa03c9d8173))  by @dependabot[bot]
+
+
+
+
+  Bumps redis from 8.6.0-alpine to 8.6.1-alpine.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: redis
+    dependency-version: 8.6.1-alpine
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
 ## mender-7.5.3 - 2026-02-17
 
 
@@ -958,6 +985,14 @@
 
 
 # Changelog
+
+## [7.5.5](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.4...mender-7.5.5) (2026-03-03)
+
+
+### Bug Fixes
+
+* bump redis from 8.6.0-alpine to 8.6.1-alpine in /mender ([303c542](https://github.com/mendersoftware/mender-helm/commit/303c542dfe6785431eaa00ac401b728ea6b5b222))
+* bump redis from 8.6.0-alpine to 8.6.1-alpine in /mender ([bc91fa3](https://github.com/mendersoftware/mender-helm/commit/bc91fa3b6a20e33c786a03c6bd33baa03c9d8173))
 
 ## [7.5.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.3...mender-7.5.4) (2026-02-26)
 
