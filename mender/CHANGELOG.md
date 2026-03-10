@@ -986,6 +986,14 @@
 
 # Changelog
 
+## [7.5.6](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.5...mender-7.5.6) (2026-03-09)
+
+
+### Bug Fixes
+
+* bump traefik from v3.6.9 to v3.6.10 in /mender ([6271965](https://github.com/mendersoftware/mender-helm/commit/6271965a3e8d2e806b61f95823c680b1f62428b4))
+* bump traefik from v3.6.9 to v3.6.10 in /mender ([2649c9b](https://github.com/mendersoftware/mender-helm/commit/2649c9bad89cce25e275e11b4b1d17f840686542))
+
 ## [7.5.5](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.4...mender-7.5.5) (2026-03-03)
 
 
