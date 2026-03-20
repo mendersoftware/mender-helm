@@ -77,6 +77,10 @@ stages:
   - version-bump
 
 include:
+  - project: Northern.tech/Mender/mendertesting
+    file:
+      - qa-common/runner.yml
+      - qa-common/retry.yml
   - project: "Northern.tech/Mender/mendertesting"
     file: ".gitlab-ci-check-commits-signoffs.yml"
   - project: "Northern.tech/Mender/mendertesting"
@@ -86,6 +90,10 @@ include:
   - project: "Northern.tech/Mender/mendertesting"
     file: ".gitlab-ci-check-helm-version-bump.yml"
   - component: gitlab.com/renovate-bot/renovate-runner/renovate.gitlab-ci@main
+
+default:
+  tags: !reference [.qa-common-default-runner, tags]
+  retry: !reference [.qa-common-default-retry, retry]
 
 # Override rules
 renovate:
@@ -186,6 +194,7 @@ build:
       when: never
     - when: on_success
   before_script:
+    - !reference [.qa-common-network-apt-retry, before_script]
     - apt-get update -y
     - apt-get install -y curl make
     - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.18.6" bash
@@ -697,6 +706,7 @@ publish:helm_chart_publishing:
     - build
   image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie
   before_script:
+    - !reference [.qa-common-network-apt-retry, before_script]
     - apt-get update -y
     - apt-get install -y curl make git
     - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
