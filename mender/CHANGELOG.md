@@ -1,4 +1,34 @@
 ---
+## mender-7.5.7 - 2026-03-23
+
+
+### Bug fixes
+
+
+- Bump traefik from v3.6.10 to v3.6.11 in /mender
+ ([2a01e2a](https://github.com/mendersoftware/mender-helm/commit/2a01e2a7af8551f77c2f584c6638e5d8903c73c7))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.6.10 to v3.6.11.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: v3.6.11
+    dependency-type: direct:production
+  ...
+- Bump mongo from 8.0.16 to 8.0.20 in /mender
+ ([c9071f3](https://github.com/mendersoftware/mender-helm/commit/c9071f35a463bef599fb778365718ae83601b8c3))  by @alfrunes
+
+
+
+
+
+
+
+
 ## mender-7.5.5 - 2026-03-03
 
 
@@ -985,6 +1015,16 @@
 
 
 # Changelog
+
+## [7.5.7](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.6...mender-7.5.7) (2026-03-23)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.16 to 8.0.20 in /mender ([0d2062c](https://github.com/mendersoftware/mender-helm/commit/0d2062cb8ed79f1fb29403be692ed1c1e15fc7ed))
+* bump mongo from 8.0.16 to 8.0.20 in /mender ([c9071f3](https://github.com/mendersoftware/mender-helm/commit/c9071f35a463bef599fb778365718ae83601b8c3))
+* bump traefik from v3.6.10 to v3.6.11 in /mender ([2eecd35](https://github.com/mendersoftware/mender-helm/commit/2eecd3558a73a395bee1daa9b4d0ef4b6ea2a216))
+* bump traefik from v3.6.10 to v3.6.11 in /mender ([2a01e2a](https://github.com/mendersoftware/mender-helm/commit/2a01e2a7af8551f77c2f584c6638e5d8903c73c7))
 
 ## [7.5.6](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.5...mender-7.5.6) (2026-03-09)
 
