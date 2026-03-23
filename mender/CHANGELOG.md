@@ -1,4 +1,88 @@
 ---
+## mender-7.5.7 - 2026-03-23
+
+
+### Bug fixes
+
+
+- Bump traefik from v3.6.10 to v3.6.11 in /mender
+ ([2a01e2a](https://github.com/mendersoftware/mender-helm/commit/2a01e2a7af8551f77c2f584c6638e5d8903c73c7))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.6.10 to v3.6.11.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: v3.6.11
+    dependency-type: direct:production
+  ...
+- Bump mongo from 8.0.16 to 8.0.20 in /mender
+ ([c9071f3](https://github.com/mendersoftware/mender-helm/commit/c9071f35a463bef599fb778365718ae83601b8c3))  by @alfrunes
+
+
+
+
+
+
+
+
+## mender-7.5.5 - 2026-03-03
+
+
+### Bug fixes
+
+
+- Bump redis from 8.6.0-alpine to 8.6.1-alpine in /mender
+ ([bc91fa3](https://github.com/mendersoftware/mender-helm/commit/bc91fa3b6a20e33c786a03c6bd33baa03c9d8173))  by @dependabot[bot]
+
+
+
+
+  Bumps redis from 8.6.0-alpine to 8.6.1-alpine.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: redis
+    dependency-version: 8.6.1-alpine
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
+## mender-7.5.3 - 2026-02-17
+
+
+### Bug fixes
+
+
+- Bump traefik from 3.6.7 to 3.6.8 in /mender
+ ([e1085ae](https://github.com/mendersoftware/mender-helm/commit/e1085ae412a041d3f676f872b1f733facebc304e))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from 3.6.7 to 3.6.8.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: 3.6.8
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
 ## mender-7.5.1 - 2026-01-20
 
 
@@ -931,6 +1015,47 @@
 
 
 # Changelog
+
+## [7.5.7](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.6...mender-7.5.7) (2026-03-23)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.16 to 8.0.20 in /mender ([0d2062c](https://github.com/mendersoftware/mender-helm/commit/0d2062cb8ed79f1fb29403be692ed1c1e15fc7ed))
+* bump mongo from 8.0.16 to 8.0.20 in /mender ([c9071f3](https://github.com/mendersoftware/mender-helm/commit/c9071f35a463bef599fb778365718ae83601b8c3))
+* bump traefik from v3.6.10 to v3.6.11 in /mender ([2eecd35](https://github.com/mendersoftware/mender-helm/commit/2eecd3558a73a395bee1daa9b4d0ef4b6ea2a216))
+* bump traefik from v3.6.10 to v3.6.11 in /mender ([2a01e2a](https://github.com/mendersoftware/mender-helm/commit/2a01e2a7af8551f77c2f584c6638e5d8903c73c7))
+
+## [7.5.6](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.5...mender-7.5.6) (2026-03-09)
+
+
+### Bug Fixes
+
+* bump traefik from v3.6.9 to v3.6.10 in /mender ([6271965](https://github.com/mendersoftware/mender-helm/commit/6271965a3e8d2e806b61f95823c680b1f62428b4))
+* bump traefik from v3.6.9 to v3.6.10 in /mender ([2649c9b](https://github.com/mendersoftware/mender-helm/commit/2649c9bad89cce25e275e11b4b1d17f840686542))
+
+## [7.5.5](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.4...mender-7.5.5) (2026-03-03)
+
+
+### Bug Fixes
+
+* bump redis from 8.6.0-alpine to 8.6.1-alpine in /mender ([303c542](https://github.com/mendersoftware/mender-helm/commit/303c542dfe6785431eaa00ac401b728ea6b5b222))
+* bump redis from 8.6.0-alpine to 8.6.1-alpine in /mender ([bc91fa3](https://github.com/mendersoftware/mender-helm/commit/bc91fa3b6a20e33c786a03c6bd33baa03c9d8173))
+
+## [7.5.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.3...mender-7.5.4) (2026-02-26)
+
+
+### Bug Fixes
+
+* bump redis from 8.4.0-alpine to 8.6.0-alpine in /mender ([4ae7e56](https://github.com/mendersoftware/mender-helm/commit/4ae7e5672445b4d75f6faa38b0ae977044ef9564))
+
+## [7.5.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.2...mender-7.5.3) (2026-02-17)
+
+
+### Bug Fixes
+
+* bump traefik from 3.6.7 to 3.6.8 in /mender ([933b503](https://github.com/mendersoftware/mender-helm/commit/933b5039827de97af95464849faebf1545531eea))
+* bump traefik from 3.6.7 to 3.6.8 in /mender ([e1085ae](https://github.com/mendersoftware/mender-helm/commit/e1085ae412a041d3f676f872b1f733facebc304e))
 
 ## [7.5.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.1...mender-7.5.2) (2026-01-26)
 
