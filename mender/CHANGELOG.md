@@ -1,4 +1,20 @@
 ---
+## mender-7.5.9 - 2026-04-08
+
+
+### Bug fixes
+
+
+- Update AppVersion to the latest version of Mender Server Enterprise (v4.1.1)
+ ([f349b4c](https://github.com/mendersoftware/mender-helm/commit/f349b4cd2db22ca7a59d5960c2ebda627be652d5))  by @kjaskiewiczz
+
+
+
+
+
+
+
+
 ## mender-7.5.8 - 2026-03-31
 
 
@@ -1056,6 +1072,18 @@
 
 
 # Changelog
+
+## [7.5.9](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.8...mender-7.5.9) (2026-04-08)
+
+
+### Features
+
+* update AppVersion to the latest version of Mender Server Enterprise (v4.1.1) ([ce4834a](https://github.com/mendersoftware/mender-helm/commit/ce4834a67869d997ce51c9b5d0fe0cf1be40f84a))
+
+
+### Bug Fixes
+
+* update AppVersion to the latest version of Mender Server Enterprise (v4.1.1) ([f349b4c](https://github.com/mendersoftware/mender-helm/commit/f349b4cd2db22ca7a59d5960c2ebda627be652d5))
 
 ## [7.5.8](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.7...mender-7.5.8) (2026-03-31)
 
