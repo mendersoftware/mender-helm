@@ -1,4 +1,61 @@
 ---
+## mender-7.5.9 - 2026-04-08
+
+
+### Bug fixes
+
+
+- Update AppVersion to the latest version of Mender Server Enterprise (v4.1.1)
+ ([f349b4c](https://github.com/mendersoftware/mender-helm/commit/f349b4cd2db22ca7a59d5960c2ebda627be652d5))  by @kjaskiewiczz
+
+
+
+
+
+
+
+
+## mender-7.5.8 - 2026-03-31
+
+
+### Bug fixes
+
+
+- Bump redis from 8.6.1-alpine to 8.6.2-alpine in /mender
+ ([a0b73d1](https://github.com/mendersoftware/mender-helm/commit/a0b73d15679243eb572a341c902c389a1c5190f3))  by @dependabot[bot]
+
+
+
+
+  Bumps redis from 8.6.1-alpine to 8.6.2-alpine.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: redis
+    dependency-version: 8.6.2-alpine
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+- Bump traefik from v3.6.11 to v3.6.12 in /mender
+ ([72426af](https://github.com/mendersoftware/mender-helm/commit/72426af4372adad5451ebae067b8c566f95f1221))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.6.11 to v3.6.12.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: v3.6.12
+    dependency-type: direct:production
+  ...
+
+
+
+
+
+
 ## mender-7.5.7 - 2026-03-23
 
 
@@ -1015,6 +1072,35 @@
 
 
 # Changelog
+
+## [7.6.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.9...mender-7.6.0) (2026-04-13)
+
+
+### Features
+
+* added inventory addr to tenantadm pod template ([627b745](https://github.com/mendersoftware/mender-helm/commit/627b745c0d3a0e35caf2ceb22b9f0c17f5970511))
+
+## [7.5.9](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.8...mender-7.5.9) (2026-04-08)
+
+
+### Features
+
+* update AppVersion to the latest version of Mender Server Enterprise (v4.1.1) ([ce4834a](https://github.com/mendersoftware/mender-helm/commit/ce4834a67869d997ce51c9b5d0fe0cf1be40f84a))
+
+
+### Bug Fixes
+
+* update AppVersion to the latest version of Mender Server Enterprise (v4.1.1) ([f349b4c](https://github.com/mendersoftware/mender-helm/commit/f349b4cd2db22ca7a59d5960c2ebda627be652d5))
+
+## [7.5.8](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.7...mender-7.5.8) (2026-03-31)
+
+
+### Bug Fixes
+
+* bump redis from 8.6.1-alpine to 8.6.2-alpine in /mender ([cafcbcc](https://github.com/mendersoftware/mender-helm/commit/cafcbcce1879386a206b93de32bcd3479ad39912))
+* bump redis from 8.6.1-alpine to 8.6.2-alpine in /mender ([a0b73d1](https://github.com/mendersoftware/mender-helm/commit/a0b73d15679243eb572a341c902c389a1c5190f3))
+* bump traefik from v3.6.11 to v3.6.12 in /mender ([15deed1](https://github.com/mendersoftware/mender-helm/commit/15deed1a79a52143832535aa03c777e31f68583a))
+* bump traefik from v3.6.11 to v3.6.12 in /mender ([72426af](https://github.com/mendersoftware/mender-helm/commit/72426af4372adad5451ebae067b8c566f95f1221))
 
 ## [7.5.7](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.6...mender-7.5.7) (2026-03-23)
 
