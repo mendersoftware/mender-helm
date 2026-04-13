@@ -1073,6 +1073,13 @@
 
 # Changelog
 
+## [7.6.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.9...mender-7.6.0) (2026-04-13)
+
+
+### Features
+
+* added inventory addr to tenantadm pod template ([627b745](https://github.com/mendersoftware/mender-helm/commit/627b745c0d3a0e35caf2ceb22b9f0c17f5970511))
+
 ## [7.5.9](https://github.com/mendersoftware/mender-helm/compare/mender-7.5.8...mender-7.5.9) (2026-04-08)
 
 
