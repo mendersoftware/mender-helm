@@ -221,7 +221,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.6.11
+    tag: v3.6.13
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -1504,7 +1504,7 @@ redis:
 
   image:
     repository: redis
-    tag: "8.6.1-alpine"
+    tag: "8.6.2-alpine"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1

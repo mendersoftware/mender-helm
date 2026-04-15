@@ -184,7 +184,7 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260406
   tags:
     - hetzner-amd-beefy
   rules:
@@ -704,7 +704,7 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260406
   before_script:
     - !reference [.qa-common-network-apt-retry, before_script]
     - apt-get update -y
