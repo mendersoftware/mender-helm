@@ -1,4 +1,30 @@
 ---
+## mender-7.6.2 - 2026-04-28
+
+
+### Bug fixes
+
+
+- Bump traefik from v3.6.13 to v3.6.14 in /mender
+ ([d947754](https://github.com/mendersoftware/mender-helm/commit/d947754b30e3c846b0352533bebe718913460d4c))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.6.13 to v3.6.14.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: v3.6.14
+    dependency-type: direct:production
+  ...
+
+
+
+
+
+
 ## mender-7.5.9 - 2026-04-08
 
 
@@ -1072,6 +1098,14 @@
 
 
 # Changelog
+
+## [7.6.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.1...mender-7.6.2) (2026-04-28)
+
+
+### Bug Fixes
+
+* bump traefik from v3.6.13 to v3.6.14 in /mender ([78bf0b4](https://github.com/mendersoftware/mender-helm/commit/78bf0b4cf732008f37462e567f622c75f49a162b))
+* bump traefik from v3.6.13 to v3.6.14 in /mender ([d947754](https://github.com/mendersoftware/mender-helm/commit/d947754b30e3c846b0352533bebe718913460d4c))
 
 ## [7.6.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.0...mender-7.6.1) (2026-04-14)
 
