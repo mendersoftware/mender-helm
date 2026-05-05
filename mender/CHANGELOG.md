@@ -1099,6 +1099,16 @@
 
 # Changelog
 
+## [7.6.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.2...mender-7.6.3) (2026-05-05)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.20 to 8.0.21 in /mender ([e5da926](https://github.com/mendersoftware/mender-helm/commit/e5da9265c9e59142c21fcc877e264a11c511c995))
+* bump mongo from 8.0.20 to 8.0.21 in /mender ([6b80d9d](https://github.com/mendersoftware/mender-helm/commit/6b80d9d1d9f13319343a8d6faef47d8eb5613ef7))
+* bump traefik from v3.6.14 to v3.6.15 in /mender ([0231252](https://github.com/mendersoftware/mender-helm/commit/0231252451e4c970ebaf65ac5c4618a5a1ba387e))
+* bump traefik from v3.6.14 to v3.6.15 in /mender ([a7a0705](https://github.com/mendersoftware/mender-helm/commit/a7a0705b9592d96803aaaa2d768b8e9f3c1eca83))
+
 ## [7.6.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.1...mender-7.6.2) (2026-04-28)
 
 
