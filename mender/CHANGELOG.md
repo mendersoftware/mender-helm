@@ -1099,6 +1099,13 @@
 
 # Changelog
 
+## [7.7.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.3...mender-7.7.0) (2026-05-08)
+
+
+### Features
+
+* **api-gateway:** add preStop sleep and terminationGracePeriodSeconds ([718a7a9](https://github.com/mendersoftware/mender-helm/commit/718a7a90666d24a079b5949738cdbb574aef7c15))
+
 ## [7.6.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.2...mender-7.6.3) (2026-05-05)
 
 
