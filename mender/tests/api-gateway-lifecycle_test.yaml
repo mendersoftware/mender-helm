@@ -1,0 +1,90 @@
+suite: test api-gateway lifecycle and termination grace
+templates:
+  - templates/api-gateway/deployment.yaml
+  - templates/api-gateway/configmap.yaml
+tests:
+  - it: should render preStop sleep from defaults
+    template: templates/api-gateway/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].lifecycle.preStop.sleep.seconds
+          value: 30
+
+  - it: should render terminationGracePeriodSeconds from defaults
+    template: templates/api-gateway/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 60
+
+  - it: should not render lifecycle when api_gateway.lifecycle is null
+    template: templates/api-gateway/deployment.yaml
+    set:
+      api_gateway.lifecycle: ~
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].lifecycle
+
+  - it: should not render terminationGracePeriodSeconds when null
+    template: templates/api-gateway/deployment.yaml
+    set:
+      api_gateway.terminationGracePeriodSeconds: ~
+    asserts:
+      - notExists:
+          path: spec.template.spec.terminationGracePeriodSeconds
+
+  - it: should accept custom sleep duration
+    template: templates/api-gateway/deployment.yaml
+    set:
+      api_gateway.lifecycle:
+        preStop:
+          sleep:
+            seconds: 90
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].lifecycle.preStop.sleep.seconds
+          value: 90
+
+  - it: should accept custom terminationGracePeriodSeconds
+    template: templates/api-gateway/deployment.yaml
+    set:
+      api_gateway.terminationGracePeriodSeconds: 120
+    asserts:
+      - equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 120
+
+  - it: should accept exec form preStop hook (fallback for K8s < 1.30)
+    template: templates/api-gateway/deployment.yaml
+    set:
+      api_gateway.lifecycle:
+        preStop:
+          exec:
+            command:
+              - /bin/sleep
+              - "30"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].lifecycle.preStop.exec.command[0]
+          value: /bin/sleep
+      - equal:
+          path: spec.template.spec.containers[0].lifecycle.preStop.exec.command[1]
+          value: "30"
+
+  - it: should not render the deployment when api_gateway is disabled
+    template: templates/api-gateway/deployment.yaml
+    set:
+      api_gateway.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should clear lifecycle and grace via values-file override (Helm 3 null semantics)
+    template: templates/api-gateway/deployment.yaml
+    values:
+      - values-no-lifecycle.yaml
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].lifecycle
+      - notExists:
+          path: spec.template.spec.terminationGracePeriodSeconds
