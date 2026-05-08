@@ -1,4 +1,30 @@
 ---
+## mender-7.6.2 - 2026-04-28
+
+
+### Bug fixes
+
+
+- Bump traefik from v3.6.13 to v3.6.14 in /mender
+ ([d947754](https://github.com/mendersoftware/mender-helm/commit/d947754b30e3c846b0352533bebe718913460d4c))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.6.13 to v3.6.14.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: v3.6.14
+    dependency-type: direct:production
+  ...
+
+
+
+
+
+
 ## mender-7.5.9 - 2026-04-08
 
 
@@ -1072,6 +1098,31 @@
 
 
 # Changelog
+
+## [7.7.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.3...mender-7.7.0) (2026-05-08)
+
+
+### Features
+
+* **api-gateway:** add preStop sleep and terminationGracePeriodSeconds ([718a7a9](https://github.com/mendersoftware/mender-helm/commit/718a7a90666d24a079b5949738cdbb574aef7c15))
+
+## [7.6.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.2...mender-7.6.3) (2026-05-05)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.20 to 8.0.21 in /mender ([e5da926](https://github.com/mendersoftware/mender-helm/commit/e5da9265c9e59142c21fcc877e264a11c511c995))
+* bump mongo from 8.0.20 to 8.0.21 in /mender ([6b80d9d](https://github.com/mendersoftware/mender-helm/commit/6b80d9d1d9f13319343a8d6faef47d8eb5613ef7))
+* bump traefik from v3.6.14 to v3.6.15 in /mender ([0231252](https://github.com/mendersoftware/mender-helm/commit/0231252451e4c970ebaf65ac5c4618a5a1ba387e))
+* bump traefik from v3.6.14 to v3.6.15 in /mender ([a7a0705](https://github.com/mendersoftware/mender-helm/commit/a7a0705b9592d96803aaaa2d768b8e9f3c1eca83))
+
+## [7.6.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.1...mender-7.6.2) (2026-04-28)
+
+
+### Bug Fixes
+
+* bump traefik from v3.6.13 to v3.6.14 in /mender ([78bf0b4](https://github.com/mendersoftware/mender-helm/commit/78bf0b4cf732008f37462e567f622c75f49a162b))
+* bump traefik from v3.6.13 to v3.6.14 in /mender ([d947754](https://github.com/mendersoftware/mender-helm/commit/d947754b30e3c846b0352533bebe718913460d4c))
 
 ## [7.6.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.6.0...mender-7.6.1) (2026-04-14)
 
