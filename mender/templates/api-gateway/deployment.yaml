@@ -177,6 +177,11 @@ spec:
           readOnly: true
 {{- end }}
 
+        {{- with .Values.api_gateway.lifecycle }}
+        lifecycle:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+
 {{- with .Values.api_gateway.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
 {{- end }}
@@ -211,6 +216,10 @@ spec:
 {{- $pcn := coalesce .Values.api_gateway.priorityClassName .Values.global.priorityClassName -}}
 {{- if $pcn }}
       priorityClassName: {{ $pcn }}
-{{- end -}}
+{{- end }}
+
+{{- with .Values.api_gateway.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . }}
+{{- end }}
 
 {{- end }}

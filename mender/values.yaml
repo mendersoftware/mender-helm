@@ -319,6 +319,12 @@ api_gateway:
     # successThreshold: 2
     failureThreshold: 3
 
+  lifecycle:
+    preStop:
+      sleep:
+        seconds: 30
+  terminationGracePeriodSeconds: 60
+
 deployments:
   enabled: true
   podAnnotations: {}
