@@ -188,6 +188,8 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.probesOverrides.successThreshold` | Override the `successThreshold` for every Readiness and Liveness probes. | `nil` |
 | `api_gateway.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `3` |
 | `api_gateway.minReadySeconds` | Wait before considering the new pod available | `nil` |
+| `api_gateway.lifecycle` | Container [lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/) hooks. Default preStop sleep gives the load balancer time to deregister the pod before SIGTERM. | `{"preStop":{"sleep":{"seconds":30}}}` |
+| `api_gateway.terminationGracePeriodSeconds` | [Pod termination grace period](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination). Must cover preStop sleep + drain time. | `60` |
 
 ### Parameters: deployments
 

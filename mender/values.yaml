@@ -155,7 +155,7 @@ mongodb:
   enabled: true
   image:
     repository: mongo
-    tag: "8.0.20"
+    tag: "8.0.21"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1
@@ -221,7 +221,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.6.13
+    tag: v3.6.15
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -318,6 +318,12 @@ api_gateway:
     # timeoutSeconds: 2
     # successThreshold: 2
     failureThreshold: 3
+
+  lifecycle:
+    preStop:
+      sleep:
+        seconds: 30
+  terminationGracePeriodSeconds: 60
 
 deployments:
   enabled: true
@@ -1504,7 +1510,7 @@ redis:
 
   image:
     repository: redis
-    tag: "8.6.2-alpine"
+    tag: "8.6.3-alpine"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1
