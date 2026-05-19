@@ -1,4 +1,31 @@
 ---
+## mender-7.7.2 - 2026-05-19
+
+
+### Bug fixes
+
+
+- Bump mongo from 8.0.21 to 8.0.23 in /mender
+ ([48095bd](https://github.com/mendersoftware/mender-helm/commit/48095bda18034c96e0cc0f4be351f9445278ad35))  by @dependabot[bot]
+
+
+
+
+  Bumps mongo from 8.0.21 to 8.0.23.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: mongo
+    dependency-version: 8.0.23
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+
+
 ## mender-7.6.2 - 2026-04-28
 
 
@@ -1098,6 +1125,14 @@
 
 
 # Changelog
+
+## [7.7.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.1...mender-7.7.2) (2026-05-19)
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.21 to 8.0.23 in /mender ([e978e70](https://github.com/mendersoftware/mender-helm/commit/e978e7081c025d851d93843f5e4b2cd292dbd0a7))
+* bump mongo from 8.0.21 to 8.0.23 in /mender ([48095bd](https://github.com/mendersoftware/mender-helm/commit/48095bda18034c96e0cc0f4be351f9445278ad35))
 
 ## [7.7.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.0...mender-7.7.1) (2026-05-15)
 
