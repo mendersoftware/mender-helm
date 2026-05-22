@@ -155,7 +155,7 @@ mongodb:
   enabled: true
   image:
     repository: mongo
-    tag: "8.0.21"
+    tag: "8.0.23"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1
@@ -221,7 +221,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.6.15
+    tag: v3.7.1
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
