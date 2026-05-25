@@ -532,26 +532,33 @@ device_auth:
   # These cronjobs are used to perform maintenance tasks, like device licensing
   #
   cronjobs:
-    enabled: false
-    jobs: []
-    #   - name: device-auth-license-count
-    #     schedule: "7 3 * * *"
+    enabled: true
+    jobs:
+      - name: device-auth-license-count
+        schedule: "7 3 * * *"
+        enterpriseOnly: true
+        command: []
+        args:
+        - "license-count"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+    #   Additional jobs can be added here:
+    #   - name: my-custom-job
+    #     schedule: "0 * * * *"
     #     command: []
     #     args:
-    #     - "license-count"
+    #     - "my-command"
     #     customEnvs:
     #       - name: DEVICEAUTH_MONGO
     #         valueFrom:
     #           secretKeyRef:
     #             key: MONGO_URL
     #             name: mongodb-common
-    #     resources:
-    #       limits:
-    #         cpu: 100m
-    #         memory: 100Mi
-    #       requests:
-    #         cpu: 50m
-    #         memory: 50Mi
     #     tolerations: []
     #     priorityClassName: "mender-low-priority"
     #     affinity: {}
