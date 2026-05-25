@@ -78,7 +78,6 @@ spec:
     {{- end }}
 
     env:
-    # NATS uri
     - name: AUDITLOGS_ADDR
       value: {{ printf "%s:%v" .dot.Values.auditlogs.service.name .dot.Values.auditlogs.service.port }}
     - name: DEPLOYMENTS_ADDR
@@ -101,6 +100,7 @@ spec:
       value: {{ printf "%s:%v" .dot.Values.useradm.service.name .dot.Values.useradm.service.port }}
     - name: WORKFLOWS_SERVER_ADDR
       value: {{ printf "%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port }}
+    # NATS uri
     - name: WORKFLOWS_NATS_URI
     {{- if include "nats_existingSecret" . }}
       valueFrom:

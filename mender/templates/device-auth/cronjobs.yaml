@@ -4,6 +4,7 @@
                       "imageComponent" "deviceauth"
                       "override" .Values.device_auth) -}}
 {{- range $index, $job := .Values.device_auth.cronjobs.jobs }}
+{{- if or (not $job.enterpriseOnly) $.Values.global.enterprise }}
 
 ---
 apiVersion: batch/v1
@@ -41,8 +42,11 @@ spec:
             env:
 {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{- with $job.customEnvFroms }}
             envFrom:
+            - prefix: DEVICEAUTH_
+              secretRef:
+                name: {{ $.Values.global.mongodb.existingSecret | default "mongodb-common" }}
+            {{- with $job.customEnvFroms }}
 {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- with $job.resources }}
@@ -71,5 +75,6 @@ spec:
           priorityClassName: {{ . }}
           {{- end }}
           restartPolicy: {{ $job.restartPolicy | default "Never" }}
+{{- end }}
 {{- end }}
 {{- end }}

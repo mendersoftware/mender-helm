@@ -1,0 +1,98 @@
+suite: test device-auth license-count cronjob
+tests:
+  - it: license-count cronjob is rendered by default on enterprise
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: true
+    asserts:
+      - isKind:
+          of: CronJob
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-mender-device-auth-license-count
+
+  - it: license-count cronjob has correct schedule
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: true
+    asserts:
+      - equal:
+          path: spec.schedule
+          value: "7 3 * * *"
+
+  - it: license-count cronjob runs with license-count arg
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: true
+    asserts:
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].args
+          content: "license-count"
+
+  - it: license-count cronjob has concurrencyPolicy Forbid
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: true
+    asserts:
+      - equal:
+          path: spec.concurrencyPolicy
+          value: Forbid
+
+  - it: license-count cronjob injects MongoDB credentials
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: true
+    asserts:
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].envFrom
+          content:
+            prefix: DEVICEAUTH_
+            secretRef:
+              name: mongodb-common
+
+  - it: license-count cronjob uses global.mongodb.existingSecret when set
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: true
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].envFrom
+          content:
+            prefix: DEVICEAUTH_
+            secretRef:
+              name: my-mongodb-secret
+
+  - it: no cronjob rendered on OSS install (enterpriseOnly gate)
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: no cronjob rendered when device_auth.cronjobs.enabled is false
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: true
+      global.enterprise: true
+      device_auth.cronjobs.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: no cronjob rendered when device_auth itself is disabled
+    template: templates/device-auth/cronjobs.yaml
+    set:
+      device_auth.enabled: false
+      global.enterprise: true
+    asserts:
+      - hasDocuments:
+          count: 0
