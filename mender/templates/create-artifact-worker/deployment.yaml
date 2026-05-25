@@ -1,4 +1,5 @@
 {{- if .Values.create_artifact_worker.enabled }}
+{{- include "nats_conf_validation" . }}
 {{- $context := dict "dot" .
     "override" .Values.create_artifact_worker
     "component" "create-artifact-worker" -}}
@@ -75,7 +76,13 @@ spec:
         # Set in order, last value for the key will be used in case duplications.
         env:
         # NATS uri
-        {{- if not .Values.global.nats.existingSecret }}
+        {{- if include "nats_existingSecret" . }}
+        - name: WORKFLOWS_NATS_URI
+          valueFrom:
+            secretKeyRef:
+              key: NATS_URI
+              name: {{ include "nats_existingSecret" . }}
+        {{- else }}
         - name: WORKFLOWS_NATS_URI
           value: {{ template "nats_uri" . }}
         {{- end }}
@@ -94,11 +101,6 @@ spec:
           secretRef:
             name: {{ .Values.global.mongodb.existingSecret | default "mongodb-common" }}
 
-        {{- if .Values.global.nats.existingSecret }}
-        - prefix: WORKFLOWS_
-          secretRef:
-            name: {{ .Values.global.nats.existingSecret }}
-        {{- end }}
 
 {{- if and .Values.global.image .Values.global.image.username }}
       imagePullSecrets:

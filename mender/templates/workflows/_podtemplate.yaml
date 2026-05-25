@@ -1,4 +1,5 @@
 {{- define "mender.workflowsPodTemplate" -}}
+{{- include "nats_conf_validation" . }}
 metadata:
   {{- with .dot.Values.workflows.podAnnotations }}
   annotations:
@@ -101,17 +102,17 @@ spec:
     - name: WORKFLOWS_SERVER_ADDR
       value: {{ printf "%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port }}
     - name: WORKFLOWS_NATS_URI
-    {{- if .dot.Values.global.nats.existingSecret }}
+    {{- if include "nats_existingSecret" . }}
       valueFrom:
         secretKeyRef:
           key: NATS_URI
-          name: {{ .dot.Values.global.nats.existingSecret }}
+          name: {{ include "nats_existingSecret" . }}
     {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}
     - name: WORKFLOWS_NATS_STREAM_REPLICAS
       {{- if .dot.Values.nats.enabled }}
-      value: {{ .dot.Values.nats.replicas | default "3" | quote }}
+      value: {{ .dot.Values.nats.config.cluster.replicas | default "3" | quote }}
       {{- else }}
       value: {{ .dot.Values.workflows.nats.replicas | default "3" | quote }}
       {{- end }}

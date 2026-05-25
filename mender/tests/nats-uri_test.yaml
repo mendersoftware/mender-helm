@@ -1,0 +1,78 @@
+suite: test nats_uri helper
+templates:
+  - templates/workflows/deployment-server.yaml
+tests:
+  - it: uses internal NATS URL when nats.enabled and no URL override
+    set:
+      workflows.enabled: true
+      nats.enabled: true
+      nats.URL: ""
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+      nats.fullnameOverride: "mender-nats"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://mender-nats"
+
+  - it: uses nats.URL when set
+    set:
+      workflows.enabled: true
+      nats.enabled: false
+      nats.URL: "nats://external-nats.svc:4222"
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://external-nats.svc:4222"
+
+  - it: falls back to global.nats.URL when nats.URL is unset
+    set:
+      workflows.enabled: true
+      nats.enabled: false
+      nats.URL: ""
+      global.nats.URL: "nats://legacy-external:4222"
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://legacy-external:4222"
+
+  - it: uses secretKeyRef when nats.existingSecret is set
+    set:
+      workflows.enabled: true
+      nats.existingSecret: "my-nats-secret"
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: my-nats-secret
+
+  - it: falls back to global.nats.existingSecret when nats.existingSecret is unset
+    set:
+      workflows.enabled: true
+      nats.existingSecret: ""
+      global.nats.existingSecret: "legacy-nats-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: legacy-nats-secret

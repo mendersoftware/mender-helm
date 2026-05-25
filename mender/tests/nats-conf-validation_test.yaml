@@ -1,0 +1,42 @@
+suite: test nats_conf_validation - conflicting config is rejected
+templates:
+  - templates/workflows/deployment-server.yaml
+tests:
+  - it: fails when nats.enabled and nats.URL are both set
+    set:
+      workflows.enabled: true
+      nats.enabled: true
+      nats.URL: "nats://external-nats:4222"
+      global.nats.URL: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "When internal NATS is enabled, nats.URL and global.nats.URL must be unset"
+
+  - it: fails when nats.enabled and global.nats.URL are both set
+    set:
+      workflows.enabled: true
+      nats.enabled: true
+      nats.URL: ""
+      global.nats.URL: "nats://external-nats:4222"
+    asserts:
+      - failedTemplate:
+          errorMessage: "When internal NATS is enabled, nats.URL and global.nats.URL must be unset"
+
+  - it: fails when both nats.URL and global.nats.URL are set
+    set:
+      workflows.enabled: true
+      nats.enabled: false
+      nats.URL: "nats://new-external:4222"
+      global.nats.URL: "nats://legacy-external:4222"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Please set either nats.URL or global.nats.URL, not both"
+
+  - it: fails when both nats.existingSecret and global.nats.existingSecret are set
+    set:
+      workflows.enabled: true
+      nats.existingSecret: "my-nats-secret"
+      global.nats.existingSecret: "legacy-nats-secret"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Please set either nats.existingSecret or global.nats.existingSecret, not both"
