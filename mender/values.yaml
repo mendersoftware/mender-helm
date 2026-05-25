@@ -1576,17 +1576,3 @@ dbmigration:
     runAsNonRoot: true
     runAsUser: 999
 
-# Feature preview: Device License Count
-# Only available from version 3.6,
-# and available in Mender Enterprise
-# **WARNING**: This will be deprecated in the Helm Chart v7.0.0
-# and will be replaced by the `device_auth.cronjobs` feature.
-device_license_count:
-  enabled: true
-
-# Feature preview
-featureGates:
-  # Use K8s TLS Secret type for the API Gateway:
-  # tls.crt and tls.key replace cert.crt and private.key
-  # This affects api_gateway.certs when SSL is enabled
-  k8sTlsSecrets: false
