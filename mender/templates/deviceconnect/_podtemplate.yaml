@@ -1,4 +1,5 @@
 {{- define "mender.deviceconnectPodTemplate" -}}
+{{- include "nats_conf_validation" . }}
 metadata:
   {{- with .dot.Values.deviceconnect.podAnnotations }}
   annotations:
@@ -73,11 +74,11 @@ spec:
     env:
     # NATS uri
     - name: DEVICECONNECT_NATS_URI
-    {{- if .dot.Values.global.nats.existingSecret }}
+    {{- if include "nats_existingSecret" . }}
       valueFrom:
         secretKeyRef:
           key: NATS_URI
-          name: {{ .dot.Values.global.nats.existingSecret }}
+          name: {{ include "nats_existingSecret" . }}
     {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}

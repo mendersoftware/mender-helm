@@ -1,5 +1,6 @@
 {{- define "mender.inventoryPodTemplate" -}}
 {{- include "redis_conf_validation" . }}
+{{- include "nats_conf_validation" . }}
 metadata:
   {{- with .dot.Values.inventory.podAnnotations }}
   annotations:
@@ -89,11 +90,11 @@ spec:
     {{- end }}
     {{- end }}
     - name: INVENTORY_NATS_URI
-    {{- if .dot.Values.global.nats.existingSecret }}
+    {{- if include "nats_existingSecret" . }}
       valueFrom:
         secretKeyRef:
           key: NATS_URI
-          name: {{ .dot.Values.global.nats.existingSecret }}
+          name: {{ include "nats_existingSecret" . }}
     {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}

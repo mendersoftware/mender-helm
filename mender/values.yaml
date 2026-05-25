@@ -9,7 +9,9 @@ global:
     existingSecret: ""
     URL: ""
   nats:
+    # DEPRECATED: use nats.existingSecret instead. Will be removed in the next major release.
     existingSecret: ""
+    # DEPRECATED: use nats.URL instead. Will be removed in the next major release.
     URL: ""
   redis:
     URL: ""
@@ -192,26 +194,32 @@ mongodb:
 
 # Using default values from
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+# NOTE: Helm merges the parent chart's global: block into all subcharts.
+# If global.image.registry is set in a mender override file, it will also
+# apply to NATS container images. Use nats.container.image.registry for
+# NATS-specific registry overrides instead.
 nats:
   enabled: true
-  replicas: 1
-  cluster:
-    enabled: true
-    replicas: 3
   fullnameOverride: ""
-  nats:
-    image:
-      tag: "2.9.25-scratch"
+  # preferred replacement for global.nats.existingSecret (deprecated)
+  existingSecret: ""
+  # preferred replacement for global.nats.URL (deprecated)
+  URL: ""
+  config:
+    cluster:
+      enabled: true
+      replicas: 3
     jetstream:
       enabled: true
-      memStorage:
+      memoryStore:
         enabled: true
-        size: "1Gi"
-      fileStorage:
+        maxSize: "1Gi"
+      fileStore:
         enabled: true
-        size: "2Gi"
-        storageDirectory: /data/
-        storageClassName: ""
+        dir: /data/
+        pvc:
+          size: "2Gi"
+          storageClassName: ""
 
 api_gateway:
   enabled: true

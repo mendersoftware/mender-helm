@@ -38,8 +38,8 @@ The following table lists the global, default, and other parameters supported by
 | `global.image.tag` | Global Docker image registry tag | `mender-3.7.7` |
 | `global.mongodb.existingSecret` | MongoDB existing secret with keys: `MONGO` and `MONGO_URL` both with MongoDB connection string format  | `null` |
 | `global.mongodb.URL` | MongoDB URL | `mongodb://mongodb` |
-| `global.nats.existingSecret` | NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
-| `global.nats.URL` | NATS URL | `nats://nats:4222` |
+| `global.nats.existingSecret` | **Deprecated** - use `nats.existingSecret` instead. NATS existing secret with key: `NATS_URI` and NATS connection string `nats://...` | `null` |
+| `global.nats.URL` | **Deprecated** - use `nats.URL` instead. NATS URL | `nats://nats:4222` |
 | `global.redis.URL` | Optional Redis URL, used with an external service when `redis.enabled=false` | `nil` |
 | `global.redis.existingSecret` | Optional Redis URL from a secret, used with an external service when `redis.enabled=false`. The key has to be `REDIS_CONNECTION_STRING` | `nil` |
 | `global.opensearch.URLs` | Opensearch URLs | `http://opensearch-cluster-master:9200` |

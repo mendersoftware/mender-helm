@@ -1,0 +1,346 @@
+suite: test NATS URI injection - all consuming services
+tests:
+  - it: deviceconnect uses nats.existingSecret
+    template: templates/deviceconnect/deployment.yaml
+    set:
+      deviceconnect.enabled: true
+      nats.existingSecret: "my-nats-secret"
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEVICECONNECT_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: my-nats-secret
+
+  - it: inventory uses nats.existingSecret
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.enabled: true
+      nats.existingSecret: "my-nats-secret"
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: INVENTORY_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: my-nats-secret
+
+  - it: iot-manager uses nats.existingSecret
+    template: templates/iot-manager/deployment.yaml
+    set:
+      iot_manager.enabled: true
+      nats.existingSecret: "my-nats-secret"
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: IOT_MANAGER_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: my-nats-secret
+
+  - it: create-artifact-worker uses nats.existingSecret
+    template: templates/create-artifact-worker/deployment.yaml
+    set:
+      create_artifact_worker.enabled: true
+      nats.existingSecret: "my-nats-secret"
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: my-nats-secret
+
+  - it: generate-delta-worker uses nats.existingSecret
+    template: templates/generate-delta-worker/statefulset.yaml
+    set:
+      generate_delta_worker.enabled: true
+      global.enterprise: true
+      nats.existingSecret: "my-nats-secret"
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: my-nats-secret
+
+  - it: deviceconnect falls back to global.nats.existingSecret when nats.existingSecret unset
+    template: templates/deviceconnect/deployment.yaml
+    set:
+      deviceconnect.enabled: true
+      nats.existingSecret: ""
+      global.nats.existingSecret: "legacy-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEVICECONNECT_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: legacy-secret
+
+  - it: create-artifact-worker falls back to global.nats.existingSecret when nats.existingSecret unset
+    template: templates/create-artifact-worker/deployment.yaml
+    set:
+      create_artifact_worker.enabled: true
+      nats.existingSecret: ""
+      global.nats.existingSecret: "legacy-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: legacy-secret
+
+  - it: inventory falls back to global.nats.existingSecret when nats.existingSecret unset
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.enabled: true
+      nats.existingSecret: ""
+      global.nats.existingSecret: "legacy-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: INVENTORY_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: legacy-secret
+
+  - it: iot-manager falls back to global.nats.existingSecret when nats.existingSecret unset
+    template: templates/iot-manager/deployment.yaml
+    set:
+      iot_manager.enabled: true
+      nats.existingSecret: ""
+      global.nats.existingSecret: "legacy-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: IOT_MANAGER_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: legacy-secret
+
+  - it: generate-delta-worker falls back to global.nats.existingSecret when nats.existingSecret unset
+    template: templates/generate-delta-worker/statefulset.yaml
+    set:
+      generate_delta_worker.enabled: true
+      global.enterprise: true
+      nats.existingSecret: ""
+      global.nats.existingSecret: "legacy-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                key: NATS_URI
+                name: legacy-secret
+
+  - it: deviceconnect uses nats.URL when set
+    template: templates/deviceconnect/deployment.yaml
+    set:
+      deviceconnect.enabled: true
+      nats.enabled: false
+      nats.URL: "nats://external-nats.svc:4222"
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEVICECONNECT_NATS_URI
+            value: "nats://external-nats.svc:4222"
+
+  - it: inventory uses nats.URL when set
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.enabled: true
+      nats.enabled: false
+      nats.URL: "nats://external-nats.svc:4222"
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: INVENTORY_NATS_URI
+            value: "nats://external-nats.svc:4222"
+
+  - it: iot-manager uses nats.URL when set
+    template: templates/iot-manager/deployment.yaml
+    set:
+      iot_manager.enabled: true
+      nats.enabled: false
+      nats.URL: "nats://external-nats.svc:4222"
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: IOT_MANAGER_NATS_URI
+            value: "nats://external-nats.svc:4222"
+
+  - it: create-artifact-worker uses nats.URL when set
+    template: templates/create-artifact-worker/deployment.yaml
+    set:
+      create_artifact_worker.enabled: true
+      nats.enabled: false
+      nats.URL: "nats://external-nats.svc:4222"
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://external-nats.svc:4222"
+
+  - it: generate-delta-worker uses nats.URL when set
+    template: templates/generate-delta-worker/statefulset.yaml
+    set:
+      generate_delta_worker.enabled: true
+      global.enterprise: true
+      nats.enabled: false
+      nats.URL: "nats://external-nats.svc:4222"
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://external-nats.svc:4222"
+
+  - it: deviceconnect falls back to global.nats.URL when nats.URL is unset
+    template: templates/deviceconnect/deployment.yaml
+    set:
+      deviceconnect.enabled: true
+      nats.enabled: false
+      nats.URL: ""
+      global.nats.URL: "nats://legacy-external:4222"
+      nats.existingSecret: ""
+      global.nats.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEVICECONNECT_NATS_URI
+            value: "nats://legacy-external:4222"
+
+  - it: deviceconnect uses internal NATS URL when nats.enabled and no secret
+    template: templates/deviceconnect/deployment.yaml
+    set:
+      deviceconnect.enabled: true
+      nats.enabled: true
+      nats.URL: ""
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+      nats.fullnameOverride: "mender-nats"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEVICECONNECT_NATS_URI
+            value: "nats://mender-nats"
+
+  - it: inventory uses internal NATS URL when nats.enabled and no secret
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.enabled: true
+      nats.enabled: true
+      nats.URL: ""
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+      nats.fullnameOverride: "mender-nats"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: INVENTORY_NATS_URI
+            value: "nats://mender-nats"
+
+  - it: iot-manager uses internal NATS URL when nats.enabled and no secret
+    template: templates/iot-manager/deployment.yaml
+    set:
+      iot_manager.enabled: true
+      nats.enabled: true
+      nats.URL: ""
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+      nats.fullnameOverride: "mender-nats"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: IOT_MANAGER_NATS_URI
+            value: "nats://mender-nats"
+
+  - it: create-artifact-worker uses internal NATS URL when nats.enabled and no secret
+    template: templates/create-artifact-worker/deployment.yaml
+    set:
+      create_artifact_worker.enabled: true
+      nats.enabled: true
+      nats.URL: ""
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+      nats.fullnameOverride: "mender-nats"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://mender-nats"
+
+  - it: generate-delta-worker uses internal NATS URL when nats.enabled and no secret
+    template: templates/generate-delta-worker/statefulset.yaml
+    set:
+      generate_delta_worker.enabled: true
+      global.enterprise: true
+      nats.enabled: true
+      nats.URL: ""
+      nats.existingSecret: ""
+      global.nats.URL: ""
+      global.nats.existingSecret: ""
+      nats.fullnameOverride: "mender-nats"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://mender-nats"
