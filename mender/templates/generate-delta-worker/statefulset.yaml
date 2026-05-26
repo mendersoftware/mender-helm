@@ -31,11 +31,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
 
-  # if deployment is not completed within 10 min, consider it failed,
-  # as result deployment Reason=ProgressDeadlineExceeded
-  # needs to be big enough to rollout to complete
-  progressDeadlineSeconds: 600
-
   {{- with .Values.generate_delta_worker.persistence }}
   {{- if .enabled }}
   volumeClaimTemplates:
