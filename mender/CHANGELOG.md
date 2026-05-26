@@ -1126,6 +1126,14 @@
 
 # Changelog
 
+## [7.7.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.2...mender-7.7.3) (2026-05-26)
+
+
+### Bug Fixes
+
+* remove invalid progressDeadlineSeconds from statefulset ([48a5a60](https://github.com/mendersoftware/mender-helm/commit/48a5a60ac913493ee0f03ed966e8a1d2605538e1))
+* remove invalid progressDeadlineSeconds from statefulset ([1f814bb](https://github.com/mendersoftware/mender-helm/commit/1f814bbdf782132c7e427ca3652aa53f2d7ee5b5))
+
 ## [7.7.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.1...mender-7.7.2) (2026-05-19)
 
 
