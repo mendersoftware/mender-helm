@@ -58,3 +58,8 @@ nats:
 
 redis:
   enabled: true
+
+generate_delta_worker:
+  enabled: true
+  persistence:
+    enabled: false
