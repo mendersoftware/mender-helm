@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-KUBE_SUPPORTED_VERSIONS = 1.21.0 1.22.0 1.23.0 1.24.0 1.25.0 1.26.0
+KUBE_SUPPORTED_VERSIONS = 1.30.0 1.31.0 1.32.0 1.33.0 1.34.0 1.35.0
 
 NAME=mender
 VERSION=$$(grep version: $(NAME)/Chart.yaml | sed -e 's/.*: *//g' | sed -e 's/"//g')
@@ -50,7 +50,8 @@ test-all: lint unittest kubeconform test ## Run all tests (lint, unit, kubeconfo
 .PHONY: kubeconform
 kubeconform: ## Run kubeconform over helm chart rendered template
 	for kubeversion in $(KUBE_SUPPORTED_VERSIONS); do \
-		helm template $(NAME)/ -f values-enterprise.yaml --kube-version $$kubeversion | kubeconform --kubernetes-version $$kubeversion; \
+		helm template $(NAME)/ -f tests/values-helmci.yaml --kube-version $$kubeversion \
+			| kubeconform --kubernetes-version $$kubeversion --strict --ignore-missing-schemas; \
 	done
 
 .PHONY: template_helm_chart_previous_lts
