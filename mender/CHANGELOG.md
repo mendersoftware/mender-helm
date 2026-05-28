@@ -1126,6 +1126,14 @@
 
 # Changelog
 
+## [7.7.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.3...mender-7.7.4) (2026-05-28)
+
+
+### Bug Fixes
+
+* **generate-delta-worker:** removed wrong maxSurge option ([7db25b2](https://github.com/mendersoftware/mender-helm/commit/7db25b2d2e65bcc22dbcaba66dca87b1ee0f49af))
+* **generate-delta-worker:** removed wrong maxSurge option ([c7bc9bf](https://github.com/mendersoftware/mender-helm/commit/c7bc9bfe30a7c57d1751c92481c41267fdf86ba8))
+
 ## [7.7.3](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.2...mender-7.7.3) (2026-05-26)
 
 
