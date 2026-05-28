@@ -34,3 +34,10 @@ generate_delta_worker:
   enabled: true
   persistence:
     enabled: false
+  resources:
+    limits:
+      cpu: 50
+      memory: 100Mi
+    requests:
+      cpu: 50
+      memory: 100Mi
