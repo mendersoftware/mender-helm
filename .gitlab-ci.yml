@@ -526,9 +526,6 @@ test:helm_unittest:
       when: never
     - when: on_success
   script:
-    - echo "INFO - installing helm-unittest plugin"
-    - helm plugin install https://github.com/helm-unittest/helm-unittest --version v0.3.3
-    - echo "INFO - running helm unit tests"
     - helm unittest mender/
 
 test:helm_chart_install_opensource:
