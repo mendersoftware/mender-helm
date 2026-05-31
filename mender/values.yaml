@@ -115,6 +115,31 @@ serviceAccount:
   labels: {}
   annotations: {}
 
+# On-demand diagnostics bundle generator for on-prem clusters. Shipped as a
+# suspended CronJob; trigger a run with:
+#   kubectl create job --from=cronjob/<release>-support <release>-support-now -n <namespace>
+supportTool:
+  enabled: false
+
+  # Image must bundle kubectl, helm, jq and bash (not a Mender service image).
+  image:
+    repository: alpine/k8s
+    tag: "1.31.1"
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  # - name: secret1
+  # - name: secret2
+
+  # Helm release to inspect; defaults to this chart's release name when empty.
+  helmReleaseName: ""
+  # Mask secret values in the collected helm values and pod logs.
+  maskSecrets: true
+  # Maximum number of log lines collected per pod.
+  maxLogLines: 1000
+  # Image for the disposable pod the tool spawns to dump MongoDB databases.
+  mongoImage: "mongo:8.0"
+  resources: {}
+
 # Enabling this will publically expose your Mender instance.
 ingress:
   enabled: false

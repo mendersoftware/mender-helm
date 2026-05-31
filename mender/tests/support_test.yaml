@@ -1,0 +1,181 @@
+suite: test support tool (ConfigMap, CronJob, RBAC)
+templates:
+  - templates/support/configmap.yaml
+  - templates/support/cronjobs.yaml
+  - templates/support/rbac.yaml
+
+tests:
+  # --- gating ---------------------------------------------------------------
+  - it: should not render the ConfigMap when disabled (default)
+    template: templates/support/configmap.yaml
+    set:
+      supportTool.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render the CronJob when disabled (default)
+    template: templates/support/cronjobs.yaml
+    set:
+      supportTool.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render RBAC when disabled (default)
+    template: templates/support/rbac.yaml
+    set:
+      supportTool.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # --- ConfigMap ------------------------------------------------------------
+  - it: should embed the script in the ConfigMap when enabled
+    template: templates/support/configmap.yaml
+    set:
+      supportTool.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - exists:
+          path: data["mender_server_support_tool.sh"]
+      - matchRegex:
+          path: data["mender_server_support_tool.sh"]
+          pattern: "Helm Support Bundle Generator"
+
+  # --- CronJob --------------------------------------------------------------
+  - it: should render a suspended CronJob with the never-match schedule
+    template: templates/support/cronjobs.yaml
+    set:
+      supportTool.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: CronJob
+      - equal:
+          path: spec.suspend
+          value: true
+      - equal:
+          path: spec.schedule
+          value: "0 0 31 2 *"
+
+  - it: should run the mounted script as the dedicated service account
+    template: templates/support/cronjobs.yaml
+    set:
+      supportTool.enabled: true
+    asserts:
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.serviceAccountName
+          pattern: "-support$"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[0]
+          value: bash
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[1]
+          value: /scripts/mender_server_support_tool.sh
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.volumes[0].configMap.defaultMode
+          value: 0755
+
+  - it: should inject namespace and pod name via the downward API
+    template: templates/support/cronjobs.yaml
+    set:
+      supportTool.enabled: true
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env[0].name
+          value: NAMESPACE
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env[0].valueFrom.fieldRef.fieldPath
+          value: metadata.namespace
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env[1].name
+          value: POD_NAME
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env[1].valueFrom.fieldRef.fieldPath
+          value: metadata.name
+
+  - it: should build the image from supportTool.image values
+    template: templates/support/cronjobs.yaml
+    set:
+      supportTool.enabled: true
+      supportTool.image.repository: example.com/toolbox
+      supportTool.image.tag: "9.9.9"
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: example.com/toolbox:9.9.9
+
+  - it: should render imagePullSecrets when provided
+    template: templates/support/cronjobs.yaml
+    set:
+      supportTool.enabled: true
+      supportTool.imagePullSecrets:
+        - name: my-pull-secret
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.imagePullSecrets[0].name
+          value: my-pull-secret
+
+  # --- RBAC (ServiceAccount + Role + RoleBinding) ---------------------------
+  - it: should render the three RBAC objects when enabled
+    template: templates/support/rbac.yaml
+    set:
+      supportTool.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 3
+      - isKind:
+          of: ServiceAccount
+        documentIndex: 0
+      - isKind:
+          of: Role
+        documentIndex: 1
+      - isKind:
+          of: RoleBinding
+        documentIndex: 2
+
+  - it: should grant pods/exec and deployments read in the Role
+    template: templates/support/rbac.yaml
+    documentIndex: 1
+    set:
+      supportTool.enabled: true
+    asserts:
+      - equal:
+          path: rules[0].resources[0]
+          value: pods
+      - contains:
+          path: rules[0].verbs
+          content: create
+      - equal:
+          path: rules[3].resources[0]
+          value: pods/exec
+      - contains:
+          path: rules[4].apiGroups
+          content: apps
+      - equal:
+          path: rules[4].resources[0]
+          value: deployments
+
+  - it: should bind the Role to the ServiceAccount
+    template: templates/support/rbac.yaml
+    documentIndex: 2
+    set:
+      supportTool.enabled: true
+    asserts:
+      - equal:
+          path: roleRef.kind
+          value: Role
+      - matchRegex:
+          path: roleRef.name
+          pattern: "-support$"
+      - equal:
+          path: subjects[0].kind
+          value: ServiceAccount
+      - matchRegex:
+          path: subjects[0].name
+          pattern: "-support$"

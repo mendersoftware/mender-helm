@@ -1,0 +1,63 @@
+{{- if .Values.supportTool.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "mender.fullname" . }}-support
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+spec:
+  # Runs on demand only (see values.yaml for the trigger command), never on a schedule.
+  suspend: true
+  # schedule is required even when suspended; this value can never match (Feb 31).
+  schedule: "0 0 31 2 *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          serviceAccountName: {{ include "mender.fullname" . }}-support
+          restartPolicy: Never
+          {{- $ips := coalesce .Values.supportTool.imagePullSecrets .Values.default.imagePullSecrets }}
+          {{- if $ips }}
+          imagePullSecrets:
+          {{- toYaml $ips | nindent 10 }}
+          {{- end }}
+          containers:
+          - name: support-tool
+            # Must be an image bundling kubectl, helm, jq and bash (not a Mender service image).
+            image: "{{ .Values.supportTool.image.repository }}:{{ .Values.supportTool.image.tag }}"
+            imagePullPolicy: {{ .Values.supportTool.image.pullPolicy | default "IfNotPresent" }}
+            command: ["bash", "/scripts/mender_server_support_tool.sh"]
+            env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: HELM_RELEASE
+              value: {{ .Values.supportTool.helmReleaseName | default .Release.Name | quote }}
+            - name: MASK_SECRETS
+              value: {{ .Values.supportTool.maskSecrets | quote }}
+            - name: MAX_LOG_LINES
+              value: {{ .Values.supportTool.maxLogLines | quote }}
+            - name: MONGO_IMAGE
+              value: {{ .Values.supportTool.mongoImage | quote }}
+            volumeMounts:
+            - name: support-script
+              mountPath: /scripts
+              readOnly: true
+            {{- with .Values.supportTool.resources }}
+            resources:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+          volumes:
+          - name: support-script
+            configMap:
+              name: {{ include "mender.fullname" . }}-support
+              defaultMode: 0755
+{{- end }}

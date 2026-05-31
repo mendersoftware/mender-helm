@@ -4,14 +4,23 @@ set -euo pipefail
 
 # Global variables
 TMP_DIR=""
-NAMESPACE=""
-HELM_RELEASE=""
+NAMESPACE="${NAMESPACE:-}"
+HELM_RELEASE="${HELM_RELEASE:-}"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 RAND_SUFFIX=$(od -An -N3 -tx1 /dev/urandom 2>/dev/null | tr -d ' \n')
 SUPPORT_BUNDLE="mender_support_${TIMESTAMP}_${RAND_SUFFIX}.tar.gz"
 MASK_SECRETS="${MASK_SECRETS:-true}" # Can be disabled with MASK_SECRETS=false
 MAX_LOG_LINES="${MAX_LOG_LINES:-1000}"
 MONGO_IMAGE="${MONGO_IMAGE:-mongo:8.0}"
+
+# Detect whether we have an interactive terminal. When false (e.g. running inside
+# a Kubernetes Job), prompts are skipped and NAMESPACE / HELM_RELEASE must be
+# provided via the environment.
+if [[ -t 0 ]]; then
+  INTERACTIVE=true
+else
+  INTERACTIVE=false
+fi
 
 # Colors for output
 RED='\033[0;31m'
@@ -65,10 +74,14 @@ check_command() {
     ;;
   *)
     print_msg "$YELLOW" "⚠ Warning: $cmd is installed in non-standard location: $cmd_path"
-    read -p "Do you want to continue? (y/N): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-      return 1
+    if [[ "$INTERACTIVE" == true ]]; then
+      read -p "Do you want to continue? (y/N): " -n 1 -r
+      echo
+      if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        return 1
+      fi
+    else
+      print_msg "$YELLOW" "  Non-interactive mode: continuing despite non-standard location"
     fi
     ;;
   esac
@@ -91,9 +104,12 @@ check_requirements() {
     exit 1
   fi
 
-  # Verify kubectl cluster connectivity before proceeding
+  # Verify kubectl cluster connectivity before proceeding.
+  # `kubectl version` contacts the API server (proving reachability) without
+  # requiring access to kube-system, so it works under least-privilege RBAC.
+  # `kubectl cluster-info` is avoided as it lists kube-system services we cannot read.
   print_msg "$YELLOW" "Verifying cluster connectivity..."
-  if ! kubectl cluster-info >/dev/null 2>&1; then
+  if ! kubectl version >/dev/null 2>&1; then
     print_msg "$RED" "Error: Cannot connect to Kubernetes cluster."
     print_msg "$RED" "Check your kubeconfig and cluster availability."
     exit 1
@@ -123,6 +139,19 @@ validate_name() {
 
 # Function to select namespace
 select_namespace() {
+  # If a namespace was provided via the environment, use it as-is (no prompt).
+  if [[ -n "$NAMESPACE" ]]; then
+    validate_name "$NAMESPACE" "namespace"
+    print_msg "$GREEN" "Using namespace from environment: $NAMESPACE"
+    echo ""
+    return
+  fi
+
+  if [[ "$INTERACTIVE" != true ]]; then
+    print_msg "$RED" "Error: NAMESPACE must be set when running non-interactively"
+    exit 1
+  fi
+
   print_msg "$YELLOW" "Fetching available namespaces..."
 
   # Get namespaces and store in array (safe from word splitting)
@@ -157,6 +186,19 @@ select_namespace() {
 
 # Function to select helm release
 select_helm_release() {
+  # If a release was provided via the environment, use it as-is (no prompt).
+  if [[ -n "$HELM_RELEASE" ]]; then
+    validate_name "$HELM_RELEASE" "release"
+    print_msg "$GREEN" "Using Helm release from environment: $HELM_RELEASE"
+    echo ""
+    return
+  fi
+
+  if [[ "$INTERACTIVE" != true ]]; then
+    print_msg "$RED" "Error: HELM_RELEASE must be set when running non-interactively"
+    exit 1
+  fi
+
   print_msg "$YELLOW" "Fetching Helm releases in namespace '$NAMESPACE'..."
 
   # Get helm releases in the selected namespace (safe from word splitting)
@@ -725,6 +767,19 @@ EOF
   print_msg "$GREEN" "✓ Support bundle created: $SUPPORT_BUNDLE (mode 600)"
   print_msg "$GREEN" "Bundle size: $(du -h "$SUPPORT_BUNDLE" | cut -f1)"
   print_msg "$YELLOW" "⚠ Security: Bundle contains potentially sensitive data. Handle with care!"
+
+  # In non-interactive mode (e.g. a Kubernetes Job) there is no shell to copy the
+  # file from, so emit it base64-encoded between markers. The command to extract it
+  # is printed in the final summary (main). Extraction matches the marker lines
+  # EXACTLY, so a command line mentioning them as a substring never collides with
+  # the real delimiters.
+  # NOTE: very large bundles bloat pod logs; acceptable for diagnostics use.
+  if [[ "$INTERACTIVE" != true ]]; then
+    print_msg "$YELLOW" "Emitting bundle to stdout for log-based retrieval..."
+    echo "-----BEGIN MENDER SUPPORT BUNDLE-----"
+    base64 "$SUPPORT_BUNDLE"
+    echo "-----END MENDER SUPPORT BUNDLE-----"
+  fi
 }
 
 list_tenants() {
@@ -1076,11 +1131,15 @@ show_security_warning() {
   print_msg "$YELLOW" "╚══════════════════════════════════════════════════════════════╝"
   echo ""
 
-  read -p "Do you understand and want to proceed? (y/N): " -n 1 -r
-  echo ""
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    print_msg "$RED" "Aborted by user"
-    exit 1
+  if [[ "$INTERACTIVE" == true ]]; then
+    read -p "Do you understand and want to proceed? (y/N): " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      print_msg "$RED" "Aborted by user"
+      exit 1
+    fi
+  else
+    print_msg "$YELLOW" "Non-interactive mode: proceeding without confirmation"
   fi
   echo ""
 }
@@ -1127,11 +1186,20 @@ main() {
 
   echo ""
   print_msg "$GREEN" "=== Support bundle generation completed successfully ==="
-  print_msg "$GREEN" "File: $SUPPORT_BUNDLE"
-  print_msg "$YELLOW" "Remember to:"
-  print_msg "$YELLOW" "  1. Review contents before sharing"
-  print_msg "$YELLOW" "  2. Transfer securely (encrypted channel)"
-  print_msg "$YELLOW" "  3. Delete securely when done: shred -vfz $SUPPORT_BUNDLE"
+  if [[ "$INTERACTIVE" == true ]]; then
+    print_msg "$GREEN" "File: $SUPPORT_BUNDLE"
+    print_msg "$YELLOW" "Remember to:"
+    print_msg "$YELLOW" "  1. Review contents before sharing"
+    print_msg "$YELLOW" "  2. Transfer securely (encrypted channel)"
+    print_msg "$YELLOW" "  3. Delete securely when done: shred -vfz $SUPPORT_BUNDLE"
+  else
+    # The in-pod copy is ephemeral (gone when the pod is removed); the base64 block
+    # emitted above is the only durable copy. Print the exact command to save it.
+    local pod_ref="${POD_NAME:-<pod>}"
+    print_msg "$YELLOW" "Save the bundle locally by running:"
+    printf "  kubectl logs -n %s %s | awk '\$0==\"-----BEGIN MENDER SUPPORT BUNDLE-----\"{f=1;next} \$0==\"-----END MENDER SUPPORT BUNDLE-----\"{f=0} f' | base64 -d > mender_support_bundle.tar.gz\n" "$NAMESPACE" "$pod_ref"
+    print_msg "$YELLOW" "Then review the contents, transfer over an encrypted channel, and shred when done."
+  fi
 }
 
 # Run main function
