@@ -1,0 +1,111 @@
+suite: test generate-delta-worker StatefulSet
+templates:
+  - templates/generate-delta-worker/statefulset.yaml
+
+tests:
+  - it: should not render when enterprise is disabled
+    set:
+      global.enterprise: false
+      generate_delta_worker.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render when generate_delta_worker is disabled
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a StatefulSet when enabled
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: StatefulSet
+      - equal:
+          path: apiVersion
+          value: apps/v1
+
+  - it: should NOT have progressDeadlineSeconds (Deployment-only field)
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+    asserts:
+      - notExists:
+          path: spec.progressDeadlineSeconds
+
+  - it: should NOT inherit default.updateStrategy with maxSurge (Deployment-only field)
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      default.updateStrategy.rollingUpdate.maxSurge: 25%
+      default.updateStrategy.rollingUpdate.maxUnavailable: 0
+    asserts:
+      - notExists:
+          path: spec.updateStrategy
+
+  - it: should have serviceName set (StatefulSet-specific field)
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+    asserts:
+      - isNotEmpty:
+          path: spec.serviceName
+
+  - it: should default to 1 replica
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 1
+
+  - it: should render volumeClaimTemplates when persistence is enabled
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      generate_delta_worker.persistence.enabled: true
+      generate_delta_worker.persistence.size: "40Gi"
+    asserts:
+      - isNotEmpty:
+          path: spec.volumeClaimTemplates
+
+  - it: should not render volumeClaimTemplates when persistence is disabled
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      generate_delta_worker.persistence.enabled: false
+    asserts:
+      - notExists:
+          path: spec.volumeClaimTemplates
+
+  - it: should set GENERATE_DELTA_WORKDIR env when persistence is enabled
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      generate_delta_worker.persistence.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GENERATE_DELTA_WORKDIR
+            value: /work
+
+  - it: should not set GENERATE_DELTA_WORKDIR env when persistence is disabled
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      generate_delta_worker.persistence.enabled: false
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GENERATE_DELTA_WORKDIR
+            value: /work

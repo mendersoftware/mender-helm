@@ -1,8 +1,16 @@
 SHELL := /bin/bash
-KUBE_SUPPORTED_VERSIONS = 1.21.0 1.22.0 1.23.0 1.24.0 1.25.0 1.26.0
 
 NAME=mender
 VERSION=$$(grep version: $(NAME)/Chart.yaml | sed -e 's/.*: *//g' | sed -e 's/"//g')
+
+# Fetch the 5 most recent non-EOL Kubernetes minor versions at runtime.
+# Requires curl and jq. For offline use, set KUBE_VERSIONS explicitly:
+#   make kubeconform KUBE_VERSIONS="1.33.0 1.34.0 1.35.0"
+KUBE_VERSIONS_CMD = TODAY=$$(date +%Y-%m-%d); \
+	KUBE_VERSIONS=$$(curl -sf https://endoflife.date/api/kubernetes.json \
+		| jq -r --arg today "$$TODAY" \
+			'[.[] | select(.eol == false or .eol > $$today) | .cycle] \
+			 | sort | reverse | .[0:5] | reverse | .[] | . + ".0"')
 
 help: ## Show this help
 	@IFS=$$'\n' ; \
@@ -45,13 +53,51 @@ test: ## Run integration tests
 	bash tests/tests.sh
 
 .PHONY: test-all
-test-all: lint unittest kubeconform test ## Run all tests (lint, unit, kubeconform, integration)
+test-all: lint unittest kubeconform check-deprecated-apis test ## Run all tests (lint, unit, kubeconform, deprecated-api, integration)
 
 .PHONY: kubeconform
-kubeconform: ## Run kubeconform over helm chart rendered template
-	for kubeversion in $(KUBE_SUPPORTED_VERSIONS); do \
-		helm template $(NAME)/ -f values-enterprise.yaml --kube-version $$kubeversion | kubeconform --kubernetes-version $$kubeversion; \
+kubeconform: ## Run kubeconform over helm chart rendered template (versions from endoflife.date)
+	$(KUBE_VERSIONS_CMD); \
+	echo "INFO - versions: $$KUBE_VERSIONS"; \
+	for kubeversion in $$KUBE_VERSIONS; do \
+		helm template $(NAME)/ -f tests/values-helmci.yaml --kube-version $$kubeversion \
+			| kubeconform --kubernetes-version $$kubeversion --strict --ignore-missing-schemas; \
 	done
+
+.PHONY: check-deprecated-apis
+check-deprecated-apis: ## Detect removed/deprecated Kubernetes API versions (versions from endoflife.date)
+	$(KUBE_VERSIONS_CMD); \
+	echo "INFO - versions: $$KUBE_VERSIONS"; \
+	for kubeversion in $$KUBE_VERSIONS; do \
+		echo "INFO - checking deprecated APIs for k8s $$kubeversion"; \
+		helm template $(NAME)/ -f tests/values-helmci.yaml --kube-version $$kubeversion \
+			| pluto detect - --target-versions k8s=v$$kubeversion; \
+	done
+
+.PHONY: trivy
+trivy: ## Run trivy misconfiguration check on the chart
+	trivy config $(NAME)/ \
+		--helm-values tests/values-helmci.yaml \
+		--exit-code 1 \
+		--ignorefile .trivyignore
+
+.PHONY: trivy-sbom
+trivy-sbom: ## Generate CycloneDX SBOM by scanning all container images referenced in the chart
+	rm -rf /tmp/trivy-sbom-parts && mkdir -p /tmp/trivy-sbom-parts; \
+	IMAGES=$$(helm template $(NAME)/ -f tests/values-helmci.yaml \
+		| grep -E '^\s+image: ' | awk '{print $$2}' | tr -d '"' | sort -u); \
+	echo "INFO - images: $$(echo $$IMAGES | tr '\n' ' ')"; \
+	for img in $$IMAGES; do \
+		echo "INFO - scanning $$img"; \
+		safe=$$(echo "$$img" | tr '/: ' '---'); \
+		trivy image "$$img" --format cyclonedx --quiet \
+			--output /tmp/trivy-sbom-parts/$$safe.json || \
+			echo "WARN - failed to scan $$img (skipping)"; \
+	done; \
+	jq -s '{"bomFormat":"CycloneDX","specVersion":"1.5","version":1,"components":[.[].components//[]|.[]]}' \
+		/tmp/trivy-sbom-parts/*.json > sbom.cdx.json; \
+	echo "INFO - SBOM written to sbom.cdx.json ($$(jq '.components|length' sbom.cdx.json) components)"; \
+	rm -rf /tmp/trivy-sbom-parts
 
 .PHONY: template_helm_chart_previous_lts
 template_helm_chart_previous_lts: ## Run the template of the previous LTS
