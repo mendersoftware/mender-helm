@@ -29,3 +29,15 @@ redis:
   replica:
     persistence:
       enabled: false
+
+generate_delta_worker:
+  enabled: true
+  persistence:
+    enabled: false
+  resources:
+    limits:
+      cpu: 50m
+      memory: 100Mi
+    requests:
+      cpu: 50m
+      memory: 100Mi

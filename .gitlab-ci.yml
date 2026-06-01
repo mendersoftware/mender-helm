@@ -165,7 +165,7 @@ build:setup_eks_cluster:
         --asg-access \
         ${SPOT_STRING} \
         --instance-types c6i.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge,m5d.xlarge \
-        --nodes ${CI_EKS_NUMBER_OF_NODES:-6}
+        --nodes ${CI_EKS_NUMBER_OF_NODES:-8}
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
@@ -184,7 +184,7 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260505
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260518
   tags:
     - hetzner-amd-beefy
   rules:
@@ -470,9 +470,9 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
     - echo "INFO - cleaning up resources"
     - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
 
-test:kubeconform_tests:
+test:kubeconform:
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   rules:
@@ -482,35 +482,9 @@ test:kubeconform_tests:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
-  id_tokens:
-    AWS_OIDC_TOKEN:
-      aud: https://gitlab.com
-  before_script:
-    - *set_eks_helmci_vars
+    - when: on_success
   script:
-    - |
-      echo "INFO - running kubeconform tests:"
-      while IFS= read -r version; do
-        full_version=${version}.0
-        echo "INFO - testing version ${full_version}"
-        helm template mender/ \
-          -f tests/values-helmci.yaml \
-          --kube-version ${full_version} \
-        | kubeconform --kubernetes-version ${full_version}
-      done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
-    - |
-      echo "DEBUG - run failed kubeconform tests: this should fail"
-      sed -i 's/apps\/v1/fakeapps\/v42/' mender/templates/gui/deployment.yaml
-      while IFS= read -r version; do
-        full_version=${version}.0
-        echo "INFO - testing version ${full_version}"
-        helm template mender/ \
-          -f tests/values-helmci.yaml \
-          --kube-version ${full_version} \
-        | kubeconform --kubernetes-version ${full_version} \
-        || echo "INFO - test failed with version ${kubeversion}: this is expected"
-      done < <(eksctl version -o json | jq -r '.EKSServerSupportedVersions[]')
+    - make kubeconform
 
 test:helm_unittest:
   tags:
@@ -526,9 +500,6 @@ test:helm_unittest:
       when: never
     - when: on_success
   script:
-    - echo "INFO - installing helm-unittest plugin"
-    - helm plugin install https://github.com/helm-unittest/helm-unittest --version v0.3.3
-    - echo "INFO - running helm unit tests"
     - helm unittest mender/
 
 test:helm_chart_install_opensource:
@@ -704,7 +675,7 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260505
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260518
   before_script:
     - !reference [.qa-common-network-apt-retry, before_script]
     - apt-get update -y
