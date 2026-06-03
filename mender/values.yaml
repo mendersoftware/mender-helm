@@ -970,6 +970,13 @@ useradm:
     # successThreshold: 2
     # failureThreshold: 6
 
+  #
+  # Optional cronjobs for useradm.
+  #
+  cronjobs:
+    enabled: false
+    jobs: []
+
 workflows:
   enabled: true
   podAnnotations: {}
