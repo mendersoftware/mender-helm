@@ -103,7 +103,7 @@ renovate:
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
   stage: build
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
   - export AWS_DEFAULT_REGION=eu-central-1
@@ -135,7 +135,7 @@ build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .pre
   tags:
-    - hetzner-amd-beefy
+    - k8s
   resource_group: helm
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
@@ -186,7 +186,7 @@ build:
   stage: build
   image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260518
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
@@ -234,7 +234,7 @@ test:check-license-source:
 
 test:helm_chart_install:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -279,7 +279,7 @@ test:helm_chart_install:
 
 test:helm_chart_install_sub_charts:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -346,7 +346,7 @@ test:helm_chart_install_sub_charts:
 .test:helm_chart_upgrade_from_previous_lts_to_current_lts: # TODO: enable this for the next LTS
   # For example: from Mender 3.6 to Mender 3.7
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -410,7 +410,7 @@ test:helm_chart_install_sub_charts:
 
 test:helm_chart_upgrade_from_current_lts_to_current_release:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -504,7 +504,7 @@ test:helm_unittest:
 
 test:helm_chart_install_opensource:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -570,7 +570,7 @@ test:helm_chart_install_opensource:
 
 test:helm_chart_install_with_r2:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -640,7 +640,7 @@ test:helm_chart_install_with_r2:
 
 test:playground_eks_cluster:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -664,7 +664,7 @@ test:playground_eks_cluster:
 
 publish:helm_chart_publishing:
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: "$CI_COMMIT_TAG"
       changes:
@@ -675,13 +675,8 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260518
+  image: ${PIPELINE_TOOLBOX_IMAGE}
   before_script:
-    - !reference [.qa-common-network-apt-retry, before_script]
-    - apt-get update -y
-    - apt-get install -y curl make git
-    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
-    - *get_kubectl_and_tools
     - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0
     - export AWS_DEFAULT_REGION=us-east-1
     - >
@@ -703,7 +698,7 @@ publish:helm_chart_publishing:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .post
   tags:
-    - hetzner-amd-beefy
+    - k8s
   resource_group: helm
   allow_failure: true # can't find a way to avoid eks cleanup when no eks is setup, so let's allow to fail for now
   dependencies:
@@ -744,7 +739,7 @@ changelog:
     GIT_DEPTH: 0 # Always get the full history
     GIT_STRATEGY: clone # Always get the full history
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
@@ -798,7 +793,7 @@ release:github:
   image: "registry.gitlab.com/northern.tech/mender/mender-test-containers/release-please:master"
   stage: .post
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
