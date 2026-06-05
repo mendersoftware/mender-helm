@@ -16,10 +16,8 @@ spec:
   serviceName: {{ include "mender.fullname" . }}-generate-delta-worker
   replicas: {{ .Values.generate_delta_worker.replicas }}
 
-  # Rollout upgrade
-  {{- $updateStrategy := coalesce .Values.generate_delta_worker.updateStrategy .Values.default.updateStrategy }}
-  {{- if $updateStrategy }}
-  updateStrategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- with .Values.generate_delta_worker.updateStrategy }}
+  updateStrategy: {{- toYaml . | nindent 4 }}
   {{- end }}
 
   {{- $minReadySeconds := coalesce .Values.generate_delta_worker.minReadySeconds .Values.default.minReadySeconds }}
@@ -30,11 +28,6 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
-
-  # if deployment is not completed within 10 min, consider it failed,
-  # as result deployment Reason=ProgressDeadlineExceeded
-  # needs to be big enough to rollout to complete
-  progressDeadlineSeconds: 600
 
   {{- with .Values.generate_delta_worker.persistence }}
   {{- if .enabled }}

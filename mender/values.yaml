@@ -602,12 +602,12 @@ generate_delta_worker:
   # - name: LOG_LEVEL
   #   value: DEBUG
 
-  # generate_delta_worker.updateStrategy: Strategy to use to update existing pods
+  # generate_delta_worker.updateStrategy: Strategy to use to update existing pods.
   # Example:
   # updateStrategy:
+  #   type: RollingUpdate
   #   rollingUpdate:
-  #     maxSurge: 25%
-  #     maxUnavailable: 25%
+  #     partition: 0
 
 gui:
   enabled: true
