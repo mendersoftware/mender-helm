@@ -1,4 +1,21 @@
 ---
+## mender-7.8.0 - 2026-06-05
+
+
+### Features
+
+
+- Add cronjobs template to useradm
+([MEN-8860](https://northerntech.atlassian.net/browse/MEN-8860)) ([86d269a](https://github.com/mendersoftware/mender-helm/commit/86d269a658fd315c33814b26336f20980a5d5766))  by @kjaskiewiczz
+
+
+
+
+
+
+
+
+
 ## mender-7.7.2 - 2026-05-19
 
 
@@ -1125,6 +1142,14 @@
 
 
 # Changelog
+
+## [7.8.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.4...mender-7.8.0) (2026-06-05)
+
+
+### Features
+
+* add cronjobs template to useradm ([ad289b4](https://github.com/mendersoftware/mender-helm/commit/ad289b441062c80ed8f2be9399ea060102369f67))
+* add cronjobs template to useradm ([86d269a](https://github.com/mendersoftware/mender-helm/commit/86d269a658fd315c33814b26336f20980a5d5766))
 
 ## [7.7.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.3...mender-7.7.4) (2026-05-28)
 
