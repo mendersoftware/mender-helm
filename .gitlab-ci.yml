@@ -106,6 +106,8 @@ renovate:
     - k8s-small
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
+  # prevent client-go in-cluster fallback to the runner pod namespace
+  - unset KUBERNETES_SERVICE_HOST KUBERNETES_SERVICE_PORT
   - export AWS_DEFAULT_REGION=eu-central-1
   - >
     export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
