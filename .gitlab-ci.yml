@@ -504,6 +504,33 @@ test:helm_unittest:
   script:
     - helm unittest mender/
 
+test:helm_trivy_audit:
+  tags:
+    - k8s-small
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  rules:
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_TAG'
+      when: on_success
+  before_script:
+    - mkdir -p ~/.docker
+    - printf '{"auths":{"registry.mender.io":{"auth":"%s"}}}' "$(printf '%s:%s' "${REGISTRY_MENDER_IO_USERNAME}" "${REGISTRY_MENDER_IO_PASSWORD}" | base64 -w 0)" > ~/.docker/config.json
+  script:
+    - make trivy
+    - make trivy-sbom
+  artifacts:
+    expire_in: 1 year
+    reports:
+      cyclonedx: sbom.cdx.json
+    paths:
+      - sbom.cdx.json
+
 test:helm_chart_install_opensource:
   tags:
     - k8s
