@@ -1306,6 +1306,10 @@ deviceconnect:
       cpu: 100m
       memory: 128Mi
   affinity: {}
+  config: {}
+    ## Configuration mounted as `/etc/deviceconnect/config.yaml`
+    ## Please refer to the reference configuration shipped with the container
+    ## for a complete reference of configuration options.
   # image:
   #   registry: ""
   #   repository: ""
