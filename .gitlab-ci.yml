@@ -18,6 +18,12 @@ variables:
   CHART_DIR: "mender"
   GITHUB_TOKEN: "${GITHUB_BOT_TOKEN_REPO_FULL}"
   MAIN_BRANCH: "master"
+  ECR_REGISTRY:
+    value: "017659451055.dkr.ecr.eu-central-1.amazonaws.com"
+    description: "ECR registry endpoint that fronts the Docker Hub pull-through cache"
+  ECR_DOCKERHUB_MIRROR:
+    value: "017659451055.dkr.ecr.eu-central-1.amazonaws.com/dockerhub"
+    description: "Registry mirror for Docker Hub images via ECR pull-through cache"
   RUN_PLAYGROUND:
     value: "false"
     description: "Run EKS setup playground"
@@ -125,6 +131,7 @@ renovate:
   - kubectl create ns "${NAMESPACE}"
   - kubectl config set-context --current --namespace="${NAMESPACE}"
   - echo "INFO - installing helm from scratch"
+  - aws ecr get-login-password --region eu-central-1 | helm registry login --username AWS --password-stdin ${ECR_REGISTRY}
   - tests/ci-deps-k8s.sh
   - |
     kubectl create secret docker-registry my-mender-pull-secret \
@@ -168,6 +175,19 @@ build:setup_eks_cluster:
         ${SPOT_STRING} \
         --instance-types c6i.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge,m5d.xlarge \
         --nodes ${CI_EKS_NUMBER_OF_NODES:-8}
+    - |
+      echo "INFO - granting ECR pull-through cache write permissions to node role"
+      NODEGROUP=$(eksctl get nodegroup --cluster ${EKS_CLUSTER_NAME} -o json | jq -r '.[0].Name')
+      NODE_ROLE_ARN=$(aws eks describe-nodegroup \
+        --cluster-name ${EKS_CLUSTER_NAME} \
+        --nodegroup-name "${NODEGROUP}" \
+        --query 'nodegroup.nodeRole' --output text)
+      NODE_ROLE_NAME=$(basename "${NODE_ROLE_ARN}")
+      AWS_ACCOUNT_ID=$(echo "${ECR_REGISTRY}" | cut -d. -f1)
+      aws iam put-role-policy \
+        --role-name "${NODE_ROLE_NAME}" \
+        --policy-name "ecr-pull-through-cache" \
+        --policy-document "$(printf '{"Version":"2012-10-17","Statement":[{"Sid":"EcrPtcWrite","Effect":"Allow","Action":["ecr:CreateRepository","ecr:BatchImportUpstreamImage"],"Resource":"arn:aws:ecr:%s:%s:repository/dockerhub/*"}]}' "${AWS_DEFAULT_REGION}" "${AWS_ACCOUNT_ID}")"
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
