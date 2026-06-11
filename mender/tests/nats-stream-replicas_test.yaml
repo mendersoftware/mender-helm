@@ -1,0 +1,52 @@
+suite: test WORKFLOWS_NATS_STREAM_REPLICAS
+templates:
+  - templates/workflows/deployment-server.yaml
+tests:
+  - it: uses nats.config.cluster.replicas when internal NATS is enabled
+    set:
+      workflows.enabled: true
+      nats.enabled: true
+      nats.config.cluster.replicas: 3
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "3"
+
+  - it: uses nats.config.cluster.replicas custom value when set
+    set:
+      workflows.enabled: true
+      nats.enabled: true
+      nats.config.cluster.replicas: 5
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "5"
+
+  - it: uses workflows.nats.replicas when internal NATS is disabled
+    set:
+      workflows.enabled: true
+      nats.enabled: false
+      global.nats.URL: "nats://external-nats:4222"
+      workflows.nats.replicas: 2
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "2"
+
+  - it: defaults WORKFLOWS_NATS_STREAM_REPLICAS to 3 when external NATS with no replica config
+    set:
+      workflows.enabled: true
+      nats.enabled: false
+      global.nats.URL: "nats://external-nats:4222"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "3"

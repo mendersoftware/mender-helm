@@ -107,11 +107,36 @@ nats_uri
 */}}
 {{- define "nats_uri" }}
 {{- $dot := (ternary . .dot (empty .dot)) -}}
-  {{- if and $dot.Values.nats.enabled ( not $dot.Values.global.nats.URL ) }}
+{{- $url := coalesce $dot.Values.nats.URL $dot.Values.global.nats.URL | default "" -}}
+  {{- if and $dot.Values.nats.enabled ( not $url ) }}
     {{- printf "nats://%s" ( include "nats.fullname" $dot.Subcharts.nats ) -}}
   {{- else }}
-    {{- printf $dot.Values.global.nats.URL | quote }}
+    {{- printf $url | quote }}
   {{- end }}
+{{- end }}
+
+{{/*
+nats_existingSecret - resolves new nats.existingSecret with fallback to global.nats.existingSecret
+*/}}
+{{- define "nats_existingSecret" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- coalesce $dot.Values.nats.existingSecret $dot.Values.global.nats.existingSecret | default "" -}}
+{{- end -}}
+
+{{/*
+nats_conf_validation - fail on conflicting NATS configuration
+*/}}
+{{- define "nats_conf_validation" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if and $dot.Values.nats.enabled ( or $dot.Values.nats.URL $dot.Values.global.nats.URL ) }}
+{{- fail "When internal NATS is enabled, nats.URL and global.nats.URL must be unset" }}
+{{- end }}
+{{- if and $dot.Values.nats.URL $dot.Values.global.nats.URL }}
+{{- fail "Please set either nats.URL or global.nats.URL, not both" }}
+{{- end }}
+{{- if and $dot.Values.nats.existingSecret $dot.Values.global.nats.existingSecret }}
+{{- fail "Please set either nats.existingSecret or global.nats.existingSecret, not both" }}
+{{- end }}
 {{- end }}
 
 {{/*
