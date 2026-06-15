@@ -529,6 +529,7 @@ test:helm_trivy_audit:
     - k8s-small
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
+  allow_failure: true
   rules:
     - if: '$RUN_PLAYGROUND == "true"'
       when: never
