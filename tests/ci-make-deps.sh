@@ -34,7 +34,8 @@ else
         oci://${ECR_DOCKERHUB_MIRROR}/bitnamicharts/mongodb \
         --version 16.5.45 \
         --set "global.security.allowInsecureImages=true" \
-        --set "image.repository=${ECR_DOCKERHUB_MIRROR}/bitnamisecure/mongodb" \
+        --set "global.imageRegistry=${ECR_REGISTRY}" \
+        --set "image.repository=dockerhub/bitnamisecure/mongodb" \
         --set "image.tag=latest" \
         --set "auth.enabled=false" \
         --set "persistence.enabled=false" \
