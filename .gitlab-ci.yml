@@ -126,9 +126,15 @@ renovate:
     --output text))
   - aws sts get-caller-identity
 
+.post_test_helm_cleanup: &post_test_helm_cleanup
+  - |
+    echo "INFO - cleaning up all Helm releases in namespace ${NAMESPACE}"
+    helm list -n "${NAMESPACE}" -q 2>/dev/null \
+      | xargs -r helm delete -n "${NAMESPACE}" --timeout 5m || true
+
 .pre_helm_tests: &pre_helm_tests
   - eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-  - kubectl create ns "${NAMESPACE}"
+  - kubectl create ns "${NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
   - kubectl config set-context --current --namespace="${NAMESPACE}"
   - echo "INFO - installing helm from scratch"
   - aws ecr get-login-password --region eu-central-1 | helm registry login --username AWS --password-stdin ${ECR_REGISTRY}
@@ -138,7 +144,8 @@ renovate:
       --docker-username=${REGISTRY_MENDER_IO_USERNAME} \
       --docker-password=${REGISTRY_MENDER_IO_PASSWORD} \
       --docker-email=${REGISTRY_MENDER_IO_EMAIL} \
-      --docker-server=registry.mender.io
+      --docker-server=registry.mender.io \
+      --dry-run=client -o yaml | kubectl apply -f -
 
 build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
@@ -296,8 +303,7 @@ test:helm_chart_install:
         ./mender || exit 3;
     - make test
   after_script:
-    - echo "INFO - cleaning up to save resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:helm_chart_install_sub_charts:
   tags:
@@ -362,8 +368,7 @@ test:helm_chart_install_sub_charts:
       bash tests/ingress-internal-test.sh
     - bash tests/ci-test-teardown.sh || true
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 .test:helm_chart_upgrade_from_previous_lts_to_current_lts: # TODO: enable this for the next LTS
   # For example: from Mender 3.6 to Mender 3.7
@@ -427,8 +432,7 @@ test:helm_chart_install_sub_charts:
     - helm history mender
     - make test
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:helm_chart_upgrade_from_current_lts_to_current_release:
   tags:
@@ -489,8 +493,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
     - helm history mender
     - make test
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:kubeconform:
   tags:
@@ -615,8 +618,7 @@ test:helm_chart_install_opensource:
       bash tests/ingress-internal-test.sh
     - bash tests/ci-test-teardown.sh || true
   after_script:
-    - echo "INFO - cleaning up to save resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:helm_chart_install_with_r2:
   tags:
@@ -685,8 +687,7 @@ test:helm_chart_install_with_r2:
       bash tests/ingress-internal-test.sh
     - bash tests/ci-test-teardown.sh || true
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:playground_eks_cluster:
   tags:
