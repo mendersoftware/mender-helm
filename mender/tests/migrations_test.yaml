@@ -1,0 +1,309 @@
+suite: test database migrations
+templates:
+  - templates/device-auth/job.yaml
+  - templates/deployments/job.yaml
+  - templates/deviceconfig/job.yaml
+  - templates/deviceconnect/job.yaml
+  - templates/inventory/job.yaml
+  - templates/iot-manager/job.yaml
+  - templates/useradm/job.yaml
+  - templates/workflows/job.yaml
+  - templates/auditlogs/job.yaml
+  - templates/devicemonitor/job.yaml
+  - templates/tenantadm/job.yaml
+tests:
+  ##############################################################################
+  # Global migration control tests
+  ##############################################################################
+  - it: should not create any migration jobs when dbmigration is disabled
+    set:
+      dbmigration.enable: false
+      global.enterprise: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  ##############################################################################
+  # Common migrations (Open Source + Enterprise)
+  ##############################################################################
+
+
+  # device-auth migration (common)
+  - it: should create device-auth migration when enabled
+    set:
+      dbmigration.enable: true
+      device_auth.enabled: true
+    template: templates/device-auth/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*deviceauth-migration$
+      - equal:
+          path: spec.backoffLimit
+          value: 5
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install,pre-upgrade
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "10"
+      - equal:
+          path: metadata.annotations["helm.sh/hook-delete-policy"]
+          value: before-hook-creation,hook-succeeded
+
+  - it: should not create device-auth migration when device_auth is disabled
+    set:
+      dbmigration.enable: true
+      device_auth.enabled: false
+    template: templates/device-auth/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # deployments migration (common)
+  - it: should create deployments migration when enabled
+    set:
+      dbmigration.enable: true
+      deployments.enabled: true
+    template: templates/deployments/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*deployments-migration$
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install,pre-upgrade
+
+  # useradm migration (common)
+  - it: should create useradm migration when enabled
+    set:
+      dbmigration.enable: true
+      useradm.enabled: true
+    template: templates/useradm/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*useradm-migration$
+
+  # workflows migration (common)
+  - it: should create workflows migration when enabled
+    set:
+      dbmigration.enable: true
+      workflows.enabled: true
+    template: templates/workflows/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*workflows-migration$
+
+  # inventory migration (common)
+  - it: should create inventory migration when enabled
+    set:
+      dbmigration.enable: true
+      inventory.enabled: true
+    template: templates/inventory/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*inventory-migration$
+
+  # deviceconnect migration (common)
+  - it: should create deviceconnect migration when enabled
+    set:
+      dbmigration.enable: true
+      deviceconnect.enabled: true
+    template: templates/deviceconnect/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*deviceconnect-migration$
+
+  # deviceconfig migration (common)
+  - it: should create deviceconfig migration when enabled
+    set:
+      dbmigration.enable: true
+      deviceconfig.enabled: true
+    template: templates/deviceconfig/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*deviceconfig-migration$
+
+  # iot-manager migration (common)
+  - it: should create iot-manager migration when enabled
+    set:
+      dbmigration.enable: true
+      iot_manager.enabled: true
+    template: templates/iot-manager/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*iot-manager-migration$
+
+  ##############################################################################
+  # Enterprise-only migrations
+  ##############################################################################
+
+
+  # auditlogs migration (enterprise-only)
+  - it: should create auditlogs migration for enterprise when enabled
+    set:
+      dbmigration.enable: true
+      global.enterprise: true
+      auditlogs.enabled: true
+    template: templates/auditlogs/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*auditlogs-migration$
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install,pre-upgrade
+
+  - it: should not create auditlogs migration for open source
+    set:
+      dbmigration.enable: true
+      global.enterprise: false
+      auditlogs.enabled: true
+    template: templates/auditlogs/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create auditlogs migration when auditlogs is disabled
+    set:
+      dbmigration.enable: true
+      global.enterprise: true
+      auditlogs.enabled: false
+    template: templates/auditlogs/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # devicemonitor migration (enterprise-only)
+  - it: should create devicemonitor migration for enterprise when enabled
+    set:
+      dbmigration.enable: true
+      global.enterprise: true
+      devicemonitor.enabled: true
+    template: templates/devicemonitor/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*devicemonitor-migration$
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install,pre-upgrade
+
+  - it: should not create devicemonitor migration for open source
+    set:
+      dbmigration.enable: true
+      global.enterprise: false
+      devicemonitor.enabled: true
+    template: templates/devicemonitor/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # tenantadm migration (enterprise-only)
+  - it: should create tenantadm migration for enterprise when enabled
+    set:
+      dbmigration.enable: true
+      global.enterprise: true
+      tenantadm.enabled: true
+    template: templates/tenantadm/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Job
+      - matchRegex:
+          path: metadata.name
+          pattern: .*tenantadm-migration$
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install,pre-upgrade
+
+  - it: should not create tenantadm migration for open source
+    set:
+      dbmigration.enable: true
+      global.enterprise: false
+      tenantadm.enabled: true
+    template: templates/tenantadm/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create tenantadm migration when tenantadm is disabled
+    set:
+      dbmigration.enable: true
+      global.enterprise: true
+      tenantadm.enabled: false
+    template: templates/tenantadm/job.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  ##############################################################################
+  # Migration job configuration tests
+  ##############################################################################
+  - it: should use restart policy Never for migrations
+    set:
+      dbmigration.enable: true
+      device_auth.enabled: true
+    template: templates/device-auth/job.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.restartPolicy
+          value: Never
+
+  - it: should have correct labels on migration jobs
+    set:
+      dbmigration.enable: true
+      device_auth.enabled: true
+    template: templates/device-auth/job.yaml
+    asserts:
+      - isNotNull:
+          path: metadata.labels
+      - isNotNull:
+          path: spec.template.metadata.labels
