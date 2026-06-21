@@ -1,4 +1,5 @@
 {{- define "mender.iotmanagerPodTemplate" -}}
+{{- include "nats_conf_validation" . }}
 metadata:
   {{- with .dot.Values.iot_manager.podAnnotations }}
   annotations:
@@ -74,11 +75,11 @@ spec:
     - name: IOT_MANAGER_DEVICEAUTH_ADDR
       value: {{ printf "http://%s:%v" .dot.Values.device_auth.service.name .dot.Values.device_auth.service.port | quote }}
     - name: IOT_MANAGER_NATS_URI
-    {{- if .dot.Values.global.nats.existingSecret }}
+    {{- if include "nats_existingSecret" . }}
       valueFrom:
         secretKeyRef:
           key: NATS_URI
-          name: {{ .dot.Values.global.nats.existingSecret }}
+          name: {{ include "nats_existingSecret" . }}
     {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}

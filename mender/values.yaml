@@ -9,7 +9,9 @@ global:
     existingSecret: ""
     URL: ""
   nats:
+    # DEPRECATED: use nats.existingSecret instead. Will be removed in the next major release.
     existingSecret: ""
+    # DEPRECATED: use nats.URL instead. Will be removed in the next major release.
     URL: ""
   redis:
     URL: ""
@@ -192,26 +194,32 @@ mongodb:
 
 # Using default values from
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
+# NOTE: Helm merges the parent chart's global: block into all subcharts.
+# If global.image.registry is set in a mender override file, it will also
+# apply to NATS container images. Use nats.container.image.registry for
+# NATS-specific registry overrides instead.
 nats:
   enabled: true
-  replicas: 1
-  cluster:
-    enabled: true
-    replicas: 3
   fullnameOverride: ""
-  nats:
-    image:
-      tag: "2.9.25-scratch"
+  # preferred replacement for global.nats.existingSecret (deprecated)
+  existingSecret: ""
+  # preferred replacement for global.nats.URL (deprecated)
+  URL: ""
+  config:
+    cluster:
+      enabled: true
+      replicas: 3
     jetstream:
       enabled: true
-      memStorage:
+      memoryStore:
         enabled: true
-        size: "1Gi"
-      fileStorage:
+        maxSize: "1Gi"
+      fileStore:
         enabled: true
-        size: "2Gi"
-        storageDirectory: /data/
-        storageClassName: ""
+        dir: /data/
+        pvc:
+          size: "2Gi"
+          storageClassName: ""
 
 api_gateway:
   enabled: true
@@ -530,26 +538,33 @@ device_auth:
   # These cronjobs are used to perform maintenance tasks, like device licensing
   #
   cronjobs:
-    enabled: false
-    jobs: []
-    #   - name: device-auth-license-count
-    #     schedule: "7 3 * * *"
+    enabled: true
+    jobs:
+      - name: device-auth-license-count
+        schedule: "7 3 * * *"
+        enterpriseOnly: true
+        command: []
+        args:
+        - "license-count"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+    #   Additional jobs can be added here:
+    #   - name: my-custom-job
+    #     schedule: "0 * * * *"
     #     command: []
     #     args:
-    #     - "license-count"
+    #     - "my-command"
     #     customEnvs:
     #       - name: DEVICEAUTH_MONGO
     #         valueFrom:
     #           secretKeyRef:
     #             key: MONGO_URL
     #             name: mongodb-common
-    #     resources:
-    #       limits:
-    #         cpu: 100m
-    #         memory: 100Mi
-    #       requests:
-    #         cpu: 50m
-    #         memory: 50Mi
     #     tolerations: []
     #     priorityClassName: "mender-low-priority"
     #     affinity: {}
@@ -1578,17 +1593,3 @@ dbmigration:
     runAsNonRoot: true
     runAsUser: 999
 
-# Feature preview: Device License Count
-# Only available from version 3.6,
-# and available in Mender Enterprise
-# **WARNING**: This will be deprecated in the Helm Chart v7.0.0
-# and will be replaced by the `device_auth.cronjobs` feature.
-device_license_count:
-  enabled: true
-
-# Feature preview
-featureGates:
-  # Use K8s TLS Secret type for the API Gateway:
-  # tls.crt and tls.key replace cert.crt and private.key
-  # This affects api_gateway.certs when SSL is enabled
-  k8sTlsSecrets: false
