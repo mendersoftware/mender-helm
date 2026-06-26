@@ -78,6 +78,7 @@ check-deprecated-apis: ## Detect removed/deprecated Kubernetes API versions (ver
 trivy: ## Run trivy misconfiguration check on the chart
 	trivy config $(NAME)/ \
 		--helm-values tests/values-helmci.yaml \
+		--severity HIGH,CRITICAL \
 		--exit-code 1 \
 		--ignorefile .trivyignore
 
