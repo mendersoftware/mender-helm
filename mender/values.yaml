@@ -155,7 +155,7 @@ mongodb:
   enabled: true
   image:
     repository: mongo
-    tag: "8.0.23"
+    tag: "8.0.26"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1
@@ -221,7 +221,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.7.1
+    tag: v3.7.5
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -970,6 +970,13 @@ useradm:
     # successThreshold: 2
     # failureThreshold: 6
 
+  #
+  # Optional cronjobs for useradm.
+  #
+  cronjobs:
+    enabled: false
+    jobs: []
+
 workflows:
   enabled: true
   podAnnotations: {}
@@ -1299,6 +1306,10 @@ deviceconnect:
       cpu: 100m
       memory: 128Mi
   affinity: {}
+  config: {}
+    ## Configuration mounted as `/etc/deviceconnect/config.yaml`
+    ## Please refer to the reference configuration shipped with the container
+    ## for a complete reference of configuration options.
   # image:
   #   registry: ""
   #   repository: ""
@@ -1510,7 +1521,7 @@ redis:
 
   image:
     repository: redis
-    tag: "8.6.3-alpine"
+    tag: "8.8.0-alpine"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1

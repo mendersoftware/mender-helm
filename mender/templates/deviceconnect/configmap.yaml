@@ -1,0 +1,19 @@
+{{- if and .Values.deviceconnect.enabled .Values.deviceconnect.config }}
+{{- /* This (entire) ConfigMap is mounted at /etc/deviceconnect */}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mender.fullname" . }}-deviceconnect
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
+    app.kubernetes.io/component: deviceconnect
+data:
+  config.yaml: |-
+    {{- if (typeIs "string" .Values.deviceconnect.config) }}
+    {{- fromYaml .Values.deviceconnect.config | toYaml | nindent 4}}
+    {{- else }}
+    {{- toYaml .Values.deviceconnect.config | nindent 4 }}
+    {{- end }}
+{{- end }}

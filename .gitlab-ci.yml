@@ -18,6 +18,12 @@ variables:
   CHART_DIR: "mender"
   GITHUB_TOKEN: "${GITHUB_BOT_TOKEN_REPO_FULL}"
   MAIN_BRANCH: "master"
+  ECR_REGISTRY:
+    value: "017659451055.dkr.ecr.eu-central-1.amazonaws.com"
+    description: "ECR registry endpoint that fronts the Docker Hub pull-through cache"
+  ECR_DOCKERHUB_MIRROR:
+    value: "017659451055.dkr.ecr.eu-central-1.amazonaws.com/dockerhub"
+    description: "Registry mirror for Docker Hub images via ECR pull-through cache"
   RUN_PLAYGROUND:
     value: "false"
     description: "Run EKS setup playground"
@@ -81,8 +87,7 @@ include:
     file:
       - qa-common/runner.yml
       - qa-common/retry.yml
-  - project: "Northern.tech/Mender/mendertesting"
-    file: ".gitlab-ci-check-commits-signoffs.yml"
+  - component: gitlab.com/Northern.tech/Mender/mendertesting/commit-lint@master
   - project: "Northern.tech/Mender/mendertesting"
     file: ".gitlab-ci-check-license.yml"
   - project: "Northern.tech/Mender/mendertesting"
@@ -103,9 +108,11 @@ renovate:
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
   stage: build
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
 
 .set_eks_helmci_vars: &set_eks_helmci_vars
+  # prevent client-go in-cluster fallback to the runner pod namespace
+  - unset KUBERNETES_SERVICE_HOST KUBERNETES_SERVICE_PORT
   - export AWS_DEFAULT_REGION=eu-central-1
   - >
     export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
@@ -118,24 +125,142 @@ renovate:
     --output text))
   - aws sts get-caller-identity
 
+.delete_ecr_inline_policy: &delete_ecr_inline_policy
+  - |
+    echo "INFO - removing ecr-pull-through-cache inline policy from node role"
+    NODEGROUP=$(eksctl get nodegroup --cluster ${EKS_CLUSTER_NAME} -o json 2>/dev/null | jq -r '.[0].Name // empty')
+    if [ -z "$NODEGROUP" ]; then
+      echo "INFO - no nodegroup found, skipping inline policy deletion"
+    else
+      NODE_ROLE_ARN=$(aws eks describe-nodegroup \
+        --cluster-name ${EKS_CLUSTER_NAME} \
+        --nodegroup-name "${NODEGROUP}" \
+        --query 'nodegroup.nodeRole' --output text 2>/dev/null || true)
+      NODE_ROLE_NAME=$(basename "${NODE_ROLE_ARN}")
+      aws iam delete-role-policy \
+        --role-name "${NODE_ROLE_NAME}" \
+        --policy-name "ecr-pull-through-cache" || true
+    fi
+
+.pre_eks_delete_cleanup: &pre_eks_delete_cleanup
+  - |
+    echo "INFO - writing kubeconfig for pre-deletion cleanup"
+    eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME} || true
+  - |
+    echo "INFO - deleting Helm releases in application namespaces (kube-system preserved so LB controller stays up)"
+    for ns in $(kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | grep -v '^kube-system$'); do
+      releases=$(helm list -n "$ns" -q 2>/dev/null)
+      if [ -n "$releases" ]; then
+        echo "INFO - deleting releases in namespace $ns: $releases"
+        echo "$releases" | xargs -r helm delete -n "$ns" --timeout 5m || true
+      fi
+    done
+  - |
+    echo "INFO - draining ELBs from cluster VPC"
+    VPC_ID=$(aws eks describe-cluster --name ${EKS_CLUSTER_NAME} \
+      --query 'cluster.resourcesVpcConfig.vpcId' --output text 2>/dev/null || true)
+    if [ -n "$VPC_ID" ]; then
+      for i in $(seq 1 9); do
+        LB_COUNT=$(aws elbv2 describe-load-balancers \
+          --query "length(LoadBalancers[?VpcId=='${VPC_ID}'])" \
+          --output text 2>/dev/null || echo 0)
+        [ "${LB_COUNT:-0}" -eq 0 ] && echo "INFO - no ELBs remaining" && break
+        echo "INFO - ${LB_COUNT} ELB(s) still present (attempt $i/9), waiting 10s..."
+        sleep 10
+      done
+      LB_ARNS=$(aws elbv2 describe-load-balancers \
+        --query "LoadBalancers[?VpcId=='${VPC_ID}'].LoadBalancerArn" \
+        --output json 2>/dev/null | jq -r '.[]' || true)
+      if [ -n "$LB_ARNS" ]; then
+        for arn in $LB_ARNS; do
+          echo "INFO - force-deleting ELB: $arn"
+          aws elbv2 delete-load-balancer --load-balancer-arn "$arn" || true
+        done
+        for arn in $LB_ARNS; do
+          aws elbv2 wait load-balancers-deleted --load-balancer-arns "$arn" || true
+        done
+      fi
+    fi
+  - |
+    echo "INFO - sweeping all available ENIs in cluster VPC (up to 3m, then force-delete)"
+    VPC_ID=$(aws eks describe-cluster --name ${EKS_CLUSTER_NAME} \
+      --query 'cluster.resourcesVpcConfig.vpcId' --output text 2>/dev/null || true)
+    if [ -n "$VPC_ID" ]; then
+      for i in $(seq 1 18); do
+        ENI_COUNT=$(aws ec2 describe-network-interfaces \
+          --filters "Name=vpc-id,Values=${VPC_ID}" "Name=status,Values=available" \
+          --query 'length(NetworkInterfaces)' \
+          --output text 2>/dev/null || echo 0)
+        [ "${ENI_COUNT:-0}" -eq 0 ] && echo "INFO - no available ENIs remaining" && break
+        echo "INFO - ${ENI_COUNT} available ENI(s) in VPC (attempt $i/18), waiting 10s..."
+        sleep 10
+      done
+      ENI_IDS=$(aws ec2 describe-network-interfaces \
+        --filters "Name=vpc-id,Values=${VPC_ID}" "Name=status,Values=available" \
+        --query 'NetworkInterfaces[].NetworkInterfaceId' \
+        --output json 2>/dev/null | jq -r '.[]' || true)
+      for eni in $ENI_IDS; do
+        echo "INFO - force-deleting available ENI: $eni"
+        aws ec2 delete-network-interface --network-interface-id "$eni" || true
+      done
+    fi
+  - |
+    echo "INFO - deleting Load Balancer Controller security groups"
+    VPC_ID=$(aws eks describe-cluster --name ${EKS_CLUSTER_NAME} \
+      --query 'cluster.resourcesVpcConfig.vpcId' --output text 2>/dev/null || true)
+    if [ -n "$VPC_ID" ]; then
+      LB_SGS=$(aws ec2 describe-security-groups \
+        --filters \
+          "Name=vpc-id,Values=${VPC_ID}" \
+          "Name=tag:elbv2.k8s.aws/cluster,Values=${EKS_CLUSTER_NAME}" \
+        --query 'SecurityGroups[].GroupId' \
+        --output json 2>/dev/null | jq -r '.[]' || true)
+      for sg in $LB_SGS; do
+        REFS=$(aws ec2 describe-security-groups \
+          --filters "Name=vpc-id,Values=${VPC_ID}" "Name=ip-permission.group-id,Values=${sg}" \
+          --query 'SecurityGroups[].GroupId' \
+          --output json 2>/dev/null | jq -r '.[]' || true)
+        for ref in $REFS; do
+          PERMS=$(aws ec2 describe-security-groups --group-ids "$ref" \
+            --query "SecurityGroups[0].IpPermissions[?UserIdGroupPairs[?GroupId=='${sg}']]" \
+            --output json 2>/dev/null || echo '[]')
+          [ "$PERMS" != "[]" ] && aws ec2 revoke-security-group-ingress \
+            --group-id "$ref" --ip-permissions "$PERMS" || true
+        done
+        echo "INFO - deleting security group: $sg"
+        aws ec2 delete-security-group --group-id "$sg" || true
+      done
+    fi
+  - |
+    echo "INFO - deleting Helm releases in kube-system"
+    helm list -n kube-system -q 2>/dev/null | xargs -r helm delete -n kube-system --timeout 5m || true
+
+.post_test_helm_cleanup: &post_test_helm_cleanup
+  - |
+    echo "INFO - cleaning up all Helm releases in namespace ${NAMESPACE}"
+    helm list -n "${NAMESPACE}" -q 2>/dev/null \
+      | xargs -r helm delete -n "${NAMESPACE}" --timeout 5m || true
+
 .pre_helm_tests: &pre_helm_tests
   - eksctl utils write-kubeconfig --cluster=${EKS_CLUSTER_NAME}
-  - kubectl create ns "${NAMESPACE}"
+  - kubectl create ns "${NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
   - kubectl config set-context --current --namespace="${NAMESPACE}"
   - echo "INFO - installing helm from scratch"
+  - aws ecr get-login-password --region eu-central-1 | helm registry login --username AWS --password-stdin ${ECR_REGISTRY}
   - tests/ci-deps-k8s.sh
   - |
     kubectl create secret docker-registry my-mender-pull-secret \
       --docker-username=${REGISTRY_MENDER_IO_USERNAME} \
       --docker-password=${REGISTRY_MENDER_IO_PASSWORD} \
       --docker-email=${REGISTRY_MENDER_IO_EMAIL} \
-      --docker-server=registry.mender.io
+      --docker-server=registry.mender.io \
+      --dry-run=client -o yaml | kubectl apply -f -
 
 build:setup_eks_cluster:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .pre
   tags:
-    - hetzner-amd-beefy
+    - k8s
   resource_group: helm
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
@@ -144,7 +269,7 @@ build:setup_eks_cluster:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
   id_tokens:
     AWS_OIDC_TOKEN:
       aud: https://gitlab.com
@@ -166,6 +291,19 @@ build:setup_eks_cluster:
         ${SPOT_STRING} \
         --instance-types c6i.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge,m5d.xlarge \
         --nodes ${CI_EKS_NUMBER_OF_NODES:-8}
+    - |
+      echo "INFO - granting ECR pull-through cache write permissions to node role"
+      NODEGROUP=$(eksctl get nodegroup --cluster ${EKS_CLUSTER_NAME} -o json | jq -r '.[0].Name')
+      NODE_ROLE_ARN=$(aws eks describe-nodegroup \
+        --cluster-name ${EKS_CLUSTER_NAME} \
+        --nodegroup-name "${NODEGROUP}" \
+        --query 'nodegroup.nodeRole' --output text)
+      NODE_ROLE_NAME=$(basename "${NODE_ROLE_ARN}")
+      AWS_ACCOUNT_ID=$(echo "${ECR_REGISTRY}" | cut -d. -f1)
+      aws iam put-role-policy \
+        --role-name "${NODE_ROLE_NAME}" \
+        --policy-name "ecr-pull-through-cache" \
+        --policy-document "$(printf '{"Version":"2012-10-17","Statement":[{"Sid":"EcrPtcWrite","Effect":"Allow","Action":["ecr:CreateRepository","ecr:BatchImportUpstreamImage"],"Resource":"arn:aws:ecr:%s:%s:repository/dockerhub/*"}]}' "${AWS_DEFAULT_REGION}" "${AWS_ACCOUNT_ID}")"
     - echo "INFO - assigning SSO roles for debugging failed tests:"
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_AdministratorAccess_d80c0803237d713a --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
     - eksctl create iamidentitymapping --cluster ${EKS_CLUSTER_NAME} --arn arn:aws:iam::017659451055:role/AWSReservedSSO_PowerUserAccess_28a0f819b31196fb --username "admin:{{SessionName}}" --group "system:masters" --no-duplicate-arns
@@ -184,9 +322,9 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260518
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260610
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
@@ -234,7 +372,7 @@ test:check-license-source:
 
 test:helm_chart_install:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -249,7 +387,7 @@ test:helm_chart_install:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-setup-test"
   id_tokens:
@@ -274,12 +412,11 @@ test:helm_chart_install:
         ./mender || exit 3;
     - make test
   after_script:
-    - echo "INFO - cleaning up to save resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:helm_chart_install_sub_charts:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -294,7 +431,7 @@ test:helm_chart_install_sub_charts:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-setup-test-sub-charts"
     INSTALL_SEAWEEDFS_DEP_ONLY: "true"
@@ -340,13 +477,12 @@ test:helm_chart_install_sub_charts:
       bash tests/ingress-internal-test.sh
     - bash tests/ci-test-teardown.sh || true
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 .test:helm_chart_upgrade_from_previous_lts_to_current_lts: # TODO: enable this for the next LTS
   # For example: from Mender 3.6 to Mender 3.7
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -361,7 +497,7 @@ test:helm_chart_install_sub_charts:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-upgrade-test-previous-tls"
   id_tokens:
@@ -405,12 +541,11 @@ test:helm_chart_install_sub_charts:
     - helm history mender
     - make test
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:helm_chart_upgrade_from_current_lts_to_current_release:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -426,7 +561,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-upgrade-test-current-lts"
   id_tokens:
@@ -467,8 +602,7 @@ test:helm_chart_upgrade_from_current_lts_to_current_release:
     - helm history mender
     - make test
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:kubeconform:
   tags:
@@ -502,9 +636,37 @@ test:helm_unittest:
   script:
     - helm unittest mender/
 
+test:helm_trivy_audit:
+  tags:
+    - k8s-small
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  allow_failure: true
+  rules:
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_TAG'
+      when: on_success
+  before_script:
+    - mkdir -p ~/.docker
+    - printf '{"auths":{"registry.mender.io":{"auth":"%s"}}}' "$(printf '%s:%s' "${REGISTRY_MENDER_IO_USERNAME}" "${REGISTRY_MENDER_IO_PASSWORD}" | base64 -w 0)" > ~/.docker/config.json
+  script:
+    - make trivy
+    - make trivy-sbom
+  artifacts:
+    expire_in: 1 year
+    reports:
+      cyclonedx: sbom.cdx.json
+    paths:
+      - sbom.cdx.json
+
 test:helm_chart_install_opensource:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -519,7 +681,7 @@ test:helm_chart_install_opensource:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-opensource-setup-test"
     INSTALL_SEAWEEDFS_DEP_ONLY: "true"
@@ -565,12 +727,11 @@ test:helm_chart_install_opensource:
       bash tests/ingress-internal-test.sh
     - bash tests/ci-test-teardown.sh || true
   after_script:
-    - echo "INFO - cleaning up to save resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:helm_chart_install_with_r2:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -588,7 +749,7 @@ test:helm_chart_install_with_r2:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
   variables:
     NAMESPACE: "mender-setup-test-r2"
   id_tokens:
@@ -635,12 +796,11 @@ test:helm_chart_install_with_r2:
       bash tests/ingress-internal-test.sh
     - bash tests/ci-test-teardown.sh || true
   after_script:
-    - echo "INFO - cleaning up resources"
-    - helm delete -n "${NAMESPACE}" mender || exit 0 # if it fails it means it's timing out - not that important
+    - *post_test_helm_cleanup
 
 test:playground_eks_cluster:
   tags:
-    - hetzner-amd-beefy
+    - k8s
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: test
   needs: ["build:setup_eks_cluster"]
@@ -664,7 +824,7 @@ test:playground_eks_cluster:
 
 publish:helm_chart_publishing:
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: "$CI_COMMIT_TAG"
       changes:
@@ -675,13 +835,8 @@ publish:helm_chart_publishing:
       aud: https://gitlab.com
   dependencies:
     - build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260518
+  image: ${PIPELINE_TOOLBOX_IMAGE}
   before_script:
-    - !reference [.qa-common-network-apt-retry, before_script]
-    - apt-get update -y
-    - apt-get install -y curl make git
-    - curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | DESIRED_VERSION="v3.8.2" bash
-    - *get_kubectl_and_tools
     - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0
     - export AWS_DEFAULT_REGION=us-east-1
     - >
@@ -703,9 +858,8 @@ publish:helm_chart_publishing:
   image: ${PIPELINE_TOOLBOX_IMAGE}
   stage: .post
   tags:
-    - hetzner-amd-beefy
+    - k8s
   resource_group: helm
-  allow_failure: true # can't find a way to avoid eks cleanup when no eks is setup, so let's allow to fail for now
   dependencies:
     - build:setup_eks_cluster
   rules:
@@ -715,15 +869,23 @@ publish:helm_chart_publishing:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "master-next" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG || $RUN_PLAYGROUND == "true"'
   id_tokens:
     AWS_OIDC_TOKEN:
       aud: https://gitlab.com
   before_script:
     - *set_eks_helmci_vars
   script:
-    - echo "INFO - deleting the temporary EKS cluster"
-    - eksctl delete cluster -n ${EKS_CLUSTER_NAME}
+    - *delete_ecr_inline_policy
+    - *pre_eks_delete_cleanup
+    - |
+      echo "INFO - checking if cluster ${EKS_CLUSTER_NAME} exists before deletion"
+      if eksctl get cluster --name ${EKS_CLUSTER_NAME} > /dev/null 2>&1; then
+        echo "INFO - deleting the temporary EKS cluster"
+        eksctl delete cluster -n ${EKS_CLUSTER_NAME}
+      else
+        echo "INFO - cluster ${EKS_CLUSTER_NAME} not found, skipping deletion"
+      fi
 
 cleanup_eks_cluster:failed:
   when: on_failure
@@ -744,7 +906,7 @@ changelog:
     GIT_DEPTH: 0 # Always get the full history
     GIT_STRATEGY: clone # Always get the full history
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
@@ -798,7 +960,7 @@ release:github:
   image: "registry.gitlab.com/northern.tech/mender/mender-test-containers/release-please:master"
   stage: .post
   tags:
-    - hetzner-amd-beefy
+    - k8s-small
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       when: never
