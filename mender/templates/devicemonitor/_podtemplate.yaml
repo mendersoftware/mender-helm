@@ -77,6 +77,8 @@ spec:
       value: {{ printf "http://%s:%v" .dot.Values.useradm.service.name .dot.Values.useradm.service.port | quote }}
     - name: DEVICEMONITOR_WORKFLOWS_URL
       value: {{ printf "http://%s:%v" .dot.Values.workflows.service.name .dot.Values.workflows.service.port | quote }}
+    - name: DEVICEMONITOR_BASE_URL
+      value: {{ .dot.Values.global.url | quote }}
 
     {{- include "mender.customEnvs" (merge (deepCopy .dot.Values.devicemonitor) (deepCopy (default (dict) .dot.Values.default))) | nindent 4 }}
 
