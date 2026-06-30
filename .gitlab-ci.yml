@@ -322,7 +322,7 @@ build:setup_eks_cluster:
 
 build:
   stage: build
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260610
+  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/debian:trixie-20260623
   tags:
     - k8s-small
   rules:
