@@ -21,16 +21,21 @@ local_seaweedfs_only=${1:-"false"}
 
 log "deploying dependencies: seaweedfs"
 # Stick to version 4.0.404 because of QA-1446
-helm install seaweedfs --wait -f tests/seaweedfs.yaml seaweedfs/seaweedfs --version 4.0.404
+helm install seaweedfs --wait \
+    -f tests/seaweedfs.yaml \
+    --set "global.registry=${ECR_DOCKERHUB_MIRROR}" \
+    seaweedfs/seaweedfs --version 4.0.404
 
 if [[ "$local_seaweedfs_only" == "true" ]]; then
     log "not deploying mongodb"
 else
     log "deploying dependencies: mongodb"
-    helm install mender-mongo bitnami/mongodb \
+    helm install mender-mongo \
+        oci://${ECR_DOCKERHUB_MIRROR}/bitnamicharts/mongodb \
         --version 16.5.45 \
         --set "global.security.allowInsecureImages=true" \
-        --set "image.repository=bitnamisecure/mongodb" \
+        --set "image.registry=${ECR_REGISTRY}" \
+        --set "image.repository=dockerhub/bitnamisecure/mongodb" \
         --set "image.tag=latest" \
         --set "auth.enabled=false" \
         --set "persistence.enabled=false" \
@@ -43,7 +48,11 @@ else
     log "deploying dependencies: nats"
     helm install nats nats/nats \
         --version 0.8.2 \
-        --set "nats.image=nats:2.9.25-scratch" \
+        --set "nats.image=${ECR_DOCKERHUB_MIRROR}/library/nats:2.9.25-scratch" \
         --set "nats.jetstream.enabled=true" \
+        --set "bootconfig.image=${ECR_DOCKERHUB_MIRROR}/natsio/nats-boot-config:0.5.3" \
+        --set "natsbox.image=${ECR_DOCKERHUB_MIRROR}/natsio/nats-box:0.6.0" \
+        --set "reloader.image=${ECR_DOCKERHUB_MIRROR}/natsio/nats-server-config-reloader:0.6.1" \
+        --set "exporter.image=${ECR_DOCKERHUB_MIRROR}/natsio/prometheus-nats-exporter:0.8.0" \
         -f ./tests/affinity-x86_64-standard.yaml
 fi
