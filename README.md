@@ -423,34 +423,6 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `inventory.minReadySeconds` | Wait before considering the new pod available | `nil` |
 
-### Parameters: reporting
-
-The following table lists the parameters for the `reporting` component and their default values:
-
-| Parameter | Description | Default |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `reporting.enabled` | Enable the component | `true` |
-| `reporting.automigrate` | Enable automatic database migrations at service start up | `false` |
-| `reporting.image.registry` | Docker image registry | `docker.io` |
-| `reporting.image.repository` | Docker image repository | `mendersoftware/reporting` |
-| `reporting.image.tag` | Docker image tag | `nil` |
-| `reporting.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
-| `reporting.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
-| `reporting.image.podAnnotations` | add custom pod annotations | `nil` |
-| `reporting.replicas` | Number of replicas | `1` |
-| `reporting.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
-| `reporting.resources.limits.cpu` | Resources CPU limit | `50m` |
-| `reporting.resources.limits.memory` | Resources memory limit | `128Mi` |
-| `reporting.resources.requests.cpu` | Resources CPU request | `50m` |
-| `reporting.resources.requests.memory` | Resources memory request | `128Mi` |
-| `reporting.service.name` | Name of the service | `mender-reporting` |
-| `reporting.service.annotations` | Annotations map for the service | `{}` |
-| `reporting.service.type` | Service type | `ClusterIP` |
-| `reporting.service.loadBalancerIP` | Service load balancer IP | `nil` |
-| `reporting.service.loadBalancerSourceRanges` | Service load balancer source ranges | `nil` |
-| `reporting.service.port` | Port for the service | `8080` |
-| `reporting.service.nodePort` | Node port for the service | `nil` |
-
 ### Parameters: tenantadm
 
 The following table lists the parameters for the `tenantadm` component and their default values:

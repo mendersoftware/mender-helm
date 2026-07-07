@@ -1,4 +1,111 @@
 ---
+## mender-7.9.0 - 2026-07-06
+
+
+### Bug fixes
+
+
+- Bump traefik from v3.7.1 to v3.7.4 in /mender
+ ([0e30b20](https://github.com/mendersoftware/mender-helm/commit/0e30b203fd82807e980963b25a50e8097b928ef3))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.7.1 to v3.7.4.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: v3.7.4
+    dependency-type: direct:production
+  ...
+- Bump traefik from v3.7.4 to v3.7.5 in /mender
+ ([a8c0f45](https://github.com/mendersoftware/mender-helm/commit/a8c0f45b1930e278f8311a09d0b7fdbfd4a339e8))  by @dependabot[bot]
+
+
+
+
+  Bumps traefik from v3.7.4 to v3.7.5.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: traefik
+    dependency-version: v3.7.5
+    dependency-type: direct:production
+  ...
+- Bump mongo from 8.0.23 to 8.0.26 in /mender
+ ([843119d](https://github.com/mendersoftware/mender-helm/commit/843119d9663996d4411755d286ceb4712e46b253))  by @dependabot[bot]
+
+
+
+
+  Bumps mongo from 8.0.23 to 8.0.26.
+  
+  ---
+  updated-dependencies:
+  - dependency-name: mongo
+    dependency-version: 8.0.26
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+
+
+
+### Documentation
+
+
+- Remove reporting section from readme
+ ([ee15aaf](https://github.com/mendersoftware/mender-helm/commit/ee15aaf8ad10da31809eb38dd26a10a2994c3581))  by @alfrunes
+
+
+
+
+  The service was removed several years ago.
+
+
+
+
+### Features
+
+
+- *(deviceconnect)* Add ConfigMap for mounting file configuration
+ ([c06a39c](https://github.com/mendersoftware/mender-helm/commit/c06a39cb21fd7a783c0f1a3bd1002c532fef2ae8))  by @alfrunes
+
+
+
+- *(devicemonitor)* Add base url for devicemonitor, needed for security email sending
+([QA-1646](https://northerntech.atlassian.net/browse/QA-1646)) ([4a8faef](https://github.com/mendersoftware/mender-helm/commit/4a8faef0105ea1c0960a98fbca9724a72967f366))  by @merlin-northern
+
+
+
+
+
+  Devicemonitor now uses the general email notification template
+  and this setting is needed, see QA-1646 and
+  mender-server-enterprise/ed22c191630e06e9410e9c29ad214639027118c4
+
+
+
+
+
+## mender-7.8.0 - 2026-06-05
+
+
+### Features
+
+
+- Add cronjobs template to useradm
+([MEN-8860](https://northerntech.atlassian.net/browse/MEN-8860)) ([86d269a](https://github.com/mendersoftware/mender-helm/commit/86d269a658fd315c33814b26336f20980a5d5766))  by @kjaskiewiczz
+
+
+
+
+
+
+
+
+
 ## mender-7.7.2 - 2026-05-19
 
 
@@ -1125,6 +1232,41 @@
 
 
 # Changelog
+
+## [7.9.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.8.1...mender-7.9.0) (2026-07-06)
+
+
+### Features
+
+* **deviceconnect:** add ConfigMap for mounting file configuration ([729faf9](https://github.com/mendersoftware/mender-helm/commit/729faf9db0ceee60bc861935b2ca0a95aeb7bb8f))
+* **deviceconnect:** add ConfigMap for mounting file configuration ([c06a39c](https://github.com/mendersoftware/mender-helm/commit/c06a39cb21fd7a783c0f1a3bd1002c532fef2ae8))
+* **devicemonitor:** add base url for devicemonitor, needed for security email sending ([4a8faef](https://github.com/mendersoftware/mender-helm/commit/4a8faef0105ea1c0960a98fbca9724a72967f366))
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.23 to 8.0.26 in /mender ([f3a2bbe](https://github.com/mendersoftware/mender-helm/commit/f3a2bbe1bce660e8646e2dbda0d732a47517d036))
+* bump mongo from 8.0.23 to 8.0.26 in /mender ([843119d](https://github.com/mendersoftware/mender-helm/commit/843119d9663996d4411755d286ceb4712e46b253))
+* bump traefik from v3.7.1 to v3.7.4 in /mender ([fdc8528](https://github.com/mendersoftware/mender-helm/commit/fdc8528f407fa6040ac048d9cbbbaaca52d875bb))
+* bump traefik from v3.7.1 to v3.7.4 in /mender ([0e30b20](https://github.com/mendersoftware/mender-helm/commit/0e30b203fd82807e980963b25a50e8097b928ef3))
+* bump traefik from v3.7.4 to v3.7.5 in /mender ([e4a137d](https://github.com/mendersoftware/mender-helm/commit/e4a137d54415d6be790e7cbebad5811ad12b65d9))
+* bump traefik from v3.7.4 to v3.7.5 in /mender ([a8c0f45](https://github.com/mendersoftware/mender-helm/commit/a8c0f45b1930e278f8311a09d0b7fdbfd4a339e8))
+
+## [7.8.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.8.0...mender-7.8.1) (2026-06-05)
+
+
+### Bug Fixes
+
+* bump redis from 8.6.3-alpine to 8.8.0-alpine in /mender ([999faba](https://github.com/mendersoftware/mender-helm/commit/999faba45634a645f7027af884f0e1a94a1d2a7b))
+* bump redis from 8.6.3-alpine to 8.8.0-alpine in /mender ([84c4f5d](https://github.com/mendersoftware/mender-helm/commit/84c4f5dbea8e7b3245ffc660ee8e4364f427ceb4))
+
+## [7.8.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.4...mender-7.8.0) (2026-06-05)
+
+
+### Features
+
+* add cronjobs template to useradm ([ad289b4](https://github.com/mendersoftware/mender-helm/commit/ad289b441062c80ed8f2be9399ea060102369f67))
+* add cronjobs template to useradm ([86d269a](https://github.com/mendersoftware/mender-helm/commit/86d269a658fd315c33814b26336f20980a5d5766))
 
 ## [7.7.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.7.3...mender-7.7.4) (2026-05-28)
 

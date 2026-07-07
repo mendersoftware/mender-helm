@@ -21,9 +21,6 @@ set -e
 log "add helm repo: stable"
 helm repo add stable https://charts.helm.sh/stable
 
-log "add helm repo: mongodb"
-helm repo add bitnami https://charts.bitnami.com/bitnami
-
 log "add helm repo: nats"
 helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 

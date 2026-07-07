@@ -118,6 +118,18 @@ spec:
           port: 8080
           path: api/internal/v1/deviceconnect/shutdown
     {{- end }}
+    {{- if and .dot.Values.deviceconnect.enabled .dot.Values.deviceconnect.config }}
+    volumeMounts:
+      - mountPath: /etc/deviceconnect
+        name: config
+    {{- end }}
+
+  {{- if and .dot.Values.deviceconnect.enabled .dot.Values.deviceconnect.config }}
+  volumes:
+  - name: config
+    configMap:
+      name: {{ include "mender.fullname" .dot }}-deviceconnect
+  {{- end }}
 
   {{- if (not .migration) }}
   # Termination grace period should be higher than graceful shutdown timeout
