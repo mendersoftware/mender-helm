@@ -1233,6 +1233,14 @@
 
 # Changelog
 
+## [7.9.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.9.0...mender-7.9.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* bump traefik from v3.7.5 to v3.7.6 in /mender ([3fe8be6](https://github.com/mendersoftware/mender-helm/commit/3fe8be6d4a58ab93904086b70a876d126bdcdf2e))
+* bump traefik from v3.7.5 to v3.7.6 in /mender ([b593832](https://github.com/mendersoftware/mender-helm/commit/b5938328b1555c5667739b406a7925faa961a2e6))
+
 ## [7.9.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.8.1...mender-7.9.0) (2026-07-06)
 
 
