@@ -1,4 +1,20 @@
 ---
+## mender-7.9.2 - 2026-07-10
+
+
+### Bug fixes
+
+
+- Set AppVersion to latest version of Mender Server Enterprise (v4.1.2)
+ ([7cd322b](https://github.com/mendersoftware/mender-helm/commit/7cd322b67efd56c337d3114bcee1f219079e1916))  by @frodeha
+
+
+
+
+
+
+
+
 ## mender-7.9.0 - 2026-07-06
 
 
@@ -1232,6 +1248,14 @@
 
 
 # Changelog
+
+## [7.9.2](https://github.com/mendersoftware/mender-helm/compare/mender-7.9.1...mender-7.9.2) (2026-07-10)
+
+
+### Bug Fixes
+
+* set AppVersion to latest version of Mender Server Enterprise (v4.1.2) ([c3453e4](https://github.com/mendersoftware/mender-helm/commit/c3453e4728608b4bde35826a743a0e0e0c2cf6bd))
+* set AppVersion to latest version of Mender Server Enterprise (v4.1.2) ([7cd322b](https://github.com/mendersoftware/mender-helm/commit/7cd322b67efd56c337d3114bcee1f219079e1916))
 
 ## [7.9.1](https://github.com/mendersoftware/mender-helm/compare/mender-7.9.0...mender-7.9.1) (2026-07-07)
 
