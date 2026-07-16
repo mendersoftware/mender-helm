@@ -1,6 +1,7 @@
 {{- define "mender.inventoryPodTemplate" -}}
 {{- include "redis_conf_validation" . }}
 {{- include "nats_conf_validation" . }}
+{{- include "mongodb_conf_validation" . }}
 metadata:
   {{- with .dot.Values.inventory.podAnnotations }}
   annotations:

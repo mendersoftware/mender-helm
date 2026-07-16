@@ -1,4 +1,5 @@
 {{- if and (.Values.device_auth.enabled) (.Values.device_auth.cronjobs.enabled) }}
+{{- include "mongodb_conf_validation" . }}
 {{- $context := (dict "dot" .
                       "component" "device-auth"
                       "imageComponent" "deviceauth"

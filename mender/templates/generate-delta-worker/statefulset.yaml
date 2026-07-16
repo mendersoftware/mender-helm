@@ -1,5 +1,6 @@
 {{- if and .Values.global.enterprise .Values.generate_delta_worker.enabled }}
 {{- include "nats_conf_validation" . }}
+{{- include "mongodb_conf_validation" . }}
 {{- $context := dict "dot" .
                      "override" .Values.generate_delta_worker
                      "component" "generate-delta-worker" }}

@@ -1,5 +1,6 @@
 {{- define "mender.deviceconnectPodTemplate" -}}
 {{- include "nats_conf_validation" . }}
+{{- include "mongodb_conf_validation" . }}
 metadata:
   {{- with .dot.Values.deviceconnect.podAnnotations }}
   annotations:

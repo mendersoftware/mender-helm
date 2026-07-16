@@ -1,5 +1,6 @@
 {{- if .Values.create_artifact_worker.enabled }}
 {{- include "nats_conf_validation" . }}
+{{- include "mongodb_conf_validation" . }}
 {{- $context := dict "dot" .
     "override" .Values.create_artifact_worker
     "component" "create-artifact-worker" -}}

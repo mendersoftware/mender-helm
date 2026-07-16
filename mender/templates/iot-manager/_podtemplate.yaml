@@ -1,5 +1,6 @@
 {{- define "mender.iotmanagerPodTemplate" -}}
 {{- include "nats_conf_validation" . }}
+{{- include "mongodb_conf_validation" . }}
 metadata:
   {{- with .dot.Values.iot_manager.podAnnotations }}
   annotations:

@@ -60,6 +60,7 @@ tests:
     set:
       device_auth.enabled: true
       global.enterprise: true
+      mongodb.enabled: false
       global.mongodb.existingSecret: "my-mongodb-secret"
     asserts:
       - contains:

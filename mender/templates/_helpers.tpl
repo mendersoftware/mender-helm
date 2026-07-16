@@ -103,6 +103,19 @@ MongoDB URI
 {{- end }}
 
 {{/*
+Validate MongoDB configuration
+*/}}
+{{- define "mongodb_conf_validation" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if and $dot.Values.mongodb.enabled ( or $dot.Values.global.mongodb.URL $dot.Values.global.mongodb.existingSecret ) }}
+{{- fail "When internal mongodb is enabled, both global.mongodb.URL and global.mongodb.existingSecret have to be unset" }}
+{{- end }}
+{{- if and $dot.Values.global.mongodb.URL $dot.Values.global.mongodb.existingSecret }}
+{{- fail "Please set either global.mongodb.URL or global.mongodb.existingSecret, not both" }}
+{{- end }}
+{{- end }}
+
+{{/*
 nats_uri
 */}}
 {{- define "nats_uri" }}
