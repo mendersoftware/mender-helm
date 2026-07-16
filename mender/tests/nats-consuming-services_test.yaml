@@ -4,6 +4,7 @@ tests:
     template: templates/deviceconnect/deployment.yaml
     set:
       deviceconnect.enabled: true
+      nats.enabled: false
       nats.existingSecret: "my-nats-secret"
       global.nats.existingSecret: ""
     asserts:
@@ -20,6 +21,7 @@ tests:
     template: templates/inventory/deployment.yaml
     set:
       inventory.enabled: true
+      nats.enabled: false
       nats.existingSecret: "my-nats-secret"
       global.nats.existingSecret: ""
     asserts:
@@ -36,6 +38,7 @@ tests:
     template: templates/iot-manager/deployment.yaml
     set:
       iot_manager.enabled: true
+      nats.enabled: false
       nats.existingSecret: "my-nats-secret"
       global.nats.existingSecret: ""
     asserts:
@@ -52,6 +55,7 @@ tests:
     template: templates/create-artifact-worker/deployment.yaml
     set:
       create_artifact_worker.enabled: true
+      nats.enabled: false
       nats.existingSecret: "my-nats-secret"
       global.nats.existingSecret: ""
     asserts:
@@ -69,6 +73,7 @@ tests:
     set:
       generate_delta_worker.enabled: true
       global.enterprise: true
+      nats.enabled: false
       nats.existingSecret: "my-nats-secret"
       global.nats.existingSecret: ""
     asserts:
@@ -85,6 +90,7 @@ tests:
     template: templates/deviceconnect/deployment.yaml
     set:
       deviceconnect.enabled: true
+      nats.enabled: false
       nats.existingSecret: ""
       global.nats.existingSecret: "legacy-secret"
     asserts:
@@ -101,6 +107,7 @@ tests:
     template: templates/create-artifact-worker/deployment.yaml
     set:
       create_artifact_worker.enabled: true
+      nats.enabled: false
       nats.existingSecret: ""
       global.nats.existingSecret: "legacy-secret"
     asserts:
@@ -117,6 +124,7 @@ tests:
     template: templates/inventory/deployment.yaml
     set:
       inventory.enabled: true
+      nats.enabled: false
       nats.existingSecret: ""
       global.nats.existingSecret: "legacy-secret"
     asserts:
@@ -133,6 +141,7 @@ tests:
     template: templates/iot-manager/deployment.yaml
     set:
       iot_manager.enabled: true
+      nats.enabled: false
       nats.existingSecret: ""
       global.nats.existingSecret: "legacy-secret"
     asserts:
@@ -150,6 +159,7 @@ tests:
     set:
       generate_delta_worker.enabled: true
       global.enterprise: true
+      nats.enabled: false
       nats.existingSecret: ""
       global.nats.existingSecret: "legacy-secret"
     asserts:

@@ -50,6 +50,7 @@ tests:
   - it: uses secretKeyRef when nats.existingSecret is set
     set:
       workflows.enabled: true
+      nats.enabled: false
       nats.existingSecret: "my-nats-secret"
       global.nats.existingSecret: ""
     asserts:
@@ -65,6 +66,7 @@ tests:
   - it: falls back to global.nats.existingSecret when nats.existingSecret is unset
     set:
       workflows.enabled: true
+      nats.enabled: false
       nats.existingSecret: ""
       global.nats.existingSecret: "legacy-nats-secret"
     asserts:

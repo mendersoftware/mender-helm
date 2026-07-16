@@ -131,6 +131,9 @@ nats_conf_validation - fail on conflicting NATS configuration
 {{- if and $dot.Values.nats.enabled ( or $dot.Values.nats.URL $dot.Values.global.nats.URL ) }}
 {{- fail "When internal NATS is enabled, nats.URL and global.nats.URL must be unset" }}
 {{- end }}
+{{- if and $dot.Values.nats.enabled ( or $dot.Values.nats.existingSecret $dot.Values.global.nats.existingSecret ) }}
+{{- fail "When internal NATS is enabled, nats.existingSecret and global.nats.existingSecret must be unset" }}
+{{- end }}
 {{- if and $dot.Values.nats.URL $dot.Values.global.nats.URL }}
 {{- fail "Please set either nats.URL or global.nats.URL, not both" }}
 {{- end }}
