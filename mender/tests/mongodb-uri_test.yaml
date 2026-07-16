@@ -1,6 +1,7 @@
 suite: test mongodb_uri helper and the mongodb-common secret
 templates:
   - templates/secrets/secret-mongodb-common.yaml
+  - templates/secrets/secret-mongodb-common-prerelease.yaml
 tests:
   - it: renders the internal connection string when mongodb.enabled and no override is set
     set:
@@ -34,6 +35,49 @@ tests:
           value: "bW9uZ29kYjovL2V4dGVybmFsLW1vbmdvOjI3MDE3"
 
   - it: is not rendered at all when global.mongodb.existingSecret is set
+    set:
+      mongodb.enabled: false
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: mongodb-common-prerelease renders the internal connection string when mongodb.enabled and no override is set
+    template: templates/secrets/secret-mongodb-common-prerelease.yaml
+    set:
+      fullnameOverride: "mender"
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data.MONGO
+          value: "bW9uZ29kYjovL3Jvb3Q6cGxlYXNlY2hhbmdlbWVAbWVuZGVyLW1vbmdvZGI6MjcwMTc="
+      - equal:
+          path: data.MONGO_URL
+          value: "bW9uZ29kYjovL3Jvb3Q6cGxlYXNlY2hhbmdlbWVAbWVuZGVyLW1vbmdvZGI6MjcwMTc="
+
+  - it: mongodb-common-prerelease renders global.mongodb.URL when mongodb.enabled is false and existingSecret is unset
+    template: templates/secrets/secret-mongodb-common-prerelease.yaml
+    set:
+      mongodb.enabled: false
+      global.mongodb.URL: "mongodb://external-mongo:27017"
+      global.mongodb.existingSecret: ""
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data.MONGO
+          value: "bW9uZ29kYjovL2V4dGVybmFsLW1vbmdvOjI3MDE3"
+      - equal:
+          path: data.MONGO_URL
+          value: "bW9uZ29kYjovL2V4dGVybmFsLW1vbmdvOjI3MDE3"
+
+  - it: mongodb-common-prerelease is not rendered at all when global.mongodb.existingSecret is set
+    template: templates/secrets/secret-mongodb-common-prerelease.yaml
     set:
       mongodb.enabled: false
       global.mongodb.URL: ""
