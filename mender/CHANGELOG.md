@@ -1249,6 +1249,29 @@
 
 # Changelog
 
+## [8.0.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.9.4...mender-8.0.0) (2026-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* featureGates.k8sTlsSecrets is removed. The kubernetes.io/tls Secret type is now unconditional. Existing installs with SSL enabled must delete the api-gateway Secret before upgrading
+* device_license_count is removed. The replacement device_auth.cronjobs is now enabled by default with the device-auth-license-count job pre-configured. Existing installs must delete the old CronJob before upgrading to avoid a name conflict.
+* NATS subchart
+
+### Features
+
+* move api gateway secrets to kubernetes standard ([1d5c63b](https://github.com/mendersoftware/mender-helm/commit/1d5c63b2e809500576d19c9b9545f253bb9d97ca))
+* remove deprecated device_license_count ([827be71](https://github.com/mendersoftware/mender-helm/commit/827be717e3a87ecc82e44dba4bbf64c7acb81145))
+* upgrade NATS subchart to 2.14 ([9db3d31](https://github.com/mendersoftware/mender-helm/commit/9db3d311a20f6427cd556b85d93141ad41b0ae56))
+
+
+### Bug Fixes
+
+* enforce redis_conf_validation in deployments pod template ([4104d63](https://github.com/mendersoftware/mender-helm/commit/4104d63f6718ce9189ef5cdfdb1fd59cb3aa3697))
+* guard secret-mongodb-common-prerelease.yaml on existingSecret ([d568a94](https://github.com/mendersoftware/mender-helm/commit/d568a9491066a83e6d2c46bded6360ca9b264b9d))
+* reject global.mongodb.existingSecret/URL when internal mongodb is enabled ([2400ba4](https://github.com/mendersoftware/mender-helm/commit/2400ba413c3e192ff024abaf349624ee02854dc7))
+* reject nats.existingSecret when internal NATS is enabled ([9900128](https://github.com/mendersoftware/mender-helm/commit/9900128f352878dc24bcd5f668a1d2f9890cb9d3))
+
 ## [7.9.4](https://github.com/mendersoftware/mender-helm/compare/mender-7.9.3...mender-7.9.4) (2026-07-20)
 
 
