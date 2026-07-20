@@ -1,0 +1,226 @@
+suite: test MongoDB connection injection - all consuming services
+tests:
+  - it: workflows uses mongodb-common secret when mongodb.enabled (default)
+    template: templates/workflows/deployment-server.yaml
+    set:
+      workflows.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: WORKFLOWS_
+            secretRef:
+              name: mongodb-common
+
+  - it: workflows uses global.mongodb.existingSecret when mongodb is disabled
+    template: templates/workflows/deployment-server.yaml
+    set:
+      workflows.enabled: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: WORKFLOWS_
+            secretRef:
+              name: my-mongodb-secret
+
+  - it: workflows still points at mongodb-common when only global.mongodb.URL is set
+    template: templates/workflows/deployment-server.yaml
+    set:
+      workflows.enabled: true
+      mongodb.enabled: false
+      global.mongodb.URL: "mongodb://external-mongo:27017"
+      global.mongodb.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: WORKFLOWS_
+            secretRef:
+              name: mongodb-common
+
+  - it: device-auth uses mongodb-common secret when mongodb.enabled (default)
+    template: templates/device-auth/deployment.yaml
+    set:
+      device_auth.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: DEVICEAUTH_
+            secretRef:
+              name: mongodb-common
+
+  - it: device-auth uses global.mongodb.existingSecret when mongodb is disabled
+    template: templates/device-auth/deployment.yaml
+    set:
+      device_auth.enabled: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: DEVICEAUTH_
+            secretRef:
+              name: my-mongodb-secret
+
+  - it: create-artifact-worker uses mongodb-common secret when mongodb.enabled (default)
+    template: templates/create-artifact-worker/deployment.yaml
+    set:
+      create_artifact_worker.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: WORKFLOWS_
+            secretRef:
+              name: mongodb-common
+
+  - it: create-artifact-worker uses global.mongodb.existingSecret when mongodb is disabled
+    template: templates/create-artifact-worker/deployment.yaml
+    set:
+      create_artifact_worker.enabled: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: WORKFLOWS_
+            secretRef:
+              name: my-mongodb-secret
+
+  - it: generate-delta-worker uses mongodb-common secret when mongodb.enabled (default)
+    template: templates/generate-delta-worker/statefulset.yaml
+    set:
+      generate_delta_worker.enabled: true
+      global.enterprise: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: WORKFLOWS_
+            secretRef:
+              name: mongodb-common
+
+  - it: generate-delta-worker uses global.mongodb.existingSecret when mongodb is disabled
+    template: templates/generate-delta-worker/statefulset.yaml
+    set:
+      generate_delta_worker.enabled: true
+      global.enterprise: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: WORKFLOWS_
+            secretRef:
+              name: my-mongodb-secret
+
+  - it: inventory uses mongodb-common secret when mongodb.enabled (default)
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+      inventory.mongodbExistingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: INVENTORY_
+            secretRef:
+              name: mongodb-common
+
+  - it: inventory falls back to global.mongodb.existingSecret when mongodb is disabled
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.enabled: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "my-mongodb-secret"
+      inventory.mongodbExistingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: INVENTORY_
+            secretRef:
+              name: my-mongodb-secret
+
+  - it: inventory.mongodbExistingSecret takes priority over global.mongodb.existingSecret
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.enabled: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "legacy-secret"
+      inventory.mongodbExistingSecret: "inventory-only-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: INVENTORY_
+            secretRef:
+              name: inventory-only-secret
+
+  - it: deployments uses mongodb-common secret when mongodb.enabled (default)
+    template: templates/deployments/deployment.yaml
+    set:
+      deployments.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+      deployments.mongodbExistingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: DEPLOYMENTS_
+            secretRef:
+              name: mongodb-common
+
+  - it: deployments falls back to global.mongodb.existingSecret when mongodb is disabled
+    template: templates/deployments/deployment.yaml
+    set:
+      deployments.enabled: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "my-mongodb-secret"
+      deployments.mongodbExistingSecret: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: DEPLOYMENTS_
+            secretRef:
+              name: my-mongodb-secret
+
+  - it: deployments.mongodbExistingSecret takes priority over global.mongodb.existingSecret
+    template: templates/deployments/deployment.yaml
+    set:
+      deployments.enabled: true
+      mongodb.enabled: false
+      global.mongodb.existingSecret: "legacy-secret"
+      deployments.mongodbExistingSecret: "deployments-only-secret"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            prefix: DEPLOYMENTS_
+            secretRef:
+              name: deployments-only-secret

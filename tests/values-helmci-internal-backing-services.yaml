@@ -42,19 +42,20 @@ mongodb:
 # Using default values from https://github.com/nats-io/k8s/tree/main/helm/charts/nats
 nats:
   enabled: true
-  cluster:
-    enabled: false
-  nats:
+  config:
+    cluster:
+      enabled: true
+      replicas: 3
     jetstream:
       enabled: true
-      memStorage:
+      memoryStore:
         enabled: true
-        size: "1Gi"
-      fileStorage:
-        enabled: false
-  podAnnotations: {}
-  statefulSetAnnotations: {}
-  serviceAnnotations: {}
+        maxSize: "1Gi"
+      fileStore:
+        enabled: true
+        maxSize: "1Gi"
+        pvc:
+          enabled: false
 
 redis:
   enabled: true
