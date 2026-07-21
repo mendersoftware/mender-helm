@@ -1,0 +1,53 @@
+suite: test mongodb_conf_validation - conflicting config is rejected
+templates:
+  - templates/workflows/deployment-server.yaml
+tests:
+  - it: fails when mongodb.enabled and global.mongodb.URL are both set
+    set:
+      workflows.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: "mongodb://external-mongo:27017"
+      global.mongodb.existingSecret: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "When internal mongodb is enabled, both global.mongodb.URL and global.mongodb.existingSecret have to be unset"
+
+  - it: fails when mongodb.enabled and global.mongodb.existingSecret are both set
+    set:
+      workflows.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - failedTemplate:
+          errorMessage: "When internal mongodb is enabled, both global.mongodb.URL and global.mongodb.existingSecret have to be unset"
+
+  - it: fails when both global.mongodb.URL and global.mongodb.existingSecret are set
+    set:
+      workflows.enabled: true
+      mongodb.enabled: false
+      global.mongodb.URL: "mongodb://external-mongo:27017"
+      global.mongodb.existingSecret: "my-mongodb-secret"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Please set either global.mongodb.URL or global.mongodb.existingSecret, not both"
+
+  - it: passes when mongodb.enabled and no external config set
+    set:
+      workflows.enabled: true
+      mongodb.enabled: true
+      global.mongodb.URL: ""
+      global.mongodb.existingSecret: ""
+    asserts:
+      - isKind:
+          of: Deployment
+
+  - it: passes when mongodb is disabled and an external URL is set
+    set:
+      workflows.enabled: true
+      mongodb.enabled: false
+      global.mongodb.URL: "mongodb://external-mongo:27017"
+      global.mongodb.existingSecret: ""
+    asserts:
+      - isKind:
+          of: Deployment

@@ -1,5 +1,6 @@
 {{- define "mender.useradmPodTemplate" -}}
 {{- include "redis_conf_validation" . }}
+{{- include "mongodb_conf_validation" . }}
 metadata:
   {{- with .dot.Values.useradm.podAnnotations }}
   annotations:
