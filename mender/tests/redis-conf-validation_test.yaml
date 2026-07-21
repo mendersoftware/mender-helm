@@ -1,0 +1,47 @@
+suite: test redis_conf_validation - conflicting config is rejected
+templates:
+  - templates/deployments/deployment.yaml
+tests:
+  - it: fails when redis.enabled and global.redis.URL are both set
+    set:
+      deployments.enabled: true
+      global.enterprise: true
+      redis.enabled: true
+      global.redis.URL: "redis://external-redis:6379"
+      global.redis.existingSecret: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "When internal redis is enabled, both global.redis.URL and global.redis.existingSecret have to be unset"
+
+  - it: fails when redis.enabled and global.redis.existingSecret are both set
+    set:
+      deployments.enabled: true
+      global.enterprise: true
+      redis.enabled: true
+      global.redis.URL: ""
+      global.redis.existingSecret: "my-redis-secret"
+    asserts:
+      - failedTemplate:
+          errorMessage: "When internal redis is enabled, both global.redis.URL and global.redis.existingSecret have to be unset"
+
+  - it: fails when both global.redis.URL and global.redis.existingSecret are set
+    set:
+      deployments.enabled: true
+      global.enterprise: true
+      redis.enabled: false
+      global.redis.URL: "redis://external-redis:6379"
+      global.redis.existingSecret: "my-redis-secret"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Please set either global.redis.URL or global.redis.existingSecret, not both"
+
+  - it: passes when redis is disabled and no external config set
+    set:
+      deployments.enabled: true
+      global.enterprise: true
+      redis.enabled: false
+      global.redis.URL: ""
+      global.redis.existingSecret: ""
+    asserts:
+      - isKind:
+          of: Deployment

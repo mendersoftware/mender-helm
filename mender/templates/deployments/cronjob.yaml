@@ -1,4 +1,5 @@
 {{- if .Values.deployments.directUpload.enabled }}
+{{- include "mongodb_conf_validation" . }}
 {{- $context := dict "dot" .
                      "component" "deployments"
                      "override" .Values.deployments -}}
