@@ -1,8 +1,9 @@
 apiVersion: v2
-appVersion: v4.1.1
-description: Mender is a robust and secure way to update all your software and deploy your IoT devices at scale with support for customization
+appVersion: v4.1.2
+description: Mender is a robust and secure way to update all your software and
+  deploy your IoT devices at scale with support for customization
 name: mender
-version: 7.9.1-2692221674-staging
+version: 8.0.0
 keywords:
   - mender
   - iot
@@ -17,6 +18,6 @@ maintainers:
     url: https://northern.tech
 dependencies:
   - name: nats
-    version: ~0.19.17
+    version: ~2.14.0
     repository: "https://nats-io.github.io/k8s/helm/charts/"
     condition: nats.enabled

@@ -1,4 +1,6 @@
 {{- define "mender.deploymentsPodTemplate" -}}
+{{- include "redis_conf_validation" . }}
+{{- include "mongodb_conf_validation" . }}
 metadata:
   {{- if or ( and .dot.Values.deployments.enabled .dot.Values.deployments.config ) .dot.Values.deployments.podAnnotations }}
   annotations:
