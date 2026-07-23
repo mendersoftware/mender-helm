@@ -362,7 +362,7 @@ data:
 {{- end }}
           rule: >-
             !Path(`/api/management/v1/useradm/auth/logout`) &&
-            PathRegexp(`^/api/management/v[0-9a-z]+/useradm/(auth|oauth2|oidc)`)
+            PathRegexp(`^/api/management/v[0-9a-z]+/useradm/(auth|oauth2|oidc|users/me/email-change/complete)`)
           service: useradm
           tls: {{ $isTls }}
 {{- if and .Values.api_gateway.storage_proxy.enabled .Values.api_gateway.minio.enabled }}
