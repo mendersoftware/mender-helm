@@ -38,7 +38,7 @@ n=0
 max_wait=512
 while [ $n -lt $max_wait ]; do
     sleep 1
-    LB_IP=$(dig +short ${LB_HOSTNAME} @1.1.1.1 | head -n1)
+    LB_IP=$(dig +short +time=2 +tries=1 ${LB_HOSTNAME} @1.1.1.1 2>/dev/null | grep -E '^[0-9]{1,3}(\.[0-9]{1,3}){3}$' | head -n1)
     if [ -n "${LB_IP}" ] ; then
         echo -e "\n> LB IP is ready: ${LB_IP}"
         break
