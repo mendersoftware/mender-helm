@@ -5,6 +5,10 @@ kind: ConfigMap
 metadata:
   name: {{ include "mender.fullname" . }}-deviceconnect
   namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade,pre-rollback
+    helm.sh/hook-weight: "10"
+    helm.sh/hook-delete-policy: before-hook-creation
   labels:
     {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-deviceconnect
