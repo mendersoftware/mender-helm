@@ -298,7 +298,7 @@ data:
 {{- if .Values.api_gateway.compression }}
           - compression
 {{- end }}
-          rule: "PathRegexp(`^/api/management/v2/inventory`)"
+          rule: "PathRegexp(`^/api/management/v2[a-z0-9]*/inventory`)"
           service: inventory
           tls: {{ $isTls }}
 
