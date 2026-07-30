@@ -130,7 +130,7 @@ spec:
   volumes:
   - name: config
     configMap:
-      name: {{ include "mender.fullname" .dot }}-deviceconnect
+      name: {{ include "mender.fullname" .dot }}-deviceconnect{{- if .migration }}-migration{{end}}
   {{- end }}
 
   {{- if (not .migration) }}
