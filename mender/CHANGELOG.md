@@ -1,4 +1,12 @@
 ---
+## mender-8.2.0 - 2026-07-31
+
+
+### New features
+
+- Allow traefik to accept alpha versioned inventory endpoints
+- Default USERADM_JWT_ISSUER to global.url FQDN
+
 ## mender-8.1.0 - 2026-07-28
 
 
@@ -1264,6 +1272,16 @@
 
 
 # Changelog
+
+## [8.2.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.1.0...mender-8.2.0) (2026-07-31)
+
+
+### Features
+
+* allow traefik to accept alpha versioned inventory endpoints ([22227cc](https://github.com/mendersoftware/mender-helm/commit/22227cc12a65e8028daf0ce30f4ec6196d6c91c9))
+* allow traefik to accept alpha versioned inventory endpoints ([8cc70a3](https://github.com/mendersoftware/mender-helm/commit/8cc70a3695cb06e2bdb9322979e18f2ee9075024))
+* default USERADM_JWT_ISSUER to global.url FQDN ([f298fd1](https://github.com/mendersoftware/mender-helm/commit/f298fd12aa62e82fbf7bb326e10874fd762846f5))
+* default USERADM_JWT_ISSUER to global.url FQDN ([4555093](https://github.com/mendersoftware/mender-helm/commit/4555093e41972ce0be428e95951fadfed5d20b60))
 
 ## [8.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.0.0...mender-8.1.0) (2026-07-28)
 
