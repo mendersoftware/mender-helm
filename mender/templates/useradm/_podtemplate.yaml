@@ -92,7 +92,7 @@ spec:
     - name: USERADM_PROXY_COUNT
       value: {{ .dot.Values.useradm.env.USERADM_PROXY_COUNT | quote }}
     - name: USERADM_JWT_ISSUER
-      value: {{ .dot.Values.useradm.env.USERADM_JWT_ISSUER | quote }}
+      value: {{ .dot.Values.useradm.env.USERADM_JWT_ISSUER | default (.dot.Values.global.url | trimPrefix "https://" | trimPrefix "http://") | quote }}
     - name: USERADM_JWT_EXP_TIMEOUT
       value: {{ .dot.Values.useradm.env.USERADM_JWT_EXP_TIMEOUT | quote }}
     - name: USERADM_BASE_URL
