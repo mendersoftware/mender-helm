@@ -524,7 +524,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.service.port` | Port for the service | `8080` |
 | `useradm.service.nodePort` | Node port for the service | `nil` |
 | `useradm.env.USERADM_PROXY_COUNT` | Set the number of proxy gateways from the backend to client. | `2` |
-| `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable | `Mender Users` |
+| `useradm.env.USERADM_JWT_ISSUER` | Set the USERADM_JWT_ISSUER variable. FQDN from `global.url` (scheme stripped) | `""` |
 | `useradm.env.USERADM_JWT_EXP_TIMEOUT` | Set the USERADM_JWT_EXP_TIMEOUT variable | `604800` |
 | `useradm.env.USERADM_MIDDLEWARE` | Set the USERADM_MIDDLEWARE variable | `prod` |
 | `useradm.env.USERADM_REDIS_KEY_PREFIX` | Set the USERADM_REDIS_KEY_PREFIX variable | `useradm:v1` |
