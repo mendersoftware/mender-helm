@@ -1,4 +1,32 @@
 ---
+## mender-8.2.0 - 2026-08-10
+
+
+### New features
+
+- Allow traefik to accept alpha versioned inventory endpoints
+- Default USERADM_JWT_ISSUER to global.url FQDN
+
+### Dependency updates
+
+- *(deps)* Update docker.io/traefik docker tag to v3.7.10
+
+## mender-8.1.0 - 2026-07-28
+
+
+### New features
+
+- Update NoAuth rule to include users/me/email-change/complete
+
+### Bug fixes
+
+- Configmaps not created for resources created by helm hooks
+- Configmap for deviceconnect migration job
+- Bump mongo from 8.0.26 to 8.0.28 in /mender
+- Bump redis from 8.8.0-alpine to 8.8.1-alpine in /mender
+- Bump traefik from v3.7.8 to v3.7.9 in /mender
+- Mender-server release 4.1.3
+
 ## mender-7.9.2 - 2026-07-10
 
 
@@ -1248,6 +1276,44 @@
 
 
 # Changelog
+
+## [8.2.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.1.0...mender-8.2.0) (2026-08-10)
+
+
+### Features
+
+* allow traefik to accept alpha versioned inventory endpoints ([22227cc](https://github.com/mendersoftware/mender-helm/commit/22227cc12a65e8028daf0ce30f4ec6196d6c91c9))
+* allow traefik to accept alpha versioned inventory endpoints ([8cc70a3](https://github.com/mendersoftware/mender-helm/commit/8cc70a3695cb06e2bdb9322979e18f2ee9075024))
+* default USERADM_JWT_ISSUER to global.url FQDN ([f298fd1](https://github.com/mendersoftware/mender-helm/commit/f298fd12aa62e82fbf7bb326e10874fd762846f5))
+* default USERADM_JWT_ISSUER to global.url FQDN ([4555093](https://github.com/mendersoftware/mender-helm/commit/4555093e41972ce0be428e95951fadfed5d20b60))
+
+## [8.1.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.0.0...mender-8.1.0) (2026-07-28)
+
+
+### Features
+
+* update NoAuth rule to include users/me/email-change/complete ([669f02e](https://github.com/mendersoftware/mender-helm/commit/669f02e9187dc842ecf3aa5219e8afda24a5eea1))
+* update NoAuth rule to include users/me/email-change/complete ([39b79ee](https://github.com/mendersoftware/mender-helm/commit/39b79ee8784743c5cc170df91fb7f31abc8c65c3))
+
+
+### Bug Fixes
+
+* bump mongo from 8.0.26 to 8.0.28 in /mender ([eb68ede](https://github.com/mendersoftware/mender-helm/commit/eb68ede69ed964204761f79ffbdc3e0065c33ce6))
+* bump mongo from 8.0.26 to 8.0.28 in /mender ([26a96f7](https://github.com/mendersoftware/mender-helm/commit/26a96f765b3adc08323e5bb1f0bd1cf19589f526))
+* bump redis from 8.8.0-alpine to 8.8.1-alpine in /mender ([922ca2c](https://github.com/mendersoftware/mender-helm/commit/922ca2c443795497ad754b406a91b89bd38c8016))
+* bump redis from 8.8.0-alpine to 8.8.1-alpine in /mender ([e0aa74e](https://github.com/mendersoftware/mender-helm/commit/e0aa74e5b3e522fb82c3a460e2568fdace54c986))
+* bump traefik from v3.7.8 to v3.7.9 in /mender ([962e8e6](https://github.com/mendersoftware/mender-helm/commit/962e8e68097b2e2a880bae640bccb80a5ae6f24f))
+* bump traefik from v3.7.8 to v3.7.9 in /mender ([36f0e3e](https://github.com/mendersoftware/mender-helm/commit/36f0e3e66b3e2cb5cfa2b7514f30177234a4e2e3))
+* configmap for deviceconnect migration job ([fd2a45f](https://github.com/mendersoftware/mender-helm/commit/fd2a45fc38811b5cc0ba221e4ed188bacd0c67bb))
+* configmaps not created for resources created by helm hooks ([d606d5e](https://github.com/mendersoftware/mender-helm/commit/d606d5eb1611655ffdfc75dd59c8e341c3902088))
+* configmaps not created for resources created by helm hooks ([2324b41](https://github.com/mendersoftware/mender-helm/commit/2324b412e9f6b231cf28fc862a2d69966eb1c44f))
+* mender-server release 4.1.3 ([d13b738](https://github.com/mendersoftware/mender-helm/commit/d13b738c07e53d2d3b3429be15432eb864b04a24))
+* mender-server release 4.1.3 ([a4628f0](https://github.com/mendersoftware/mender-helm/commit/a4628f06563ec6e2a7c30effca9f56e6a30acc41))
+
+
+### Reverts
+
+* "fix: configmaps not created for resources created by helm hooks" ([5043e45](https://github.com/mendersoftware/mender-helm/commit/5043e456e941ab8b970e293bf4a07432e53ed6d8))
 
 ## [8.0.0](https://github.com/mendersoftware/mender-helm/compare/mender-7.9.4...mender-8.0.0) (2026-07-20)
 

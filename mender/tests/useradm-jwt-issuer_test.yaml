@@ -1,0 +1,20 @@
+suite: test USERADM_JWT_ISSUER default and override
+templates:
+  - templates/useradm/deployment.yaml
+tests:
+  - it: defaults USERADM_JWT_ISSUER to the FQDN from global.url (scheme stripped) when not overridden
+    set:
+      global.url: "https://mender.custom.server.example.com"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="USERADM_JWT_ISSUER")].value
+          value: "mender.custom.server.example.com"
+
+  - it: uses the explicit useradm.env.USERADM_JWT_ISSUER value when set
+    set:
+      global.url: "https://mender.custom.server.example.com"
+      useradm.env.USERADM_JWT_ISSUER: "Mender Users"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="USERADM_JWT_ISSUER")].value
+          value: "Mender Users"
