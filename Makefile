@@ -48,12 +48,30 @@ template: ## Render the mender helm chart template
 unittest: ## Run helm unit tests
 	helm unittest $(NAME)/
 
+# helm-unittest renders each template with its own values context, so it cannot
+# see state shared across a render. This needs a full chart render.
+ISOLATION_DEFAULT_HPA = default.hpa={"enabled":true,"minReplicas":2,"maxReplicas":50,"metrics":[{"type":"Resource","resource":{"name":"cpu","target":{"type":"Utilization","averageUtilization":70}}}],"behavior":{"scaleDown":{"stabilizationWindowSeconds":240}}}
+ISOLATION_SERVICE_HPA = deviceconnect.hpa={"behavior":{"scaleDown":{"stabilizationWindowSeconds":3601}}}
+
+.PHONY: test-render-isolation
+test-render-isolation: ## Check per-service hpa overrides do not leak onto other services
+	@count=$$(helm template test $(NAME)/ -f tests/values-helmci.yaml \
+		--set-json '$(ISOLATION_DEFAULT_HPA)' \
+		--set-json '$(ISOLATION_SERVICE_HPA)' \
+		| grep -c "stabilizationWindowSeconds: 3601"); \
+	if [ "$$count" -ne 1 ]; then \
+		echo "FAIL - hpa override leaked onto $$((count - 1)) other services."; \
+		echo "       mergeOverwrite aliases nested maps; the helpers need deepCopy."; \
+		exit 1; \
+	fi; \
+	echo "PASS - hpa override confined to the service that set it"
+
 .PHONY: test
 test: ## Run integration tests
 	bash tests/tests.sh
 
 .PHONY: test-all
-test-all: lint unittest kubeconform check-deprecated-apis test ## Run all tests (lint, unit, kubeconform, deprecated-api, integration)
+test-all: lint unittest test-render-isolation kubeconform check-deprecated-apis test ## Run all tests (lint, unit, render-isolation, kubeconform, deprecated-api, integration)
 
 .PHONY: kubeconform
 kubeconform: ## Run kubeconform over helm chart rendered template (versions from endoflife.date)
