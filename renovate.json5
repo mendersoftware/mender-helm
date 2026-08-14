@@ -1,0 +1,91 @@
+// renovate.json5 - Mender dependency update configuration for mender-helm
+// See Documentation/dependency-updates.md in mender-qa for the process.
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  "extends": [
+    "config:recommended",
+    ":gitSignOff",
+    ":rebaseStalePrs"
+  ],
+
+  // CODEOWNERS drives reviewer assignment, which is what the Dependabot image bumps
+  // on mender/values.yaml already used - keep its entries current.
+  "reviewersFromCodeOwners": true,
+
+  // fix(deps): <desc>. This repo releases through release-please, which ignores
+  // chore, so a chore(deps) chart bump would never cut a release. Dependabot used a
+  // "fix" prefix here for the same reason.
+  "semanticCommits": "enabled",
+  "semanticCommitType": "fix",
+  "semanticCommitScope": "deps",
+
+  // Fallback window for weeks with no merges; the renovate CI job is the primary trigger.
+  "schedule": ["after 10pm on Monday", "before 6am on Tuesday"],
+
+  // Was prConcurrentLimit 1, which is too tight now that renovate covers the docker
+  // images Dependabot used to handle.
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+
+  // Only master gets updates. 2.4.x - 3.1.x are still on the remote but Dependabot
+  // never opened PRs against them either - add any that are still maintained.
+  "baseBranchPatterns": ["master"],
+
+  // Security PRs bypass the schedule and automerge when CI is green.
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "automerge": true,
+    "automergeType": "pr",
+    "labels": ["security"]
+  },
+
+  // Helm chart versions passed to `helm --version` in the test scripts.
+  // Migrated from the deprecated regexManagers/fileMatch spelling.
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^tests/.*\\.sh$/"],
+      "matchStrings": [
+        "(?<depName>[\\w/-]+)[\\s\\\\]+--version\\s+(?<currentValue>\\S+)"
+      ],
+      "datasourceTemplate": "helm"
+    }
+  ],
+
+  "packageRules": [
+    // config:recommended pulls in :semanticPrefixFixDepsChoreOthers, which forces
+    // semanticCommitType back to "chore" for any dep whose manager does not tag it
+    // with an npm/pip style depType - that is every docker and helm-values dep here.
+    // Without this the chart bumps would open as chore(deps) and release-please would
+    // skip them. Must stay BEFORE the gitlabci rule: rules apply in order, last match
+    // wins, so gitlabci keeps its own type.
+    {
+      "matchPackageNames": ["*"],
+      "semanticCommitType": "fix"
+    },
+
+    // CI file updates get ci: - these do not need to trigger a release.
+    {
+      "matchManagers": ["gitlabci", "gitlabci-include"],
+      "semanticCommitType": "ci",
+      "semanticCommitScope": ""
+    },
+
+    // Infrastructure charts: patch bumps only, grouped. Minor and major upgrades of
+    // these need a deliberate decision, so they stay off.
+    {
+      "matchManagers": ["helm-values", "helmv3"],
+      "matchPackageNames": ["mongo", "nats", "redis"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "infrastructure-deps"
+    },
+    {
+      "matchManagers": ["helm-values", "helmv3"],
+      "matchPackageNames": ["mongo", "nats", "redis"],
+      "matchUpdateTypes": ["minor", "major"],
+      "enabled": false
+    }
+  ]
+}

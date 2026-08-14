@@ -1277,6 +1277,13 @@
 
 # Changelog
 
+## [8.2.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.2.0...mender-8.2.1) (2026-08-13)
+
+
+### Bug Fixes
+
+* stop HPA and PDB overrides leaking between services ([a536281](https://github.com/mendersoftware/mender-helm/commit/a5362813b28be108401a21ae4a8cd0c34487d2fe))
+
 ## [8.2.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.1.0...mender-8.2.0) (2026-08-10)
 
 
