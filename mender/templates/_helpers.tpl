@@ -203,10 +203,10 @@ MinIO Rule
 {{- define "mender.autoscaler" -}}
 {{- $autoscaling := dict }}
 {{- if .default.hpa }}
-{{- $_ := (mergeOverwrite $autoscaling .default.hpa) }}
+{{- $_ := (mergeOverwrite $autoscaling (deepCopy .default.hpa)) }}
 {{- end }}
 {{- if .override.hpa }}
-{{- $_ := (mergeOverwrite $autoscaling .override.hpa) }}
+{{- $_ := (mergeOverwrite $autoscaling (deepCopy .override.hpa)) }}
 {{- end }}
 {{- if and $autoscaling.enabled $autoscaling.metrics}}
 apiVersion: autoscaling/v2
@@ -234,10 +234,10 @@ spec:
 {{- define "mender.pdb" -}}
 {{- $pdb := dict }}
 {{- if .default.pdb }}
-{{- $_ := (mergeOverwrite $pdb .default.pdb) }}
+{{- $_ := (mergeOverwrite $pdb (deepCopy .default.pdb)) }}
 {{- end }}
 {{- if .override.pdb }}
-{{- $_ := (mergeOverwrite $pdb .override.pdb) }}
+{{- $_ := (mergeOverwrite $pdb (deepCopy .override.pdb)) }}
 {{- end }}
 {{- if $pdb.enabled }}
 {{- if and $pdb.minAvailable $pdb.maxUnavailable }}
@@ -407,7 +407,7 @@ Use custom probes overrides
 */}}
 {{- define "mender.probesOverrides" -}}
 {{- $_ := dict }}
-{{- $_ := (mergeOverwrite $_ .default .override) }}
+{{- $_ := (mergeOverwrite $_ (deepCopy .default) (deepCopy .override)) }}
 {{- if $_ }}
 {{- toYaml $_ }}
 {{- end }}
