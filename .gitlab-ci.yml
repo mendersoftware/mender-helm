@@ -649,6 +649,22 @@ test:helm_unittest:
   script:
     - helm unittest mender/
 
+test:render_isolation:
+  tags:
+    - k8s-small
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  rules:
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
+    - when: on_success
+  script:
+    - make test-render-isolation
+
 test:helm_trivy_audit:
   tags:
     - k8s-small
