@@ -1277,6 +1277,14 @@
 
 # Changelog
 
+## [8.2.2](https://github.com/mendersoftware/mender-helm/compare/mender-8.2.1...mender-8.2.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* **deps:** update docker.io/traefik docker tag to v3.7.11 ([dbe62f5](https://github.com/mendersoftware/mender-helm/commit/dbe62f59d6cae8e708d4d7083f12fc91f8406776))
+* **deps:** update docker.io/traefik docker tag to v3.7.11 ([d50d845](https://github.com/mendersoftware/mender-helm/commit/d50d845d87134019d74c7d4ed8eec0bbffd85dc4))
+
 ## [8.2.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.2.0...mender-8.2.1) (2026-08-13)
 
 
