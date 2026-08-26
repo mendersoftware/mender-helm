@@ -104,7 +104,9 @@ default:
 renovate:
   needs: []
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    # Only the renovate schedule sets this. Without it renovate also ran on the
+    # other schedules in this project.
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RENOVATE_SCHEDULED_RUN == "true"'
     - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
   stage: build
   tags:
