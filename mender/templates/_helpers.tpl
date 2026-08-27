@@ -156,6 +156,22 @@ nats_conf_validation - fail on conflicting NATS configuration
 {{- end }}
 
 {{/*
+admin_panel_conf_validation - fail on an admin panel that cannot work as configured
+*/}}
+{{- define "admin_panel_conf_validation" }}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- if and $dot.Values.admin_panel.enabled (empty $dot.Values.admin_panel.hostname) }}
+{{- fail "admin_panel.hostname is required: the panel is only routed on a host of its own" }}
+{{- end }}
+{{- if and $dot.Values.admin_panel_gui.enabled (not $dot.Values.admin_panel.enabled) }}
+{{- fail "admin_panel_gui.enabled requires admin_panel.enabled: the GUI has no backend to talk to" }}
+{{- end }}
+{{- if and $dot.Values.admin_panel.enabled (empty $dot.Values.admin_panel.existingSecret) (empty $dot.Values.admin_panel.customEnvs) }}
+{{- fail "admin_panel needs OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and SESSION_SECRET: set admin_panel.existingSecret or admin_panel.customEnvs" }}
+{{- end }}
+{{- end }}
+
+{{/*
 Ingress rules
 */}}
 {{- define "mender.serviceName" -}}
