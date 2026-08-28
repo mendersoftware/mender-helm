@@ -1,0 +1,116 @@
+suite: test NATS integration for open source
+templates:
+  - templates/workflows/deployment-worker.yaml
+tests:
+  ##############################################################################
+  # NATS Configuration Tests - Workflows Service
+  ##############################################################################
+  - it: should configure NATS environment variables when NATS is enabled
+    set:
+      nats.enabled: true
+      nats.replicas: 3
+      workflows.enabled: true
+      workflows.automigrate: false
+    template: templates/workflows/deployment-worker.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: nats://RELEASE-NAME-nats
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "3"
+
+  - it: should use NATS replicas from nats.replicas when NATS is enabled
+    set:
+      nats.enabled: true
+      nats.replicas: 5
+      workflows.enabled: true
+      workflows.automigrate: false
+    template: templates/workflows/deployment-worker.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "5"
+
+  - it: should use workflows.nats.replicas when NATS is disabled (external NATS)
+    set:
+      nats.enabled: false
+      global.nats.URL: "nats://external-nats:4222"
+      workflows.nats.replicas: 3
+      workflows.enabled: true
+      workflows.automigrate: false
+    template: templates/workflows/deployment-worker.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "3"
+
+  - it: should use external NATS URL when provided
+    set:
+      nats.enabled: false
+      global.nats.URL: "nats://external-nats.example.com:4222"
+      workflows.enabled: true
+      workflows.automigrate: false
+    template: templates/workflows/deployment-worker.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: "nats://external-nats.example.com:4222"
+
+  - it: should use NATS credentials from existing secret when specified
+    set:
+      nats.enabled: true
+      global.nats.existingSecret: my-nats-secret
+      workflows.enabled: true
+      workflows.automigrate: false
+    template: templates/workflows/deployment-worker.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            valueFrom:
+              secretKeyRef:
+                name: my-nats-secret
+                key: NATS_URI
+
+  ##############################################################################
+  # Open Source Default Configuration
+  ##############################################################################
+  - it: should enable NATS by default for open source deployment
+    set:
+      global.enterprise: false
+      workflows.enabled: true
+      workflows.automigrate: false
+    template: templates/workflows/deployment-worker.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_URI
+            value: nats://RELEASE-NAME-nats
+
+  - it: should configure JetStream replicas correctly for open source
+    set:
+      global.enterprise: false
+      nats.enabled: true
+      nats.replicas: 3
+      workflows.enabled: true
+      workflows.automigrate: false
+    template: templates/workflows/deployment-worker.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: WORKFLOWS_NATS_STREAM_REPLICAS
+            value: "3"
