@@ -1557,11 +1557,11 @@ redis:
 
   resources:
     limits:
-      memory: "512Mi"
-      cpu: "500m"
+      memory: "1024Mi"
+      cpu: "1500m"
     requests:
-      memory: "256Mi"
-      cpu: "100m"
+      memory: "512Mi"
+      cpu: "800m"
 
   securityContext:
     enabled: true
