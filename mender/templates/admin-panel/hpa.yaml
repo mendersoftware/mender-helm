@@ -1,0 +1,5 @@
+{{- if and .Values.admin_panel.enabled .Values.global.enterprise }}
+{{- $servicename := "admin-panel" }}
+{{- $context := (dict "default" .Values.default "override" .Values.admin_panel "name" (printf "%s-%s" (include "mender.fullname" . ) $servicename ) ) -}}
+{{- include "mender.autoscaler" $context }}
+{{- end }}

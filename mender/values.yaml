@@ -1529,6 +1529,144 @@ devicemonitor:
     # successThreshold: 2
     # failureThreshold: 6
 
+# The admin panel is an internal, Northern.tech only tool: it drives the
+# privileged endpoints of the other services, so it stays off unless a
+# deployment asks for it explicitly.
+admin_panel:
+  enabled: false
+  hostname: ""
+  podAnnotations: {}
+  replicas: 1
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  affinity: {}
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  nodeSelector: {}
+  service:
+    name: mender-admin-panel
+    annotations: {}
+    type: ClusterIP
+    port: 8080
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
+  priorityClassName: ""
+
+  ingress:
+    enabled: false
+    ingressClassName: alb
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internal
+      alb.ingress.kubernetes.io/group.name: mender-internal
+      alb.ingress.kubernetes.io/group.order: "50"
+      alb.ingress.kubernetes.io/backend-protocol: HTTP
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      alb.ingress.kubernetes.io/success-codes: 200-499
+      alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+      alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+      alb.ingress.kubernetes.io/healthcheck-path: /
+    path: /
+    extraPaths: []
+    # - path: /
+    #   backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
+    tls: []
+    # - secretName: mender-admin-panel-ingress-tls
+    #   hosts:
+    #     - admin.mender.example.com
+
+  # The service refuses to start without OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET
+  # and SESSION_SECRET, so this - or customEnvs - has to provide them.
+  existingSecret: ""
+
+  customEnvs: []
+  # - name: ADMIN_PANEL_ALLOWED_EMAIL_DOMAINS
+  #   value: northern.tech
+
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
+  probesOverrides:
+    {}
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
+  hpa: {}
+
+admin_panel_gui:
+  enabled: false
+  podAnnotations: {}
+  replicas: 1
+  resources:
+    limits:
+      cpu: 20m
+      memory: 64Mi
+    requests:
+      cpu: 5m
+      memory: 16Mi
+  affinity: {}
+  # image:
+  #   registry: ""
+  #   repository: ""
+  #   tag: ""
+  #   pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  nodeSelector: {}
+  service:
+    name: mender-admin-panel-gui
+    annotations: {}
+    type: ClusterIP
+    port: 80
+  httpPort: 8090
+  podSecurityContext:
+    enabled: false
+    runAsNonRoot: true
+    runAsUser: 65534
+  containerSecurityContext:
+    enabled: false
+    allowPrivilegeEscalation: false
+    runAsUser: 65534
+  priorityClassName: ""
+
+  customEnvs: []
+  # - name: LOG_LEVEL
+  #   value: DEBUG
+
+  # updateStrategy:
+  #   rollingUpdate:
+  #     maxSurge: 25%
+  #     maxUnavailable: 25%
+
+  probesOverrides:
+    initialDelaySeconds: 2
+    periodSeconds: 5
+    # timeoutSeconds: 2
+    # successThreshold: 2
+    # failureThreshold: 6
+
+  hpa: {}
+
 # This is a sample redis deployment single instance included in the
 # helm chart for convinence. Not recommended in production.
 redis:
@@ -1592,4 +1730,3 @@ dbmigration:
     enabled: false
     runAsNonRoot: true
     runAsUser: 999
-
