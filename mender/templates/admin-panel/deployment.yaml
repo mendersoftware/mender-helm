@@ -1,0 +1,137 @@
+{{- if and .Values.admin_panel.enabled .Values.global.enterprise }}
+{{- include "admin_panel_conf_validation" . }}
+{{- $context := dict "dot" . "component" "admin-panel" "override" .Values.admin_panel -}}
+{{- $merged := merge (deepCopy .Values.admin_panel) (deepCopy (default (dict) .Values.default)) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mender.fullname" . }}-admin-panel
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel
+    app.kubernetes.io/component: admin-panel
+spec:
+  {{- if not (or .Values.admin_panel.hpa .Values.default.hpa ) }}
+  replicas: {{ .Values.admin_panel.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel
+
+  progressDeadlineSeconds: 600
+
+  {{- $updateStrategy := coalesce .Values.admin_panel.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
+
+  {{- $minReadySeconds := coalesce .Values.admin_panel.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
+
+  template:
+    metadata:
+      {{- with .Values.admin_panel.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel
+        {{- include "mender.labels" . | nindent 8 }}
+        app.kubernetes.io/component: admin-panel
+    spec:
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
+      {{- with $merged.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.admin_panel.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.admin_panel.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
+
+      containers:
+      - name: admin-panel
+        image: {{ include "mender.image" $context }}
+        imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
+{{- if .Values.admin_panel.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.admin_panel.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
+        {{- with include "mender.resources" (list .Values.default.resources .Values.admin_panel.resources) }}
+        resources: {{- nindent 10 . }}
+        {{- end }}
+
+        args: ["server"]
+
+        readinessProbe:
+          httpGet:
+            path: /api/internal/v1/admin-panel/health
+            port: 8080
+          periodSeconds: 15
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.admin_panel.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /api/internal/v1/admin-panel/alive
+            port: 8080
+          periodSeconds: 5
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.admin_panel.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
+        startupProbe:
+          httpGet:
+            path: /api/internal/v1/admin-panel/alive
+            port: 8080
+          failureThreshold: 36
+          periodSeconds: 5
+
+        env:
+        - name: ADMIN_PANEL_BASE_URL
+          value: {{ printf "https://%s" .Values.admin_panel.hostname | quote }}
+        - name: ADMIN_PANEL_TENANTADM_ADDRESS
+          value: {{ printf "http://%s:%v" .Values.tenantadm.service.name .Values.tenantadm.service.port }}
+        - name: ADMIN_PANEL_USERADM_ADDRESS
+          value: {{ printf "http://%s:%v" .Values.useradm.service.name .Values.useradm.service.port }}
+        - name: ADMIN_PANEL_DEVICEAUTH_ADDRESS
+          value: {{ printf "http://%s:%v" .Values.device_auth.service.name .Values.device_auth.service.port }}
+        - name: ADMIN_PANEL_DEPLOYMENTS_ADDRESS
+          value: {{ printf "http://%s:%v" .Values.deployments.service.name .Values.deployments.service.port }}
+        - name: ADMIN_PANEL_INVENTORY_ADDRESS
+          value: {{ printf "http://%s:%v" .Values.inventory.service.name .Values.inventory.service.port }}
+        # the chart names the workflows service '-server', so the service default of 'mender-workflows' does not resolve here
+        - name: ADMIN_PANEL_WORKFLOWS_ADDRESS
+          value: {{ printf "http://%s:%v" .Values.workflows.service.name .Values.workflows.service.port }}
+        {{- include "mender.customEnvs" (merge (deepCopy .Values.admin_panel) (deepCopy (default (dict) .Values.default))) | nindent 8 }}
+        # The OAuth credentials and the session secret have no defaults and the  service refuses to start without them,
+        # so they are expected to come in through customEnvs or the secret below.
+        {{- with .Values.admin_panel.existingSecret }}
+        envFrom:
+        - prefix: ADMIN_PANEL_
+          secretRef:
+            name: {{ . }}
+        {{- end }}
+
+{{- if and .Values.global.image .Values.global.image.username }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.admin_panel.imagePullSecrets .Values.default.imagePullSecrets }}
+{{- if $ips }}
+      imagePullSecrets:
+{{- toYaml $ips | nindent 6 }}
+{{- end }}
+{{- end }}
+
+{{- $pcn := coalesce .Values.admin_panel.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end }}
+
+{{- with (coalesce .Values.admin_panel.nodeSelector .Values.default.nodeSelector) }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,38 @@
+{{- if and .Values.admin_panel.enabled .Values.global.enterprise }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.admin_panel.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: admin-panel-svc
+    app.kubernetes.io/component: admin-panel
+{{- with .Values.admin_panel.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.admin_panel.service.type }}
+  {{- if and (eq .Values.admin_panel.service.type "ClusterIP") .Values.admin_panel.service.clusterIP }}
+  clusterIP: {{ .Values.admin_panel.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.admin_panel.service.type "LoadBalancer") .Values.admin_panel.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.admin_panel.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.admin_panel.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.admin_panel.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.admin_panel.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.admin_panel.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.admin_panel.service.port }}
+    name: http
+    protocol: TCP
+    targetPort: 8080
+    {{- if .Values.admin_panel.service.nodePort }}
+    nodePort: {{ .Values.admin_panel.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel
+{{- end }}
