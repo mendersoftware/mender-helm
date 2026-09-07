@@ -41,6 +41,52 @@ data:
           service: ping@internal
           priority: 20
 
+{{- if and .Values.admin_panel.enabled .Values.global.enterprise .Values.admin_panel.hostname }}
+        adminPanel:
+          entrypoints: {{ $scheme }}
+          middlewares:
+          - ratelimit
+          - adminPanelHeaders
+          - sec-headers
+{{- if .Values.api_gateway.compression }}
+          - compression
+{{- end }}
+          rule: "Host(`{{ .Values.admin_panel.hostname }}`) && PathRegexp(`^/api/sudo/v[0-9a-z]+/admin-panel`)"
+          service: admin-panel
+          priority: 100
+          tls: {{ $isTls }}
+{{- if .Values.api_gateway.authRateLimit }}
+        adminPanelAuth:
+          entrypoints: {{ $scheme }}
+          middlewares:
+          - authRateLimit
+          - adminPanelHeaders
+          - sec-headers
+{{- if .Values.api_gateway.compression }}
+          - compression
+{{- end }}
+          rule: "Host(`{{ .Values.admin_panel.hostname }}`) && PathRegexp(`^/api/sudo/v[0-9a-z]+/admin-panel/auth`)"
+          service: admin-panel
+          priority: 110
+          tls: {{ $isTls }}
+{{- end }}
+{{- end }}
+{{- if and .Values.admin_panel_gui.enabled .Values.global.enterprise .Values.admin_panel.hostname }}
+        adminPanelGui:
+          entrypoints: {{ $scheme }}
+          middlewares:
+          - ratelimit
+          - adminPanelHeaders
+          - sec-headers
+{{- if .Values.api_gateway.compression }}
+          - compression
+{{- end }}
+          rule: "Host(`{{ .Values.admin_panel.hostname }}`)"
+          service: admin-panel-gui
+          priority: 15
+          tls: {{ $isTls }}
+{{- end }}
+
         #
         # auditlogs
         #
@@ -401,6 +447,20 @@ data:
       #
       services:
 
+{{- if and .Values.admin_panel.enabled .Values.global.enterprise }}
+        admin-panel:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.admin_panel.service.name }}:{{ .Values.admin_panel.service.port }}"
+{{- end }}
+{{- if and .Values.admin_panel_gui.enabled .Values.global.enterprise }}
+
+        admin-panel-gui:
+          loadBalancer:
+            servers:
+            - url: "http://{{ .Values.admin_panel_gui.service.name }}:{{ .Values.admin_panel_gui.service.port }}"
+{{- end }}
+
         auditlogs:
           loadBalancer:
             servers:
@@ -525,6 +585,16 @@ data:
         authRateLimit:
           ratelimit:
 {{ toYaml .Values.api_gateway.authRateLimit | indent 12 }}
+{{- end }}
+
+{{- if and (or .Values.admin_panel.enabled .Values.admin_panel_gui.enabled) .Values.global.enterprise .Values.admin_panel.hostname }}
+        adminPanelHeaders:
+          headers:
+            customRequestHeaders:
+              X-MEN-RequestID: ""
+              X-MEN-RBAC-Inventory-Groups: ""
+              X-MEN-RBAC-Deployments-Groups: ""
+              X-MEN-RBAC-Releases-Tags: ""
 {{- end }}
 
         devauth:

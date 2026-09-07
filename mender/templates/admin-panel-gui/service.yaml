@@ -1,0 +1,38 @@
+{{- if and .Values.admin_panel_gui.enabled .Values.global.enterprise }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.admin_panel_gui.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: admin-panel-gui-svc
+    app.kubernetes.io/component: admin-panel-gui
+{{- with .Values.admin_panel_gui.service.annotations }}
+  annotations: {{ tpl (toYaml .) $ | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.admin_panel_gui.service.type }}
+  {{- if and (eq .Values.admin_panel_gui.service.type "ClusterIP") .Values.admin_panel_gui.service.clusterIP }}
+  clusterIP: {{ .Values.admin_panel_gui.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.admin_panel_gui.service.type "LoadBalancer") .Values.admin_panel_gui.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.admin_panel_gui.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.admin_panel_gui.service.externalIPs }}
+  externalIPs: {{ toYaml .Values.admin_panel_gui.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- if .Values.admin_panel_gui.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.admin_panel_gui.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.admin_panel_gui.service.port }}
+    name: http
+    protocol: TCP
+    targetPort: {{ .Values.admin_panel_gui.httpPort }}
+    {{- if .Values.admin_panel_gui.service.nodePort }}
+    nodePort: {{ .Values.admin_panel_gui.service.nodePort }}
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel-gui
+{{- end }}
