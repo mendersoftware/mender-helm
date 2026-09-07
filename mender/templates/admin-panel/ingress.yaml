@@ -1,0 +1,81 @@
+{{- if and .Values.admin_panel.enabled .Values.global.enterprise .Values.admin_panel.ingress.enabled -}}
+{{- include "admin_panel_conf_validation" . }}
+{{- $fullName := include "mender.serviceName" . -}}
+{{- $servicePort := .Values.api_gateway.service.httpPort -}}
+{{- $ingressExtraPaths := .Values.admin_panel.ingress.extraPaths -}}
+{{- $ingressSupportsIngressClassName := eq (include "mender.ingress.supportsIngressClassName" .) "true" -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-admin-panel-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/component: admin-panel
+{{- with .Values.admin_panel.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  {{- if and $ingressSupportsIngressClassName .Values.admin_panel.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.admin_panel.ingress.ingressClassName }}
+  {{- end -}}
+{{- with .Values.admin_panel.ingress.tls }}
+  tls:
+  {{- range . }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+    {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
+    # the backend is the api-gateway, not the panel services: traefik does the
+    # host and path split so the sudo api and the gui keep a single origin
+    - host: {{ .Values.admin_panel.hostname | quote }}
+      http:
+        paths:
+          {{- range $ingressExtraPaths }}
+          - path: {{ .path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .backend.serviceName }}
+                port:
+                {{- if .backend.servicePort }}
+                  name: {{ .backend.servicePort }}
+                {{- else }}
+                  number: {{ .backend.servicePortNumber }}
+                {{- end }}
+          {{- end }}
+          - path: {{ .Values.admin_panel.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $servicePort }}
+    {{- else }}
+    - host: {{ .Values.admin_panel.hostname | quote }}
+      http:
+        paths:
+          {{- range $ingressExtraPaths }}
+          - path: {{ .path }}
+            backend:
+              serviceName: {{ .backend.serviceName }}
+              servicePort: {{ .backend.servicePort | default .backend.servicePortNumber }}
+          {{- end }}
+          - path: {{ .Values.admin_panel.ingress.path }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: {{ $servicePort }}
+    {{- end }}
+{{- end }}
