@@ -1284,6 +1284,20 @@
 
 # Changelog
 
+## [8.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.2.3...mender-8.3.0) (2026-09-07)
+
+
+### Features
+
+* added the rewritten admin panel to the chart ([b26a61d](https://github.com/mendersoftware/mender-helm/commit/b26a61dccb4cb27fc0e08803a024376a1438fffd))
+* added the rewritten admin panel to the chart ([f885cc2](https://github.com/mendersoftware/mender-helm/commit/f885cc2c0d587ebf754cddaa61d7506dbef63450))
+
+
+### Bug Fixes
+
+* **deps:** update docker.io/traefik docker tag to v3.7.13 ([e9e4cc1](https://github.com/mendersoftware/mender-helm/commit/e9e4cc1c6bb7169d522f20abdf69b86cc849d938))
+* **deps:** update docker.io/traefik docker tag to v3.7.13 ([eb1daa0](https://github.com/mendersoftware/mender-helm/commit/eb1daa0425a90427c9e6ffaedc12e3353c5cd3be))
+
 ## [8.2.3](https://github.com/mendersoftware/mender-helm/compare/mender-8.2.2...mender-8.2.3) (2026-08-28)
 
 
