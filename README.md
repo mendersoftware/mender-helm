@@ -157,6 +157,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.rateLimit.sourceCriterion` | See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `{"ipStrategy": {"depth": 1}}` |
 | `api_gateway.extraArgs` | Optional list of additional args for the `api_gateway` container. | `null` |
 | `api_gateway.authRateLimit` | Optional rate limiting for the Auth module only. See the [Traefik rate limit configuration options](https://doc.traefik.io/traefik/v2.6/middlewares/http/ratelimit/#configuration-options) | `null` |
+| `api_gateway.artifactsListRateLimit` | Optional rate limiting for `GET /api/management/v{n}/deployments/artifacts` only. | `null` |
 | `api_gateway.podSecurityContext.enabled` | Enable [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) | `false` |
 | `api_gateway.podSecurityContext.runAsNonRoot` | Run as non-root user | `true` |
 | `api_gateway.podSecurityContext.runAsUser` | User ID for the pod | `65534` |
