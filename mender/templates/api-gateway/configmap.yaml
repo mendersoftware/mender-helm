@@ -144,6 +144,22 @@ data:
           service: deployments
           tls: {{ $isTls }}
 
+{{- if .Values.api_gateway.artifactsListRateLimit }}
+        deploymentsArtifactsList:
+          entrypoints: {{ $scheme }}
+          priority: 100
+          middlewares:
+          - artifactsListRateLimit
+          - userauth
+          - sec-headers
+{{- if .Values.api_gateway.compression }}
+          - compression
+{{- end }}
+          rule: "Method(`GET`) && PathRegexp(`^/api/management/v[0-9a-z]+/deployments/artifacts$`)"
+          service: deployments
+          tls: {{ $isTls }}
+{{- end }}
+
         deploymentsMgmt:
           entrypoints: {{ $scheme }}
           middlewares:
@@ -585,6 +601,12 @@ data:
         authRateLimit:
           ratelimit:
 {{ toYaml .Values.api_gateway.authRateLimit | indent 12 }}
+{{- end }}
+
+{{- if .Values.api_gateway.artifactsListRateLimit }}
+        artifactsListRateLimit:
+          ratelimit:
+{{ toYaml .Values.api_gateway.artifactsListRateLimit | indent 12 }}
 {{- end }}
 
 {{- if and (or .Values.admin_panel.enabled .Values.admin_panel_gui.enabled) .Values.global.enterprise .Values.admin_panel.hostname }}
