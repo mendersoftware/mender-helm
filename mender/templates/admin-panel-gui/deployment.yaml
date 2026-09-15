@@ -1,0 +1,110 @@
+{{- if and .Values.admin_panel_gui.enabled .Values.global.enterprise }}
+{{- include "admin_panel_conf_validation" . }}
+{{- $context := dict "dot" . "component" "admin-panel-gui" "override" .Values.admin_panel_gui -}}
+{{- $merged := merge (deepCopy .Values.admin_panel_gui) (deepCopy (default (dict) .Values.default)) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mender.fullname" . }}-admin-panel-gui
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "mender.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel-gui
+    app.kubernetes.io/component: admin-panel-gui
+spec:
+  {{- if not (or .Values.admin_panel_gui.hpa .Values.default.hpa ) }}
+  replicas: {{ .Values.admin_panel_gui.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel-gui
+
+  progressDeadlineSeconds: 600
+
+  {{- $updateStrategy := coalesce .Values.admin_panel_gui.updateStrategy .Values.default.updateStrategy }}
+  {{- if $updateStrategy }}
+  strategy: {{- toYaml $updateStrategy | nindent 4 }}
+  {{- end }}
+
+  {{- $minReadySeconds := coalesce .Values.admin_panel_gui.minReadySeconds .Values.default.minReadySeconds }}
+  {{- if $minReadySeconds }}
+  minReadySeconds: {{ $minReadySeconds }}
+  {{- end }}
+
+  template:
+    metadata:
+      {{- with .Values.admin_panel_gui.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "mender.fullname" . }}-admin-panel-gui
+        {{- include "mender.labels" . | nindent 8 }}
+        app.kubernetes.io/component: admin-panel-gui
+    spec:
+      serviceAccountName: {{ include "mender.serviceAccountName" . }}
+      {{- with $merged.affinity }}
+      affinity: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with $merged.tolerations }}
+      tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+{{- if .Values.admin_panel_gui.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.admin_panel_gui.podSecurityContext "enabled" | toYaml | nindent 8 }}
+{{- end }}
+
+      containers:
+      - name: admin-panel-gui
+        image: {{ include "mender.image" $context }}
+        imagePullPolicy: {{ include "mender.imagePullPolicy" $context }}
+{{- if .Values.admin_panel_gui.containerSecurityContext.enabled }}
+        securityContext: {{- omit .Values.admin_panel_gui.containerSecurityContext "enabled" | toYaml | nindent 10 }}
+{{- end }}
+        {{- with include "mender.resources" (list .Values.default.resources .Values.admin_panel_gui.resources) }}
+        resources: {{- nindent 10 . }}
+        {{- end }}
+
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.admin_panel_gui.httpPort }}
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.admin_panel_gui.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.admin_panel_gui.httpPort }}
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.admin_panel_gui.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.admin_panel_gui.httpPort }}
+          {{- with include "mender.probesOverrides" (dict "default" .Values.default.probesOverrides "override" .Values.admin_panel_gui.probesOverrides ) }}
+          {{- nindent 10 . }}
+          {{- end }}
+
+        {{- with include "mender.customEnvs" (merge (deepCopy .Values.admin_panel_gui) (deepCopy (default (dict) .Values.default))) }}
+        env:
+        {{- nindent 8 . }}
+        {{- end }}
+
+{{- if and .Values.global.image .Values.global.image.username }}
+      imagePullSecrets:
+      - name: docker-registry
+{{- else }}
+{{- $ips := coalesce .Values.admin_panel_gui.imagePullSecrets .Values.default.imagePullSecrets }}
+{{- if $ips }}
+      imagePullSecrets:
+{{- toYaml $ips | nindent 6 }}
+{{- end }}
+{{- end }}
+
+{{- $pcn := coalesce .Values.admin_panel_gui.priorityClassName .Values.global.priorityClassName -}}
+{{- if $pcn }}
+      priorityClassName: {{ $pcn }}
+{{- end }}
+
+{{- with (coalesce .Values.admin_panel_gui.nodeSelector .Values.default.nodeSelector) }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+{{- end }}
+{{- end }}

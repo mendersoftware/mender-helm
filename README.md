@@ -191,6 +191,96 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.lifecycle` | Container [lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/) hooks. Default preStop sleep gives the load balancer time to deregister the pod before SIGTERM. | `{"preStop":{"sleep":{"seconds":30}}}` |
 | `api_gateway.terminationGracePeriodSeconds` | [Pod termination grace period](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination). Must cover preStop sleep + drain time. | `60` |
 
+### Parameters: admin-panel
+
+The admin panel is an internal Northern.tech tool. It is disabled by default and requires
+`global.enterprise`. It drives the privileged internal endpoints of the other services, so both its
+sudo API and its GUI are published only on `admin_panel.hostname` - a host of its own, so the panel
+session cookie never rides along on customer-facing requests. Setting the hostname is mandatory:
+without it the api-gateway routers stay unrendered and the chart fails to render.
+
+`admin_panel.ingress` is a dedicated Ingress for that host, separate from `ingress`. It defaults to
+the internal AWS ALB group, so the panel is not reachable from the public listener the rest of the
+API shares. Deployments on another ingress controller have to override both `ingressClassName` and
+`annotations`.
+
+`ADMIN_PANEL_BASE_URL` is derived from `admin_panel.hostname`, because the OAuth `redirect_uri` is
+built from it and a wrong value only surfaces as a `redirect_uri` mismatch at the identity provider
+on the first sign in.
+
+The following table lists the parameters for the `admin_panel` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `admin_panel.enabled` | Enable the component | `false` |
+| `admin_panel.hostname` | Host serving both the panel GUI and the sudo API, for example `admin.mender.example.com`. Required when the component is enabled | `""` |
+| `admin_panel.replicas` | Number of replicas, ignored when an HPA is active | `1` |
+| `admin_panel.image.registry` | Docker image registry | `registry.mender.io` |
+| `admin_panel.image.repository` | Docker image repository | `mender-server-enterprise` |
+| `admin_panel.image.tag` | Docker image tag | `nil`, falls back to the chart `appVersion` |
+| `admin_panel.image.pullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `admin_panel.existingSecret` | Existing secret providing `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` and `SESSION_SECRET`. The keys are read with an `ADMIN_PANEL_` prefix | `""` |
+| `admin_panel.customEnvs` | Custom environment variables, for example `ADMIN_PANEL_ALLOWED_EMAIL_DOMAINS` | `[]` |
+| `admin_panel.ingress.enabled` | Create a dedicated Ingress for `admin_panel.hostname` | `false` |
+| `admin_panel.ingress.ingressClassName` | Ingress class of the dedicated Ingress | `alb` |
+| `admin_panel.ingress.annotations` | Ingress annotations, default to the internal ALB group `mender-internal` with `scheme: internal` | see `values.yaml` |
+| `admin_panel.ingress.path` | Path of the dedicated Ingress, the whole host belongs to the panel | `/` |
+| `admin_panel.ingress.extraPaths` | Extra Ingress paths inserted ahead of the api-gateway backend, for example the ALB `ssl-redirect` action | `[]` |
+| `admin_panel.ingress.tls` | TLS configuration of the dedicated Ingress | `[]` |
+| `admin_panel.service.name` | Service name | `mender-admin-panel` |
+| `admin_panel.service.type` | Service type | `ClusterIP` |
+| `admin_panel.service.port` | Service port | `8080` |
+| `admin_panel.service.annotations` | Service annotations | `{}` |
+| `admin_panel.resources.limits.cpu` | Resources CPU limit | `50m` |
+| `admin_panel.resources.limits.memory` | Resources memory limit | `128Mi` |
+| `admin_panel.resources.requests.cpu` | Resources CPU request | `50m` |
+| `admin_panel.resources.requests.memory` | Resources memory request | `128Mi` |
+| `admin_panel.hpa` | HorizontalPodAutoscaler overrides, see `default.hpa` | `{}` |
+| `admin_panel.probesOverrides` | Override the properties of the readiness, liveness and startup probes | `{}` |
+| `admin_panel.podAnnotations` | Pod annotations | `{}` |
+| `admin_panel.podSecurityContext` | Pod security context, disabled by default | `enabled: false` |
+| `admin_panel.containerSecurityContext` | Container security context, disabled by default | `enabled: false` |
+| `admin_panel.affinity` | Affinity rules, falls back to `default.affinity` | `{}` |
+| `admin_panel.nodeSelector` | Node selector, falls back to `default.nodeSelector` | `{}` |
+| `admin_panel.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
+| `admin_panel.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `""` |
+| `admin_panel.updateStrategy` | The strategy to use to update existing pods | `nil` |
+
+### Parameters: admin-panel-gui
+
+The GUI is served from the root of `admin_panel.hostname`, so it shares an origin with the sudo API.
+
+The following table lists the parameters for the `admin_panel_gui` component and their default values:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `admin_panel_gui.enabled` | Enable the component, requires `admin_panel.enabled` | `false` |
+| `admin_panel_gui.replicas` | Number of replicas, ignored when an HPA is active | `1` |
+| `admin_panel_gui.image.registry` | Docker image registry | `registry.mender.io` |
+| `admin_panel_gui.image.repository` | Docker image repository | `mender-server-enterprise` |
+| `admin_panel_gui.image.tag` | Docker image tag | `nil`, falls back to the chart `appVersion` |
+| `admin_panel_gui.image.pullPolicy` | Docker image pull policy | `IfNotPresent` |
+| `admin_panel_gui.httpPort` | Port the GUI container listens on | `8090` |
+| `admin_panel_gui.service.name` | Service name | `mender-admin-panel-gui` |
+| `admin_panel_gui.service.type` | Service type | `ClusterIP` |
+| `admin_panel_gui.service.port` | Service port | `80` |
+| `admin_panel_gui.service.annotations` | Service annotations | `{}` |
+| `admin_panel_gui.resources.limits.cpu` | Resources CPU limit | `20m` |
+| `admin_panel_gui.resources.limits.memory` | Resources memory limit | `64Mi` |
+| `admin_panel_gui.resources.requests.cpu` | Resources CPU request | `5m` |
+| `admin_panel_gui.resources.requests.memory` | Resources memory request | `16Mi` |
+| `admin_panel_gui.customEnvs` | Custom environment variables | `[]` |
+| `admin_panel_gui.hpa` | HorizontalPodAutoscaler overrides, see `default.hpa` | `{}` |
+| `admin_panel_gui.probesOverrides` | Override the properties of the readiness, liveness and startup probes | `initialDelaySeconds: 2`, `periodSeconds: 5` |
+| `admin_panel_gui.podAnnotations` | Pod annotations | `{}` |
+| `admin_panel_gui.podSecurityContext` | Pod security context, disabled by default | `enabled: false` |
+| `admin_panel_gui.containerSecurityContext` | Container security context, disabled by default | `enabled: false` |
+| `admin_panel_gui.affinity` | Affinity rules, falls back to `default.affinity` | `{}` |
+| `admin_panel_gui.nodeSelector` | Node selector, falls back to `default.nodeSelector` | `{}` |
+| `admin_panel_gui.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
+| `admin_panel_gui.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `""` |
+| `admin_panel_gui.updateStrategy` | The strategy to use to update existing pods | `nil` |
+
 ### Parameters: deployments
 
 The following table lists the parameters for the `deployments` component and their default values:

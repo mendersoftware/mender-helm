@@ -1,0 +1,275 @@
+suite: test admin panel gating, validation and host based gateway routing
+templates:
+  - templates/admin-panel/deployment.yaml
+  - templates/admin-panel/ingress.yaml
+  - templates/admin-panel-gui/deployment.yaml
+  - templates/api-gateway/configmap.yaml
+tests:
+  - it: should render nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/admin-panel/deployment.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/admin-panel/ingress.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/admin-panel-gui/deployment.yaml
+
+  - it: should render nothing when enabled on an open source install
+    set:
+      global.enterprise: false
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+      admin_panel.ingress.enabled: true
+      admin_panel_gui.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/admin-panel/deployment.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/admin-panel/ingress.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/admin-panel-gui/deployment.yaml
+
+  # nothing routes the panel without a hostname, so an enabled panel without one
+  # is rejected for the whole chart rather than deployed unreachable
+  - it: should fail when no hostname is set
+    template: templates/admin-panel/deployment.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.existingSecret: admin-panel-secret
+    asserts:
+      - failedTemplate:
+          errorMessage: "admin_panel.hostname is required: the panel is only routed on a host of its own"
+
+  - it: should fail when the gui is enabled without the backend
+    template: templates/admin-panel-gui/deployment.yaml
+    set:
+      global.enterprise: true
+      admin_panel_gui.enabled: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "admin_panel_gui.enabled requires admin_panel.enabled: the GUI has no backend to talk to"
+
+  - it: should fail when no credentials are provided
+    template: templates/admin-panel/deployment.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+    asserts:
+      - failedTemplate:
+          errorMessage: "admin_panel needs OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and SESSION_SECRET: set admin_panel.existingSecret or admin_panel.customEnvs"
+
+  - it: should accept credentials from customEnvs instead of a secret
+    template: templates/admin-panel/deployment.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.customEnvs:
+        - name: ADMIN_PANEL_SESSION_SECRET
+          value: secret
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should default the base url to the admin host
+    template: templates/admin-panel/deployment.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="ADMIN_PANEL_BASE_URL")].value
+          value: https://admin.docker.mender.io
+
+  - it: should wire the backend to the internal service addresses
+    template: templates/admin-panel/deployment.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="ADMIN_PANEL_WORKFLOWS_ADDRESS")].value
+          value: http://mender-workflows-server:8080
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[0].secretRef.name
+          value: admin-panel-secret
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[0].prefix
+          value: ADMIN_PANEL_
+
+  - it: should not route the admin panel unless it is enabled
+    template: templates/api-gateway/configmap.yaml
+    set:
+      global.enterprise: true
+    asserts:
+      - notMatchRegex:
+          path: data["traefik.yaml"]
+          pattern: "admin-panel"
+
+  - it: should serve the whole admin host from the gui
+    template: templates/api-gateway/configmap.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+      admin_panel_gui.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'rule: "Host\(`admin\.docker\.mender\.io`\)"'
+      - notMatchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'PathPrefix\(`/admin`\)'
+      # above the catch-all gui router and below healthz, so /healthz survives on
+      # the admin host when both share the http entrypoint
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'rule: "Host\(`admin\.docker\.mender\.io`\)"\n\s+service: admin-panel-gui\n\s+priority: 15'
+
+  - it: should host scope the sudo api
+    template: templates/api-gateway/configmap.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+    asserts:
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'rule: "Host\(`admin\.docker\.mender\.io`\) && PathRegexp\(`\^/api/sudo/v\[0-9a-z\]\+/admin-panel`\)"'
+      # no sudo route may ever be reachable on the customer facing host
+      - notMatchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'rule: "PathRegexp\(`\^/api/sudo'
+
+  - it: should not render a duplicate auth router when authRateLimit is unset
+    template: templates/api-gateway/configmap.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+      api_gateway.authRateLimit: ~
+    asserts:
+      - notMatchRegex:
+          path: data["traefik.yaml"]
+          pattern: "adminPanelAuth"
+
+  - it: should render the auth router with its own rate limit when authRateLimit is set
+    template: templates/api-gateway/configmap.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+      api_gateway.authRateLimit:
+        average: 10
+        burst: 20
+    asserts:
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: "adminPanelAuth"
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: "priority: 110"
+
+  - it: should strip client supplied X-MEN headers on the admin routes
+    template: templates/api-gateway/configmap.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+    asserts:
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: '\n\s+- adminPanelHeaders\n'
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'X-MEN-RBAC-Inventory-Groups: ""'
+      # the list has to track useradm's authResponseHeaders or a spoofed header
+      # reaches the panel unfiltered
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'X-MEN-RequestID: ""'
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'X-MEN-RBAC-Deployments-Groups: ""'
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'X-MEN-RBAC-Releases-Tags: ""'
+
+  - it: should render an internal ingress for the admin host
+    template: templates/admin-panel/ingress.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+      admin_panel.ingress.enabled: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: spec.rules[0].host
+          value: admin.docker.mender.io
+      - equal:
+          path: metadata.annotations["alb.ingress.kubernetes.io/scheme"]
+          value: internal
+      - equal:
+          path: metadata.annotations["alb.ingress.kubernetes.io/group.name"]
+          value: mender-internal
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: mender-api-gateway
+
+  # the default annotations keep :80 open, so the alb ssl-redirect action has to
+  # be wireable the same way it is on the main ingress
+  - it: should put extraPaths ahead of the api-gateway backend
+    template: templates/admin-panel/ingress.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+      admin_panel.ingress.enabled: true
+      admin_panel.ingress.extraPaths:
+        - path: /
+          backend:
+            serviceName: ssl-redirect
+            servicePort: use-annotation
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: ssl-redirect
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.name
+          value: use-annotation
+      - equal:
+          path: spec.rules[0].http.paths[1].backend.service.name
+          value: mender-api-gateway
+
+  - it: should not render the admin ingress when the panel is enabled but the ingress is not
+    template: templates/admin-panel/ingress.yaml
+    set:
+      global.enterprise: true
+      admin_panel.enabled: true
+      admin_panel.hostname: admin.docker.mender.io
+      admin_panel.existingSecret: admin-panel-secret
+    asserts:
+      - hasDocuments:
+          count: 0
