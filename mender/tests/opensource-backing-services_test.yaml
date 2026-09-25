@@ -1,0 +1,375 @@
+suite: test open source backing services
+templates:
+  - templates/mongodb/deployment.yaml
+  - templates/mongodb/service.yaml
+  - templates/mongodb/secret.yaml
+  - templates/mongodb/pvc.yaml
+tests:
+  ##############################################################################
+  # MongoDB Deployment Tests
+  ##############################################################################
+  - it: should create MongoDB deployment when enabled
+    set:
+      mongodb.enabled: true
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: .*-mongodb$
+      - equal:
+          path: spec.replicas
+          value: 1
+      - equal:
+          path: spec.strategy.type
+          value: Recreate
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "-100"
+
+  - it: should not create MongoDB deployment when disabled
+    set:
+      mongodb.enabled: false
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should configure MongoDB container correctly
+    set:
+      mongodb.enabled: true
+      mongodb.image.repository: mongo
+      mongodb.image.tag: "8.0.16"
+      mongodb.image.pullPolicy: IfNotPresent
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: mongodb
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: mongo:8.0.16
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+
+  - it: should configure MongoDB environment variables
+    set:
+      mongodb.enabled: true
+      mongodb.auth.rootUsername: "testuser"
+      mongodb.auth.database: "testdb"
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MONGO_INITDB_ROOT_USERNAME
+            value: "testuser"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MONGO_INITDB_DATABASE
+            value: "testdb"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: RELEASE-NAME-mender-mongodb
+                key: mongodb-root-password
+
+  - it: should configure MongoDB port correctly
+    set:
+      mongodb.enabled: true
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].name
+          value: mongodb
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].containerPort
+          value: 27017
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].protocol
+          value: TCP
+
+  - it: should configure MongoDB health probes
+    set:
+      mongodb.enabled: true
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.containers[0].livenessProbe
+      - isNotNull:
+          path: spec.template.spec.containers[0].readinessProbe
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command[0]
+          value: mongosh
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.exec.command[0]
+          value: mongosh
+
+  - it: should mount data volume correctly
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: false
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: mongodb-data
+            mountPath: /data/db
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: mongodb-data
+            emptyDir: {}
+
+  - it: should use PVC when persistence is enabled
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: true
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: mongodb-data
+            persistentVolumeClaim:
+              claimName: RELEASE-NAME-mender-mongodb-pvc
+
+  - it: should have correct component labels
+    set:
+      mongodb.enabled: true
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: mongodb
+      - equal:
+          path: spec.template.metadata.labels["app.kubernetes.io/component"]
+          value: mongodb
+
+  ##############################################################################
+  # MongoDB Service Tests
+  ##############################################################################
+  - it: should create MongoDB service when enabled
+    set:
+      mongodb.enabled: true
+    template: templates/mongodb/service.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
+      - matchRegex:
+          path: metadata.name
+          pattern: .*-mongodb$
+      - equal:
+          path: spec.type
+          value: ClusterIP
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "-100"
+
+  - it: should not create MongoDB service when disabled
+    set:
+      mongodb.enabled: false
+    template: templates/mongodb/service.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should configure MongoDB service port
+    set:
+      mongodb.enabled: true
+    template: templates/mongodb/service.yaml
+    asserts:
+      - equal:
+          path: spec.ports[0].name
+          value: mongodb
+      - equal:
+          path: spec.ports[0].port
+          value: 27017
+      - equal:
+          path: spec.ports[0].targetPort
+          value: mongodb
+      - equal:
+          path: spec.ports[0].protocol
+          value: TCP
+
+  - it: should have correct selector for MongoDB service
+    set:
+      mongodb.enabled: true
+    template: templates/mongodb/service.yaml
+    asserts:
+      - equal:
+          path: spec.selector["app.kubernetes.io/component"]
+          value: mongodb
+
+  ##############################################################################
+  # MongoDB Secret Tests
+  ##############################################################################
+  - it: should create MongoDB secret when enabled
+    set:
+      mongodb.enabled: true
+      mongodb.auth.rootPassword: "testpassword"
+    template: templates/mongodb/secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Secret
+      - matchRegex:
+          path: metadata.name
+          pattern: .*-mongodb$
+      - equal:
+          path: type
+          value: Opaque
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "-100"
+
+  - it: should not create MongoDB secret when disabled
+    set:
+      mongodb.enabled: false
+    template: templates/mongodb/secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should encode MongoDB root password in secret
+    set:
+      mongodb.enabled: true
+      mongodb.auth.rootPassword: "mypassword"
+    template: templates/mongodb/secret.yaml
+    asserts:
+      - isNotNull:
+          path: data["mongodb-root-password"]
+      - equal:
+          path: data["mongodb-root-password"]
+          value: bXlwYXNzd29yZA==
+
+  ##############################################################################
+  # MongoDB PVC Tests
+  ##############################################################################
+  - it: should create MongoDB PVC when both mongodb and persistence are enabled
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: true
+      mongodb.persistence.size: 10Gi
+      mongodb.persistence.accessMode: ReadWriteOnce
+    template: templates/mongodb/pvc.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PersistentVolumeClaim
+      - matchRegex:
+          path: metadata.name
+          pattern: .*-mongodb-pvc$
+      - equal:
+          path: spec.resources.requests.storage
+          value: 10Gi
+      - contains:
+          path: spec.accessModes
+          content: ReadWriteOnce
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-install
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "-150"
+
+  - it: should not create MongoDB PVC when mongodb is disabled
+    set:
+      mongodb.enabled: false
+      mongodb.persistence.enabled: true
+    template: templates/mongodb/pvc.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create MongoDB PVC when persistence is disabled
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: false
+    template: templates/mongodb/pvc.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should configure storage class when specified
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: true
+      mongodb.persistence.storageClass: fast-ssd
+    template: templates/mongodb/pvc.yaml
+    asserts:
+      - equal:
+          path: spec.storageClassName
+          value: fast-ssd
+
+  - it: should not set storage class when not specified
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: true
+    template: templates/mongodb/pvc.yaml
+    asserts:
+      - isNull:
+          path: spec.storageClassName
+
+  ##############################################################################
+  # Open Source Deployment Complete Tests
+  ##############################################################################
+  - it: should create deployment for open source with persistence
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: true
+      global.enterprise: false
+    template: templates/mongodb/deployment.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should create service for open source
+    set:
+      mongodb.enabled: true
+      global.enterprise: false
+    template: templates/mongodb/service.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should create secret for open source
+    set:
+      mongodb.enabled: true
+      global.enterprise: false
+    template: templates/mongodb/secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should create PVC for open source with persistence
+    set:
+      mongodb.enabled: true
+      mongodb.persistence.enabled: true
+      global.enterprise: false
+    template: templates/mongodb/pvc.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
