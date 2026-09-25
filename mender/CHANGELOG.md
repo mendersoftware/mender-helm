@@ -1284,6 +1284,14 @@
 
 # Changelog
 
+## [8.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.0...mender-8.3.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* mender-server release 4.1.4 ([2218dd6](https://github.com/mendersoftware/mender-helm/commit/2218dd629fe227528ccb63775185d06ae13f69a3))
+* mender-server release 4.1.4 ([e5e7265](https://github.com/mendersoftware/mender-helm/commit/e5e7265138b252899cdc8df00cdb593d486bc5a6))
+
 ## [8.3.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.2.3...mender-8.3.0) (2026-09-07)
 
 
