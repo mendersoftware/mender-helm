@@ -1284,6 +1284,13 @@
 
 # Changelog
 
+## [8.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.1...mender-8.3.2) (2026-09-30)
+
+
+### Bug Fixes
+
+* bump redis from 8.8.1-alpine to 8.10.0-alpine in /mender ([19c7fc0](https://github.com/mendersoftware/mender-helm/commit/19c7fc0f0136e5c9744ae849f21c5b7525dc953b))
+
 ## [8.3.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.0...mender-8.3.1) (2026-09-25)
 
 
