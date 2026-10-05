@@ -1284,6 +1284,14 @@
 
 # Changelog
 
+## [8.3.3](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.2...mender-8.3.3) (2026-10-05)
+
+
+### Bug Fixes
+
+* **deps:** update redis docker tag to v8.10.2 ([84bfb98](https://github.com/mendersoftware/mender-helm/commit/84bfb98dc645a10b57c05c347cf674458a0da5f1))
+* **deps:** update redis docker tag to v8.10.2 ([9b57c79](https://github.com/mendersoftware/mender-helm/commit/9b57c7989d4b6bad35928a6660e12d817248c31a))
+
 ## [8.3.2](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.1...mender-8.3.2) (2026-09-30)
 
 
