@@ -53,6 +53,7 @@ global:
 default:
   affinity: {}
   tolerations: {}
+  topologySpreadConstraints: []
 
   # The default.image depends on the state of `global.enterprise`:
   # If true:  registry.mender.io/mender-server-enterprise

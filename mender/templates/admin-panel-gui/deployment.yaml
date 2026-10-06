@@ -46,6 +46,10 @@ spec:
       {{- with $merged.affinity }}
       affinity: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- include "mender.validateScheduling" (dict "name" "admin-panel-gui" "affinity" $merged.affinity "topologySpreadConstraints" $merged.topologySpreadConstraints) }}
+      {{- with $merged.topologySpreadConstraints }}
+      topologySpreadConstraints: {{ tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
       {{- with $merged.tolerations }}
       tolerations: {{ tpl (toYaml .) $ | nindent 8 }}
       {{- end }}

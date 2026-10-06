@@ -428,3 +428,11 @@ Use custom probes overrides
 {{- toYaml $_ }}
 {{- end }}
 {{- end }}
+
+{{/* podAntiAffinity is a hard filter; a spread constraint beside it is inert */}}
+{{- define "mender.validateScheduling" -}}
+{{- $affinity := .affinity | default dict -}}
+{{- if and $affinity.podAntiAffinity .topologySpreadConstraints }}
+{{- fail (printf "%s: cannot set both podAntiAffinity and topologySpreadConstraints: podAntiAffinity would make the topologySpreadConstraints inert." .name) }}
+{{- end }}
+{{- end }}

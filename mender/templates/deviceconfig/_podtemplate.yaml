@@ -12,6 +12,10 @@ spec:
   {{- with (coalesce .dot.Values.deviceconfig.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
+  {{- include "mender.validateScheduling" (dict "name" "deviceconfig" "affinity" (coalesce .dot.Values.deviceconfig.affinity .dot.Values.default.affinity) "topologySpreadConstraints" (coalesce .dot.Values.deviceconfig.topologySpreadConstraints .dot.Values.default.topologySpreadConstraints)) }}
+  {{- with (coalesce .dot.Values.deviceconfig.topologySpreadConstraints .dot.Values.default.topologySpreadConstraints) }}
+  topologySpreadConstraints: {{ toYaml . | nindent 4 }}
+  {{- end }}
   {{- with (coalesce .dot.Values.deviceconfig.tolerations .dot.Values.default.tolerations) }}
   tolerations: {{ toYaml . | nindent 4 }}
   {{- end }}
