@@ -53,6 +53,7 @@ global:
 default:
   affinity: {}
   tolerations: {}
+  topologySpreadConstraints: []
 
   # The default.image depends on the state of `global.enterprise`:
   # If true:  registry.mender.io/mender-server-enterprise
@@ -229,7 +230,7 @@ api_gateway:
   image:
     registry: docker.io
     repository: traefik
-    tag: v3.7.13
+    tag: v3.7.14
     imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   replicas: 1
@@ -1674,7 +1675,7 @@ redis:
 
   image:
     repository: redis
-    tag: "8.8.1-alpine"
+    tag: "8.10.2-alpine"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1

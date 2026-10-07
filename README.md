@@ -68,6 +68,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
 | `default.affinity` | Optional affinity values that applies to all the resources | `nil` |
+| `default.topologySpreadConstraints` | Optional [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) constraints that apply to all the resources. Cannot be combined with `podAntiAffinity` | `[]` |
 | `default.toleration` | Optional toleration values that applies to all the resources | `nil` |
 | `default.hpa` | HorizontalPodAutoscaler support | `nil` |
 | `default.hpa.enabled` | HorizontalPodAutoscaler enabled | `nil` |
@@ -129,6 +130,7 @@ The following table lists the parameters for the `api-gateway` component and the
 | `api_gateway.podAnnotations` | add custom pod annotations | `nil` |
 | `api_gateway.replicas` | Number of replicas | `1` |
 | `api_gateway.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `api_gateway.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `api_gateway.httpPort` | Port for the HTTP listener in the container | `9080` |
 | `api_gateway.httpsPort` | Port for the HTTPS listener in the container | `9443` |
 | `api_gateway.resources.limits.cpu` | Resources CPU limit | `600m` |
@@ -241,6 +243,7 @@ The following table lists the parameters for the `admin_panel` component and the
 | `admin_panel.podSecurityContext` | Pod security context, disabled by default | `enabled: false` |
 | `admin_panel.containerSecurityContext` | Container security context, disabled by default | `enabled: false` |
 | `admin_panel.affinity` | Affinity rules, falls back to `default.affinity` | `{}` |
+| `admin_panel.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `admin_panel.nodeSelector` | Node selector, falls back to `default.nodeSelector` | `{}` |
 | `admin_panel.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `admin_panel.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `""` |
@@ -276,6 +279,7 @@ The following table lists the parameters for the `admin_panel_gui` component and
 | `admin_panel_gui.podSecurityContext` | Pod security context, disabled by default | `enabled: false` |
 | `admin_panel_gui.containerSecurityContext` | Container security context, disabled by default | `enabled: false` |
 | `admin_panel_gui.affinity` | Affinity rules, falls back to `default.affinity` | `{}` |
+| `admin_panel_gui.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `admin_panel_gui.nodeSelector` | Node selector, falls back to `default.nodeSelector` | `{}` |
 | `admin_panel_gui.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `admin_panel_gui.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `""` |
@@ -298,6 +302,7 @@ The following table lists the parameters for the `deployments` component and the
 | `deployments.podAnnotations` | add custom pod annotations | `nil` |
 | `deployments.replicas` | Number of replicas | `1` |
 | `deployments.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `deployments.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `deployments.directUpload.enabled` | Enable direct upload feature | `true` |
 | `deployments.directUpload.jitter` | Clock jitter - margin for removing expired objects | `"3s"` |
 | `deployments.directUpload.skipVerify`  | Skip verification of artifact uploaded through direct upload. Only advised if you verified the direct upload through other means. | `false` |
@@ -360,6 +365,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.podAnnotations` | add custom pod annotations | `nil` |
 | `device_auth.replicas` | Number of replicas | `1` |
 | `device_auth.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `device_auth.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `device_auth.resources.limits.cpu` | Resources CPU limit | `350m` |
 | `device_auth.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `device_auth.resources.requests.cpu` | Resources CPU request | `350m` |
@@ -424,6 +430,7 @@ The following table lists the parameters for the `gui` component and their defau
 | `gui.podAnnotations` | add custom pod annotations | `nil` |
 | `gui.replicas` | Number of replicas | `1` |
 | `gui.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `gui.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `gui.resources.limits.cpu` | Resources CPU limit | `20m` |
 | `gui.resources.limits.memory` | Resources memory limit | `64Mi` |
 | `gui.resources.requests.cpu` | Resources CPU request | `5m` |
@@ -474,6 +481,7 @@ The following table lists the parameters for the `inventory` component and their
 | `inventory.podAnnotations` | add custom pod annotations | `nil` |
 | `inventory.replicas` | Number of replicas | `1` |
 | `inventory.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `inventory.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `inventory.resources.limits.cpu` | Resources CPU limit | `300m` |
 | `inventory.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `inventory.resources.requests.cpu` | Resources CPU request | `300m` |
@@ -529,6 +537,7 @@ The following table lists the parameters for the `tenantadm` component and their
 | `tenantadm.podAnnotations` | add custom pod annotations | `nil` |
 | `tenantadm.replicas` | Number of replicas | `1` |
 | `tenantadm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `tenantadm.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `tenantadm.resources.limits.cpu` | Resources CPU limit | `150m` |
 | `tenantadm.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `tenantadm.resources.requests.cpu` | Resources CPU request | `150m` |
@@ -602,6 +611,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.podAnnotations` | add custom pod annotations | `nil` |
 | `useradm.replicas` | Number of replicas | `1` |
 | `useradm.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `useradm.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `useradm.resources.limits.cpu` | Resources CPU limit | `150m` |
 | `useradm.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `useradm.resources.requests.cpu` | Resources CPU request | `150m` |
@@ -668,6 +678,7 @@ The following table lists the parameters for the `workflows-server` component an
 | `workflows.podAnnotations` | add custom pod annotations | `nil` |
 | `workflows.replicas` | Number of replicas | `1` |
 | `workflows.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `workflows.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `workflows.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `workflows.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `workflows.resources.requests.cpu` | Resources CPU request | `10m` |
@@ -760,6 +771,7 @@ The following table lists the parameters for the `create-artifact-worker` compon
 | `create_artifact_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `create_artifact_worker.replicas` | Number of replicas | `1` |
 | `create_artifact_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `create_artifact_worker.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `create_artifact_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `create_artifact_worker.resources.limits.memory` | Resources memory limit | `1024Mi` |
 | `create_artifact_worker.resources.requests.cpu` | Resources CPU request | `100m` |
@@ -792,6 +804,7 @@ The following table lists the parameters for the `auditlogs` component and their
 | `auditlogs.logRetentionSeconds` | Seconds before an audit event is evicted from the database | `7776000` |
 | `auditlogs.replicas` | Number of replicas | `1` |
 | `auditlogs.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `auditlogs.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `auditlogs.resources.limits.cpu` | Resources CPU limit | `50m` |
 | `auditlogs.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `auditlogs.resources.requests.cpu` | Resources CPU request | `50m` |
@@ -841,6 +854,7 @@ The following table lists the parameters for the `iot-manager` component and the
 | `iot_manager.image.podAnnotations` | add custom pod annotations | `nil` |
 | `iot_manager.replicas` | Number of replicas | `1` |
 | `iot_manager.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `iot_manager.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `iot_manager.resources.limits.cpu` | Resources CPU limit | `50m` |
 | `iot_manager.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `iot_manager.resources.requests.cpu` | Resources CPU request | `50m` |
@@ -893,6 +907,7 @@ The following table lists the parameters for the `deviceconnect` component and t
 | `deviceconnect.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconnect.replicas` | Number of replicas | `1` |
 | `deviceconnect.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `deviceconnect.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `deviceconnect.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `deviceconnect.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `deviceconnect.resources.requests.cpu` | Resources CPU request | `100m` |
@@ -947,6 +962,7 @@ The following table lists the parameters for the `deviceconfig` component and th
 | `deviceconfig.podAnnotations` | add custom pod annotations | `nil` |
 | `deviceconfig.replicas` | Number of replicas | `1` |
 | `deviceconfig.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `deviceconfig.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `deviceconfig.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `deviceconfig.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `deviceconfig.resources.requests.cpu` | Resources CPU request | `100m` |
@@ -996,6 +1012,7 @@ The following table lists the parameters for the `devicemonitor` component and t
 | `devicemonitor.podAnnotations` | add custom pod annotations | `nil` |
 | `devicemonitor.replicas` | Number of replicas | `1` |
 | `devicemonitor.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `devicemonitor.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `devicemonitor.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `devicemonitor.resources.limits.memory` | Resources memory limit | `128Mi` |
 | `devicemonitor.resources.requests.cpu` | Resources CPU request | `100m` |
@@ -1053,6 +1070,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.persistence.retention.whenDeleted` | Volume retention policy when StatefulSet is deleted | `"Retain"` |
 | `generate_delta_worker.persistence.retention.whenScaled` | Volume retention policy when StatefulSet is scaled (down) | `"Delete"` |
 | `generate_delta_worker.affinity` | [Affinity map](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity) for the POD | `{}` |
+| `generate_delta_worker.topologySpreadConstraints` | [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) for the POD, replaces `default.topologySpreadConstraints`. Cannot be combined with `podAntiAffinity` | `[]` |
 | `generate_delta_worker.resources.limits.cpu` | Resources CPU limit | `100m` |
 | `generate_delta_worker.resources.limits.memory` | Resources memory limit | `1024Mi` |
 | `generate_delta_worker.resources.requests.cpu` | Resources CPU request | `100m` |
