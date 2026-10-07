@@ -1,0 +1,104 @@
+suite: test scheduling configuration shapes
+templates:
+  - templates/inventory/deployment.yaml
+  - templates/api-gateway/deployment.yaml
+  - templates/api-gateway/configmap.yaml
+tests:
+  - it: should keep nodeAffinity and podAntiAffinity when a service declares both
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node.kubernetes.io/nodegroup
+                    operator: In
+                    values: [mender]
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: inventory
+    asserts:
+      - exists:
+          path: spec.template.spec.affinity.nodeAffinity
+      - exists:
+          path: spec.template.spec.affinity.podAntiAffinity
+      - notExists:
+          path: spec.template.spec.topologySpreadConstraints
+
+  - it: should inherit nodeAffinity when a service declares only podAntiAffinity
+    template: templates/api-gateway/deployment.yaml
+    set:
+      default.affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node.kubernetes.io/nodegroup
+                    operator: In
+                    values: [mender]
+      api_gateway.affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: api-gateway
+    asserts:
+      - exists:
+          path: spec.template.spec.affinity.nodeAffinity
+      - exists:
+          path: spec.template.spec.affinity.podAntiAffinity
+
+  - it: should keep a nodeAffinity exclusion alongside spread constraints
+    template: templates/inventory/deployment.yaml
+    set:
+      inventory.affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node.kubernetes.io/nodegroup
+                    operator: In
+                    values: [mender]
+                  - key: node.kubernetes.io/lifecycle
+                    operator: NotIn
+                    values: [spot]
+      inventory.topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          nodeAffinityPolicy: Honor
+          nodeTaintsPolicy: Honor
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[1].operator
+          value: NotIn
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].nodeAffinityPolicy
+          value: Honor
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].nodeTaintsPolicy
+          value: Honor
+
+  - it: should leave tolerations untouched when spread constraints are added
+    template: templates/inventory/deployment.yaml
+    set:
+      default.tolerations:
+        - key: mender
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+      default.topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations[0].key
+          value: mender
+      - exists:
+          path: spec.template.spec.topologySpreadConstraints
