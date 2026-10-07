@@ -17,6 +17,10 @@ spec:
   {{- with (coalesce .dot.Values.deployments.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
+  {{- include "mender.validateScheduling" (dict "name" "deployments" "affinity" (coalesce .dot.Values.deployments.affinity .dot.Values.default.affinity) "topologySpreadConstraints" (coalesce .dot.Values.deployments.topologySpreadConstraints .dot.Values.default.topologySpreadConstraints)) }}
+  {{- with (coalesce .dot.Values.deployments.topologySpreadConstraints .dot.Values.default.topologySpreadConstraints) }}
+  topologySpreadConstraints: {{ toYaml . | nindent 4 }}
+  {{- end }}
   {{- with (coalesce .dot.Values.deployments.tolerations .dot.Values.default.tolerations) }}
   tolerations: {{ toYaml . | nindent 4 }}
   {{- end }}

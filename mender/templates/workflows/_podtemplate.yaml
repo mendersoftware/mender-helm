@@ -13,6 +13,10 @@ spec:
   {{- with (coalesce .dot.Values.workflows.affinity .dot.Values.default.affinity) }}
   affinity: {{ toYaml . | nindent 4 }}
   {{- end }}
+  {{- include "mender.validateScheduling" (dict "name" "workflows" "affinity" (coalesce .dot.Values.workflows.affinity .dot.Values.default.affinity) "topologySpreadConstraints" (coalesce .dot.Values.workflows.topologySpreadConstraints .dot.Values.default.topologySpreadConstraints)) }}
+  {{- with (coalesce .dot.Values.workflows.topologySpreadConstraints .dot.Values.default.topologySpreadConstraints) }}
+  topologySpreadConstraints: {{ toYaml . | nindent 4 }}
+  {{- end }}
   {{- with (coalesce .dot.Values.workflows.tolerations .dot.Values.default.tolerations) }}
   tolerations: {{ toYaml . | nindent 4 }}
   {{- end }}
