@@ -1,4 +1,23 @@
 ---
+## mender-8.4.0 - 2026-10-07
+
+
+### New features
+
+- Support topologySpreadConstraints on mender services ([MC-8871](https://northerntech.atlassian.net/browse/MC-8871)) ([e9d1b74](https://github.com/mendersoftware/mender-helm/commit/e9d1b742fb6251eac1c4be283620624d70d4412d)) by @oldgiova
+
+### Bug fixes
+
+- *(deps)* Update docker.io/traefik docker tag to v3.7.14 ([28669d3](https://github.com/mendersoftware/mender-helm/commit/28669d300e853c168f82473010d5afbdf616e69e)) by @renovate-ring-mendersoftware[bot]
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MC-8871](https://northerntech.atlassian.net/browse/MC-8871) |
+
+
 ## mender-8.2.3 - 2026-08-28
 
 
@@ -1283,6 +1302,20 @@
 
 
 # Changelog
+
+## [8.4.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.3...mender-8.4.0) (2026-10-07)
+
+
+### Features
+
+* support topologySpreadConstraints on mender services ([1e80a3f](https://github.com/mendersoftware/mender-helm/commit/1e80a3f4bcb7391f081493692fb2c30ff723b58a))
+* support topologySpreadConstraints on mender services ([e9d1b74](https://github.com/mendersoftware/mender-helm/commit/e9d1b742fb6251eac1c4be283620624d70d4412d))
+
+
+### Bug Fixes
+
+* **deps:** update docker.io/traefik docker tag to v3.7.14 ([ff08016](https://github.com/mendersoftware/mender-helm/commit/ff08016687c00962a5ee1c5d91bda12b34a8f7b9))
+* **deps:** update docker.io/traefik docker tag to v3.7.14 ([28669d3](https://github.com/mendersoftware/mender-helm/commit/28669d300e853c168f82473010d5afbdf616e69e))
 
 ## [8.3.3](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.2...mender-8.3.3) (2026-10-05)
 
