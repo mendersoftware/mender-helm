@@ -611,6 +611,8 @@ generate_delta_worker:
   #   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nodeSelector: {}
+  service:
+    annotations: {}
   priorityClassName: ""
 
   # custom envs

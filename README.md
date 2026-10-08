@@ -1061,6 +1061,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `generate_delta_worker.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `generate_delta_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `generate_delta_worker.service.annotations` | Annotations map for the service | `{}` |
 | `generate_delta_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `generate_delta_worker.replicas` | Number of replicas | `1` |
 | `generate_delta_worker.persistence.enabled` | Enable persistence of the work directory (PVC template) | `true` |
