@@ -1,0 +1,85 @@
+suite: test generate-delta-worker Service
+templates:
+  - templates/generate-delta-worker/service.yaml
+
+tests:
+  - it: should not render when enterprise is disabled
+    set:
+      global.enterprise: false
+      generate_delta_worker.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render when generate_delta_worker is disabled
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a headless Service with no annotations by default
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-mender-generate-delta-worker
+      - equal:
+          path: spec.clusterIP
+          value: "None"
+      - notExists:
+          path: metadata.annotations
+
+  - it: should render its own service annotations
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      generate_delta_worker.service.annotations:
+        example.com/owner: delta
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/owner"]
+          value: delta
+
+  - it: should render service annotations through tpl
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      generate_delta_worker.service.annotations:
+        example.com/release: "{{ .Release.Name }}"
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/release"]
+          value: RELEASE-NAME
+
+  - it: should not inherit annotations from deployments.service
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      deployments.service.annotations:
+        service.kubernetes.io/topology-mode: "Auto"
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: should keep its own annotations when deployments.service also sets some
+    set:
+      global.enterprise: true
+      generate_delta_worker.enabled: true
+      deployments.service.annotations:
+        service.kubernetes.io/topology-mode: "Auto"
+      generate_delta_worker.service.annotations:
+        example.com/owner: delta
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/owner"]
+          value: delta
+      - notExists:
+          path: metadata.annotations["service.kubernetes.io/topology-mode"]
