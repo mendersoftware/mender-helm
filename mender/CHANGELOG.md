@@ -1,4 +1,11 @@
 ---
+## mender-8.4.1 - 2026-10-08
+
+
+### Bug fixes
+
+- Read generate-delta-worker service annotations from its own values ([e878eb4](https://github.com/mendersoftware/mender-helm/commit/e878eb486c109a68ee0dc5c42eef7ac3ac19069e)) by @oldgiova
+
 ## mender-8.4.0 - 2026-10-07
 
 
@@ -1302,6 +1309,14 @@
 
 
 # Changelog
+
+## [8.4.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.4.0...mender-8.4.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* read generate-delta-worker service annotations from its own values ([b77146d](https://github.com/mendersoftware/mender-helm/commit/b77146db4ceeae39cb9f73a3d09c96167f6547e7))
+* read generate-delta-worker service annotations from its own values ([e878eb4](https://github.com/mendersoftware/mender-helm/commit/e878eb486c109a68ee0dc5c42eef7ac3ac19069e))
 
 ## [8.4.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.3.3...mender-8.4.0) (2026-10-07)
 
