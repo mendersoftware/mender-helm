@@ -65,9 +65,9 @@ workflows:
     repository: mender-server-enterprise
 gui:
   image:
-    tag: "v4.2.0-saas.20"
-    registry: registry.mender.io
-    repository: mender-server-enterprise
+    tag: "main@sha256:06e68dde851f542f0f2cc7223dfe22954f61353093db62fd13140703aaedabed"
+    registry: docker.io
+    repository: mendersoftware
 admin_panel:
   image:
     tag: v4.2.0-saas.20
