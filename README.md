@@ -68,6 +68,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
 | `default.affinity` | Optional affinity values that applies to all the resources | `nil` |
+| `default.tolerations` | Optional tolerations that apply to all the resources | `[]` |
 | `default.topologySpreadConstraints` | Optional [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) constraints that apply to all the resources. Cannot be combined with `podAntiAffinity` | `[]` |
 | `default.toleration` | Optional toleration values that applies to all the resources | `nil` |
 | `default.hpa` | HorizontalPodAutoscaler support | `nil` |

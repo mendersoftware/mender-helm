@@ -52,7 +52,7 @@ global:
 # present
 default:
   affinity: {}
-  tolerations: {}
+  tolerations: []
   topologySpreadConstraints: []
 
   # The default.image depends on the state of `global.enterprise`:
