@@ -1,4 +1,11 @@
 ---
+## mender-8.4.2 - 2026-10-14
+
+
+### Bug fixes
+
+- Render storage daemon nodeSelector inside the CronJob pod spec ([1f3b5cd](https://github.com/mendersoftware/mender-helm/commit/1f3b5cddf3966d39814863d964b76e7c3572cd69)) by @oldgiova
+
 ## mender-8.4.1 - 2026-10-08
 
 
@@ -1309,6 +1316,14 @@
 
 
 # Changelog
+
+## [8.4.2](https://github.com/mendersoftware/mender-helm/compare/mender-8.4.1...mender-8.4.2) (2026-10-14)
+
+
+### Bug Fixes
+
+* render storage daemon nodeSelector inside the CronJob pod spec ([86d3381](https://github.com/mendersoftware/mender-helm/commit/86d3381fdfe990720c447bd04bb41d1ee48cb0c6))
+* render storage daemon nodeSelector inside the CronJob pod spec ([1f3b5cd](https://github.com/mendersoftware/mender-helm/commit/1f3b5cddf3966d39814863d964b76e7c3572cd69))
 
 ## [8.4.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.4.0...mender-8.4.1) (2026-10-08)
 
