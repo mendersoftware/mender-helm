@@ -3,6 +3,7 @@ templates:
   - templates/inventory/deployment.yaml
   - templates/api-gateway/deployment.yaml
   - templates/api-gateway/configmap.yaml
+  - templates/deployments/cronjob.yaml
 tests:
   - it: should keep nodeAffinity and podAntiAffinity when a service declares both
     template: templates/inventory/deployment.yaml
@@ -102,3 +103,32 @@ tests:
           value: mender
       - exists:
           path: spec.template.spec.topologySpreadConstraints
+
+  # the storage daemon CronJob nests its pod spec two levels deeper than a
+  # Deployment; a mis-indented nodeSelector lands on the pod template itself,
+  # which server-side apply (Helm 4) rejects as an undeclared field
+  - it: should put nodeSelector and tolerations on the storage daemon pod spec
+    template: templates/deployments/cronjob.yaml
+    set:
+      deployments.directUpload.enabled: true
+      deployments.nodeSelector:
+        kubernetes.io/arch: amd64
+      default.tolerations:
+        - key: review
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+    asserts:
+      - isKind:
+          of: CronJob
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/arch: amd64
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.tolerations
+          value:
+            - key: review
+              operator: Equal
+              value: "true"
+              effect: NoSchedule
