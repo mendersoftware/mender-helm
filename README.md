@@ -68,6 +68,7 @@ The following table lists the global, default, and other parameters supported by
 | `global.smtp.SMTP_SSL` | Enable the SSL connection to the SMTP server | `false` |
 | `global.url` | Public URL of the Mender Server, replace with your domain | `https://mender-api-gateway` |
 | `default.affinity` | Optional affinity values that applies to all the resources | `nil` |
+| `default.tolerations` | Optional tolerations that apply to all the resources | `[]` |
 | `default.topologySpreadConstraints` | Optional [Pod topology spread](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) constraints that apply to all the resources. Cannot be combined with `podAntiAffinity` | `[]` |
 | `default.toleration` | Optional toleration values that applies to all the resources | `nil` |
 | `default.hpa` | HorizontalPodAutoscaler support | `nil` |
@@ -1061,6 +1062,7 @@ The following table lists the parameters for the `generate-delta-worker` compone
 | `generate_delta_worker.image.imagePullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `generate_delta_worker.imagePullSecrets` | Optional list of existing Image Pull Secrets in the format of `- name: my-custom-secret` | `[]` |
 | `generate_delta_worker.nodeSelector` | [Node selection](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) | `{}` |
+| `generate_delta_worker.service.annotations` | Annotations map for the service | `{}` |
 | `generate_delta_worker.podAnnotations` | add custom pod annotations | `nil` |
 | `generate_delta_worker.replicas` | Number of replicas | `1` |
 | `generate_delta_worker.persistence.enabled` | Enable persistence of the work directory (PVC template) | `true` |
