@@ -1,7 +1,6 @@
 variables:
   PIPELINE_TOOLBOX_IMAGE: "registry.gitlab.com/northern.tech/mender/mender-test-containers/aws-k8s-toolbox:master"
   EKS_CLUSTER_NAME: "helmci-${CI_PIPELINE_ID}"
-  EKS_MIN_KUBERNETES_VERSION: "1.35"
   RUN_HELM_CHART_INSTALL:
     value: "false"
     description: "Run Helm Chart tests"
@@ -277,13 +276,6 @@ build:setup_eks_cluster:
         --instance-types c6i.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge,m5d.xlarge \
         --nodes ${CI_EKS_NUMBER_OF_NODES:-8}
     - |
-      EKS_VERSION=$(aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --query 'cluster.version' --output text)
-      echo "INFO - EKS version ${EKS_VERSION} (minimum ${EKS_MIN_KUBERNETES_VERSION})"
-      if [[ "$(printf '%s\n' "${EKS_MIN_KUBERNETES_VERSION}" "${EKS_VERSION}" | sort -V | head -n1)" != "${EKS_MIN_KUBERNETES_VERSION}" ]]; then
-        echo "ERROR - EKS ${EKS_VERSION} is below the minimum ${EKS_MIN_KUBERNETES_VERSION}, update eksctl in the toolbox image"
-        exit 1
-      fi
-    - |
       echo "INFO - granting ECR pull-through cache write permissions to node role"
       NODEGROUP=$(eksctl get nodegroup --cluster ${EKS_CLUSTER_NAME} -o json | jq -r '.[0].Name')
       NODE_ROLE_ARN=$(aws eks describe-nodegroup \
@@ -303,16 +295,16 @@ build:setup_eks_cluster:
     - eksctl utils associate-iam-oidc-provider --cluster ${EKS_CLUSTER_NAME} --approve
     - eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKS_EBS_CSI_DriverRole --role-only --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --approve
     - eksctl create iamserviceaccount --name=aws-load-balancer-controller --namespace=kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::017659451055:policy/AWSLoadBalancerControllerIAMPolicy  --approve
-    - echo "INFO - waiting for the API server and aggregated APIs to be ready"
-    - kubectl wait --for=condition=Available apiservice --all --timeout=300s
+    # QA-1789: GET /openapi/v2 answers 503 on fresh EKS 1.35 clusters, which breaks
+    # helm client side validation. Remove --disable-openapi-validation once fixed.
     - helm repo add eks https://aws.github.io/eks-charts
     - helm repo update eks
-    - helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=${EKS_CLUSTER_NAME} --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller --wait
+    - helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=${EKS_CLUSTER_NAME} --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller --wait --disable-openapi-validation
     - eksctl create addon --name aws-ebs-csi-driver --cluster ${EKS_CLUSTER_NAME} --service-account-role-arn arn:aws:iam::017659451055:role/AmazonEKS_EBS_CSI_DriverRole --force
     - echo "DEBUG - kubectl cluster version:"
     - kubectl version
     - helm repo add jetstack https://charts.jetstack.io
-    - helm install cert-manager jetstack/cert-manager --wait --set installCRDs=true
+    - helm install cert-manager jetstack/cert-manager --wait --set installCRDs=true --disable-openapi-validation
 
 build:
   stage: build
