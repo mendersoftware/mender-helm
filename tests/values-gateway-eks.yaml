@@ -1,0 +1,23 @@
+featureGates:
+  gatewayApi: true
+gateway:
+  enabled: true
+  httpRoute:
+    parentRefs:
+      - name: mender-gateway
+    hostnames:
+      - mender.example.com
+  extraObjects:
+    - apiVersion: gateway.k8s.aws/v1
+      kind: TargetGroupConfiguration
+      metadata:
+        name: mender-api-gateway
+      spec:
+        targetReference:
+          name: mender-api-gateway
+        defaultConfiguration:
+          targetType: ip
+          healthCheckConfig:
+            healthCheckPath: /
+            matcher:
+              httpCode: "200-499"

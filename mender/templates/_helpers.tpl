@@ -436,3 +436,111 @@ Use custom probes overrides
 {{- fail (printf "%s: cannot set both podAntiAffinity and topologySpreadConstraints: podAntiAffinity would make the topologySpreadConstraints inert." .name) }}
 {{- end }}
 {{- end }}
+
+{{/*
+gateway_api_validation - fail on a Gateway API config that cannot work as set
+*/}}
+{{- define "gateway_api_validation" }}
+{{- $g := .Values.gateway }}
+{{- if and $g.enabled (not .Values.featureGates.gatewayApi) }}
+  {{- fail "gateway.enabled requires featureGates.gatewayApi=true (experimental)" }}
+{{- end }}
+{{- if and $g.admin_panel.enabled (not $g.enabled) }}
+  {{- fail "gateway.admin_panel.enabled requires gateway.enabled" }}
+{{- end }}
+{{- if and $g.extraObjects (not $g.enabled) }}
+  {{- fail "gateway.extraObjects requires gateway.enabled" }}
+{{- end }}
+{{- if and $g.enabled .Values.featureGates.gatewayApi }}
+  {{- if not (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1") }}
+    {{- fail "gateway.enabled requires the Gateway API CRDs (gateway.networking.k8s.io/v1). Install them first" }}
+  {{- end }}
+  {{- include "gateway_api_rules_validation" (dict "rules" $g.httpRoute.rules "name" "gateway.httpRoute") }}
+  {{- if and $g.httpRoute.tenantadmHooks (not (and .Values.global.enterprise .Values.tenantadm.enabled)) }}
+    {{- fail "gateway.httpRoute.tenantadmHooks requires global.enterprise and tenantadm.enabled" }}
+  {{- end }}
+  {{- if not $g.httpRoute.hostnames }}
+    {{- fail "gateway.enabled requires gateway.httpRoute.hostnames" }}
+  {{- end }}
+  {{- if not $g.httpRoute.rules }}
+    {{- fail "gateway.enabled requires gateway.httpRoute.rules" }}
+  {{- end }}
+  {{- include "gateway_api_refs_validation" (dict "refs" $g.httpRoute.parentRefs "name" "gateway.httpRoute") }}
+  {{- if and .Values.global.enterprise .Values.admin_panel.enabled }}
+    {{- $host := lower .Values.admin_panel.hostname }}
+    {{- range $h := $g.httpRoute.hostnames }}
+      {{- $h = lower $h }}
+      {{- if or (eq $h $host) (and (hasPrefix "*." $h) (hasSuffix (trimPrefix "*" $h) $host)) }}
+        {{- fail (printf "gateway.httpRoute.hostnames must not match admin_panel.hostname (%s): the admin panel must not be reachable through the public route" $host) }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- if $g.admin_panel.enabled }}
+    {{- if not (and .Values.global.enterprise .Values.admin_panel.enabled) }}
+      {{- fail "gateway.admin_panel.enabled requires global.enterprise and admin_panel.enabled" }}
+    {{- end }}
+    {{- include "admin_panel_conf_validation" . }}
+    {{- if not $g.admin_panel.httpRoute.rules }}
+      {{- fail "gateway.admin_panel.enabled requires gateway.admin_panel.httpRoute.rules" }}
+    {{- end }}
+    {{- include "gateway_api_refs_validation" (dict "refs" $g.admin_panel.httpRoute.parentRefs "name" "gateway.admin_panel.httpRoute") }}
+    {{- include "gateway_api_rules_validation" (dict "rules" $g.admin_panel.httpRoute.rules "name" "gateway.admin_panel.httpRoute") }}
+    {{- range $a := $g.httpRoute.parentRefs }}
+    {{- range $b := $g.admin_panel.httpRoute.parentRefs }}
+      {{- if and (eq $a.name $b.name) (eq (default $.Release.Namespace $a.namespace) (default $.Release.Namespace $b.namespace)) }}
+        {{- fail (printf "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (%s): listeners do not separate them, the admin panel must not be reachable through the public Gateway" $a.name) }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- range $g.extraObjects }}
+    {{- if not (and .apiVersion .kind (dig "metadata" "name" "" .)) }}
+      {{- fail "every gateway.extraObjects entry needs apiVersion, kind and metadata.name" }}
+    {{- end }}
+    {{- $group := "" }}
+    {{- if contains "/" .apiVersion }}
+      {{- $group = first (splitList "/" .apiVersion) }}
+    {{- end }}
+    {{- if not (has (printf "%s/%s" $group .kind) (list "gateway.k8s.aws/TargetGroupConfiguration" "alb.networking.azure.io/HealthCheckPolicy")) }}
+      {{- fail (printf "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got %s %s" .apiVersion .kind) }}
+    {{- end }}
+    {{- $ns := dig "metadata" "namespace" "" . }}
+    {{- if and $ns (ne $ns $.Release.Namespace) }}
+      {{- fail (printf "gateway.extraObjects entries must be in the release namespace (%s), got %s" $.Release.Namespace $ns) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "gateway_api_refs_validation" }}
+{{- if not .refs }}
+  {{- fail (printf "%s.parentRefs is required" .name) }}
+{{- end }}
+{{- range .refs }}
+  {{- if not .name }}
+    {{- fail (printf "every %s.parentRefs entry needs a name" $.name) }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "gateway_api_rules_validation" }}
+{{- range $i, $rule := .rules }}
+  {{- if not (kindIs "map" $rule) }}
+    {{- fail (printf "%s.rules[%d] must be a map" $.name $i) }}
+  {{- end }}
+  {{- if hasKey $rule "backendRefs" }}
+    {{- fail (printf "%s.rules[%d].backendRefs is not allowed: every rule routes to the api-gateway Service" $.name $i) }}
+  {{- end }}
+  {{- range $j, $filter := $rule.filters }}
+    {{- if not (kindIs "map" $filter) }}
+      {{- fail (printf "%s.rules[%d].filters[%d] must be a map" $.name $i $j) }}
+    {{- end }}
+    {{- if not (has $filter.type (list "RequestRedirect" "URLRewrite")) }}
+      {{- fail (printf "%s.rules[%d].filters[%d]: type %v is not allowed, only RequestRedirect and URLRewrite" $.name $i $j $filter.type) }}
+    {{- end }}
+    {{- if and (eq $filter.type "URLRewrite") (dig "urlRewrite" "hostname" "" $filter) }}
+      {{- fail (printf "%s.rules[%d].filters[%d]: URLRewrite must not set hostname" $.name $i $j) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
