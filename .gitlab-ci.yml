@@ -851,7 +851,8 @@ publish:helm_chart_publishing:
     - build
   image: ${PIPELINE_TOOLBOX_IMAGE}
   before_script:
-    - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0
+    # Helm 4 verifies plugins by default; git sources have no .prov to verify against
+    - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0 --verify=false
     - export AWS_DEFAULT_REGION=us-east-1
     - >
       export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
