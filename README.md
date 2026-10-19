@@ -1166,6 +1166,8 @@ Prerequisites:
 
 Misconfigurations fail the render instead of rendering nothing: `gateway.enabled` without
 `featureGates.gatewayApi`, missing CRDs, no `parentRefs` (every entry needs a `name`), no `hostnames` or no `rules`.
+The same goes for `gateway.admin_panel.enabled` or `gateway.extraObjects` set while `gateway.enabled` is `false`:
+clear them when switching the feature off.
 
 ```yaml
 featureGates:
@@ -1188,13 +1190,28 @@ The following table lists the parameters:
 | `gateway.enabled` | Render the `HTTPRoute`. Requires `featureGates.gatewayApi` | `false` |
 | `gateway.httpRoute.annotations` | `HTTPRoute` annotations | `{}` |
 | `gateway.httpRoute.parentRefs` | Gateways to attach to, as in the Gateway API `parentRefs`. Required, every entry needs a `name` | `[]` |
-| `gateway.httpRoute.hostnames` | Hostnames of the route. Required | `[mender.example.com]` |
-| `gateway.httpRoute.rules` | `HTTPRoute` rules. Required. A rule without `backendRefs` gets the api-gateway Service and `api_gateway.service.httpPort` | `PathPrefix /` |
-| `gateway.extraObjects` | Raw manifests of Gateway API and controller objects, rendered in the release namespace. | `[]` |
+| `gateway.httpRoute.hostnames` | Public hostnames of the Mender server, like `ingress.hosts`. Required. While the admin panel is enabled they must not include `admin_panel.hostname` or a wildcard covering it, such as `*.example.com` | `[mender.example.com]` |
+| `gateway.httpRoute.tenantadmHooks` | Route `/api/hooks/v1/tenantadm` straight to the tenantadm Service, like the hosted `ingress.extraPaths`. Requires `global.enterprise` and `tenantadm.enabled` | `false` |
+| `gateway.httpRoute.rules` | `HTTPRoute` rules. Required. Every rule routes to the api-gateway Service on `api_gateway.service.httpPort`, `backendRefs` is rejected. Filters are limited to `RequestRedirect` and `URLRewrite` without `hostname` | `PathPrefix /` |
+| `gateway.extraObjects` | Raw `TargetGroupConfiguration` (AWS) or `HealthCheckPolicy` (Azure) manifests, rendered in the release namespace | `[]` |
+| `gateway.admin_panel.enabled` | Render an `HTTPRoute` for `admin_panel.hostname`. Requires `gateway.enabled`, `global.enterprise` and `admin_panel.enabled` | `false` |
+| `gateway.admin_panel.httpRoute.annotations` | Admin panel `HTTPRoute` annotations | `{}` |
+| `gateway.admin_panel.httpRoute.parentRefs` | Gateways of the admin panel route. Required, must name a different Gateway than `gateway.httpRoute.parentRefs` | `[]` |
+| `gateway.admin_panel.httpRoute.rules` | Admin panel `HTTPRoute` rules. Required, same restrictions as `gateway.httpRoute.rules` | `PathPrefix /` |
+
+The admin panel is internal (see [Parameters: admin-panel](#parameters-admin-panel)), so its route needs a `Gateway`
+of its own that is only reachable internally. The chart fails the render when its `parentRefs` name the same
+Gateway as the public ones (a different `sectionName` does not help: one Gateway is one load balancer with one
+scheme, on AWS an ALB is either internet-facing or internal), or when the public
+`hostnames` include `admin_panel.hostname` or a wildcard covering it, so the admin panel is never served by the public
+Gateway. It cannot tell whether two different Gateways are both public, that is up
+to the platform.
 
 #### Moving from `ingress` to `gateway`
 
-Most Ingress settings have no place in an `HTTPRoute`. They have to be recreated on the platform side:
+Most Ingress settings have no place in an `HTTPRoute`. They have to be recreated on the platform side. The
+`ingress.extraPaths` entry to the tenantadm webhooks becomes `gateway.httpRoute.tenantadmHooks: true`; on AWS the
+tenantadm Service then needs a `TargetGroupConfiguration` of its own in `gateway.extraObjects`.
 
 | Ingress setting | Gateway API equivalent | Handled by the chart |
 | ------------------------------------------ | ------------------------------------------------------------------------------ | -------------------- |
@@ -1207,9 +1224,9 @@ Most Ingress settings have no place in an `HTTPRoute`. They have to be recreated
 | ALB `ssl-redirect` extra path | redirect on the http listener of the `Gateway` | no, platform |
 | ALB `target-type`, `healthcheck-*`, `success-codes` | AWS `TargetGroupConfiguration` of the api-gateway Service | `gateway.extraObjects` |
 
-`gateway.extraObjects` renders raw Gateway API and controller objects, like the `TargetGroupConfiguration`
-example in `values.yaml`, in the release namespace. Built-in Kubernetes resources, `Gateway`,
-`GatewayClass` and `ReferenceGrant` are rejected, and it must be empty while `gateway.enabled` is `false`.
+`gateway.extraObjects` renders raw controller objects for the api-gateway Service, like the `TargetGroupConfiguration`
+example in `values.yaml`, in the release namespace. Only the AWS `gateway.k8s.aws/TargetGroupConfiguration`
+and the Azure `alb.networking.azure.io/HealthCheckPolicy` are accepted, anything else fails the render.
 
 Controller notes:
 
