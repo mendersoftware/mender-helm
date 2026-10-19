@@ -173,6 +173,18 @@ gateway:
           - path:
               type: PathPrefix
               value: /
+  # Route for admin_panel.hostname.
+  admin_panel:
+    # Requires global.enterprise, admin_panel.enabled and admin_panel.hostname
+    enabled: false
+    httpRoute:
+      annotations: {}
+      parentRefs: []
+      rules:
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /
 
 # Helm chart smoke tests
 tests:

@@ -445,6 +445,9 @@ gateway_api_validation - fail on a Gateway API config that cannot work as set
 {{- if and $g.enabled (not .Values.featureGates.gatewayApi) }}
   {{- fail "gateway.enabled requires featureGates.gatewayApi=true (experimental)" }}
 {{- end }}
+{{- if and $g.admin_panel.enabled (not $g.enabled) }}
+  {{- fail "gateway.admin_panel.enabled requires gateway.enabled" }}
+{{- end }}
 {{- if and $g.enabled .Values.featureGates.gatewayApi }}
   {{- if not (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1") }}
     {{- fail "gateway.enabled requires the Gateway API CRDs (gateway.networking.k8s.io/v1). Install them first" }}
@@ -460,6 +463,33 @@ gateway_api_validation - fail on a Gateway API config that cannot work as set
     {{- fail "gateway.enabled requires gateway.httpRoute.rules" }}
   {{- end }}
   {{- include "gateway_api_refs_validation" (dict "refs" $g.httpRoute.parentRefs "name" "gateway.httpRoute") }}
+  {{- if and .Values.global.enterprise .Values.admin_panel.enabled }}
+    {{- $host := lower .Values.admin_panel.hostname }}
+    {{- range $h := $g.httpRoute.hostnames }}
+      {{- $h = lower $h }}
+      {{- if or (eq $h $host) (and (hasPrefix "*." $h) (hasSuffix (trimPrefix "*" $h) $host)) }}
+        {{- fail (printf "gateway.httpRoute.hostnames must not match admin_panel.hostname (%s): the admin panel must not be reachable through the public route" $host) }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- if $g.admin_panel.enabled }}
+    {{- if not (and .Values.global.enterprise .Values.admin_panel.enabled) }}
+      {{- fail "gateway.admin_panel.enabled requires global.enterprise and admin_panel.enabled" }}
+    {{- end }}
+    {{- include "admin_panel_conf_validation" . }}
+    {{- if not $g.admin_panel.httpRoute.rules }}
+      {{- fail "gateway.admin_panel.enabled requires gateway.admin_panel.httpRoute.rules" }}
+    {{- end }}
+    {{- include "gateway_api_refs_validation" (dict "refs" $g.admin_panel.httpRoute.parentRefs "name" "gateway.admin_panel.httpRoute") }}
+    {{- include "gateway_api_rules_validation" (dict "rules" $g.admin_panel.httpRoute.rules "name" "gateway.admin_panel.httpRoute") }}
+    {{- range $a := $g.httpRoute.parentRefs }}
+    {{- range $b := $g.admin_panel.httpRoute.parentRefs }}
+      {{- if and (eq $a.name $b.name) (eq (default $.Release.Namespace $a.namespace) (default $.Release.Namespace $b.namespace)) }}
+        {{- fail (printf "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (%s): listeners do not separate them, the admin panel must not be reachable through the public Gateway" $a.name) }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}
 
