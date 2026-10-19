@@ -613,6 +613,7 @@ test:kubeconform:
     - when: on_success
   script:
     - make kubeconform
+    - make test-render-gateway
 
 test:helm_unittest:
   tags:
