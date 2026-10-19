@@ -154,6 +154,9 @@ default:
       --query 'cluster.resourcesVpcConfig.vpcId' --output text 2>/dev/null || true)
     echo "INFO - cluster VPC: ${VPC_ID:-<none>}"
   - |
+    echo "INFO - deleting Gateways so the LB controller removes their ALBs"
+    kubectl delete gateway --all --all-namespaces --ignore-not-found --timeout 5m || true
+  - |
     echo "INFO - deleting Helm releases in application namespaces (kube-system preserved so LB controller stays up)"
     for ns in $(kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | grep -v '^kube-system$'); do
       releases=$(helm list -n "$ns" -q 2>/dev/null)
@@ -275,7 +278,7 @@ build:setup_eks_cluster:
         --asg-access \
         ${SPOT_STRING} \
         --instance-types c6i.xlarge,m6i.xlarge,m6a.xlarge,t3.xlarge,m5d.xlarge \
-        --nodes ${CI_EKS_NUMBER_OF_NODES:-8}
+        --nodes ${CI_EKS_NUMBER_OF_NODES:-10}
     - |
       echo "INFO - granting ECR pull-through cache write permissions to node role"
       NODEGROUP=$(eksctl get nodegroup --cluster ${EKS_CLUSTER_NAME} -o json | jq -r '.[0].Name')
@@ -296,6 +299,7 @@ build:setup_eks_cluster:
     - eksctl utils associate-iam-oidc-provider --cluster ${EKS_CLUSTER_NAME} --approve
     - eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKS_EBS_CSI_DriverRole --role-only --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --approve
     - eksctl create iamserviceaccount --name=aws-load-balancer-controller --namespace=kube-system --cluster ${EKS_CLUSTER_NAME} --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::017659451055:policy/AWSLoadBalancerControllerIAMPolicy  --approve
+    - tests/ci-gateway-crds.sh || echo "WARN - the Gateway API CRDs are not installed, only the Gateway API test job will fail"
     # QA-1789: GET /openapi/v2 answers 503 on fresh EKS 1.35 clusters, which breaks
     # helm client side validation. Remove --disable-openapi-validation once fixed.
     - helm repo add eks https://aws.github.io/eks-charts
@@ -400,6 +404,55 @@ test:helm_chart_install:
         --set default.image.tag="main" \
         ./mender || exit 3;
     - make test
+  after_script:
+    - *post_test_helm_cleanup
+
+test:helm_chart_gateway:
+  tags:
+    - k8s
+  image: ${PIPELINE_TOOLBOX_IMAGE}
+  stage: test
+  needs: ["build:setup_eks_cluster"]
+  dependencies:
+    - build:setup_eks_cluster
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      when: never
+    - if: '$RUN_PLAYGROUND == "true"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $FORCE_RENOVATE_RUN == "true"'
+      when: never
+    - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "prod"
+      when: never
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" || $RUN_HELM_CHART_INSTALL == "true" || $CI_COMMIT_TAG'
+  variables:
+    NAMESPACE: "mender-gateway-test"
+  id_tokens:
+    AWS_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    - *set_eks_helmci_vars
+    - *pre_helm_tests
+  script:
+    - tests/ci-make-deps.sh
+    - kubectl apply -n "${NAMESPACE}" -f tests/gateway/platform.yaml
+    - |
+      echo "INFO - installing mender with the Gateway API route"
+      source ./tests/variables.sh
+      helm upgrade -i mender \
+        -f tests/values-helmci.yaml \
+        -f tests/values-gateway-eks.yaml \
+        --wait \
+        --timeout=${HELM_UPGRADE_TIMEOUT:-15m} \
+        --set global.s3.AWS_ACCESS_KEY_ID="${SEAWEEDFS_ACCESS_KEY_ID}" \
+        --set global.s3.AWS_SECRET_ACCESS_KEY="${SEAWEEDFS_SECRET_ACCESS_KEY}" \
+        --namespace "${NAMESPACE}" \
+        --set default.image.tag="main" \
+        ./mender || exit 3;
+    - tests/gateway/run-tests.sh
   after_script:
     - *post_test_helm_cleanup
 
