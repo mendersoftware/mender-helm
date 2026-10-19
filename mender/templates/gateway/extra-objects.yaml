@@ -1,0 +1,9 @@
+{{- include "gateway_api_validation" . }}
+{{- if and .Values.gateway.enabled .Values.featureGates.gatewayApi }}
+{{- range .Values.gateway.extraObjects }}
+{{- $o := deepCopy . }}
+{{- $_ := set $o.metadata "namespace" $.Release.Namespace }}
+---
+{{ toYaml $o }}
+{{- end }}
+{{- end }}

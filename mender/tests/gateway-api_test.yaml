@@ -1,6 +1,7 @@
 suite: test gateway api feature gate
 templates:
   - templates/gateway/httproute.yaml
+  - templates/gateway/extra-objects.yaml
   - templates/ingress.yaml
 capabilities:
   majorVersion: 1
@@ -466,3 +467,375 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+
+  - it: renders no extra objects by default
+    template: templates/gateway/extra-objects.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders extraObjects in the release namespace
+    template: templates/gateway/extra-objects.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.k8s.aws/v1
+          kind: TargetGroupConfiguration
+          metadata:
+            name: mender-api-gateway
+          spec:
+            targetReference:
+              name: mender-api-gateway
+            defaultConfiguration:
+              targetType: ip
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: TargetGroupConfiguration
+      - equal:
+          path: apiVersion
+          value: gateway.k8s.aws/v1
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+      - equal:
+          path: spec.targetReference.name
+          value: mender-api-gateway
+      - equal:
+          path: spec.defaultConfiguration.targetType
+          value: ip
+
+  - it: renders every extra object and accepts the release namespace
+    template: templates/gateway/extra-objects.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.k8s.aws/v1
+          kind: TargetGroupConfiguration
+          metadata:
+            name: one
+            namespace: NAMESPACE
+        - apiVersion: alb.networking.azure.io/v1
+          kind: HealthCheckPolicy
+          metadata:
+            name: two
+    asserts:
+      - hasDocuments:
+          count: 2
+      - equal:
+          path: kind
+          value: TargetGroupConfiguration
+        documentSelector:
+          path: metadata.name
+          value: one
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+        documentSelector:
+          path: metadata.name
+          value: one
+      - equal:
+          path: kind
+          value: HealthCheckPolicy
+        documentSelector:
+          path: metadata.name
+          value: two
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+        documentSelector:
+          path: metadata.name
+          value: two
+
+  - it: fails when extraObjects is set without gateway.enabled
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.extraObjects:
+        - apiVersion: gateway.k8s.aws/v1
+          kind: TargetGroupConfiguration
+          metadata:
+            name: one
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects requires gateway.enabled"
+
+  - it: fails on an extra object without apiVersion, kind or name
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - kind: TargetGroupConfiguration
+          metadata:
+            name: one
+    asserts:
+      - failedTemplate:
+          errorMessage: "every gateway.extraObjects entry needs apiVersion, kind and metadata.name"
+
+  - it: fails on an extra object without metadata
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.k8s.aws/v1
+          kind: TargetGroupConfiguration
+    asserts:
+      - failedTemplate:
+          errorMessage: "every gateway.extraObjects entry needs apiVersion, kind and metadata.name"
+
+  - it: rejects an object in another namespace
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.k8s.aws/v1
+          kind: TargetGroupConfiguration
+          metadata:
+            name: one
+            namespace: kube-system
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects entries must be in the release namespace (NAMESPACE), got kube-system"
+
+  - it: rejects a Gateway
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.networking.k8s.io/v1
+          kind: Gateway
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got gateway.networking.k8s.io/v1 Gateway"
+
+  - it: rejects a GatewayClass
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.networking.k8s.io/v1
+          kind: GatewayClass
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got gateway.networking.k8s.io/v1 GatewayClass"
+
+  - it: rejects a ReferenceGrant
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.networking.k8s.io/v1beta1
+          kind: ReferenceGrant
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got gateway.networking.k8s.io/v1beta1 ReferenceGrant"
+
+  - it: rejects an HTTPRoute, it would bypass the route checks
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.networking.k8s.io/v1
+          kind: HTTPRoute
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got gateway.networking.k8s.io/v1 HTTPRoute"
+
+  - it: rejects a ListenerSet and the experimental group
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.networking.x-k8s.io/v1alpha1
+          kind: XListenerSet
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got gateway.networking.x-k8s.io/v1alpha1 XListenerSet"
+
+  - it: rejects built-in Kubernetes resources
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: v1
+          kind: Secret
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got v1 Secret"
+
+  - it: rejects RBAC objects
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got rbac.authorization.k8s.io/v1 ClusterRoleBinding"
+
+  - it: rejects workloads
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got apps/v1 Deployment"
+
+  - it: rejects admission webhooks
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: admissionregistration.k8s.io/v1
+          kind: ValidatingWebhookConfiguration
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got admissionregistration.k8s.io/v1 ValidatingWebhookConfiguration"
+
+  - it: rejects other built-in groups such as networking.k8s.io
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: networking.k8s.io/v1
+          kind: NetworkPolicy
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got networking.k8s.io/v1 NetworkPolicy"
+
+  - it: rejects GitOps and policy objects
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: argoproj.io/v1alpha1
+          kind: Application
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got argoproj.io/v1alpha1 Application"
+
+  - it: rejects another kind of an accepted group
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.k8s.aws/v1
+          kind: LoadBalancerConfiguration
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got gateway.k8s.aws/v1 LoadBalancerConfiguration"
+
+  - it: rejects another kind of the Azure group
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: alb.networking.azure.io/v1
+          kind: ApplicationLoadBalancer
+          metadata:
+            name: x
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got alb.networking.azure.io/v1 ApplicationLoadBalancer"
+
+  - it: accepts the AWS TargetGroupConfiguration and the Azure HealthCheckPolicy
+    template: templates/gateway/extra-objects.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.extraObjects:
+        - apiVersion: gateway.k8s.aws/v1
+          kind: TargetGroupConfiguration
+          metadata:
+            name: aws
+        - apiVersion: alb.networking.azure.io/v1
+          kind: HealthCheckPolicy
+          metadata:
+            name: azure
+    asserts:
+      - hasDocuments:
+          count: 2

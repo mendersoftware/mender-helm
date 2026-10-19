@@ -448,6 +448,9 @@ gateway_api_validation - fail on a Gateway API config that cannot work as set
 {{- if and $g.admin_panel.enabled (not $g.enabled) }}
   {{- fail "gateway.admin_panel.enabled requires gateway.enabled" }}
 {{- end }}
+{{- if and $g.extraObjects (not $g.enabled) }}
+  {{- fail "gateway.extraObjects requires gateway.enabled" }}
+{{- end }}
 {{- if and $g.enabled .Values.featureGates.gatewayApi }}
   {{- if not (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1") }}
     {{- fail "gateway.enabled requires the Gateway API CRDs (gateway.networking.k8s.io/v1). Install them first" }}
@@ -488,6 +491,22 @@ gateway_api_validation - fail on a Gateway API config that cannot work as set
         {{- fail (printf "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (%s): listeners do not separate them, the admin panel must not be reachable through the public Gateway" $a.name) }}
       {{- end }}
     {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- range $g.extraObjects }}
+    {{- if not (and .apiVersion .kind (dig "metadata" "name" "" .)) }}
+      {{- fail "every gateway.extraObjects entry needs apiVersion, kind and metadata.name" }}
+    {{- end }}
+    {{- $group := "" }}
+    {{- if contains "/" .apiVersion }}
+      {{- $group = first (splitList "/" .apiVersion) }}
+    {{- end }}
+    {{- if not (has (printf "%s/%s" $group .kind) (list "gateway.k8s.aws/TargetGroupConfiguration" "alb.networking.azure.io/HealthCheckPolicy")) }}
+      {{- fail (printf "gateway.extraObjects only accepts gateway.k8s.aws/TargetGroupConfiguration and alb.networking.azure.io/HealthCheckPolicy, got %s %s" .apiVersion .kind) }}
+    {{- end }}
+    {{- $ns := dig "metadata" "namespace" "" . }}
+    {{- if and $ns (ne $ns $.Release.Namespace) }}
+      {{- fail (printf "gateway.extraObjects entries must be in the release namespace (%s), got %s" $.Release.Namespace $ns) }}
     {{- end }}
   {{- end }}
 {{- end }}

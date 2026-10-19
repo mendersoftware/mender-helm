@@ -1190,6 +1190,7 @@ The following table lists the parameters:
 | `gateway.httpRoute.parentRefs` | Gateways to attach to, as in the Gateway API `parentRefs`. Required, every entry needs a `name` | `[]` |
 | `gateway.httpRoute.hostnames` | Hostnames of the route. Required | `[mender.example.com]` |
 | `gateway.httpRoute.rules` | `HTTPRoute` rules. Required. A rule without `backendRefs` gets the api-gateway Service and `api_gateway.service.httpPort` | `PathPrefix /` |
+| `gateway.extraObjects` | Raw manifests of Gateway API and controller objects, rendered in the release namespace. | `[]` |
 
 #### Moving from `ingress` to `gateway`
 
@@ -1204,6 +1205,11 @@ Most Ingress settings have no place in an `HTTPRoute`. They have to be recreated
 | `cert-manager.io/*` annotations | the same annotations on the `Gateway` | no, platform |
 | ALB `scheme`, `listen-ports`, `ssl-policy`, certificates | AWS `LoadBalancerConfiguration` attached to the `Gateway` | no, platform |
 | ALB `ssl-redirect` extra path | redirect on the http listener of the `Gateway` | no, platform |
+| ALB `target-type`, `healthcheck-*`, `success-codes` | AWS `TargetGroupConfiguration` of the api-gateway Service | `gateway.extraObjects` |
+
+`gateway.extraObjects` renders raw Gateway API and controller objects, like the `TargetGroupConfiguration`
+example in `values.yaml`, in the release namespace. Built-in Kubernetes resources, `Gateway`,
+`GatewayClass` and `ReferenceGrant` are rejected, and it must be empty while `gateway.enabled` is `false`.
 
 Controller notes:
 

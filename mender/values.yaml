@@ -173,6 +173,23 @@ gateway:
           - path:
               type: PathPrefix
               value: /
+  # Raw manifests of controller objects for chart owned Services, rendered in the
+  # release namespace. Only an AWS gateway.k8s.aws TargetGroupConfiguration and an
+  # Azure alb.networking.azure.io HealthCheckPolicy are accepted.
+  extraObjects: []
+  # - apiVersion: gateway.k8s.aws/v1
+  #   kind: TargetGroupConfiguration
+  #   metadata:
+  #     name: mender-api-gateway
+  #   spec:
+  #     targetReference:
+  #       name: mender-api-gateway
+  #     defaultConfiguration:
+  #       targetType: ip
+  #       healthCheckConfig:
+  #         healthCheckPath: /
+  #         matcher:
+  #           httpCode: "200-499"
   # Route for admin_panel.hostname.
   admin_panel:
     # Requires global.enterprise, admin_panel.enabled and admin_panel.hostname
