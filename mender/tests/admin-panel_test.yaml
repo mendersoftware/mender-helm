@@ -212,6 +212,15 @@ tests:
       - matchRegex:
           path: data["traefik.yaml"]
           pattern: 'X-MEN-RBAC-Releases-Tags: ""'
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'X-MEN-Plan: ""'
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'X-MEN-Trial: ""'
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'X-MEN-Addons: ""'
 
   - it: should render an internal ingress for the admin host
     template: templates/admin-panel/ingress.yaml
