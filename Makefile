@@ -73,12 +73,18 @@ test: ## Run integration tests
 .PHONY: test-all
 test-all: lint unittest test-render-isolation kubeconform check-deprecated-apis test ## Run all tests (lint, unit, render-isolation, kubeconform, deprecated-api, integration)
 
+KUBECONFORM_INGRESS_ARGS = --set ingress.enabled=true --set admin_panel.enabled=true \
+	--set admin_panel.hostname=admin.example.com --set admin_panel.existingSecret=admin-panel \
+	--set admin_panel.ingress.enabled=true
+
 .PHONY: kubeconform
-kubeconform: ## Run kubeconform over helm chart rendered template (versions from endoflife.date)
+kubeconform: ## Run kubeconform over helm chart rendered template, Ingress included (versions from endoflife.date)
 	$(KUBE_VERSIONS_CMD); \
 	echo "INFO - versions: $$KUBE_VERSIONS"; \
 	for kubeversion in $$KUBE_VERSIONS; do \
 		helm template $(NAME)/ -f tests/values-helmci.yaml --kube-version $$kubeversion \
+			| kubeconform --kubernetes-version $$kubeversion --strict --ignore-missing-schemas; \
+		helm template $(NAME)/ -f tests/values-helmci.yaml $(KUBECONFORM_INGRESS_ARGS) --kube-version $$kubeversion \
 			| kubeconform --kubernetes-version $$kubeversion --strict --ignore-missing-schemas; \
 	done
 
