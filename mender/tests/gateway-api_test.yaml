@@ -1,0 +1,468 @@
+suite: test gateway api feature gate
+templates:
+  - templates/gateway/httproute.yaml
+  - templates/ingress.yaml
+capabilities:
+  majorVersion: 1
+  minorVersion: 30
+  apiVersions:
+    - networking.k8s.io/v1
+    - gateway.networking.k8s.io/v1
+tests:
+  - it: renders nothing with defaults
+    template: templates/gateway/httproute.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: fails when gateway.enabled is set and the gate is off
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.enabled: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.enabled requires featureGates.gatewayApi=true (experimental)"
+
+  - it: renders nothing when only the gate is on
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: fails without parentRefs
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.parentRefs is required"
+
+  - it: fails on a parentRef without a name
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - sectionName: https
+    asserts:
+      - failedTemplate:
+          errorMessage: "every gateway.httpRoute.parentRefs entry needs a name"
+
+  - it: fails without hostnames
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.hostnames: []
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.enabled requires gateway.httpRoute.hostnames"
+
+  - it: fails without rules
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules: []
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.enabled requires gateway.httpRoute.rules"
+
+  - it: renders an HTTPRoute attached to the given Gateway
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+          namespace: gateway-system
+          sectionName: https
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HTTPRoute
+      - equal:
+          path: apiVersion
+          value: gateway.networking.k8s.io/v1
+      - equal:
+          path: metadata.name
+          value: mender-httproute
+      - equal:
+          path: spec.parentRefs[0].name
+          value: gw
+      - equal:
+          path: spec.parentRefs[0].namespace
+          value: gateway-system
+      - equal:
+          path: spec.parentRefs[0].sectionName
+          value: https
+      - equal:
+          path: spec.hostnames[0]
+          value: mender.example.com
+
+  - it: routes to the api-gateway Service by default
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: PathPrefix
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: mender-api-gateway
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 80
+
+  - it: follows api_gateway.service.name and httpPort
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      api_gateway.service.name: custom-gateway
+      api_gateway.service.httpPort: 8080
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: custom-gateway
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 8080
+
+  - it: every rule routes to the api-gateway Service
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /healthz
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /
+          timeouts:
+            request: 3600s
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: mender-api-gateway
+      - equal:
+          path: spec.rules[1].backendRefs[0].name
+          value: mender-api-gateway
+      - equal:
+          path: spec.rules[1].timeouts.request
+          value: 3600s
+
+  - it: rejects backendRefs in a rule
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - backendRefs:
+            - name: mender-tenantadm
+              port: 8080
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0].backendRefs is not allowed: every rule routes to the api-gateway Service"
+
+  - it: rejects empty backendRefs too
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - backendRefs: []
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0].backendRefs is not allowed: every rule routes to the api-gateway Service"
+
+  - it: renders no tenantadm rule by default
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      global.enterprise: true
+    asserts:
+      - lengthEqual:
+          path: spec.rules
+          count: 1
+
+  - it: tenantadmHooks routes the tenantadm webhooks to the tenantadm Service, first
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      global.enterprise: true
+      gateway.httpRoute.tenantadmHooks: true
+    asserts:
+      - lengthEqual:
+          path: spec.rules
+          count: 2
+      - equal:
+          path: spec.rules[0].matches
+          value:
+            - path:
+                type: PathPrefix
+                value: /api/hooks/v1/tenantadm
+      - equal:
+          path: spec.rules[0].backendRefs
+          value:
+            - name: mender-tenantadm
+              port: 8080
+      - equal:
+          path: spec.rules[1].backendRefs[0].name
+          value: mender-api-gateway
+
+  - it: tenantadmHooks follows tenantadm.service.name and port
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      global.enterprise: true
+      gateway.httpRoute.tenantadmHooks: true
+      tenantadm.service.name: custom-tenantadm
+      tenantadm.service.port: 9090
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs
+          value:
+            - name: custom-tenantadm
+              port: 9090
+
+  - it: tenantadmHooks fails without enterprise
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.tenantadmHooks: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.tenantadmHooks requires global.enterprise and tenantadm.enabled"
+
+  - it: tenantadmHooks fails when tenantadm is disabled
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      global.enterprise: true
+      tenantadm.enabled: false
+      gateway.httpRoute.tenantadmHooks: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.tenantadmHooks requires global.enterprise and tenantadm.enabled"
+
+  - it: rejects a URLRewrite that sets a hostname
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - filters:
+            - type: URLRewrite
+              urlRewrite:
+                hostname: admin.example.com
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0].filters[0]: URLRewrite must not set hostname"
+
+  - it: rejects the RequestHeaderModifier filter
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - filters:
+            - type: RequestHeaderModifier
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0].filters[0]: type RequestHeaderModifier is not allowed, only RequestRedirect and URLRewrite"
+
+  - it: rejects the ResponseHeaderModifier filter
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - filters:
+            - type: ResponseHeaderModifier
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0].filters[0]: type ResponseHeaderModifier is not allowed, only RequestRedirect and URLRewrite"
+
+  - it: rejects the RequestMirror filter
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - filters:
+            - type: RequestMirror
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0].filters[0]: type RequestMirror is not allowed, only RequestRedirect and URLRewrite"
+
+  - it: rejects the ExtensionRef filter
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - filters:
+            - type: ExtensionRef
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0].filters[0]: type ExtensionRef is not allowed, only RequestRedirect and URLRewrite"
+
+  - it: rejects a rule that is not a map
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - not-a-map
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.rules[0] must be a map"
+
+  - it: allows RequestRedirect and a URLRewrite of the path
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.rules:
+        - filters:
+            - type: RequestRedirect
+              requestRedirect:
+                scheme: https
+        - filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  type: ReplaceFullPath
+                  replaceFullPath: /ui/
+    asserts:
+      - equal:
+          path: spec.rules[0].filters[0].type
+          value: RequestRedirect
+      - equal:
+          path: spec.rules[1].filters[0].urlRewrite.path.replaceFullPath
+          value: /ui/
+
+  - it: passes annotations through
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.annotations:
+        example.com/key: value
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/key"]
+          value: value
+
+  - it: omits annotations when empty
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: renders one host entry per hostname
+    template: templates/gateway/httproute.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.httpRoute.hostnames:
+        - a.example.com
+        - b.example.com
+    asserts:
+      - equal:
+          path: spec.hostnames
+          value:
+            - a.example.com
+            - b.example.com
+
+  - it: leaves the Ingress alone when the gate is on
+    template: templates/ingress.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      ingress.enabled: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: mender-api-gateway
+
+  - it: renders no Ingress when only the gate is on
+    template: templates/ingress.yaml
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+    asserts:
+      - hasDocuments:
+          count: 0

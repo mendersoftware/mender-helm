@@ -148,6 +148,32 @@ ingress:
       hosts:
         - mender.example.com
 
+# Gateway API, the successor of Ingress. Needs featureGates.gatewayApi=true and
+# the Gateway API CRDs. The chart renders HTTPRoute only. The Gateway, its
+# listeners, TLS certificates and load balancer settings belong to the platform.
+gateway:
+  enabled: false
+  httpRoute:
+    annotations: {}
+    # Gateways to attach to. Required. Every entry needs a name.
+    # - name: mender-gateway
+    #   namespace: gateway-system
+    #   sectionName: https
+    parentRefs: []
+    hostnames:
+      - mender.example.com
+    # Route /api/hooks/v1/tenantadm straight to the tenantadm Service, like the
+    # hosted ingress.extraPaths. Requires global.enterprise and tenantadm.enabled.
+    tenantadmHooks: false
+    # Standard HTTPRoute rules. Every rule routes to the api-gateway Service:
+    # backendRefs is rejected, filters are limited to RequestRedirect and URLRewrite
+    # without hostname.
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /
+
 # Helm chart smoke tests
 tests:
   enabled: false
@@ -1733,3 +1759,9 @@ dbmigration:
     enabled: false
     runAsNonRoot: true
     runAsUser: 999
+
+# Feature preview. Gates are experimental: they can change or be removed in
+# any minor release. They never alter Ingress rendering.
+featureGates:
+  # Allows gateway.enabled. Removed when Gateway API is promoted to stable.
+  gatewayApi: false

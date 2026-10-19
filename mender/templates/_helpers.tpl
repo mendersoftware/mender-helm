@@ -436,3 +436,62 @@ Use custom probes overrides
 {{- fail (printf "%s: cannot set both podAntiAffinity and topologySpreadConstraints: podAntiAffinity would make the topologySpreadConstraints inert." .name) }}
 {{- end }}
 {{- end }}
+
+{{/*
+gateway_api_validation - fail on a Gateway API config that cannot work as set
+*/}}
+{{- define "gateway_api_validation" }}
+{{- $g := .Values.gateway }}
+{{- if and $g.enabled (not .Values.featureGates.gatewayApi) }}
+  {{- fail "gateway.enabled requires featureGates.gatewayApi=true (experimental)" }}
+{{- end }}
+{{- if and $g.enabled .Values.featureGates.gatewayApi }}
+  {{- if not (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1") }}
+    {{- fail "gateway.enabled requires the Gateway API CRDs (gateway.networking.k8s.io/v1). Install them first" }}
+  {{- end }}
+  {{- include "gateway_api_rules_validation" (dict "rules" $g.httpRoute.rules "name" "gateway.httpRoute") }}
+  {{- if and $g.httpRoute.tenantadmHooks (not (and .Values.global.enterprise .Values.tenantadm.enabled)) }}
+    {{- fail "gateway.httpRoute.tenantadmHooks requires global.enterprise and tenantadm.enabled" }}
+  {{- end }}
+  {{- if not $g.httpRoute.hostnames }}
+    {{- fail "gateway.enabled requires gateway.httpRoute.hostnames" }}
+  {{- end }}
+  {{- if not $g.httpRoute.rules }}
+    {{- fail "gateway.enabled requires gateway.httpRoute.rules" }}
+  {{- end }}
+  {{- include "gateway_api_refs_validation" (dict "refs" $g.httpRoute.parentRefs "name" "gateway.httpRoute") }}
+{{- end }}
+{{- end }}
+
+{{- define "gateway_api_refs_validation" }}
+{{- if not .refs }}
+  {{- fail (printf "%s.parentRefs is required" .name) }}
+{{- end }}
+{{- range .refs }}
+  {{- if not .name }}
+    {{- fail (printf "every %s.parentRefs entry needs a name" $.name) }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "gateway_api_rules_validation" }}
+{{- range $i, $rule := .rules }}
+  {{- if not (kindIs "map" $rule) }}
+    {{- fail (printf "%s.rules[%d] must be a map" $.name $i) }}
+  {{- end }}
+  {{- if hasKey $rule "backendRefs" }}
+    {{- fail (printf "%s.rules[%d].backendRefs is not allowed: every rule routes to the api-gateway Service" $.name $i) }}
+  {{- end }}
+  {{- range $j, $filter := $rule.filters }}
+    {{- if not (kindIs "map" $filter) }}
+      {{- fail (printf "%s.rules[%d].filters[%d] must be a map" $.name $i $j) }}
+    {{- end }}
+    {{- if not (has $filter.type (list "RequestRedirect" "URLRewrite")) }}
+      {{- fail (printf "%s.rules[%d].filters[%d]: type %v is not allowed, only RequestRedirect and URLRewrite" $.name $i $j $filter.type) }}
+    {{- end }}
+    {{- if and (eq $filter.type "URLRewrite") (dig "urlRewrite" "hostname" "" $filter) }}
+      {{- fail (printf "%s.rules[%d].filters[%d]: URLRewrite must not set hostname" $.name $i $j) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

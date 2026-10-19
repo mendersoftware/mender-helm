@@ -87,6 +87,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `default.minReadySeconds` | Wait before considering the new pod available | `0` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
+| `gateway.enabled` | Optional Gateway API `HTTPRoute`, experimental, requires `featureGates.gatewayApi`. See [Parameters: gateway](#parameters-gateway-experimental) | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `true` |
 | `serviceAccount.create` | Create a custom ServiceAccount | `false` |
@@ -1137,12 +1138,82 @@ The following table lists the parameters for the `mongodb` component and their d
 
 The special parameter `featureGates` is used to enable specific features
 that are still under development or are going to replace existing ones.
+Gates are experimental: they can change or be removed in any minor release,
+and they never change how the `ingress` is rendered.
 
 The following table lists the parameters:
 
 | Parameter | Description | Default |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `featureGates.k8sTlsSecrets` | Use K8s TLS Secret type for the API Gateway: `tls.crt` and `tls.key` instead of `cert.crt` and `private.key` | `false` |
+| `featureGates.gatewayApi` | Allow `gateway.enabled`: render a Gateway API `HTTPRoute` next to, or instead of, the `ingress`. Removed when Gateway API is promoted to stable, `gateway.*` stays | `false` |
+
+### Parameters: gateway (experimental)
+
+Kubernetes Gateway API is the successor of Ingress. The chart renders an `HTTPRoute` that sends the
+configured hostnames to the api-gateway Service, the same backend the `ingress` uses. It does **not**
+render the `Gateway`, the `GatewayClass`, listeners, TLS certificates or load balancer settings: those
+belong to the platform, and the route attaches to a Gateway the platform names in
+`gateway.httpRoute.parentRefs`. The `ingress` is not touched: both can be enabled at the same time,
+which allows to run them side by side while moving the DNS.
+
+Prerequisites:
+
+- the Gateway API CRDs (`gateway.networking.k8s.io/v1`) are installed, otherwise the chart fails to
+  render. With `helm template` and no cluster, pass `--api-versions gateway.networking.k8s.io/v1`
+- a `Gateway` exists with a listener the route is allowed to attach to. The usual default is
+  `allowedRoutes.namespaces.from: Same`: the release has to be installed in the namespace of the
+  Gateway, or the platform has to widen `allowedRoutes`
+
+Misconfigurations fail the render instead of rendering nothing: `gateway.enabled` without
+`featureGates.gatewayApi`, missing CRDs, no `parentRefs` (every entry needs a `name`), no `hostnames` or no `rules`.
+
+```yaml
+featureGates:
+  gatewayApi: true
+gateway:
+  enabled: true
+  httpRoute:
+    parentRefs:
+      - name: mender-gateway
+        namespace: gateway-system
+        sectionName: https
+    hostnames:
+      - mender.example.com
+```
+
+The following table lists the parameters:
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `gateway.enabled` | Render the `HTTPRoute`. Requires `featureGates.gatewayApi` | `false` |
+| `gateway.httpRoute.annotations` | `HTTPRoute` annotations | `{}` |
+| `gateway.httpRoute.parentRefs` | Gateways to attach to, as in the Gateway API `parentRefs`. Required, every entry needs a `name` | `[]` |
+| `gateway.httpRoute.hostnames` | Hostnames of the route. Required | `[mender.example.com]` |
+| `gateway.httpRoute.rules` | `HTTPRoute` rules. Required. A rule without `backendRefs` gets the api-gateway Service and `api_gateway.service.httpPort` | `PathPrefix /` |
+
+#### Moving from `ingress` to `gateway`
+
+Most Ingress settings have no place in an `HTTPRoute`. They have to be recreated on the platform side:
+
+| Ingress setting | Gateway API equivalent | Handled by the chart |
+| ------------------------------------------ | ------------------------------------------------------------------------------ | -------------------- |
+| `ingress.hosts` | `HTTPRoute.hostnames` | `gateway.httpRoute.hostnames` |
+| `ingress.path`, `ingress.extraPaths` | `HTTPRoute.rules` | `gateway.httpRoute.rules` |
+| `ingress.ingressClassName` | `Gateway.spec.gatewayClassName` | no, platform |
+| `ingress.tls` | Gateway listener `tls.certificateRefs` and `hostname` | no, platform |
+| `cert-manager.io/*` annotations | the same annotations on the `Gateway` | no, platform |
+| ALB `scheme`, `listen-ports`, `ssl-policy`, certificates | AWS `LoadBalancerConfiguration` attached to the `Gateway` | no, platform |
+| ALB `ssl-redirect` extra path | redirect on the http listener of the `Gateway` | no, platform |
+
+Controller notes:
+
+- **AWS ALB** (AWS Load Balancer Controller with `gateway.k8s.aws/alb`): certificates are set in the
+  `LoadBalancerConfiguration`, a listener `certificateRefs` is not supported. `HTTPRoute` `timeouts`
+  are not supported, set the ALB idle timeout in `LoadBalancerConfiguration.loadBalancerAttributes`
+  instead, this matters for the `deviceconnect` websocket and for large artifact uploads.
+- **Azure Application Gateway for Containers**: certificates are Kubernetes Secrets referenced by the
+  listener `certificateRefs`, Azure Key Vault through the Secrets Store CSI driver is not supported.
+  The listener ports are limited to 80 and 443.
 
 ## Create a tenant and a user from command line
 
