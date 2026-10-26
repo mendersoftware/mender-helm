@@ -8,7 +8,7 @@ Please follow the [official documentation](https://docs.mender.io/server-install
 for comprehensive installation guidelines.
 
 
-## Upgrading from Helm Chart 5.x and Meneder Server 3.7.x
+## Upgrading from Helm Chart 5.x and Mender Server 3.7.x
 
 Please refer to [this document](UPGRADE_from_v5_to_v6.md) for the upgrade
 procedure details, or follow the [official documentation](https://docs.mender.io/server-installation/upgrading-from-previous-versions).
