@@ -1,4 +1,24 @@
 ---
+## mender-8.5.0 - 2026-10-19
+
+
+### New features
+
+- *(api-gateway)* Forward the tenant info headers ([MEN-10274](https://northerntech.atlassian.net/browse/MEN-10274)) ([ea91017](https://github.com/mendersoftware/mender-helm/commit/ea91017e496037f47447ae3b9d1405e529e69a86)) by @kjaskiewiczz
+
+### Bug fixes
+
+- Fix spelling in README.md ([db97082](https://github.com/mendersoftware/mender-helm/commit/db970820d697c84d19d0901151b4a70909f38b15)) by @sarakthon
+- *(deps)* Update docker.io/traefik docker tag to v3.7.15 ([12e7797](https://github.com/mendersoftware/mender-helm/commit/12e7797f873e28bc32d0eaedb2ca4ca9c0b36f58)) by @renovate-ring-mendersoftware[bot]
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [MEN-10274](https://northerntech.atlassian.net/browse/MEN-10274) |
+
+
 ## mender-8.4.2 - 2026-10-14
 
 
@@ -1316,6 +1336,30 @@
 
 
 # Changelog
+
+## [8.5.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.5.0...mender-8.5.1) (2026-10-26)
+
+
+### Bug Fixes
+
+* bump appVersion to v4.1.5 ([1a009eb](https://github.com/mendersoftware/mender-helm/commit/1a009ebafc6dd4750c886de9b07bed5d0a534fb3))
+* bump appVersion to v4.1.5 ([a96e028](https://github.com/mendersoftware/mender-helm/commit/a96e028a814833b187fc9c4e28cccca7d2c6d28d))
+* **deps:** update docker.io/traefik docker tag to v3.7.16 ([16de6bc](https://github.com/mendersoftware/mender-helm/commit/16de6bcd0aaa092d1d2ca20b883997aa2d58954c))
+* **deps:** update docker.io/traefik docker tag to v3.7.16 ([edaadf2](https://github.com/mendersoftware/mender-helm/commit/edaadf276c5a033ea4e05ce83778368b9ede35b1))
+
+## [8.5.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.4.2...mender-8.5.0) (2026-10-19)
+
+
+### Features
+
+* **api-gateway:** forward the tenant info headers ([4d46f8e](https://github.com/mendersoftware/mender-helm/commit/4d46f8e9cb3bdc3356e173acd657856e3fa1a9fa))
+* **api-gateway:** forward the tenant info headers ([ea91017](https://github.com/mendersoftware/mender-helm/commit/ea91017e496037f47447ae3b9d1405e529e69a86))
+
+
+### Bug Fixes
+
+* **deps:** update docker.io/traefik docker tag to v3.7.15 ([ee7340b](https://github.com/mendersoftware/mender-helm/commit/ee7340bc6fac6be436ae7fd0c888af17a8d0757d))
+* **deps:** update docker.io/traefik docker tag to v3.7.15 ([12e7797](https://github.com/mendersoftware/mender-helm/commit/12e7797f873e28bc32d0eaedb2ca4ca9c0b36f58))
 
 ## [8.4.2](https://github.com/mendersoftware/mender-helm/compare/mender-8.4.1...mender-8.4.2) (2026-10-14)
 
