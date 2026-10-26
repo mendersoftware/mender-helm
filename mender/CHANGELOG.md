@@ -1337,6 +1337,16 @@
 
 # Changelog
 
+## [8.5.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.5.0...mender-8.5.1) (2026-10-26)
+
+
+### Bug Fixes
+
+* bump appVersion to v4.1.5 ([1a009eb](https://github.com/mendersoftware/mender-helm/commit/1a009ebafc6dd4750c886de9b07bed5d0a534fb3))
+* bump appVersion to v4.1.5 ([a96e028](https://github.com/mendersoftware/mender-helm/commit/a96e028a814833b187fc9c4e28cccca7d2c6d28d))
+* **deps:** update docker.io/traefik docker tag to v3.7.16 ([16de6bc](https://github.com/mendersoftware/mender-helm/commit/16de6bcd0aaa092d1d2ca20b883997aa2d58954c))
+* **deps:** update docker.io/traefik docker tag to v3.7.16 ([edaadf2](https://github.com/mendersoftware/mender-helm/commit/edaadf276c5a033ea4e05ce83778368b9ede35b1))
+
 ## [8.5.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.4.2...mender-8.5.0) (2026-10-19)
 
 
