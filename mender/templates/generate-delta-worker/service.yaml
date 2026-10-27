@@ -8,7 +8,7 @@ metadata:
     {{- include "mender.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ include "mender.fullname" . }}-generate-delta-worker
     app.kubernetes.io/component: generate-delta-worker
-{{- with .Values.deployments.service.annotations }}
+{{- with .Values.generate_delta_worker.service.annotations }}
   annotations: {{ tpl (toYaml .) $ | nindent 4 }}
 {{- end }}
 spec:
