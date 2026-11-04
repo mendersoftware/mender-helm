@@ -1,0 +1,182 @@
+suite: test ingress - rendered behavior is pinned
+templates:
+  - templates/ingress.yaml
+capabilities:
+  majorVersion: 1
+  minorVersion: 30
+  apiVersions:
+    - networking.k8s.io/v1
+tests:
+  - it: renders nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders an Ingress named after the chart in the release namespace
+    set:
+      ingress.enabled: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: metadata.name
+          value: mender-ingress
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+
+  - it: uses networking.k8s.io/v1
+    set:
+      ingress.enabled: true
+    asserts:
+      - equal:
+          path: apiVersion
+          value: networking.k8s.io/v1
+
+  - it: uses networking.k8s.io/v1beta1 before Kubernetes 1.19
+    set:
+      ingress.enabled: true
+    capabilities:
+      majorVersion: 1
+      minorVersion: 18
+      apiVersions:
+        - networking.k8s.io/v1beta1
+    asserts:
+      - equal:
+          path: apiVersion
+          value: networking.k8s.io/v1beta1
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.serviceName
+          value: mender-api-gateway
+
+  - it: routes every host to the api-gateway Service on port 80
+    set:
+      ingress.enabled: true
+      ingress.hosts:
+        - a.example.com
+        - b.example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: a.example.com
+      - equal:
+          path: spec.rules[1].host
+          value: b.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Prefix
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: mender-api-gateway
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 80
+
+  - it: follows api_gateway.service.name
+    set:
+      ingress.enabled: true
+      api_gateway.service.name: custom-gateway
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: custom-gateway
+
+  - it: follows ingress.path
+    set:
+      ingress.enabled: true
+      ingress.path: /mender
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /mender
+
+  - it: renders extraPaths before the catch-all path
+    set:
+      ingress.enabled: true
+      ingress.extraPaths:
+        - path: /*
+          backend:
+            serviceName: ssl-redirect
+            servicePort: use-annotation
+        - path: /other
+          backend:
+            serviceName: other
+            servicePortNumber: 8080
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /*
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: ssl-redirect
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.name
+          value: use-annotation
+      - equal:
+          path: spec.rules[0].http.paths[1].backend.service.port.number
+          value: 8080
+      - equal:
+          path: spec.rules[0].http.paths[2].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[2].backend.service.name
+          value: mender-api-gateway
+
+  - it: passes ingressClassName through
+    set:
+      ingress.enabled: true
+      ingress.ingressClassName: alb
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: alb
+
+  - it: omits ingressClassName when unset
+    set:
+      ingress.enabled: true
+    asserts:
+      - notExists:
+          path: spec.ingressClassName
+
+  - it: passes annotations through
+    set:
+      ingress.enabled: true
+      ingress.annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        cert-manager.io/cluster-issuer: letsencrypt
+    asserts:
+      - equal:
+          path: metadata.annotations["alb.ingress.kubernetes.io/scheme"]
+          value: internet-facing
+      - equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt
+
+  - it: omits annotations when empty
+    set:
+      ingress.enabled: true
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: renders the tls block
+    set:
+      ingress.enabled: true
+    asserts:
+      - equal:
+          path: spec.tls[0].secretName
+          value: mender-ingress-tls
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: mender.example.com
+
+  - it: omits tls when empty
+    set:
+      ingress.enabled: true
+      ingress.tls: []
+    asserts:
+      - notExists:
+          path: spec.tls

@@ -1,0 +1,23 @@
+suite: test gateway api feature gate - CRDs missing
+templates:
+  - templates/gateway/httproute.yaml
+capabilities:
+  majorVersion: 1
+  minorVersion: 30
+  apiVersions:
+    - networking.k8s.io/v1
+tests:
+  - it: fails when the Gateway API CRDs are missing
+    set:
+      featureGates.gatewayApi: true
+      gateway.enabled: true
+      gateway.httpRoute.parentRefs:
+        - name: gw
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.enabled requires the Gateway API CRDs (gateway.networking.k8s.io/v1). Install them first"
+
+  - it: renders nothing when the feature is off, whatever the cluster has
+    asserts:
+      - hasDocuments:
+          count: 0

@@ -51,6 +51,16 @@
         "(?<depName>[\\w/-]+)[\\s\\\\]+--version\\s+(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "helm"
+    },
+    // Gateway API CRD version installed by the Gateway API integration tests. It
+    // lives in .gitlab-ci.yml: config:recommended ignores tests/, so a file there
+    // is never scanned.
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.gitlab-ci\\.yml$/"],
+      "matchStrings": ["GATEWAY_API_VERSION: \"(?<currentValue>v[^\"]+)\""],
+      "depNameTemplate": "kubernetes-sigs/gateway-api",
+      "datasourceTemplate": "github-releases"
     }
   ],
 
@@ -71,6 +81,20 @@
       "matchManagers": ["gitlabci", "gitlabci-include"],
       "semanticCommitType": "ci",
       "semanticCommitScope": ""
+    },
+
+    // Test fixture only, it does not ship in the chart: no release. Patch bumps
+    // only, the AWS Load Balancer Controller and Azure support specific Gateway API
+    // versions. Must stay AFTER the wildcard rule above.
+    {
+      "matchPackageNames": ["kubernetes-sigs/gateway-api"],
+      "semanticCommitType": "ci",
+      "semanticCommitScope": ""
+    },
+    {
+      "matchPackageNames": ["kubernetes-sigs/gateway-api"],
+      "matchUpdateTypes": ["minor", "major"],
+      "enabled": false
     },
 
     // Infrastructure charts: patch bumps only, grouped. Minor and major upgrades of

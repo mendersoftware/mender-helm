@@ -1,0 +1,341 @@
+suite: test gateway api admin panel route
+# Validation failures surface in httproute.yaml, the first template Helm renders.
+templates:
+  - templates/gateway/httproute.yaml
+  - templates/gateway/admin-panel-httproute.yaml
+capabilities:
+  majorVersion: 1
+  minorVersion: 30
+  apiVersions:
+    - networking.k8s.io/v1
+    - gateway.networking.k8s.io/v1
+set:
+  featureGates.gatewayApi: true
+  gateway.enabled: true
+  gateway.httpRoute.parentRefs:
+    - name: public-gw
+      sectionName: https
+  global.enterprise: true
+  admin_panel.enabled: true
+  admin_panel.hostname: admin.example.com
+  admin_panel.existingSecret: admin-panel-secret
+  gateway.admin_panel.enabled: true
+  gateway.admin_panel.httpRoute.parentRefs:
+    - name: internal-gw
+tests:
+  - it: renders nothing when the admin route is not enabled
+    template: templates/gateway/admin-panel-httproute.yaml
+    set:
+      gateway.admin_panel.enabled: false
+      gateway.admin_panel.httpRoute.parentRefs: []
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders an HTTPRoute on its own Gateway for the panel host
+    template: templates/gateway/admin-panel-httproute.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HTTPRoute
+      - equal:
+          path: apiVersion
+          value: gateway.networking.k8s.io/v1
+      - equal:
+          path: metadata.name
+          value: mender-admin-panel-httproute
+      - equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: admin-panel
+      - equal:
+          path: spec.parentRefs[0].name
+          value: internal-gw
+      - equal:
+          path: spec.hostnames
+          value:
+            - admin.example.com
+
+  - it: routes to the api-gateway Service like the admin panel Ingress
+    template: templates/gateway/admin-panel-httproute.yaml
+    set:
+      api_gateway.service.httpPort: 8080
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: mender-api-gateway
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 8080
+
+  - it: passes annotations through
+    template: templates/gateway/admin-panel-httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.annotations:
+        example.com/key: value
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/key"]
+          value: value
+
+  - it: keeps the public route untouched
+    template: templates/gateway/httproute.yaml
+    asserts:
+      - equal:
+          path: spec.parentRefs[0].name
+          value: public-gw
+      - equal:
+          path: spec.hostnames
+          value:
+            - mender.example.com
+
+  - it: fails without gateway.enabled
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.enabled: false
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.enabled requires gateway.enabled"
+
+  - it: fails without enterprise
+    template: templates/gateway/httproute.yaml
+    set:
+      global.enterprise: false
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.enabled requires global.enterprise and admin_panel.enabled"
+
+  - it: fails when the panel is disabled
+    template: templates/gateway/httproute.yaml
+    set:
+      admin_panel.enabled: false
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.enabled requires global.enterprise and admin_panel.enabled"
+
+  - it: fails without the panel hostname
+    template: templates/gateway/httproute.yaml
+    set:
+      admin_panel.hostname: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "admin_panel.hostname is required: the panel is only routed on a host of its own"
+
+  - it: fails without the panel secrets
+    template: templates/gateway/httproute.yaml
+    set:
+      admin_panel.existingSecret: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "admin_panel needs OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and SESSION_SECRET: set admin_panel.existingSecret or admin_panel.customEnvs"
+
+  - it: fails without parentRefs
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.parentRefs: []
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.parentRefs is required"
+
+  - it: fails on a parentRef without a name
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.parentRefs:
+        - sectionName: internal
+    asserts:
+      - failedTemplate:
+          errorMessage: "every gateway.admin_panel.httpRoute.parentRefs entry needs a name"
+
+  - it: fails without rules
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.rules: []
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.enabled requires gateway.admin_panel.httpRoute.rules"
+
+  - it: fails when the parentRefs are the same as the public ones
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.parentRefs:
+        - name: public-gw
+          sectionName: https
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (public-gw): listeners do not separate them, the admin panel must not be reachable through the public Gateway"
+
+  - it: fails when the public route has no sectionName on the same Gateway
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.parentRefs:
+        - name: gw
+      gateway.admin_panel.httpRoute.parentRefs:
+        - name: gw
+          sectionName: internal
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (gw): listeners do not separate them, the admin panel must not be reachable through the public Gateway"
+
+  - it: fails when only the admin route has no sectionName on the same Gateway
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.parentRefs:
+        - name: gw
+          sectionName: public
+      gateway.admin_panel.httpRoute.parentRefs:
+        - name: gw
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (gw): listeners do not separate them, the admin panel must not be reachable through the public Gateway"
+
+  - it: treats an omitted namespace as the release namespace
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.parentRefs:
+        - name: gw
+          namespace: NAMESPACE
+          sectionName: https
+      gateway.admin_panel.httpRoute.parentRefs:
+        - name: gw
+          sectionName: https
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (gw): listeners do not separate them, the admin panel must not be reachable through the public Gateway"
+
+  - it: fails on two listeners of the same Gateway
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.parentRefs:
+        - name: gw
+          sectionName: public
+      gateway.admin_panel.httpRoute.parentRefs:
+        - name: gw
+          sectionName: internal
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.parentRefs must name a different Gateway than gateway.httpRoute.parentRefs (gw): listeners do not separate them, the admin panel must not be reachable through the public Gateway"
+
+  - it: allows the same Gateway name in another namespace
+    template: templates/gateway/admin-panel-httproute.yaml
+    set:
+      gateway.httpRoute.parentRefs:
+        - name: gw
+          namespace: a
+      gateway.admin_panel.httpRoute.parentRefs:
+        - name: gw
+          namespace: b
+    asserts:
+      - isKind:
+          of: HTTPRoute
+
+  - it: fails when the public hostnames include the admin hostname
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.hostnames:
+        - mender.example.com
+        - admin.example.com
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.hostnames must not match admin_panel.hostname (admin.example.com): the admin panel must not be reachable through the public route"
+
+  - it: fails when a public wildcard covers the admin hostname
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.hostnames:
+        - "*.example.com"
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.hostnames must not match admin_panel.hostname (admin.example.com): the admin panel must not be reachable through the public route"
+
+  - it: compares hostnames case-insensitively
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.hostnames:
+        - Admin.Example.COM
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.hostnames must not match admin_panel.hostname (admin.example.com): the admin panel must not be reachable through the public route"
+
+  - it: applies even when the admin route itself is off
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.enabled: false
+      gateway.admin_panel.httpRoute.parentRefs: []
+      gateway.httpRoute.hostnames:
+        - "*.example.com"
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.httpRoute.hostnames must not match admin_panel.hostname (admin.example.com): the admin panel must not be reachable through the public route"
+
+  - it: allows unrelated hostnames and wildcards
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.httpRoute.hostnames:
+        - "*.other.com"
+        - example.com
+        - xadmin.example.com
+        - "*.admin.example.com"
+    asserts:
+      - isKind:
+          of: HTTPRoute
+
+  - it: does not look at the admin hostname without the panel
+    template: templates/gateway/httproute.yaml
+    set:
+      admin_panel.enabled: false
+      gateway.admin_panel.enabled: false
+      gateway.admin_panel.httpRoute.parentRefs: []
+      gateway.httpRoute.hostnames:
+        - admin.example.com
+    asserts:
+      - isKind:
+          of: HTTPRoute
+
+  - it: the admin route follows api_gateway.service.name and httpPort
+    template: templates/gateway/admin-panel-httproute.yaml
+    set:
+      api_gateway.service.name: custom-gateway
+      api_gateway.service.httpPort: 8080
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: custom-gateway
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 8080
+
+  - it: the admin route rejects backendRefs
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.rules:
+        - backendRefs:
+            - name: mender-api-gateway
+              port: 80
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.rules[0].backendRefs is not allowed: every rule routes to the api-gateway Service"
+
+  - it: the admin route rejects a URLRewrite that sets a hostname
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.rules:
+        - filters:
+            - type: URLRewrite
+              urlRewrite:
+                hostname: mender.example.com
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.rules[0].filters[0]: URLRewrite must not set hostname"
+
+  - it: the admin route rejects other filters
+    template: templates/gateway/httproute.yaml
+    set:
+      gateway.admin_panel.httpRoute.rules:
+        - filters:
+            - type: RequestMirror
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.admin_panel.httpRoute.rules[0].filters[0]: type RequestMirror is not allowed, only RequestRedirect and URLRewrite"
