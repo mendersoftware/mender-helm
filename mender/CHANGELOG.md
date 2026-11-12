@@ -1,4 +1,19 @@
 ---
+## mender-8.5.3 - 2026-11-11
+
+
+### Bug fixes
+
+- *(deps)* Update docker.io/traefik docker tag to v3.7.18 ([d4eb3d1](https://github.com/mendersoftware/mender-helm/commit/d4eb3d1bb5f4d364750f2a94f89bc531666ae5ab)) by @renovate-ring-mendersoftware[bot]
+
+## mender-8.5.2 - 2026-11-09
+
+
+### Bug fixes
+
+- *(deps)* Update redis docker tag to v8.10.3 ([4345653](https://github.com/mendersoftware/mender-helm/commit/43456532399544f8c71f9b6f522d6a8cc5e0dc61)) by @renovate-ring-mendersoftware[bot]
+- *(deps)* Update docker.io/traefik docker tag to v3.7.17 ([0d0f09c](https://github.com/mendersoftware/mender-helm/commit/0d0f09c3a4a91f1b846175e814df93fe4c541660)) by @renovate-ring-mendersoftware[bot]
+
 ## mender-8.5.0 - 2026-10-19
 
 
@@ -1336,6 +1351,24 @@
 
 
 # Changelog
+
+## [8.5.3](https://github.com/mendersoftware/mender-helm/compare/mender-8.5.2...mender-8.5.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* **deps:** update docker.io/traefik docker tag to v3.7.18 ([186d4bc](https://github.com/mendersoftware/mender-helm/commit/186d4bca5c5a7d35c527564f72ff1a34459b80a3))
+* **deps:** update docker.io/traefik docker tag to v3.7.18 ([d4eb3d1](https://github.com/mendersoftware/mender-helm/commit/d4eb3d1bb5f4d364750f2a94f89bc531666ae5ab))
+
+## [8.5.2](https://github.com/mendersoftware/mender-helm/compare/mender-8.5.1...mender-8.5.2) (2026-11-09)
+
+
+### Bug Fixes
+
+* **deps:** update docker.io/traefik docker tag to v3.7.17 ([0d2a14f](https://github.com/mendersoftware/mender-helm/commit/0d2a14f2c4890432396159e52a463291dd283e2d))
+* **deps:** update docker.io/traefik docker tag to v3.7.17 ([0d0f09c](https://github.com/mendersoftware/mender-helm/commit/0d0f09c3a4a91f1b846175e814df93fe4c541660))
+* **deps:** update redis docker tag to v8.10.3 ([dbb1c50](https://github.com/mendersoftware/mender-helm/commit/dbb1c506f7640ef1d7fad3ead08531cb412b29f9))
+* **deps:** update redis docker tag to v8.10.3 ([4345653](https://github.com/mendersoftware/mender-helm/commit/43456532399544f8c71f9b6f522d6a8cc5e0dc61))
 
 ## [8.5.1](https://github.com/mendersoftware/mender-helm/compare/mender-8.5.0...mender-8.5.1) (2026-10-26)
 
