@@ -1,80 +1,80 @@
 auditlogs:
   image:
-    tag: main@sha256:35b3d06309e5756af97bd29c0a04d4a79ea5a3368b5fb7077d4b3c05f210d677
+    tag: main@sha256:f3435f1cd7aee994be953257699e0a322e1cd94ea849107649ae36a7c9913cf4
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 deployments:
   image:
-    tag: main@sha256:9ce4eaba58486073ccd6ae89d29e8830a00b76bfade7e8c44ad0e7dcaa32b82a
+    tag: main@sha256:a0cee9329eaaab95146228e2c500ce48781cbc3e6f01a0c4c2f3a4b9478eb2c6
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 inventory:
   image:
-    tag: main@sha256:4685d6adf9d66ab14f8f5d1f9e774dc91ec07690638156bdbdf0935d76cb9a36
+    tag: main@sha256:39de0df6f05c4b437aec77f7a3708e910d91a94adbea510f17548bbe8cd73ad4
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 create_artifact_worker:
   image:
-    tag: main@sha256:1e8ffc6646db7669b393d0c007387e2823f854b9c633559cd7ab8bbd6bee4065
+    tag: main@sha256:8a46f44e5d52051a8521593e17ef90f5070a8edb5c5a93e28a089c11dd1f0c27
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 generate_delta_worker:
   image:
-    tag: main@sha256:79dc2f6debc80512dbcc880505ebab4859a24cf86e4dc706ebc6642de9a89413
+    tag: main@sha256:1d315e680a46b720fe5f88cefdbf7a6906f8176eae487782cc5a793fa8d50746
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 deviceconnect:
   image:
-    tag: main@sha256:4b61941ae541cdf73d89a8baa3840ff00e55d57504e95c81c686b7f674cf2474
+    tag: main@sha256:474670332e6daba14ded04fc088445383caa50d0f5d216b305da708bef3980ed
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 device_auth:
   image:
-    tag: main@sha256:da79b1f9a50a8a62ec35198bbefb6127144fdfe07325dabbe75274446b3b69b8
+    tag: main@sha256:896acceec7fff01a7f4c998c400fcc6f572277853affd3607166cec31e3eb0b6
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 tenantadm:
   image:
-    tag: main@sha256:3f8a552c579bdab2a6ac0f6c28d925999db8870cf09701da719803b9af458578
+    tag: main@sha256:0dc33d13aa64524e00ebb7e29d2c18e8763aca90c1c5d304119cdac662147fbb
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 devicemonitor:
   image:
-    tag: main@sha256:dc7922306e4ecbc24ac9b617b056534e324c548aad1eb735c93378a766bf5e62
+    tag: main@sha256:0db1809eff743a0819c7c39a4896d6166bdeea61d86ff5aac9e947226a565924
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 useradm:
   image:
-    tag: main@sha256:63d90f9c109e782f03c647e7be5d8d3f9681961eb757145c3ae28ab68a8d9d31
+    tag: main@sha256:c4471db8f47205c4dd1ac32c6155ebe5f09b96cdd4f030566d26b9fa7e56f9dd
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 deviceconfig:
   image:
-    tag: main@sha256:badf7e878d3e7cf35dfda54f3cba50c47c089cb9b3daf0f3cecde2d62171da3b
+    tag: main@sha256:816f9483444c026b455f53c19e06b0f817b5ae9c776f96bd9e0f0939a2128149
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 iot_manager:
   image:
-    tag: main@sha256:22b28b9c5570de16f1190145e83931f0836ee71c31ce6c88bb70559d2e8845b5
+    tag: main@sha256:a6c602c3c0ce4bf31aad5a06874873a6f1df13aff8ed7106d181570a1e24fc5a
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 workflows:
   image:
-    tag: main@sha256:4bf3fc81aa2e1fd5bee25e629bc584b934618ab86bc1ce894f480ba68ffbbfb8
+    tag: main@sha256:522ae2ffddabecc3b9b2b3aada1a000080225da0c699ffba8530b32c6c0321dd
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 gui:
   image:
-    tag: "main@sha256:2092474731f8a53e32bd12482f34d7f6b7d9366dd7dc50bf351731f4f7182ac2"
-    registry: docker.io
-    repository: mendersoftware
+    tag: "main@sha256:db7e412bd3020432bd5e492b5cae3ed5d76d343e8e54dac23e8e23d4cbed97a7"
+    registry: registry.mender.io
+    repository: mender-server-enterprise
 admin_panel:
   image:
-    tag: main@sha256:9e64588daa6b94d2e317953ad2e1321592fb9bb0bb44a59222d82e1252a39e9c
+    tag: main@sha256:2276d10ef77bb28a9d69444a492681b66840153dc32222760e1a3b93affc68fb
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
 admin_panel_gui:
   image:
-    tag: main@sha256:e9b1523cdc8e640f05a69d26fe5d475aa2c2c6e45c59d44a5b39a45824de3490
+    tag: main@sha256:bcb7c0f1650919d2db639aeaf9fb4b9df7f25b37370d1aa097e6556d559b663e
     registry: 017659451055.dkr.ecr.eu-central-1.amazonaws.com
     repository: mender-server-enterprise
