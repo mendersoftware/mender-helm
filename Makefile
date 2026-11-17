@@ -71,16 +71,41 @@ test: ## Run integration tests
 	bash tests/tests.sh
 
 .PHONY: test-all
-test-all: lint unittest test-render-isolation kubeconform check-deprecated-apis test ## Run all tests (lint, unit, render-isolation, kubeconform, deprecated-api, integration)
+test-all: lint unittest test-render-isolation kubeconform test-render-gateway check-deprecated-apis test ## Run all tests (lint, unit, render-isolation, kubeconform, gateway render, deprecated-api, integration)
+
+KUBECONFORM_INGRESS_ARGS = --set ingress.enabled=true --set admin_panel.enabled=true \
+	--set admin_panel.hostname=admin.example.com --set admin_panel.existingSecret=admin-panel \
+	--set admin_panel.ingress.enabled=true
 
 .PHONY: kubeconform
-kubeconform: ## Run kubeconform over helm chart rendered template (versions from endoflife.date)
+kubeconform: ## Run kubeconform over helm chart rendered template, Ingress included (versions from endoflife.date)
 	$(KUBE_VERSIONS_CMD); \
 	echo "INFO - versions: $$KUBE_VERSIONS"; \
 	for kubeversion in $$KUBE_VERSIONS; do \
 		helm template $(NAME)/ -f tests/values-helmci.yaml --kube-version $$kubeversion \
 			| kubeconform --kubernetes-version $$kubeversion --strict --ignore-missing-schemas; \
+		helm template $(NAME)/ -f tests/values-helmci.yaml $(KUBECONFORM_INGRESS_ARGS) --kube-version $$kubeversion \
+			| kubeconform --kubernetes-version $$kubeversion --strict --ignore-missing-schemas; \
 	done
+
+GATEWAY_ARGS = -f tests/values-helmci.yaml --api-versions gateway.networking.k8s.io/v1 \
+	--set featureGates.gatewayApi=true --set gateway.enabled=true \
+	--set-json 'gateway.httpRoute.parentRefs=[{"name":"gw"}]' \
+	--set admin_panel.enabled=true --set admin_panel.hostname=admin.example.com \
+	--set admin_panel.existingSecret=admin-panel --set gateway.admin_panel.enabled=true \
+	--set-json 'gateway.admin_panel.httpRoute.parentRefs=[{"name":"internal-gw"}]'
+
+.PHONY: test-render-gateway
+test-render-gateway: ## Validate the rendered Gateway API routes against their schemas, no Gateway objects allowed
+	@set -euo pipefail; \
+	out=$$(mktemp); trap 'rm -f "$$out"' EXIT; \
+	helm template $(NAME)/ $(GATEWAY_ARGS) > "$$out"; \
+	[ "$$(grep -c '^kind: HTTPRoute$$' "$$out")" -eq 2 ] || { echo "FAIL - expected 2 HTTPRoute"; exit 1; }; \
+	if grep -qE '^kind: (Gateway|GatewayClass|ReferenceGrant)$$' "$$out"; then echo "FAIL - the chart must not render Gateway objects"; exit 1; fi; \
+	kubeconform --strict --summary \
+		--schema-location default \
+		--schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+		< "$$out"
 
 .PHONY: check-deprecated-apis
 check-deprecated-apis: ## Detect removed/deprecated Kubernetes API versions (versions from endoflife.date)
