@@ -851,7 +851,6 @@ publish:helm_chart_publishing:
     - build
   image: ${PIPELINE_TOOLBOX_IMAGE}
   before_script:
-    - helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0
     - export AWS_DEFAULT_REGION=us-east-1
     - >
       export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
@@ -864,8 +863,17 @@ publish:helm_chart_publishing:
       --output text))
     - aws sts get-caller-identity
   script:
-    - helm repo add mender s3://${S3_HELM_CHART_REPO}
-    - helm s3 push --acl="public-read" --relative --timeout=60s ./mender-*.tgz mender
+    - mkdir publish && cp mender-*.tgz publish/ && cd publish
+    - CHART=$(ls mender-*.tgz)
+    - aws s3 cp s3://${S3_HELM_CHART_REPO}/index.yaml old-index.yaml
+    - |
+      if grep -qxF -- "    - ${CHART}" old-index.yaml; then
+        echo "ERROR - ${CHART} is already published"
+        exit 1
+      fi
+    - helm repo index . --merge old-index.yaml
+    - aws s3 cp --acl public-read --content-type application/gzip ${CHART} s3://${S3_HELM_CHART_REPO}/${CHART}
+    - aws s3 cp --acl public-read index.yaml s3://${S3_HELM_CHART_REPO}/index.yaml
     - aws cloudfront create-invalidation --distribution-id ${S3_HELM_CHART_CDN_DISTRIBUTION_ID} --paths "/*"
 
 .eks_cleanup: &eks_cleanup
