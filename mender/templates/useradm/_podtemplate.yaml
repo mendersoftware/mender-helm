@@ -111,6 +111,10 @@ spec:
     {{- end }}
     - name: USERADM_TOTP_ISSUER
       value: {{ .dot.Values.useradm.env.USERADM_TOTP_ISSUER | quote }}
+    {{- if and .dot.Values.global.enterprise (eq (toString .dot.Values.useradm.insecure_disable_email_verification) "true") }}
+    - name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+      value: "true"
+    {{- end }}
     {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
     - name: USERADM_ENABLE_AUDIT
       value: "true"

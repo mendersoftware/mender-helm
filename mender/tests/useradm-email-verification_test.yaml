@@ -1,0 +1,100 @@
+suite: test useradm.insecure_disable_email_verification
+templates:
+  - templates/useradm/deployment.yaml
+  - templates/useradm/job.yaml
+tests:
+  - it: keeps e-mail verification enabled by default
+    template: templates/useradm/deployment.yaml
+    set:
+      global.enterprise: true
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
+
+  - it: keeps e-mail verification enabled when explicitly false
+    template: templates/useradm/deployment.yaml
+    set:
+      global.enterprise: true
+      useradm.insecure_disable_email_verification: false
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
+
+  - it: keeps e-mail verification enabled when set to the string "false"
+    template: templates/useradm/deployment.yaml
+    set:
+      global.enterprise: true
+      useradm.insecure_disable_email_verification: "false"
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
+
+  - it: keeps e-mail verification enabled for any other non-empty value
+    template: templates/useradm/deployment.yaml
+    set:
+      global.enterprise: true
+      useradm.insecure_disable_email_verification: "yes"
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
+
+  - it: disables e-mail verification when set in Enterprise
+    template: templates/useradm/deployment.yaml
+    set:
+      global.enterprise: true
+      useradm.insecure_disable_email_verification: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
+          count: 1
+
+  - it: disables e-mail verification when set to the string "true"
+    template: templates/useradm/deployment.yaml
+    set:
+      global.enterprise: true
+      useradm.insecure_disable_email_verification: "true"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
+
+  - it: applies the same setting to the migration job
+    template: templates/useradm/job.yaml
+    set:
+      global.enterprise: true
+      useradm.insecure_disable_email_verification: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
+
+  - it: ignores the setting in Open Source
+    template: templates/useradm/deployment.yaml
+    set:
+      global.enterprise: false
+      useradm.insecure_disable_email_verification: true
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION
+            value: "true"
