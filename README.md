@@ -603,6 +603,7 @@ The following table lists the parameters for the `useradm` component and their d
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `useradm.enabled` | Enable the component | `true` |
 | `useradm.automigrate` | Enable automatic database migrations at service start up | `false` |
+| `useradm.insecure_disable_email_verification` | Enterprise only, from Mender Server 5.0: set to `true` to stop requiring users to verify their e-mail address before managing other users. Insecure: the server no longer checks that users own their e-mail address. Any other value keeps the verification enabled. Sets `USERADM_INSECURE_DISABLE_EMAIL_VERIFICATION` | `false` |
 | `useradm.image.registry` | Docker image registry | `registry.mender.io` if `global.enterprise` is true, else `docker.io` |
 | `useradm.image.repository` | Docker image repository | `mendersoftware/useradm-enterprise` if `global.enterprise` is true, else `mendersoftware/useradm` |
 | `useradm.image.tag` | Docker image tag | `nil` |
