@@ -87,6 +87,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `default.minReadySeconds` | Wait before considering the new pod available | `0` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
+| `ingress.selfSignedTLS.enabled` | Demo only: generate a CA (valid 10 years) and a certificate (valid 800 days) for each `ingress.tls` entry, stored in its `secretName` with `ca.crt`. The `secretName` must not exist, or must have been created by this setting. The certificate is kept on upgrades; delete the Secret to regenerate it with a new CA, for example after changing the hosts or before it expires. Entries added later get a different CA. Not stable with `helm template` or Argo CD | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `true` |
 | `serviceAccount.create` | Create a custom ServiceAccount | `false` |

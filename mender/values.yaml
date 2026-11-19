@@ -147,6 +147,9 @@ ingress:
     - secretName: mender-ingress-tls
       hosts:
         - mender.example.com
+  # Demo only: generate a CA and a certificate for each ingress.tls entry
+  selfSignedTLS:
+    enabled: false
 
 # Helm chart smoke tests
 tests:
