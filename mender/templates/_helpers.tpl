@@ -436,3 +436,21 @@ Use custom probes overrides
 {{- fail (printf "%s: cannot set both podAntiAffinity and topologySpreadConstraints: podAntiAffinity would make the topologySpreadConstraints inert." .name) }}
 {{- end }}
 {{- end }}
+
+{{/*
+Value of a key in an existing Secret, decoded, or empty.
+Keeps generated keys stable across upgrades. lookup is empty in helm template and --dry-run.
+*/}}
+{{- define "mender.existingSecretValue" -}}
+{{- $secret := lookup "v1" "Secret" .namespace .name -}}
+{{- if and $secret $secret.data (hasKey $secret.data .key) -}}
+{{- index $secret.data .key | b64dec -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Service private key: the one already stored in the Secret, or a new one.
+*/}}
+{{- define "mender.privateKey" -}}
+{{- include "mender.existingSecretValue" (dict "namespace" .namespace "name" .name "key" "private.pem") | default (genPrivateKey "ed25519") -}}
+{{- end -}}
