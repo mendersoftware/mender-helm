@@ -1117,7 +1117,7 @@ The following table lists the parameters for the `mongodb` component and their d
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `mongodb.enabled` | Enable the component | `true` |
 | `mongodb.image.repository` | Docker image repository | `mongo` |
-| `mongodb.image.tag` | Docker image tag | `8.0.13 |
+| `mongodb.image.tag` | Docker image tag | `8.0.38` |
 | `mongodb.image.pullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `mongodb.imagePullSecrets` | List of pre-existing secrets, with the format of `- name: my-secret` | `nil` |
 | `mongodb.auth.enabled` | Whether to enable the authentication  | `true` |
