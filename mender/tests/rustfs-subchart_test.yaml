@@ -1,0 +1,248 @@
+suite: test rustfs subchart
+templates:
+  - templates/secrets/secret-artifacts-storage.yaml
+  - templates/api-gateway/configmap.yaml
+  - charts/rustfs/templates/deployment.yaml
+  - charts/rustfs/templates/statefulset.yaml
+  - charts/rustfs/templates/ingress.yaml
+  - charts/rustfs/templates/secret.yaml
+release:
+  namespace: mender
+tests:
+  - it: keeps the storage Secret unchanged by default
+    template: templates/secrets/secret-artifacts-storage.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data.AWS_AUTH_KEY
+          value: bXlhY2Nlc3NrZXk=
+
+  - it: runs RustFS as a single Deployment
+    template: charts/rustfs/templates/deployment.yaml
+    set:
+      rustfs.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: mender-rustfs
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: busybox:1.37.0
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: mender-rustfs
+
+  - it: does not render the distributed StatefulSet
+    template: charts/rustfs/templates/statefulset.yaml
+    set:
+      rustfs.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: does not render the RustFS Ingress
+    template: charts/rustfs/templates/ingress.yaml
+    set:
+      rustfs.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: does not let the subchart create its own credentials Secret
+    template: charts/rustfs/templates/secret.yaml
+    set:
+      rustfs.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: points the artifact storage to RustFS
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      global.s3.AWS_URI: https://ignored.example.com
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: data.AWS_URI
+          value: aHR0cDovL21lbmRlci1ydXN0ZnMtc3ZjOjkwMDA=
+
+  - it: points the storage proxy to RustFS
+    template: templates/api-gateway/configmap.yaml
+    set:
+      rustfs.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["traefik.yaml"]
+          pattern: 'url: http://mender-rustfs-svc:9000'
+
+  - it: uses the keys from global.s3 for Mender and RustFS
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      global.s3.AWS_ACCESS_KEY_ID: my-access
+      global.s3.AWS_SECRET_ACCESS_KEY: my-secret
+    asserts:
+      - hasDocuments:
+          count: 2
+      - equal:
+          path: data.AWS_AUTH_KEY
+          value: bXktYWNjZXNz
+        documentIndex: 0
+      - equal:
+          path: data.AWS_AUTH_SECRET
+          value: bXktc2VjcmV0
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: mender-rustfs
+        documentIndex: 1
+      - equal:
+          path: data.RUSTFS_ACCESS_KEY
+          value: bXktYWNjZXNz
+        documentIndex: 1
+      - equal:
+          path: data.RUSTFS_SECRET_KEY
+          value: bXktc2VjcmV0
+        documentIndex: 1
+
+  - it: generates keys when global.s3 keeps the chart defaults
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+    asserts:
+      - notEqual:
+          path: data.RUSTFS_ACCESS_KEY
+          value: bXlhY2Nlc3NrZXk=
+        documentIndex: 1
+      - matchRegex:
+          path: data.RUSTFS_SECRET_KEY
+          pattern: ^[A-Za-z0-9+/]{54}==$
+        documentIndex: 1
+
+  - it: reuses the keys already stored for RustFS
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: mender-rustfs
+            namespace: mender
+          data:
+            RUSTFS_ACCESS_KEY: ZXhpc3RpbmctYWNjZXNz
+            RUSTFS_SECRET_KEY: ZXhpc3Rpbmctc2VjcmV0
+    asserts:
+      - equal:
+          path: data.AWS_AUTH_KEY
+          value: ZXhpc3RpbmctYWNjZXNz
+        documentIndex: 0
+      - equal:
+          path: data.AWS_AUTH_SECRET
+          value: ZXhpc3Rpbmctc2VjcmV0
+        documentIndex: 0
+      - equal:
+          path: data.RUSTFS_ACCESS_KEY
+          value: ZXhpc3RpbmctYWNjZXNz
+        documentIndex: 1
+      - equal:
+          path: data.RUSTFS_SECRET_KEY
+          value: ZXhpc3Rpbmctc2VjcmV0
+        documentIndex: 1
+
+  - it: fails with Azure storage
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      global.storage: azure
+    asserts:
+      - failedTemplate:
+          errorMessage: "rustfs.enabled requires global.storage=aws"
+
+  - it: fails with global.s3.existingSecret
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      global.s3.existingSecret: my-storage
+    asserts:
+      - failedTemplate:
+          errorMessage: "rustfs.enabled is not supported with global.s3.existingSecret"
+
+  - it: fails with an AWS service account
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      global.s3.AWS_SERVICE_ACCOUNT_NAME: my-sa
+    asserts:
+      - failedTemplate:
+          errorMessage: "rustfs.enabled is not supported with global.s3.AWS_SERVICE_ACCOUNT_NAME"
+
+  - it: fails without the storage proxy
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      api_gateway.storage_proxy.enabled: false
+    asserts:
+      - failedTemplate:
+          errorMessage: "rustfs.enabled requires api_gateway.storage_proxy.enabled"
+
+  - it: fails when the RustFS Secret name collides with artifacts-storage
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      rustfs.secret.existingSecret: artifacts-storage
+    asserts:
+      - failedTemplate:
+          errorMessage: "rustfs.secret.existingSecret must not be artifacts-storage"
+
+  - it: fails with the distributed mode
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+      rustfs.mode.standalone.enabled: false
+      rustfs.mode.distributed.enabled: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "rustfs supports only rustfs.mode.standalone.enabled=true and rustfs.mode.distributed.enabled=false"
+
+  - it: reuses the stored access key and generates the missing secret key
+    template: templates/secrets/secret-artifacts-storage.yaml
+    set:
+      rustfs.enabled: true
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: mender-rustfs
+            namespace: mender
+          data:
+            RUSTFS_ACCESS_KEY: ZXhpc3RpbmctYWNjZXNz
+    asserts:
+      - equal:
+          path: data.RUSTFS_ACCESS_KEY
+          value: ZXhpc3RpbmctYWNjZXNz
+        documentIndex: 1
+      - matchRegex:
+          path: data.RUSTFS_SECRET_KEY
+          pattern: ^[A-Za-z0-9+/]{54}==$
+        documentIndex: 1
