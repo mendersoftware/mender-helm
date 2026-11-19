@@ -1,0 +1,39 @@
+{{- if and .Values.ingress.enabled .Values.ingress.selfSignedTLS.enabled }}
+{{- if not .Values.ingress.tls }}
+{{- fail "ingress.selfSignedTLS.enabled requires at least one ingress.tls entry" }}
+{{- end }}
+{{- $ca := genCAWithKey "Mender demo CA" 3650 (genPrivateKey "ecdsa") }}
+{{- range .Values.ingress.tls }}
+{{- $secretName := required "ingress.tls[].secretName is required with ingress.selfSignedTLS.enabled" .secretName }}
+{{- if not .hosts }}
+{{- fail (printf "ingress.tls entry %s needs hosts with ingress.selfSignedTLS.enabled" $secretName) }}
+{{- end }}
+{{- $existing := lookup "v1" "Secret" $.Release.Namespace $secretName }}
+{{- $data := (and $existing $existing.data) | default dict }}
+{{- if and (hasKey $data "tls.crt") (not (hasKey $data "ca.crt")) }}
+{{- fail (printf "Secret %s exists and was not created by ingress.selfSignedTLS: delete it or use another ingress.tls secretName" $secretName) }}
+{{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $secretName }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "mender.labels" $ | nindent 4 }}
+    app.kubernetes.io/name: {{ $secretName }}
+    app.kubernetes.io/component: ingress
+type: kubernetes.io/tls
+data:
+{{- if and (hasKey $data "tls.crt") (hasKey $data "tls.key") (hasKey $data "ca.crt") }}
+  tls.crt: {{ index $data "tls.crt" }}
+  tls.key: {{ index $data "tls.key" }}
+  ca.crt: {{ index $data "ca.crt" }}
+{{- else }}
+{{- $cert := genSignedCertWithKey (first .hosts) nil .hosts 800 $ca (genPrivateKey "ecdsa") }}
+  tls.crt: {{ $cert.Cert | b64enc }}
+  tls.key: {{ $cert.Key | b64enc }}
+  ca.crt: {{ $ca.Cert | b64enc }}
+{{- end }}
+{{- end }}
+{{- end }}
