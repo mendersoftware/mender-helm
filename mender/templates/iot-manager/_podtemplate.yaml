@@ -88,6 +88,11 @@ spec:
     {{- else }}
       value: {{ template "nats_uri" . }}
     {{- end }}
+    # Enable audit logging
+    {{- if and .dot.Values.auditlogs.enabled .dot.Values.global.enterprise }}
+    - name: IOT_MANAGER_ENABLE_AUDIT
+      value: "true"
+    {{- end }}
     {{- /*
     Supported configuration settings:
       https://github.com/mendersoftware/iot-manager/blob/master/config.yaml
