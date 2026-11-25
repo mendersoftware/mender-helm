@@ -45,3 +45,18 @@ You are using the internal Redis deployment. This configuration is:
    https://docs.mender.io/server-installation/production-installation-with-kubernetes/mender-server#external-services
 
 {{- end }}
+
+
+{{- if .Values.rustfs.enabled }}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  ⚠️  ⚠️   WARNING: DEVELOPMENT ARTIFACT STORAGE - NOT FOR PRODUCTION   ⚠️  ⚠️  ⚠️
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are using the internal RustFS deployment. This configuration is:
+  ❌ Single instance on one volume (no redundancy)
+  ❌ No automated backups
+
+👉 FOR PRODUCTION, use an external S3-compatible storage:
+   https://docs.mender.io/server-installation/production-installation-with-kubernetes/storage
+
+{{- end }}

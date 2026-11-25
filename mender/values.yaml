@@ -158,7 +158,7 @@ mongodb:
   enabled: true
   image:
     repository: mongo
-    tag: "8.0.28"
+    tag: "8.0.38"
     pullPolicy: IfNotPresent
   imagePullSecrets: []
   # - name: secret1
@@ -192,6 +192,39 @@ mongodb:
   #     pwd: 'apppass',
   #     roles: ['readWrite']
   #   });
+
+# RustFS object storage, for evaluation only.
+# The next major chart version is planned to enable it by default: set
+# rustfs.enabled explicitly to keep your storage setup across that upgrade.
+# https://github.com/rustfs/rustfs/tree/main/helm/rustfs
+rustfs:
+  enabled: false
+  fullnameOverride: mender-rustfs
+  mode:
+    standalone:
+      enabled: true
+    distributed:
+      enabled: false
+  secret:
+    existingSecret: mender-rustfs
+  config:
+    rustfs:
+      console_enable: "false"
+  ingress:
+    enabled: false
+  image:
+    initImage:
+      tag: "1.37.0"
+  storageclass:
+    name: ""
+    dataStorageSize: 10Gi
+    logStorageSize: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 1Gi
 
 # Using default values from
 # https://github.com/nats-io/k8s/tree/main/helm/charts/nats
