@@ -1,0 +1,135 @@
+suite: test admin panel ingress - rendered behavior is pinned
+templates:
+  - templates/admin-panel/ingress.yaml
+capabilities:
+  majorVersion: 1
+  minorVersion: 30
+  apiVersions:
+    - networking.k8s.io/v1
+set:
+  global.enterprise: true
+  admin_panel.enabled: true
+  admin_panel.hostname: admin.example.com
+  admin_panel.existingSecret: admin-panel-secret
+  admin_panel.ingress.enabled: true
+tests:
+  - it: renders nothing by default
+    set:
+      admin_panel.ingress.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders nothing without enterprise
+    set:
+      global.enterprise: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders nothing when the panel is disabled
+    set:
+      admin_panel.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders an Ingress named after the chart in the release namespace
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: metadata.name
+          value: mender-admin-panel-ingress
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+
+  - it: routes the panel host to the api-gateway Service
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: admin.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Prefix
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: mender-api-gateway
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 80
+
+  - it: backend port follows api_gateway.service.httpPort
+    set:
+      api_gateway.service.httpPort: 8080
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 8080
+
+  - it: defaults to the internal ALB group
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: alb
+      - equal:
+          path: metadata.annotations["alb.ingress.kubernetes.io/scheme"]
+          value: internal
+      - equal:
+          path: metadata.annotations["alb.ingress.kubernetes.io/group.name"]
+          value: mender-internal
+
+  - it: renders extraPaths before the catch-all path
+    set:
+      admin_panel.ingress.extraPaths:
+        - path: /*
+          backend:
+            serviceName: ssl-redirect
+            servicePort: use-annotation
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /*
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.name
+          value: use-annotation
+      - equal:
+          path: spec.rules[0].http.paths[1].path
+          value: /
+
+  - it: omits tls when empty
+    asserts:
+      - notExists:
+          path: spec.tls
+
+  - it: renders the tls block
+    set:
+      admin_panel.ingress.tls:
+        - secretName: admin-tls
+          hosts:
+            - admin.example.com
+    asserts:
+      - equal:
+          path: spec.tls[0].secretName
+          value: admin-tls
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: admin.example.com
+
+  - it: fails without a hostname
+    set:
+      admin_panel.hostname: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "admin_panel.hostname is required: the panel is only routed on a host of its own"
+
+  - it: fails without the panel secrets
+    set:
+      admin_panel.existingSecret: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "admin_panel needs OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and SESSION_SECRET: set admin_panel.existingSecret or admin_panel.customEnvs"
