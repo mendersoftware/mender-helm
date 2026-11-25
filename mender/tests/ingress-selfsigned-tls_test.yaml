@@ -1,0 +1,154 @@
+suite: test ingress.selfSignedTLS
+templates:
+  - templates/ingress-selfsigned-tls.yaml
+release:
+  namespace: mender
+tests:
+  - it: renders nothing by default
+    set:
+      ingress.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders nothing when the Ingress is disabled
+    set:
+      ingress.enabled: false
+      ingress.selfSignedTLS.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: creates a TLS Secret with the CA for each ingress.tls entry
+    set:
+      ingress.enabled: true
+      ingress.selfSignedTLS.enabled: true
+      ingress.tls:
+        - secretName: tls-one
+          hosts: [one.example.com]
+        - secretName: tls-two
+          hosts: [two.example.com]
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: Secret
+      - equal:
+          path: type
+          value: kubernetes.io/tls
+      - matchRegex:
+          path: data["tls.crt"]
+          pattern: ^LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t
+      - matchRegex:
+          path: data["tls.key"]
+          pattern: ^LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0t
+      - matchRegex:
+          path: data["ca.crt"]
+          pattern: ^LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t
+      - equal:
+          path: metadata.name
+          value: tls-two
+        documentIndex: 1
+
+  - it: reuses the certificate already stored in the Secret
+    set:
+      ingress.enabled: true
+      ingress.selfSignedTLS.enabled: true
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: mender-ingress-tls
+            namespace: mender
+          data:
+            tls.crt: ZXhpc3RpbmctYWNjZXNz
+            tls.key: ZXhpc3Rpbmctc2VjcmV0
+            ca.crt: ZXhpc3Rpbmcta2V5
+    asserts:
+      - equal:
+          path: data["tls.crt"]
+          value: ZXhpc3RpbmctYWNjZXNz
+      - equal:
+          path: data["tls.key"]
+          value: ZXhpc3Rpbmctc2VjcmV0
+      - equal:
+          path: data["ca.crt"]
+          value: ZXhpc3Rpbmcta2V5
+
+  - it: fails without ingress.tls entries
+    set:
+      ingress.enabled: true
+      ingress.selfSignedTLS.enabled: true
+      ingress.tls: []
+    asserts:
+      - failedTemplate:
+          errorMessage: "ingress.selfSignedTLS.enabled requires at least one ingress.tls entry"
+
+  - it: fails when an ingress.tls entry has no hosts
+    set:
+      ingress.enabled: true
+      ingress.selfSignedTLS.enabled: true
+      ingress.tls:
+        - secretName: tls-one
+    asserts:
+      - failedTemplate:
+          errorMessage: "ingress.tls entry tls-one needs hosts with ingress.selfSignedTLS.enabled"
+
+  - it: fails on a TLS Secret not created by selfSignedTLS
+    set:
+      ingress.enabled: true
+      ingress.selfSignedTLS.enabled: true
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: mender-ingress-tls
+            namespace: mender
+          data:
+            tls.crt: ZXhpc3RpbmctYWNjZXNz
+            tls.key: ZXhpc3Rpbmctc2VjcmV0
+    asserts:
+      - failedTemplate:
+          errorMessage: "Secret mender-ingress-tls exists and was not created by ingress.selfSignedTLS: delete it or use another ingress.tls secretName"
+
+  - it: regenerates an incomplete Secret
+    set:
+      ingress.enabled: true
+      ingress.selfSignedTLS.enabled: true
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: mender-ingress-tls
+            namespace: mender
+          data:
+            tls.crt: ZXhpc3RpbmctYWNjZXNz
+            ca.crt: ZXhpc3Rpbmcta2V5
+    asserts:
+      - matchRegex:
+          path: data["tls.key"]
+          pattern: ^LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0t
+      - matchRegex:
+          path: data["tls.crt"]
+          pattern: ^LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t

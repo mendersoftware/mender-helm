@@ -399,7 +399,9 @@ Define mender.storageProxyUrl
 {{- define "mender.storageProxyUrl" -}}
 {{- $dot := (ternary . .dot (empty .dot)) -}}
 {{- with $dot.Values.api_gateway.storage_proxy }}
-  {{- if .url }}
+  {{- if $dot.Values.rustfs.enabled }}
+    {{- include "mender.rustfs.url" $dot }}
+  {{- else if .url }}
     {{- printf "%s" .url }}
   {{- else if eq $dot.Values.global.storage "aws" }}
     {{- printf "https://%s.s3.%s.amazonaws.com" $dot.Values.global.s3.AWS_BUCKET $dot.Values.global.s3.AWS_REGION}}
@@ -434,5 +436,60 @@ Use custom probes overrides
 {{- $affinity := .affinity | default dict -}}
 {{- if and $affinity.podAntiAffinity .topologySpreadConstraints }}
 {{- fail (printf "%s: cannot set both podAntiAffinity and topologySpreadConstraints: podAntiAffinity would make the topologySpreadConstraints inert." .name) }}
+{{- end }}
+{{- end }}
+
+{{/*
+Value of a key in an existing Secret, decoded, or empty.
+Keeps generated keys stable across upgrades. lookup is empty in helm template and --dry-run.
+*/}}
+{{- define "mender.existingSecretValue" -}}
+{{- $secret := lookup "v1" "Secret" .namespace .name -}}
+{{- if and $secret $secret.data (hasKey $secret.data .key) -}}
+{{- index $secret.data .key | b64dec -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Service private key: the one already stored in the Secret, or a new one.
+*/}}
+{{- define "mender.privateKey" -}}
+{{- include "mender.existingSecretValue" (dict "namespace" .namespace "name" .name "key" "private.pem") | default (genPrivateKey "ed25519") -}}
+{{- end -}}
+
+{{/*
+RustFS S3 endpoint
+*/}}
+{{- define "mender.rustfs.url" -}}
+{{- $dot := (ternary . .dot (empty .dot)) -}}
+{{- printf "http://%s-svc:%v" (include "rustfs.fullname" $dot.Subcharts.rustfs) $dot.Subcharts.rustfs.Values.service.endpoint.port -}}
+{{- end -}}
+
+{{/*
+rustfs_conf_validation - fail on configurations RustFS does not support
+*/}}
+{{- define "rustfs_conf_validation" }}
+{{- if .Values.rustfs.enabled }}
+{{- if ne .Values.global.storage "aws" }}
+{{- fail "rustfs.enabled requires global.storage=aws" }}
+{{- end }}
+{{- if .Values.global.s3.existingSecret }}
+{{- fail "rustfs.enabled is not supported with global.s3.existingSecret" }}
+{{- end }}
+{{- if .Values.global.s3.AWS_SERVICE_ACCOUNT_NAME }}
+{{- fail "rustfs.enabled is not supported with global.s3.AWS_SERVICE_ACCOUNT_NAME" }}
+{{- end }}
+{{- if not .Values.api_gateway.storage_proxy.enabled }}
+{{- fail "rustfs.enabled requires api_gateway.storage_proxy.enabled" }}
+{{- end }}
+{{- if not .Values.rustfs.secret.existingSecret }}
+{{- fail "rustfs.secret.existingSecret must name the Secret the chart creates for RustFS" }}
+{{- end }}
+{{- if eq .Values.rustfs.secret.existingSecret "artifacts-storage" }}
+{{- fail "rustfs.secret.existingSecret must not be artifacts-storage" }}
+{{- end }}
+{{- if or (not .Values.rustfs.mode.standalone.enabled) .Values.rustfs.mode.distributed.enabled }}
+{{- fail "rustfs supports only rustfs.mode.standalone.enabled=true and rustfs.mode.distributed.enabled=false" }}
+{{- end }}
 {{- end }}
 {{- end }}

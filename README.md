@@ -87,6 +87,7 @@ The following table lists the global, default, and other parameters supported by
 | `default.probesOverrides.failureThreshold` | Override the `failureThreshold` for every Readiness and Liveness probes. | `nil` |
 | `default.minReadySeconds` | Wait before considering the new pod available | `0` |
 | `ingress.enabled` | Optional Mender Ingress | `false` |
+| `ingress.selfSignedTLS.enabled` | Demo only: generate a CA (valid 10 years) and a certificate (valid 800 days) for each `ingress.tls` entry, stored in its `secretName` with `ca.crt`. The `secretName` must not exist, or must have been created by this setting. The certificate is kept on upgrades; delete the Secret to regenerate it with a new CA, for example after changing the hosts or before it expires. Entries added later get a different CA. Not stable with `helm template` or Argo CD | `false` |
 | `dbmigration.enable` | Helm Chart hook that trigger a DB Migration utility just before an Helm Chart install or upgrade  | `true` |
 | `device_license_count.enabled` | Device license count feature - enterprise only | `true` |
 | `serviceAccount.create` | Create a custom ServiceAccount | `false` |
@@ -402,7 +403,7 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `device_auth.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `device_auth.certs` | certificate management | `nil` |
-| `device_auth.certs.key` | Private key in PEM format | `nil` |
+| `device_auth.certs.key` | Private key in PEM format. When unset, a key is generated on install and kept on upgrades. With `helm template` or Argo CD the key changes on every render: set this value or `existingSecret` | `nil` |
 | `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 | `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
@@ -651,7 +652,7 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `useradm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `useradm.certs` | certificate management | `nil` |
-| `useradm.certs.key` | Private key in PEM format | `nil` |
+| `useradm.certs.key` | Private key in PEM format. When unset, a key is generated on install and kept on upgrades. With `helm template` or Argo CD the key changes on every render: set this value or `existingSecret` | `nil` |
 | `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
 | `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
@@ -1118,7 +1119,7 @@ The following table lists the parameters for the `mongodb` component and their d
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `mongodb.enabled` | Enable the component | `true` |
 | `mongodb.image.repository` | Docker image repository | `mongo` |
-| `mongodb.image.tag` | Docker image tag | `8.0.13 |
+| `mongodb.image.tag` | Docker image tag | `8.0.38` |
 | `mongodb.image.pullPolicy` | Docker image pull policy | `IfNotPresent` |
 | `mongodb.imagePullSecrets` | List of pre-existing secrets, with the format of `- name: my-secret` | `nil` |
 | `mongodb.auth.enabled` | Whether to enable the authentication  | `true` |
@@ -1133,6 +1134,35 @@ The following table lists the parameters for the `mongodb` component and their d
 | `mongodb.persistence.size` | Persistence size | `8Gi` |
 | `mongodb.persistence.accessMode` | Storage access mode | `ReadWriteOnce` |
 | `mongodb.initScripts` | Optional initScripts | `nil` |
+
+### Parameters: rustfs
+
+[RustFS](https://github.com/rustfs/rustfs) S3-compatible storage for the Mender Artifacts, for evaluation only.
+When enabled, `global.s3.AWS_URI` and `api_gateway.storage_proxy.url` point to RustFS, and the
+`mender-artifact-storage` bucket is created by the Mender Server.
+If `global.s3.AWS_ACCESS_KEY_ID` and `global.s3.AWS_SECRET_ACCESS_KEY` keep their defaults, the keys are
+generated on install and kept on upgrades. With `helm template` or Argo CD they change on every render:
+set them explicitly. After changing them, restart the RustFS Deployment.
+Only the standalone mode is supported. Any other `rustfs.*` value is passed to the
+[RustFS Helm chart](https://github.com/rustfs/rustfs/tree/main/helm/rustfs).
+
+**Planned change:** the next major version of the chart is planned to enable RustFS by default.
+Set `rustfs.enabled` explicitly in your values (`false` if you use external S3, Azure or SeaweedFS)
+to keep your storage setup across that upgrade.
+
+| Parameter | Description | Default |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `rustfs.enabled` | Enable the component. Requires `global.storage=aws` and `api_gateway.storage_proxy.enabled` | `false` |
+| `rustfs.fullnameOverride` | Name prefix of the RustFS resources | `mender-rustfs` |
+| `rustfs.mode.standalone.enabled` | Single instance on one volume, the only supported mode | `true` |
+| `rustfs.secret.existingSecret` | Name of the credentials Secret created by this chart, other than `artifacts-storage` | `mender-rustfs` |
+| `rustfs.config.rustfs.console_enable` | Enable the RustFS console | `"false"` |
+| `rustfs.ingress.enabled` | Ingress for RustFS | `false` |
+| `rustfs.image.initImage.tag` | Init container image tag | `1.37.0` |
+| `rustfs.storageclass.name` | Storage class, empty for the cluster default | `""` |
+| `rustfs.storageclass.dataStorageSize` | Data volume size | `10Gi` |
+| `rustfs.storageclass.logStorageSize` | Logs volume size | `1Gi` |
+| `rustfs.resources` | Resources | `requests: 100m CPU, 256Mi; limits: 1Gi` |
 
 ### Parameters: featureGates
 
