@@ -45,3 +45,28 @@ You are using the internal Redis deployment. This configuration is:
    https://docs.mender.io/server-installation/production-installation-with-kubernetes/mender-server#external-services
 
 {{- end }}
+
+{{- $generated := list }}
+{{- range $name, $svc := dict "useradm" .Values.useradm "device_auth" .Values.device_auth }}
+{{- if and $svc.enabled (not (or $svc.certs.key $svc.certs.existingSecret)) }}
+{{- $generated = append $generated $name }}
+{{- end }}
+{{- end }}
+{{- if $generated }}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  ⚠️  ⚠️   WARNING: GENERATED SERVICE KEYS - NOT FOR PRODUCTION   ⚠️  ⚠️  ⚠️
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The chart generated the JWT signing keys for:
+{{- range $generated }}
+  ❌ {{ . }} (set {{ . }}.certs.existingSecret)
+{{- end }}
+
+These keys are not backed up, cannot be rotated without logging out
+every user and device, and change on every render with helm template
+or Argo CD.
+
+👉 FOR PRODUCTION, create and rotate your own keys:
+   https://docs.mender.io/server-installation/production-installation-with-kubernetes/mender-server#service-keys
+
+{{- end }}
