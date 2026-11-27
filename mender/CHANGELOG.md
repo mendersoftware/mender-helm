@@ -1,4 +1,24 @@
 ---
+## mender-8.6.0 - 2026-11-27
+
+
+### New features
+
+- Add useradm.insecure_disable_email_verification ([8008866](https://github.com/mendersoftware/mender-helm/commit/8008866f100f6b6ee3d2119c4f4985fb476dac4e)) by @oldgiova
+- Enable iot-manager audit logging ([ME-743](https://northerntech.atlassian.net/browse/ME-743)) ([93f1631](https://github.com/mendersoftware/mender-helm/commit/93f16319e6a9bbddd1b0cc675a2cea875e422d81)) by @frodeha
+
+### Bug fixes
+
+- Keep generated useradm and device-auth keys on upgrade ([f1641e8](https://github.com/mendersoftware/mender-helm/commit/f1641e86c46296510616ea087a17cb38d078bc01)) by @oldgiova
+
+---
+### All tickets resolved in this release
+
+| Ticket |
+|---|
+| [ME-743](https://northerntech.atlassian.net/browse/ME-743) |
+
+
 ## mender-8.5.3 - 2026-11-11
 
 
@@ -1351,6 +1371,21 @@
 
 
 # Changelog
+
+## [8.6.0](https://github.com/mendersoftware/mender-helm/compare/mender-8.5.4...mender-8.6.0) (2026-11-27)
+
+
+### Features
+
+* add useradm.insecure_disable_email_verification ([b484dd9](https://github.com/mendersoftware/mender-helm/commit/b484dd967ac15348e9465d2ab7e53c344badf3bf))
+* add useradm.insecure_disable_email_verification ([8008866](https://github.com/mendersoftware/mender-helm/commit/8008866f100f6b6ee3d2119c4f4985fb476dac4e))
+* enable iot-manager audit logging ([929e96b](https://github.com/mendersoftware/mender-helm/commit/929e96bc32b4cf49f093e5bfa357ffc470d00adc))
+* enable iot-manager audit logging ([93f1631](https://github.com/mendersoftware/mender-helm/commit/93f16319e6a9bbddd1b0cc675a2cea875e422d81))
+
+
+### Bug Fixes
+
+* keep generated useradm and device-auth keys on upgrade ([f1641e8](https://github.com/mendersoftware/mender-helm/commit/f1641e86c46296510616ea087a17cb38d078bc01))
 
 ## [8.5.4](https://github.com/mendersoftware/mender-helm/compare/mender-8.5.3...mender-8.5.4) (2026-11-16)
 
