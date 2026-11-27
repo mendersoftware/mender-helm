@@ -1,0 +1,442 @@
+suite: test generated private keys are never replaced once stored
+templates:
+  - templates/useradm/secret.yaml
+  - templates/device-auth/secret.yaml
+  - templates/useradm/deployment.yaml
+  - templates/device-auth/deployment.yaml
+release:
+  namespace: mender
+tests:
+  - it: useradm generates a key when none is stored
+    template: templates/useradm/secret.yaml
+    asserts:
+      - matchRegex:
+          path: data["private.pem"]
+          pattern: ^LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t
+
+  - it: useradm keeps the stored ed25519 key
+    template: templates/useradm/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: useradm keeps the stored key in Enterprise
+    template: templates/useradm/secret.yaml
+    set:
+      global.enterprise: true
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: useradm keeps a stored legacy RSA key
+    template: templates/useradm/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWxlZ2FjeS1yc2Eta2V5LWZpeHR1cmUKbGluZS10d28KbGluZS10aHJlZQo=
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWxlZ2FjeS1yc2Eta2V5LWZpeHR1cmUKbGluZS10d28KbGluZS10aHJlZQo=
+
+  - it: useradm keeps the stored key when other values change
+    template: templates/useradm/secret.yaml
+    set:
+      default.image.tag: v9.9.9
+      useradm.env.USERADM_JWT_EXP_TIMEOUT: "3600"
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: useradm keeps the stored key when the Secret has other keys
+    template: templates/useradm/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+            other: b3RoZXI=
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: useradm ignores a Secret with the same name in another namespace
+    template: templates/useradm/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: other
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - matchRegex:
+          path: data["private.pem"]
+          pattern: ^LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t
+      - notEqual:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: useradm uses certs.key over the stored key (explicit override)
+    template: templates/useradm/secret.yaml
+    set:
+      useradm.certs.key: my-access
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: bXktYWNjZXNz
+
+  - it: useradm renders no key Secret with certs.existingSecret
+    template: templates/useradm/secret.yaml
+    set:
+      useradm.certs.existingSecret: my-key
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-useradm
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: useradm mounts certs.existingSecret
+    template: templates/useradm/deployment.yaml
+    set:
+      useradm.certs.existingSecret: my-key
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: rsa
+            secret:
+              secretName: my-key
+
+  - it: useradm mounts the generated key Secret by default
+    template: templates/useradm/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: rsa
+            secret:
+              secretName: rsa-useradm
+
+  - it: device-auth generates a key when none is stored
+    template: templates/device-auth/secret.yaml
+    asserts:
+      - matchRegex:
+          path: data["private.pem"]
+          pattern: ^LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t
+
+  - it: device-auth keeps the stored ed25519 key
+    template: templates/device-auth/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: device-auth keeps the stored key in Enterprise
+    template: templates/device-auth/secret.yaml
+    set:
+      global.enterprise: true
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: device-auth keeps a stored legacy RSA key
+    template: templates/device-auth/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWxlZ2FjeS1yc2Eta2V5LWZpeHR1cmUKbGluZS10d28KbGluZS10aHJlZQo=
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWxlZ2FjeS1yc2Eta2V5LWZpeHR1cmUKbGluZS10d28KbGluZS10aHJlZQo=
+
+  - it: device-auth keeps the stored key when other values change
+    template: templates/device-auth/secret.yaml
+    set:
+      default.image.tag: v9.9.9
+      device_auth.env.DEVICEAUTH_JWT_EXP_TIMEOUT: "3600"
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: device-auth keeps the stored key when the Secret has other keys
+    template: templates/device-auth/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+            other: b3RoZXI=
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: device-auth ignores a Secret with the same name in another namespace
+    template: templates/device-auth/secret.yaml
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: other
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - matchRegex:
+          path: data["private.pem"]
+          pattern: ^LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0t
+      - notEqual:
+          path: data["private.pem"]
+          value: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+
+  - it: device-auth uses certs.key over the stored key (explicit override)
+    template: templates/device-auth/secret.yaml
+    set:
+      device_auth.certs.key: my-access
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - equal:
+          path: data["private.pem"]
+          value: bXktYWNjZXNz
+
+  - it: device-auth renders no key Secret with certs.existingSecret
+    template: templates/device-auth/secret.yaml
+    set:
+      device_auth.certs.existingSecret: my-key
+    kubernetesProvider:
+      scheme:
+        "v1/Secret":
+          gvr:
+            version: "v1"
+            resource: "secrets"
+          namespaced: true
+      objects:
+        - kind: Secret
+          apiVersion: v1
+          metadata:
+            name: rsa-device-auth
+            namespace: mender
+          data:
+            private.pem: c3RvcmVkLWVkMjU1MTkta2V5LWZpeHR1cmUKbGluZS10d28K
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: device-auth mounts certs.existingSecret
+    template: templates/device-auth/deployment.yaml
+    set:
+      device_auth.certs.existingSecret: my-key
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: rsa
+            secret:
+              secretName: my-key
+
+  - it: device-auth mounts the generated key Secret by default
+    template: templates/device-auth/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: rsa
+            secret:
+              secretName: rsa-device-auth

@@ -402,8 +402,8 @@ The following table lists the parameters for the `device-auth` component and the
 | `device_auth.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `device_auth.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `device_auth.certs` | certificate management | `nil` |
-| `device_auth.certs.key` | Private key in PEM format | `nil` |
-| `device_auth.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `device_auth.certs.key` | Private key in PEM format. When unset, a key is generated on install and kept on upgrades. With `helm template` or Argo CD the key changes on every render: set this value or `existingSecret` | `nil` |
+| `device_auth.certs.existingSecret` | Preexisting secret containing the signing key (key `private.pem`). Recommended for production. For key rotation, add a verification-only key `private-fallback.pem` and set `DEVICEAUTH_SERVER_FALLBACK_PRIV_KEY_PATH` via `customEnvs`, see https://docs.mender.io/server-installation/overview/certificates-and-keys#service-keys | `nil` |
 | `device_auth.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `device_auth.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `device_auth.updateStrategy` | The strategy to use to update existing pods | `nil` |
@@ -651,8 +651,8 @@ The following table lists the parameters for the `useradm` component and their d
 | `useradm.pdb.maxUnavailable` | PodDistruptionBudget maxUnavailable | `nil` |
 | `useradm.priorityClassName` | Optional pre-existing priorityClassName to be assigned to the resource | `nil` |
 | `useradm.certs` | certificate management | `nil` |
-| `useradm.certs.key` | Private key in PEM format | `nil` |
-| `useradm.certs.existingSecret` | Preexisting secret containing the private key (key `private.pem`) | `nil` |
+| `useradm.certs.key` | Private key in PEM format. When unset, a key is generated on install and kept on upgrades. With `helm template` or Argo CD the key changes on every render: set this value or `existingSecret` | `nil` |
+| `useradm.certs.existingSecret` | Preexisting secret containing the signing key (key `private.pem`). Recommended for production. For key rotation, add a verification-only key `private-fallback.pem` and set `USERADM_SERVER_FALLBACK_PRIV_KEY_PATH` via `customEnvs`, see https://docs.mender.io/server-installation/overview/certificates-and-keys#service-keys | `nil` |
 | `useradm.migrationRestartPolicy` | Migration job: restartPolicy option | `Never` |
 | `useradm.migrationResources` | Migration job: optional K8s resources. If not specified, uses the deployment resources | `nil` |
 | `useradm.updateStrategy` | The strategy to use to update existing pods | `nil` |

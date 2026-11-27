@@ -1,0 +1,77 @@
+suite: documented key rotation contract (versioned existingSecret + fallback key)
+templates:
+  - templates/useradm/deployment.yaml
+  - templates/device-auth/deployment.yaml
+  - templates/useradm/secret.yaml
+  - templates/device-auth/secret.yaml
+set:
+  useradm:
+    certs:
+      existingSecret: mender-useradm-keys-v2
+    customEnvs:
+      - name: USERADM_SERVER_FALLBACK_PRIV_KEY_PATH
+        value: /etc/useradm/rsa/private-fallback.pem
+  device_auth:
+    certs:
+      existingSecret: mender-device-auth-keys-v2
+    customEnvs:
+      - name: DEVICEAUTH_SERVER_FALLBACK_PRIV_KEY_PATH
+        value: /etc/deviceauth/rsa/private-fallback.pem
+tests:
+  - it: useradm mounts the customer Secret as the key directory
+    template: templates/useradm/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[?(@.name=="rsa")].secret.secretName
+          value: mender-useradm-keys-v2
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[?(@.name=="rsa")].mountPath
+          value: /etc/useradm/rsa/
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="USERADM_SERVER_PRIV_KEY_PATH")].value
+          value: /etc/useradm/rsa/private.pem
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="USERADM_SERVER_FALLBACK_PRIV_KEY_PATH")].value
+          value: /etc/useradm/rsa/private-fallback.pem
+
+  - it: device-auth mounts the customer Secret as the key directory
+    template: templates/device-auth/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[?(@.name=="rsa")].secret.secretName
+          value: mender-device-auth-keys-v2
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[?(@.name=="rsa")].mountPath
+          value: /etc/deviceauth/rsa/
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="DEVICEAUTH_SERVER_PRIV_KEY_PATH")].value
+          value: /etc/deviceauth/rsa/private.pem
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="DEVICEAUTH_SERVER_FALLBACK_PRIV_KEY_PATH")].value
+          value: /etc/deviceauth/rsa/private-fallback.pem
+
+  - it: the chart does not render its own useradm Secret
+    template: templates/useradm/secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: the chart does not render its own device-auth Secret
+    template: templates/device-auth/secret.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: useradm customEnvs replaces default.customEnvs, as the docs warn
+    template: templates/useradm/deployment.yaml
+    set:
+      default:
+        customEnvs:
+          - name: FROM_DEFAULT
+            value: "1"
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].env[?(@.name=="FROM_DEFAULT")]
+      - equal:
+          path: spec.template.spec.containers[0].env[?(@.name=="USERADM_SERVER_FALLBACK_PRIV_KEY_PATH")].value
+          value: /etc/useradm/rsa/private-fallback.pem
